@@ -5,7 +5,7 @@ import os, sys, getpass
 from optparse import OptionParser
 
 class GoogleContacts(object):
-    def __init__(self, email, password, maxnum = 3000):
+    def __init__(self, email, password, maxnum=3000):
         gd_client = gdata.contacts.service.ContactsService()
         gd_client.email = email
         gd_client.password = password
@@ -28,7 +28,7 @@ class GoogleContacts(object):
             group_name = groups_dict[entry.group_membership_info[0].href]
             name_dict_map.setdefault(group_name, []).append(contact_name)
 
-        #for group_name in sorted(name_dict_map.keys()):
+        # for group_name in sorted(name_dict_map.keys()):
         #    print '%s => %d' % (group_name, len(name_dict_map[group_name]))
         # not_group = 'Businesses And Mailing Lists'
 
@@ -49,9 +49,9 @@ class GoogleContacts(object):
                 #     if 'hotmail.com' in email.address or 'msn.com' in email.address:
                 #        gmail_contacts.setdefault(contact_name, []).append(email.address)
 
-        #print len(gmail_contacts.keys()), sum([ len(gmail_contacts[contact_name]) for 
+        # print len(gmail_contacts.keys()), sum([ len(gmail_contacts[contact_name]) for 
         #                                        contact_name in gmail_contacts.keys()])
-        #for contact_name in sorted(gmail_contacts.keys()):
+        # for contact_name in sorted(gmail_contacts.keys()):
         #    print '%s => %s' % (contact_name, sorted(gmail_contacts[contact_name]))
 
         # this is the list of the contacts and their IM addresses
@@ -80,7 +80,7 @@ class GoogleContacts(object):
                         f = 5
                 # print 'TANIM DEBUG problem with %s and protocol %s' % (contact_name, im.protocol)
 
-        #for contact_name in sorted(gmail_im_contacts.keys()):
+        # for contact_name in sorted(gmail_im_contacts.keys()):
         #    print '%s => %s' % (contact_name, gmail_im_contacts[contact_name])
 
     def print_pine_addresses(self):
@@ -95,12 +95,12 @@ class GoogleContacts(object):
         groups_by_status['email'] = sorted(self.gmail_contacts.keys())
         groups_by_status['im'] = sorted(self.gmail_im_contacts.keys())
         
-if __name__=='__main__':
+if __name__ == '__main__':
     parser = OptionParser()
     parser.add_option('--email', dest='email', action='store', type=str,
-                      help = 'email address to get google contact info from.')
+                      help='email address to get google contact info from.')
     parser.add_option('--passwd', dest='passwd', action='store', type=str,
-                      help = 'email address to get google contact info from.')
+                      help='email address to get google contact info from.')
     options, args = parser.parse_args()
     if options.email is None:
         raise ValueError("Error, must give the email address")
