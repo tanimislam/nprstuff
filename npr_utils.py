@@ -4,7 +4,7 @@ import calendar, numpy, time
 
 def weekdays_of_month_of_year(year, month):
     days = filter(lambda day: day != 0,
-                  numpy.array( calendar.monthcalendar(year, month), dtype=int)[:,1:6].flatten() )
+                  numpy.array( calendar.monthcalendar(year, month), dtype=int)[:,0:5].flatten() )
     return sorted(days)
 
 def saturdays_of_month_of_year(year, month):
