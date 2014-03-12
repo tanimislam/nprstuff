@@ -2,7 +2,6 @@
 
 import os, sys, glob, numpy, urllib2, mutagen.mp4
 import multiprocessing, time, lxml.etree, subprocess
-sys.path.append('/mnt/software/sources/nprstuff')
 import npr_utils
 
 def get_freshair_image():
