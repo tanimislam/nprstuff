@@ -104,5 +104,19 @@ def get_freshair(outputdir, datetime_wkday, order_totnum = None,
     mp4tags.tags['\xa9day'] = [ '%d' % year, ]
     mp4tags.tags['\xa9cmt'] = [ "more info at : Fresh Air from WHYY and NPR Web site", ]
     mp4tags.tags['trkn'] = [ ( order_in_year, tot_in_year ), ]
-    mp4tags.tags['covr'] = [ mutagen.mp4.MP4(file_data, mutagen.mp4.MP4Cover.FORMAT_PNG ), ]
+    mp4tags.tags['covr'] = [ mutagen.mp4.MP4Cover(file_data, mutagen.mp4.MP4Cover.FORMAT_PNG ), ]
     mp4tags.save()
+
+if __name__=='__main__':
+    parser = OptionParser()
+    parser.add_option('--dirname', dest='dirname', type=str,
+                      action = 'store', default = os.getcwd(),
+                      help = 'Name of the directory to store the file. Default is %s.' %
+                      os.getcwd() )
+    parser.add_option('--date', dest='date', type=str,
+                      action = 'store', default = npr_utils.get_datestring(time.localtime()),
+                      help = 'The date, in the form of "January 1, 2014." The default is today\'s date, %s.' %
+                      npr_utils.get_datestring( time.localtime() ) )
+    opts, args = parser.parse_args()
+    get_freshair( opts.dirname, npr_utils.get_time_from_datestring( opts.date ) )
+                  
