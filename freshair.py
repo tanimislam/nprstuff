@@ -88,7 +88,7 @@ def get_freshair(outputdir, datetime_wkday, order_totnum = None,
     # now convert to m4a file
     # /usr/bin/avconv -y -i freshair$wgdate.wav -ar 44100 -ac 2 -aq 400 -acodec libfaac NPR.FreshAir."$decdate".m4a ;
     m4afile = os.path.join(outputdir, 'NPR.FreshAir.%s.m4a' % decdate )
-    split_cmd = [ '/usr/bin/avconv', '-y', '-i', wavfile, '-ar', '44100', '-ac', '2',
+    split_cmd = [ '/usr/bin/avconv', '-y', '-i', wavfile, '-ar', '44100', '-ac', '2', '-threads', '%d' % multiprocessing.cpu_count(),
                   '-strict', 'experimental', '-acodec', 'aac', m4afile ]
     proc = subprocess.Popen(split_cmd, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
     stdout_val, stderr_val = proc.communicate()
