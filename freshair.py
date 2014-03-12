@@ -8,6 +8,11 @@ import npr_utils
 from optparse import OptionParser
 
 # magic to get multiprocessing to get processes to be able to start daemons
+# I copied the code from http://stackoverflow.com/a/8963618/3362358, without
+# any real understanding EXCEPT that I am extending a Pool using a
+# NoDaemonProcess that always returns False, allowing me to create a pool of
+# workers that can spawn other processes (by default, multiprocessing does not
+# allow this)   
 class NoDaemonProcess(multiprocessing.Process):
     # make 'daemon' attribute always return False
     def _get_daemon(self):
