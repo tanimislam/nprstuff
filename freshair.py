@@ -1,28 +1,17 @@
 #!/usr/bin/env python
 
-import os, sys, glob, numpy, urllib2, mutagen.mp4
-import multiprocessing, time, lxml.etree, subprocess
+import os
+import glob
+import urllib2
+import mutagen.mp4
+import multiprocessing
+import time
+import subprocess
 import multiprocessing.pool
-sys.path.append('/mnt/software/sources/nprstuff/simple-junk')
-import npr_utils
 from optparse import OptionParser
+import lxml.etree
+import npr_utils
 
-# magic to get multiprocessing to get processes to be able to start daemons
-# I copied the code from http://stackoverflow.com/a/8963618/3362358, without
-# any real understanding EXCEPT that I am extending a Pool using a
-# NoDaemonProcess that always returns False, allowing me to create a pool of
-# workers that can spawn other processes (by default, multiprocessing does not
-# allow this)   
-class NoDaemonProcess(multiprocessing.Process):
-    # make 'daemon' attribute always return False
-    def _get_daemon(self):
-        return False
-    def _set_daemon(self, value):
-        pass
-    daemon = property(_get_daemon, _set_daemon) 
-
-class MyPool(multiprocessing.pool.Pool):
-    Process = NoDaemonProcess 
 
 def get_freshair_image():
     return urllib2.urlopen('http://media.npr.org/images/podcasts/2013/primary/fresh_air.png').read()
@@ -80,7 +69,7 @@ def process_all_freshairs_by_year(yearnum, inputdir, verbose = True):
                                                     order_dates_remain if (order - 1) % nprocs == procno ] ) for
                      procno in xrange(nprocs) ]
     time0 = time.time()
-    pool = MyPool(processes = multiprocessing.cpu_count())
+    pool = npr_utils.MyPool(processes = multiprocessing.cpu_count())
     pool.map(_process_freshairs_by_year_tuple, input_tuples)
     if verbose:
         print 'processed all Fresh Air downloads for %04d in %0.3f seconds.' % ( yearnum, time.time() - time0 ) 

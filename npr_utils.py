@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 import calendar, numpy, time
+import multiprocessing
+
 
 def weekdays_of_month_of_year(year, month):
     days = filter(lambda day: day != 0,
@@ -61,5 +63,22 @@ def get_weekday_times_in_year(year):
                     month in xrange(1, 13) for day in weekdays_of_month_of_year(year, month) ])
 
 
-    
-    
+class NoDaemonProcess(multiprocessing.Process):
+    """
+    magic to get multiprocessing to get processes to be able to start daemons
+    I copied the code from http://stackoverflow.com/a/8963618/3362358, without
+    any real understanding EXCEPT that I am extending a Pool using a
+    NoDaemonProcess that always returns False, allowing me to create a pool of
+    workers that can spawn other processes (by default, multiprocessing does not
+    allow this)
+    """
+    # make 'daemon' attribute always return False
+    def _get_daemon(self):
+        return False
+    def _set_daemon(self, value):
+        pass
+    daemon = property(_get_daemon, _set_daemon)
+
+
+class MyPool(multiprocessing.pool.Pool):
+    Process = NoDaemonProcess
