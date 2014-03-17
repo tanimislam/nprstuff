@@ -164,9 +164,9 @@ def get_freshair(outputdir, datetime_wkday, order_totnum = None,
 if __name__=='__main__':
     parser = OptionParser()
     parser.add_option('--dirname', dest='dirname', type=str,
-                      action = 'store', default = os.getcwd(),
+                      action = 'store', default = '/mnt/media/freshair',
                       help = 'Name of the directory to store the file. Default is %s.' %
-                      os.getcwd() )
+                      '/mnt/media/freshair')
     parser.add_option('--date', dest='date', type=str,
                       action = 'store', default = npr_utils.get_datestring(time.localtime()),
                       help = 'The date, in the form of "January 1, 2014." The default is today\'s date, %s.' %
