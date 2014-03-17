@@ -19,7 +19,7 @@ if __name__=='__main__':
                       help = 'If chosen, do not print verbose output from the action of this ' +
                       'script. By default this is false.')
     opts, args = parser.parse_args()
-    verbose = not opts.quiet
+    verbose = not opts.is_quiet
     freshair.process_all_freshairs_by_year( opts.year,
                                             opts.inputdir,
                                             verbose = verbose )
