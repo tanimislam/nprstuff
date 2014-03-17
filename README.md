@@ -1,4 +1,4 @@
-simple-junk
+nprstuff
 ===========
 
-Simple Junk Scripts
+These are some utility scripts I find useful.
