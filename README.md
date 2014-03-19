@@ -1,4 +1,4 @@
 nprstuff
 ===========
 
-These are some utility scripts I find useful.
+I like NPR, so I made some scripts to download my favorite programs from NPR
