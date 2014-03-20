@@ -6,7 +6,9 @@ from NPR. For now, I have something that downloads `Fresh Air` and `Wait Wait..D
 extended to other NPR and PRI programs.
 
 External hyperlinks like Python_.
+.. _Python: http://www.python.org
+And more things like that.
 
 ..`Fresh Air`: http://www.npr.org/programs/fresh-air/
 ..`Wait Wait..Don't Tell Me`: http://www.npr.org/programs/wait-wait-dont-tell-me/ 
-.. _Python: http://www.python.org
+
