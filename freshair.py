@@ -22,7 +22,7 @@ def get_freshair_URL(datetime_s):
     get the NPR API tag for this Fresh Air episode 
     """
     nprApiDate = time.strftime('%Y-%m-%d', datetime_s)
-    return 'http://api.npr.org/query?id=13&date=%s&dateType=story&output=NPRML&apiKey=%s' % ( nprApiDate, _npr_FreshAir_key )
+    return 'http://api.npr.org/query?id=13&date=%s&dateType=story&output=NPRML&apiKey=%s' % ( nprApiDate, _npr_FreshAir_Key )
 
 def _download_file(input_tuple):
     mp3URL, filename = input_tuple
