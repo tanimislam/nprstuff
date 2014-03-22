@@ -7,6 +7,9 @@ import urllib2, lxml.html
 from optparse import OptionParser
 
 def get_americanlife_info(epno):
+    """
+    Returns a tuple of title, year given the episode number for This American Life.
+    """
 
     # first see if this episode of this american life exists...
     try:
@@ -41,7 +44,32 @@ def get_americanlife_info(epno):
     title = ':'.join(title.split(':')[1:]).strip()
     return title, year
 
+def get_american_life(epno, directory = '/mnt/media/thisamericanlife'):
+    """
+    Downloads an episode of This American Life into a given directory.
+    The description of which URL the episodes are downloaded from is given in
+    http://www.dirtygreek.org/t/download-this-american-life-episodes.
 
+    The URL is http://audio.thisamericanlife.org/jomamashouse/ismymamashouse/epno.mp3
+    """
 
+    try:
+        title, year = get_americanlife_info(epno)
+    except ValueError:
+        print 'Cannot find date and title for This American Life episode #%d.' % epno
+        return
 
+    if not os.path.isdir(directory):
+        raise ValueError("Error, %s is not a directory." % directory)
+    outfile = os.path.join(directory, 'PRI.ThisAmericanLife.%03d.mp3' % epno)
+    urlopn = 'http://audio.thisamericanlife.org/jomamashouse/ismymamashouse/%d.mp3' % epno
+    with open(outfile, 'wb') as openfile: openfile.write(urllib2.urlopen(urlopn).read())
 
+    f = tagpy.FileRef(outfile)
+    t = f.tag()
+    t.title = '#%d: %s' % ( epno, title)
+    t.year = year
+    t.artist = 'Ira Glass'
+    t.album = 'This American Life'
+    t.track = epno
+    f.save()
