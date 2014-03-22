@@ -82,4 +82,4 @@ if __name__=='__main__':
                       help = 'Directory into which to download This American Life episodes. Default is %s.' %
                       '/mnt/media/thisamericanlife')
     options, args = parser.parse_args()
-    get_american_life(options.epno, directory=options.directory)
+    get_american_life(options.episode, directory=options.directory)
