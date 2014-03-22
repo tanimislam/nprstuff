@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+__author__ = "Tanim Islam"
+
 import os
 import glob
 import urllib2
