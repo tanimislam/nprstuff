@@ -1,6 +1,5 @@
-__author__ = 'Tanim Islam'
-
 #!/usr/bin/env python
+__author__ = 'Tanim Islam'
 
 import os, sys, tagpy, time
 import urllib2, lxml.html
