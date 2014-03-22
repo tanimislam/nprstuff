@@ -73,3 +73,14 @@ def get_american_life(epno, directory = '/mnt/media/thisamericanlife'):
     t.album = 'This American Life'
     t.track = epno
     f.save()
+
+if __name__=='__main__':
+    parser = OptionParser()
+    parser.add_option('--episode', dest='episode', type=int, action='store', default = 150,
+                      help = 'Episode number of This American Life to download. Default is 150.')
+    parser.add_option('--directory', dest='directory', type=str, action='store',
+                      default = '/mnt/media/thisamericanlife',
+                      help = 'Directory into which to download This American Life episodes. Default is %s.' %
+                             '/mnt/media/thisamericanlife'.)
+    options, args = parser.parse_args()
+    get_american_life(options.epno, directory=options.directory)
