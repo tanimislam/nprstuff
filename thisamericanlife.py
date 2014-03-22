@@ -80,6 +80,6 @@ if __name__=='__main__':
     parser.add_option('--directory', dest='directory', type=str, action='store',
                       default = '/mnt/media/thisamericanlife',
                       help = 'Directory into which to download This American Life episodes. Default is %s.' %
-                      '/mnt/media/thisamericanlife'.)
+                      '/mnt/media/thisamericanlife')
     options, args = parser.parse_args()
     get_american_life(options.epno, directory=options.directory)
