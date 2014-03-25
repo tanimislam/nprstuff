@@ -7,6 +7,7 @@ from PIL import Image
 from optparse import OptionParser
 
 _files_to_convert_from = ( 'application/x-flac',
+                           'audio/x-flac',
                            'application/ogg',
                            'audio/mpeg' )
 
