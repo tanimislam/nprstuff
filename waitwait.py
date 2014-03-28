@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 import os, sys, glob, re, multiprocessing
-import subprocess, lxml, urllib2, datetime, time
-import npr_utils
+import subprocess, lxml.etree, urllib2, datetime, time
+import npr_utils, mutagen.mp4
 from optparse import OptionParser
 
 _npr_waitwait_key = 'MDA2OTgzNTcwMDEyOTc1NDg4NTNmMWI5Mg001'
@@ -47,7 +47,7 @@ def get_waitwait(outputdir, datetime_saturday, order_totnum = None,
     order_in_year, tot_in_year = order_totnum
         
     if file_data is None:
-        file_data = get_freshair_image()
+        file_data = get_waitwait_image()
         
     nprURL = npr_utils.get_NPR_URL(datetime_s, 
                                    _npr_waitwait_progid, 
@@ -60,7 +60,7 @@ def get_waitwait(outputdir, datetime_saturday, order_totnum = None,
     # now get tuple of title to mp3 file
     title_mp3_urls = []
     for elem in list(tree.iter('story'))[1:]:
-        title = elem.iter('title')[0].text.strip()
+        title = list(elem.iter('title'))[0].text.strip()
         m3uurl = max( elem.iter('mp3') ).text.strip()
         mp3url = urllib2.urlopen( m3uurl ).read().strip()
         title_mp3_urls.append( ( title, mp3url ) )
@@ -84,7 +84,7 @@ def get_waitwait(outputdir, datetime_saturday, order_totnum = None,
      # sox magic command
     time0 = time.time()
     wgdate = time.strftime('%d-%b-%Y', datetime_s)
-    wavfile = os.path.join(outputdir, 'freshair%s.wav' % wgdate ).replace(' ', '\ ')
+    wavfile = os.path.join(outputdir, 'waitwait%s.wav' % wgdate ).replace(' ', '\ ')
     fnames = [ filename.replace(' ', '\ ') for filename in outfiles ]
     split_cmd = [ '(for', 'file', 'in', ] + fnames + [ 
         ';', '/usr/bin/sox', '$file', '-t', 'cdr', '-', ';', 'done)' ] + [ 
@@ -97,7 +97,7 @@ def get_waitwait(outputdir, datetime_saturday, order_totnum = None,
         os.remove(filename)
 
     # now convert to m4a file
-    m4afile = os.path.join(outputdir, 'NPR.FreshAir.%s.m4a' % decdate )
+    m4afile = os.path.join(outputdir, 'NPR.WaitWait.%s.m4a' % decdate )
     split_cmd = [ '/usr/bin/avconv', '-y', '-i', wavfile, '-ar', '44100',
                   '-ac', '2', '-threads', '%d' % multiprocessing.cpu_count(),
                   '-strict', 'experimental', '-acodec', 'aac', m4afile ]
@@ -123,11 +123,11 @@ def get_waitwait(outputdir, datetime_saturday, order_totnum = None,
 if __name__=='__main__':
     parser = OptionParser()
     parser.add_option('--dirname', dest='dirname', type=str,
-                      action = 'store', default = '/mnt/media/freshair',
+                      action = 'store', default = '/mnt/media/waitwait',
                       help = 'Name of the directory to store the file. Default is %s.' %
-                      '/mnt/media/freshair')
+                      '/mnt/media/waitwait')
     parser.add_option('--date', dest='date', type=str,
-                      action = 'store', default = npr_utils.get_datestring(time.localtime()),
+                      action = 'store', default = npr_utils.get_datestring(_get_last_saturday(time.localtime())),
                       help = 'The date, in the form of "January 1, 2014." The default is last Saturday, %s.' %
                       npr_utils.get_datestring( _get_last_saturday( time.localtime() ) ) )
     opts, args = parser.parse_args()
