@@ -17,6 +17,9 @@ def _can_convert_file(filename):
     if magic.from_file(filename, mime=True).strip() in \
        _files_to_convert_from:
         return True
+    if any([ os.path.basename(filename).endswith('.%s' % tok) for
+             tok in ( 'mp3', 'ogg', 'flac' ) ]):
+        return True
     return False
 
 def _get_file_data(album_path):
