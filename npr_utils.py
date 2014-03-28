@@ -1,8 +1,14 @@
 #!/usr/bin/env python
 
 import calendar, numpy, time
-import multiprocessing
+import multiprocessing, multiprocessing.pool
 
+def get_NPR_URL(datetime_s, program_id, NPR_API_key):
+    """
+    get the NPR API tag for this Fresh Air episode 
+    """
+    nprApiDate = time.strftime('%Y-%m-%d', datetime_s)
+    return 'http://api.npr.org/query?id=%d&date=%s&dateType=story&output=NPRML&apiKey=%s' % ( program_id, nprApiDate, NPR_API_key )
 
 def weekdays_of_month_of_year(year, month):
     days = filter(lambda day: day != 0,
@@ -78,7 +84,6 @@ class NoDaemonProcess(multiprocessing.Process):
     def _set_daemon(self, value):
         pass
     daemon = property(_get_daemon, _set_daemon)
-
 
 class MyPool(multiprocessing.pool.Pool):
     Process = NoDaemonProcess

@@ -15,16 +15,10 @@ import lxml.etree
 import npr_utils
 
 _npr_FreshAir_Key = 'MDA2OTgzNTcwMDEyOTc1NDg4NTNmMWI5Mg001' 
+_npr_FreshAir_progid = 13
 
 def get_freshair_image():
     return urllib2.urlopen('http://media.npr.org/images/podcasts/2013/primary/fresh_air.png').read()
-
-def get_freshair_URL(datetime_s):
-    """
-    get the NPR API tag for this Fresh Air episode 
-    """
-    nprApiDate = time.strftime('%Y-%m-%d', datetime_s)
-    return 'http://api.npr.org/query?id=13&date=%s&dateType=story&output=NPRML&apiKey=%s' % ( nprApiDate, _npr_FreshAir_Key )
 
 def _download_file(input_tuple):
     mp3URL, filename = input_tuple
@@ -97,7 +91,9 @@ def get_freshair(outputdir, datetime_wkday, order_totnum = None,
     if file_data is None:
         file_data = get_freshair_image()
     
-    nprURL = get_freshair_URL(datetime_s)
+    nprURL = npr_utils.get_NPR_URL(datetime_s, 
+                                   _npr_FreshAir_progid, 
+                                   _npr_FreshAir_Key )
     year = datetime_s.tm_year
     
     # download this data into an lxml elementtree
@@ -106,7 +102,7 @@ def get_freshair(outputdir, datetime_wkday, order_totnum = None,
     # now get tuple of title to mp3 file
     title_mp3_urls = []
     for elem in tree.iter('story'):
-        title = list( elem.iter('title') )[0].text.strip()
+        title = list(elem.iter('title'))[0].text.strip()
         m3uurl = max( elem.iter('mp3') ).text.strip()
         mp3url = urllib2.urlopen( m3uurl ).read().strip()
         title_mp3_urls.append( ( title, mp3url ) )
