@@ -52,10 +52,14 @@ def _process_freshairs_by_year_tuple(input_tuple):
     fa_image = get_freshair_image()
     for datetime, order in datetimes_order_tuples:
         time0 = time.time()
-        fname = get_freshair(outputdir, datetime, order_totnum = ( order, totnum),
-                             file_data = fa_image )
-        if verbose:
-            print 'processed %s in %0.3f seconds.' % ( os.path.basename(fname), time.time() - time0 )
+        try:
+            fname = get_freshair(outputdir, datetime, order_totnum = ( order, totnum),
+                                 file_data = fa_image )
+            if verbose:
+                print 'processed %s in %0.3f seconds.' % ( os.path.basename(fname), time.time() - time0 )
+        except ValueError as e:
+            print 'Could not create Fresh Air episode for date %s for some reason' % npr_utils.get_datestring( datetime )
+        
 
 def process_all_freshairs_by_year(yearnum, inputdir, verbose = True):
     order_dates_remain = get_freshair_valid_dates_remaining_tuples( yearnum, inputdir )
