@@ -62,7 +62,11 @@ def get_american_life(epno, directory = '/mnt/media/thisamericanlife'):
         raise ValueError("Error, %s is not a directory." % directory)
     outfile = os.path.join(directory, 'PRI.ThisAmericanLife.%03d.mp3' % epno)
     urlopn = 'http://audio.thisamericanlife.org/jomamashouse/ismymamashouse/%d.mp3' % epno
-    with open(outfile, 'wb') as openfile: openfile.write(urllib2.urlopen(urlopn).read())
+    try:
+        with open(outfile, 'wb') as openfile: openfile.write(urllib2.urlopen(urlopn).read())
+    except urllib2.HTTPError:
+        print "Error, could not download This American Life episode #%d. Exiting..." % epno
+        return
 
     f = tagpy.FileRef(outfile)
     t = f.tag()
