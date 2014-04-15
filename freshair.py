@@ -75,8 +75,32 @@ def process_all_freshairs_by_year(yearnum, inputdir, verbose = True):
     if verbose:
         print 'processed all Fresh Air downloads for %04d in %0.3f seconds.' % ( yearnum, time.time() - time0 ) 
 
+def _process_freshair_titlemp3_tuples_one(tree):
+    title_mp3_urls = []
+    for elem in tree.iter('story'):
+        title = list(elem.iter('title'))[0].text.strip()
+        if len( list( elem.iter('mp3'))) == 0:
+            continue
+        m3uurl = max( elem.iter('mp3') ).text.strip()
+        mp3url = urllib2.urlopen( m3uurl ).read().strip()
+        title_mp3_urls.append( ( title, mp3url ) )
+    return title_mp3_urls
+
+def _process_freshair_titlemp3_tuples_two(tree):
+    titles = []
+    mp3s = []
+    for elem in tree.iter('story'):
+        title = list(elem.iter('title'))[0].text.strip()
+        titles.append(title)
+    for elem in elem.iter('mp3'):
+        m3uurl = elem.text.strip()
+        mp3url = urllib2.urlopen( m3uurl ).read().strip()
+        mp3s.append( mp3url )
+    title_mp3_urls = filter(None, zip( titles, mp3s ) )
+    return title_mp3_urls
+
 def get_freshair(outputdir, datetime_wkday, order_totnum = None,
-                 file_data = None):
+                 file_data = None, debug = False):
     
     # check if outputdir is a directory
     if not os.path.isdir(outputdir):
@@ -102,17 +126,22 @@ def get_freshair(outputdir, datetime_wkday, order_totnum = None,
     
     # download this data into an lxml elementtree
     tree = lxml.etree.fromstring( urllib2.urlopen(nprURL).read())
-    
-    # now get tuple of title to mp3 file
-    title_mp3_urls = []
-    for elem in tree.iter('story'):
-        title = list(elem.iter('title'))[0].text.strip()
-        m3uurl = max( elem.iter('mp3') ).text.strip()
-        mp3url = urllib2.urlopen( m3uurl ).read().strip()
-        title_mp3_urls.append( ( title, mp3url ) )
-    
     decdate = time.strftime('%d.%m.%Y', datetime_s)
-    
+    if debug:
+        with open(os.path.join(outputdir, 'NPR.FreshAir.tree.%s.xml' % decdate), 'w') as openfile:
+            openfile.write( lxml.etree.tostring( tree ) )
+
+    # now get tuple of title to mp3 file
+    try:
+        title_mp3_urls = _process_freshair_titlemp3_tuples_one(tree)
+    except ValueError:
+        title_mp3_urls = _process_freshair_titlemp3_tuples_two(tree)
+    #for elem in tree.iter('story'):
+    #    title = list(elem.iter('title'))[0].text.strip()
+    #    m3uurl = max( elem.iter('mp3') ).text.strip()
+    #    mp3url = urllib2.urlopen( m3uurl ).read().strip()
+    #    title_mp3_urls.append( ( title, mp3url ) )
+        
     titles, mp3urls = zip(*title_mp3_urls)
     title = time.strftime('%A, %B %d, %Y', datetime_s)
     title = '%s: %s.' % ( title,
@@ -174,6 +203,10 @@ if __name__=='__main__':
                       action = 'store', default = npr_utils.get_datestring(time.localtime()),
                       help = 'The date, in the form of "January 1, 2014." The default is today\'s date, %s.' %
                       npr_utils.get_datestring( time.localtime() ) )
+    parser.add_option('--debug', dest='debug', action='store_true',
+                      help = 'If chosen, run freshair.py in debug mode. Useful for debugging :)',
+                      default = False)
     opts, args = parser.parse_args()
-    fname = get_freshair( opts.dirname, npr_utils.get_time_from_datestring( opts.date ) )
-                  
+    fname = get_freshair( opts.dirname, npr_utils.get_time_from_datestring( opts.date ),
+                          debug = opts.debug )
+    
