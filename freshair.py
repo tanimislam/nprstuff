@@ -57,7 +57,7 @@ def _process_freshairs_by_year_tuple(input_tuple):
                                  file_data = fa_image )
             if verbose:
                 print 'processed %s in %0.3f seconds.' % ( os.path.basename(fname), time.time() - time0 )
-        except ValueError as e:
+        except Exception as e:
             print 'Could not create Fresh Air episode for date %s for some reason' % npr_utils.get_datestring( datetime )
         
 
