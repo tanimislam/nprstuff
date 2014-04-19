@@ -130,6 +130,19 @@ def get_freshair(outputdir, datetime_wkday, order_totnum = None,
     if debug:
         with open(os.path.join(outputdir, 'NPR.FreshAir.tree.%s.xml' % decdate), 'w') as openfile:
             openfile.write( lxml.etree.tostring( tree ) )
+    
+    # check for unavailable tag
+    if len(filter(lambda elem: 'value' in elem.keys() and 
+                  elem.get('value') == 'true', tree.iter('unavailable'))) != 0:
+        unavailable_elem = max(filter(lambda elem: 'value' in elem.keys() and
+                                      elem.get('value') == 'true',
+                                      tree.iter('unavailable')))
+        if unavailable_elem.text is None:
+            print 'Could not create Fresh Air episode for date %s for some reason' % npr_utils.get_datestring( datetime_s )
+        else:
+            print 'Could not create Fresh Air episode for date %s for this reason: %s' % \
+                ( npr_utils.get_datestring( datetime_s ), unavailable_elem.text.strip() )
+        return
 
     # now get tuple of title to mp3 file
     try:
