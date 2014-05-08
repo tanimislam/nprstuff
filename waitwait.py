@@ -45,7 +45,7 @@ def get_waitwait_valid_dates_remaining_tuples(yearnum, inputdir):
                              waitwait_files_downloaded ])
     all_order_saturdays = { datetime : (num+1) for (num, datetime) in
                             enumerate( npr_utils.get_saturday_times_in_year( yearnum ) ) }
-    saturdays_left = filter(lambda datetime: datetime < time.localtime(), set( all_order_weekdays.keys() ) - 
+    saturdays_left = filter(lambda datetime: datetime < time.localtime(), set( all_order_saturdays.keys() ) - 
                             set( dates_downloaded ) )
     totnum = len( all_order_saturdays.keys() )
     order_dates_remain = sorted([ ( all_order_saturdays[datetime], totnum, datetime ) for
