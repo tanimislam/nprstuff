@@ -66,7 +66,7 @@ def _process_waitwaits_by_year_tuple(input_tuple):
             print 'Could not create Wait Wait episode for date %s for some reason.' % (
                 npr_utils.get_datestring( datetime ) )
 
-def get_all_waitwaits_year( yearnum = time.localtime().tm_year,
+def get_all_waitwaits_year( yearnum,
                             inputdir, verbose = True):
     order_dates_remain = get_waitwait_valid_dates_remaining_tuples( yearnum, inputdir )
     if len( order_dates_remain ) == 0: return
