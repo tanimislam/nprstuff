@@ -82,7 +82,7 @@ def get_all_waitwaits_year( yearnum,
         print 'processed all Wait Wait downloads for %04d in %0.3f seconds.' % ( yearnum, time.time() - time0 )
         
 def get_waitwait(outputdir, datetime_saturday, order_totnum = None,
-                 file_data = None):
+                 file_data = None, debugonly = False):
     
     # check if outputdir is a directory
     if not os.path.isdir(outputdir):
@@ -108,16 +108,22 @@ def get_waitwait(outputdir, datetime_saturday, order_totnum = None,
     
     # download this data into an lxml elementtree
     tree = lxml.etree.fromstring( urllib2.urlopen(nprURL).read())
+    decdate = time.strftime('%d.%m.%Y', datetime_s)
+    if debugonly:
+        openfile = os.path.join( outputdir, 'NPR.WaitWait.tree.%s.xml' %
+                                 decdate )
+        with open( openfile, 'w') as outfile:
+            outfile.write( lxml.etree.tostring( tree ) )
+        return
     
     # now get tuple of title to mp3 file
     title_mp3_urls = []
-    for elem in list(tree.iter('story'))[1:]:
+    for elem in filter(lambda elem: len(list(elem.iter('mp3'))) != 0, tree.iter('story'))[1:]:
         title = list(elem.iter('title'))[0].text.strip()
-        m3uurl = max( elem.iter('mp3') ).text.strip()
+        m3uurl = max( filter(lambda elm: 'type' in elm.keys() and
+                             elm.get('type') == 'm3u', elem.iter('mp3') ) ).text.strip()
         mp3url = urllib2.urlopen( m3uurl ).read().strip()
         title_mp3_urls.append( ( title, mp3url ) )
-        
-    decdate = time.strftime('%d.%m.%Y', datetime_s)
 
     titles, mp3urls = zip(*title_mp3_urls)
     title = time.strftime('%B %d, %Y', datetime_s)
@@ -182,5 +188,8 @@ if __name__=='__main__':
                       action = 'store', default = npr_utils.get_datestring(_get_last_saturday(time.localtime())),
                       help = 'The date, in the form of "January 1, 2014." The default is last Saturday, %s.' %
                       npr_utils.get_datestring( _get_last_saturday( time.localtime() ) ) )
+    parser.add_option('--debugonly', dest='debugonly', action='store_true', default = False,
+                      help = 'If chosen, download the NPR XML data sheet for this Wait Wait episode.')
     opts, args = parser.parse_args()
-    fname = get_waitwait( opts.dirname, npr_utils.get_time_from_datestring( opts.date ) )
+    fname = get_waitwait( opts.dirname, npr_utils.get_time_from_datestring( opts.date ), debugonly = opts.debugonly )
+
