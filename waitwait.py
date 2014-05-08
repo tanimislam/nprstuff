@@ -28,6 +28,58 @@ def _download_file( input_tuple ):
     mp3URL, filename = input_tuple
     with open(filename, 'wb') as openfile:
         openfile.write( urllib2.urlopen(mp3URL).read() )
+
+def get_waitwait_date_from_name(candidateNPRWaitWaitFile):
+    if not os.path.isfile(candidateNPRWaitWaitFile):
+        raise ValueError("Error, %s is not a file," % candidateNPRWaitWaitFile )
+    if not os.path.basename(candidateNPRWaitWaitFile).endswith('.m4a'):
+        raise ValueError("Error, %s does not end in .m4a" % candidateNPRWaitWaitFile )
+    if not os.path.basename(candidateNPRWaitWaitFile).startswith('NPR.WaitWait.'):
+        raise ValueError("Error, %s is not a valid file" % candidateNPRWaitWaitFile )
+    day, mon, year = [ int(tok) for tok in os.path.basename(candidateNPRWaitWaitFile).split('.')[2:5] ]
+    return time.strptime('%d-%d-%04d' % ( day, mon, year ), '%d-%m-%Y' )
+
+def get_waitwait_valid_dates_remaining_tuples(yearnum, inputdir):
+    waitwait_files_downloaded = glob.glob( os.path.join(inputdir, 'NPR.WaitWait.*.%04d.m4a' % yearnum ) )
+    dates_downloaded = set([ get_waitwait_date_from_name(filename) for filename in
+                             waitwait_files_downloaded ])
+    all_order_saturdays = { datetime : (num+1) for (num, datetime) in
+                            enumerate( npr_utils.get_saturday_times_in_year( yearnum ) ) }
+    saturdays_left = filter(lambda datetime: datetime < time.localtime(), set( all_order_weekdays.keys() ) - 
+                            set( dates_downloaded ) )
+    totnum = len( all_order_saturdays.keys() )
+    order_dates_remain = sorted([ ( all_order_saturdays[datetime], totnum, datetime ) for
+                                  datetime in saturdays_left ], key = lambda tup: tup[0] )
+    return order_dates_remain
+
+def _process_waitwaits_by_year_tuple(input_tuple):
+    outputdir, totnum, verbose, datetimes_order_tuples = input_tuple
+    ww_image = get_waitwait_image()
+    for datetime, order in datetimes_order_tuples:
+        time0 = time.time()
+        try:
+            fname = get_waitwait(outputdir, datetime, order_totnum = ( order, totnum),
+                                 file_data = ww_image)
+            if verbose:
+                print 'Processed %s in %0.3f seconds.' % ( fname, time.time() - time0 )
+        except Exception as e:
+            print 'Could not create Wait Wait episode for date %s for some reason.' % (
+                npr_utils.get_datestring( datetime ) )
+
+def get_all_waitwaits_year( yearnum = time.localtime().tm_year,
+                            inputdir, verbose = True):
+    order_dates_remain = get_waitwait_valid_dates_remaining_tuples( yearnum, inputdir )
+    if len( order_dates_remain ) == 0: return
+    totnum = order_dates_remain[0][1]
+    nprocs = multiprocessing.cpu_count()
+    input_tuples = [ ( inputdir, totnum, verbose, [ ( datetime, order) for ( order, totnum, datetime ) in
+                                                    order_dates_remain if ( order - 1 ) % nprocs == procno ] ) for
+                     procno in xrange( nprocs ) ]
+    time0 = time.time()
+    pool = npr_utils.MyPool(processes = nprocs )
+    pool.map(_process_waitwaits_by_year_tuple, input_tuples)
+    if verbose:
+        print 'processed all Wait Wait downloads for %04d in %0.3f seconds.' % ( yearnum, time.time() - time0 )
         
 def get_waitwait(outputdir, datetime_saturday, order_totnum = None,
                  file_data = None):

@@ -35,6 +35,7 @@ def get_freshair_date_from_name(candidateNPRFreshAirFile):
     day, mon, year = [ int(tok) for tok in os.path.basename(candidateNPRFreshAirFile).split('.')[2:5] ]
     return time.strptime('%d-%d-%04d' % ( day, mon, year ),
                          '%d-%m-%Y' )
+    
 def get_freshair_valid_dates_remaining_tuples(yearnum, inputdir):
     freshair_files_downloaded = glob.glob( os.path.join(inputdir, 'NPR.FreshAir.*.%04d.m4a' % yearnum ) )
     dates_downloaded = set( [ get_freshair_date_from_name(filename) for filename in 
@@ -59,7 +60,6 @@ def _process_freshairs_by_year_tuple(input_tuple):
                 print 'processed %s in %0.3f seconds.' % ( os.path.basename(fname), time.time() - time0 )
         except Exception as e:
             print 'Could not create Fresh Air episode for date %s for some reason' % npr_utils.get_datestring( datetime )
-        
 
 def process_all_freshairs_by_year(yearnum, inputdir, verbose = True):
     order_dates_remain = get_freshair_valid_dates_remaining_tuples( yearnum, inputdir )
