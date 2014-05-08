@@ -118,14 +118,19 @@ def get_waitwait(outputdir, datetime_saturday, order_totnum = None,
     
     # now get tuple of title to mp3 file
     title_mp3_urls = []
-    for elem in filter(lambda elem: len(list(elem.iter('mp3'))) != 0, tree.iter('story'))[1:]:
+    for elem in filter(lambda elem: len(list(elem.iter('mp3'))) != 0, tree.iter('story')):
         title = list(elem.iter('title'))[0].text.strip()
         m3uurl = max( filter(lambda elm: 'type' in elm.keys() and
                              elm.get('type') == 'm3u', elem.iter('mp3') ) ).text.strip()
-        mp3url = urllib2.urlopen( m3uurl ).read().strip()
-        title_mp3_urls.append( ( title, mp3url ) )
+        try:
+            mp3url = urllib2.urlopen( m3uurl ).read().strip()
+            mp3h = urllib2.urlopen( mp3url )
+            order = int( mp3url.split('_')[-1].replace('.mp3', '') )
+            title_mp3_urls.append( ( title, mp3url, order ) )
+        except Exception:
+            pass
 
-    titles, mp3urls = zip(*title_mp3_urls)
+    titles, mp3urls, orders = zip(*sorted(title_mp3_urls, key = lambda tup: tup[2]))
     title = time.strftime('%B %d, %Y', datetime_s)
     title = '%s: %s.' % ( title,
                           '; '.join([ '%d) %s' % ( num + 1, titl ) for
