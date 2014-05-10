@@ -23,7 +23,7 @@ def rm_get_title_from_url( datetime_s ):
     subtites = [ elem.text.split('\n')[0].strip() for elem in cand_elems ]
     title = time.strftime('%B %d, %Y', datetime_s)
     title = '%s: %s' % ( title,
-                         ': '.join([ '%d) %s' % ( num + 1, subtite ) for
+                         '; '.join([ '%d) %s' % ( num + 1, subtite ) for
                                      (num, subtite) in enumerate(subtites) ]) )
     return title
 
