@@ -15,7 +15,8 @@ def rm_get_main_url(datetime_s):
         year, mon_lower, dsub )
     return full_rm_url
 
-def rm_get_title_from_url( datetime_s, full_rm_url ):
+def rm_get_title_from_url( datetime_s ):
+    full_rm_url = rm_get_main_url( datetime_s )
     tree = lxml.html.fromstring( urllib2.urlopen( full_rm_url ).read() )
     cand_elems = filter(lambda elem: len(list(elem.iter('a'))) != 0 and
                         elem.text is not None, tree.iter('b'))
@@ -27,17 +28,18 @@ def rm_get_title_from_url( datetime_s, full_rm_url ):
     return title
 
 def rm_download_file( datetime_s, outdir = os.getcwd() ):
+    decdate = npr_utils.get_decdate( datetime_s )
+    outfile = os.path.join( outdir, 'NPR.WaitWait.%s.rm' % decdate )
     try:
         dsub = time.strftime('%Y%m%d', datetime_s)
         rm_url = 'http://download.npr.org/real.npr.na-central/waitwait/%s_waitwait.rm' % dsub
         req = urllib2.urlopen( rm_url )
-        decdate = time.strftime('%d.%m.%Y', datetime_s)
-        outfile = os.path.join( outdir, 'NPR.WaitWait.%s.rm' % decdate )
         with open( outfile, 'w' ) as openfile:
             openfile.write( req.read() )
         return outfile
     except Exception as e:
-        print e
+        if os.path.isfile( outfile ):
+            os.remove( outfile )
         raise ValueError("Error, could not download Wait Wait RM file for '%s' into %s." % (
             npr_utils.get_datestring(datetime_s), outdir ) )        
 

@@ -3,6 +3,9 @@
 import calendar, numpy, time
 import multiprocessing, multiprocessing.pool
 
+def get_decdate(datetime_s):
+    return time.strftime('%d.%m.%Y', datetime_s)
+
 def get_NPR_URL(datetime_s, program_id, NPR_API_key):
     """
     get the NPR API tag for this Fresh Air episode 
