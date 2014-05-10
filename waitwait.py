@@ -2,7 +2,7 @@
 
 import os, sys, glob, re, multiprocessing
 import subprocess, lxml.etree, urllib2, datetime, time
-import npr_utils, mutagen.mp4
+import npr_utils, mutagen.mp4, waitwait_realmedia
 from optparse import OptionParser
 
 _npr_waitwait_key = 'MDA2OTgzNTcwMDEyOTc1NDg4NTNmMWI5Mg001'
@@ -80,6 +80,65 @@ def get_all_waitwaits_year( yearnum,
     pool.map(_process_waitwaits_by_year_tuple, input_tuples)
     if verbose:
         print 'processed all Wait Wait downloads for %04d in %0.3f seconds.' % ( yearnum, time.time() - time0 )
+
+def get_title_wavfile_standard(datetime_s, outputdir, debugonly = False):
+    
+    # download this data into an lxml elementtree
+    nprURL = npr_utils.get_NPR_URL(datetime_s, 
+                                   _npr_waitwait_progid, 
+                                   _npr_waitwait_key )
+    decdate = npr_utils.get_decdate( datetime_s )
+    tree = lxml.etree.fromstring( urllib2.urlopen(nprURL).read())
+    if debugonly:
+        openfile = os.path.join( outputdir, 'NPR.WaitWait.tree.%s.xml' %
+                                 decdate )
+        with open( openfile, 'w') as outfile:
+            outfile.write( lxml.etree.tostring( tree ) )
+        return None
+        
+    # now get tuple of title to mp3 file
+    title_mp3_urls = []
+    for elem in filter(lambda elem: len(list(elem.iter('mp3'))) != 0, tree.iter('story')):
+        title = list(elem.iter('title'))[0].text.strip()
+        m3uurl = max( filter(lambda elm: 'type' in elm.keys() and
+                             elm.get('type') == 'm3u', elem.iter('mp3') ) ).text.strip()
+        try:
+            mp3url = urllib2.urlopen( m3uurl ).read().strip()
+            mp3h = urllib2.urlopen( mp3url )
+            order = int( mp3url.split('_')[-1].replace('.mp3', '') )
+            title_mp3_urls.append( ( title, mp3url, order ) )
+        except Exception:
+            pass
+            
+    titles, mp3urls, orders = zip(*sorted(title_mp3_urls, key = lambda tup: tup[2]))
+    title = time.strftime('%B %d, %Y', datetime_s)
+    title = '%s: %s.' % ( title,
+                          '; '.join([ '%d) %s' % ( num + 1, titl ) for
+                                      (num, titl) in enumerate(titles) ]) )
+    outfiles = [ os.path.join(outputdir, 'waitwait.%s.%d.mp3' % 
+                              ( decdate, num + 1) ) for
+                 (num, mp3url) in enumerate( mp3urls) ]
+    
+    # download those files
+    time0 = time.time()
+    pool = multiprocessing.Pool(processes = len(mp3urls) )
+    pool.map(_download_file, zip( mp3urls, outfiles ) )
+    
+    # sox magic command
+    time0 = time.time()
+    wgdate = time.strftime('%d-%b-%Y', datetime_s)
+    wavfile = os.path.join(outputdir, 'waitwait%s.wav' % wgdate ).replace(' ', '\ ')
+    fnames = [ filename.replace(' ', '\ ') for filename in outfiles ]
+    split_cmd = [ '(for', 'file', 'in', ] + fnames + [ 
+        ';', '/usr/bin/sox', '$file', '-t', 'cdr', '-', ';', 'done)' ] + [ 
+            '|', '/usr/bin/sox', 't-', 'cdr', '-', wavfile ]
+    split_cmd = [ '/usr/bin/sox', ] + fnames + [ wavfile, ]
+    proc = subprocess.Popen(split_cmd, stdout = subprocess.PIPE,
+                            stderr = subprocess.PIPE)
+    stdout_val, stderr_val = proc.communicate()
+    for filename in outfiles:
+        os.remove(filename)
+    return title, wavfile
         
 def get_waitwait(outputdir, datetime_saturday, order_totnum = None,
                  file_data = None, debugonly = False):
@@ -101,63 +160,22 @@ def get_waitwait(outputdir, datetime_saturday, order_totnum = None,
     if file_data is None:
         file_data = get_waitwait_image()
         
-    nprURL = npr_utils.get_NPR_URL(datetime_s, 
-                                   _npr_waitwait_progid, 
-                                   _npr_waitwait_key )
     year = datetime_s.tm_year
-    
-    # download this data into an lxml elementtree
-    tree = lxml.etree.fromstring( urllib2.urlopen(nprURL).read())
-    decdate = time.strftime('%d.%m.%Y', datetime_s)
-    if debugonly:
-        openfile = os.path.join( outputdir, 'NPR.WaitWait.tree.%s.xml' %
-                                 decdate )
-        with open( openfile, 'w') as outfile:
-            outfile.write( lxml.etree.tostring( tree ) )
-        return
-    
-    # now get tuple of title to mp3 file
-    title_mp3_urls = []
-    for elem in filter(lambda elem: len(list(elem.iter('mp3'))) != 0, tree.iter('story')):
-        title = list(elem.iter('title'))[0].text.strip()
-        m3uurl = max( filter(lambda elm: 'type' in elm.keys() and
-                             elm.get('type') == 'm3u', elem.iter('mp3') ) ).text.strip()
-        try:
-            mp3url = urllib2.urlopen( m3uurl ).read().strip()
-            mp3h = urllib2.urlopen( mp3url )
-            order = int( mp3url.split('_')[-1].replace('.mp3', '') )
-            title_mp3_urls.append( ( title, mp3url, order ) )
-        except Exception:
-            pass
+    decdate = npr_utils.get_decdate( datetime_s )
 
-    titles, mp3urls, orders = zip(*sorted(title_mp3_urls, key = lambda tup: tup[2]))
-    title = time.strftime('%B %d, %Y', datetime_s)
-    title = '%s: %s.' % ( title,
-                          '; '.join([ '%d) %s' % ( num + 1, titl ) for
-                                      (num, titl) in enumerate(titles) ]) )
-    outfiles = [ os.path.join(outputdir, 'waitwait.%s.%d.mp3' % 
-                              ( decdate, num + 1) ) for
-                 (num, mp3url) in enumerate( mp3urls) ]
-    
-    # download those files
-    time0 = time.time()
-    pool = multiprocessing.Pool(processes = len(mp3urls) )
-    pool.map(_download_file, zip( mp3urls, outfiles ) )
-
-     # sox magic command
-    time0 = time.time()
-    wgdate = time.strftime('%d-%b-%Y', datetime_s)
-    wavfile = os.path.join(outputdir, 'waitwait%s.wav' % wgdate ).replace(' ', '\ ')
-    fnames = [ filename.replace(' ', '\ ') for filename in outfiles ]
-    split_cmd = [ '(for', 'file', 'in', ] + fnames + [ 
-        ';', '/usr/bin/sox', '$file', '-t', 'cdr', '-', ';', 'done)' ] + [ 
-            '|', '/usr/bin/sox', 't-', 'cdr', '-', wavfile ]
-    split_cmd = [ '/usr/bin/sox', ] + fnames + [ wavfile, ]
-    proc = subprocess.Popen(split_cmd, stdout = subprocess.PIPE,
-                            stderr = subprocess.PIPE)
-    stdout_val, stderr_val = proc.communicate()
-    for filename in outfiles:
-        os.remove(filename)
+    if year >= 2006:
+        tup = get_title_wavfile_standard(datetime_s, outputdir, 
+                                         debugonly = debugonly )
+        if tup is None:
+            return
+        title, wavfile = tup
+    else:
+        title = waitwait_realmedia.rm_get_title_from_url( datetime_s )
+        rmfile = waitwait_realmedia.rm_download_file( datetime_s, 
+                                                      outdir = outputdir )
+        wavfile = waitwait_realmedia.rm_create_wav_file( datetime_s, rmfile,
+                                                         outdir = outputdir )
+        os.remove( rmfile )
 
     # now convert to m4a file
     m4afile = os.path.join(outputdir, 'NPR.WaitWait.%s.m4a' % decdate )
