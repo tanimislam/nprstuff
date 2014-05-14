@@ -28,7 +28,7 @@
       <file leaf-file-name="freshair.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/freshair.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="3" column="0" selection-start="50" selection-end="50" vertical-scroll-proportion="0.0" vertical-offset="45" max-vertical-offset="2775">
+            <state line="4" column="0" selection-start="51" selection-end="51" vertical-scroll-proportion="0.0" vertical-offset="60" max-vertical-offset="3465">
               <folding />
             </state>
           </provider>
@@ -37,7 +37,7 @@
       <file leaf-file-name="thisamericanlife.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/thisamericanlife.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="86" column="52" selection-start="3814" selection-end="3814" vertical-scroll-proportion="1.4617169" vertical-offset="30" max-vertical-offset="1425">
+            <state line="41" column="45" selection-start="1893" selection-end="1893" vertical-scroll-proportion="0.06141367" vertical-offset="562" max-vertical-offset="1425">
               <folding>
                 <element signature="e#50#77#0" expanded="true" />
               </folding>
@@ -70,7 +70,7 @@
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="10" />
-    <option name="y" value="7" />
+    <option name="y" value="25" />
     <option name="width" value="1260" />
     <option name="height" value="984" />
   </component>
@@ -303,14 +303,14 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="10" y="7" width="1260" height="984" extended-state="0" />
-    <editor active="false" />
+    <frame x="10" y="25" width="1260" height="984" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24960254" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
@@ -366,6 +366,22 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/freshair.py">
       <provider selected="true" editor-type-id="text-editor">
+        <state line="3" column="0" selection-start="50" selection-end="50" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2775">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/thisamericanlife.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="86" column="52" selection-start="3814" selection-end="3814" vertical-scroll-proportion="0.0" vertical-offset="30" max-vertical-offset="1425">
+          <folding>
+            <element signature="e#50#77#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/freshair.py">
+      <provider selected="true" editor-type-id="text-editor">
         <state line="2" column="25" selection-start="48" selection-end="48" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2775">
           <folding />
         </state>
@@ -403,14 +419,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/freshair.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="3" column="0" selection-start="50" selection-end="50" vertical-scroll-proportion="0.0" vertical-offset="45" max-vertical-offset="2775">
+        <state line="4" column="0" selection-start="51" selection-end="51" vertical-scroll-proportion="0.0" vertical-offset="60" max-vertical-offset="3465">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/thisamericanlife.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="86" column="52" selection-start="3814" selection-end="3814" vertical-scroll-proportion="1.4617169" vertical-offset="30" max-vertical-offset="1425">
+        <state line="41" column="45" selection-start="1893" selection-end="1893" vertical-scroll-proportion="0.06141367" vertical-offset="562" max-vertical-offset="1425">
           <folding>
             <element signature="e#50#77#0" expanded="true" />
           </folding>
