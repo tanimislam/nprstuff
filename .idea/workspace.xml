@@ -335,7 +335,11 @@
       <created>1405284626082</created>
       <updated>1405284626082</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="added in freshair_fix_crontab.py, which checks for those NPR Fresh Air episodes which are 1) shorter than 30 minutes long, and 2) have been modified more than 90 days ago.">
+      <created>1405286633005</created>
+      <updated>1405286633005</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="ToolWindowManager">
