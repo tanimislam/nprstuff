@@ -14,7 +14,7 @@ def get_americanlife_info(epno):
     try:
         req = urllib2.urlopen('http://www.thisamericanlife.org/radio-archives/episode/%d' % epno)
     except urllib2.HTTPError as e:
-        raise ValueError("Error, could not find This American Life episode %d." % epno)
+        raise ValueError("Error, could not find This American Life episode %d, because could not open webpage." % epno)
 
     enc = req.headers['content-type'].split(';')[-1].split('=')[-1].strip().upper()
     if enc != 'UTF-8':
@@ -25,7 +25,8 @@ def get_americanlife_info(epno):
     elem_info_list = filter(lambda elem: 'class' in elem.keys() and
                                          elem.get('class') == "top-inner clearfix", tree.iter('div'))
     if len(elem_info_list) != 1:
-        raise ValueError("Error, cannot find date and title for This American Life episode #%d." % epno)
+        raise ValueError("Error, cannot find date and title for This American Life episode #%d," % epno +
+                         " because could not get proper elem from HTML source.")
     elem_info = max(elem_info_list)
     date_list = filter(lambda elem: 'class' in elem.keys() and elem.get('class') == 'date',
                         elem_info.iter('div'))
@@ -54,7 +55,8 @@ def get_american_life(epno, directory = '/mnt/media/thisamericanlife'):
 
     try:
         title, year = get_americanlife_info(epno)
-    except ValueError:
+    except ValueError as e:
+        print e
         print 'Cannot find date and title for This American Life episode #%d.' % epno
         return
 

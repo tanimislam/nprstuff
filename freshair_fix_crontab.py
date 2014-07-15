@@ -29,12 +29,12 @@ def find_NPR_files_to_modify_perproc(filename):
 	strdate = '.'.join(os.path.basename(filename).split('.')[2:5])
 	mydate = time.strptime(strdate, '%d.%m.%Y')
 	return mydate
-
-def find NPR_dates_to_fix():
+        
+def find_NPR_dates_to_fix():
 	filenames_to_process = filter(lambda filename: os.path.basename(filename).startswith('NPR.FreshAir'),
-								  glob.glob('/mnt/media/freshair/*.m4a'))
+                                      glob.glob('/mnt/media/freshair/*.m4a'))
 	pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
-	return set(filter(None, pool.map(find_NPR_files_to_modify, filenames_to_process)))
+	return set(filter(None, pool.map(find_NPR_files_to_modify_perproc, filenames_to_process)))
 
 def process_dates(npr_dates_to_fix, verbose = False):
 	if verbose and len(npr_dates_to_fix) > 0:
@@ -44,7 +44,7 @@ def process_dates(npr_dates_to_fix, verbose = False):
 		freshair.get_freshair('/mnt/media/freshair', mydate)
 		if verbose:
 			print 'PROCESSED %d / %d DATES IN %0.3f SECONDS' % ( idx+1,
-																 len(npr_dates_to_fix), time.time() - time0)
+                                                                             len(npr_dates_to_fix), time.time() - time0)
 	if verbose and len(npr_dates_to_fix) > 0:
 		print 'PROCESSED ALL DATES IN %0.3f SECONDS' % ( time.time() - time0)
 
