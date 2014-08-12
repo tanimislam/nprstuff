@@ -14,9 +14,9 @@ _files_to_convert_from = ( 'application/x-flac',
 def _can_convert_file(filename):
     if not os.path.isfile(filename):
         return False
-    if magic.from_file(filename, mime=True).strip() in \
-       _files_to_convert_from:
-        return True
+    #if magic.from_file(filename, mime=True).strip() in \
+    #   _files_to_convert_from:
+    #    return True
     if any([ os.path.basename(filename).endswith('.%s' % tok) for
              tok in ( 'mp3', 'ogg', 'flac' ) ]):
         return True
