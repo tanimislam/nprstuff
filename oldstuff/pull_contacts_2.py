@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
 import os, sys, getpass
-import atom.data, gdata.data, gdata.contacts.client, gdata.contacts.data
+import atom.data, gdata.data, gdata.contacts.client, gdata.contacts.data, gdata.service
 from optparse import OptionParser
 
 class GoogleContacts(object):
     def __init__(self, email, password, maxnum=3000):
-        gd_client = gdata.contacts.data.ContactsClient(source = 'tanim-islam-cloud-storage-2')
+        gd_client = gdata.contacts.client.ContactsClient(source = 'tanim-islam-cloud-storage-2')
         gd_client.ClientLogin(email, password, gd_client.source)
 
         query = gdata.contacts.client.ContactsQuery()
@@ -14,7 +14,7 @@ class GoogleContacts(object):
         contacts = gd_client.GetContacts(q = query)
         contacts_dict = { entry.title.text : entry for entry in contacts.entry }
         #
-        groups = gd_client.GetGroupsFeed(gdata.service.Query(feed='/m8/feeds/groups/default/full').ToUri())
+        groups = gd_client.GetGroups(gdata.service.Query(feed='/m8/feeds/groups/default/full'))
         groups_dict = { gentry.id.text : gentry.title.text for gentry in groups.entry }
 
         name_dict_map = {}
