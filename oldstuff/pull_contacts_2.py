@@ -1,20 +1,17 @@
 #!/usr/bin/env python
 
-import gdata.contacts, gdata.contacts.service
 import os, sys, getpass
+import atom.data, gdata.data, gdata.contacts.client, gdata.contacts.data
 from optparse import OptionParser
 
 class GoogleContacts(object):
     def __init__(self, email, password, maxnum=3000):
-        gd_client = gdata.contacts.service.ContactsService()
-        gd_client.email = email
-        gd_client.password = password
-        gd_client.source = 'abstractbinary.org-pull_contacts-1'
-        gd_client.ProgrammaticLogin()
+        gd_client = gdata.contacts.data.ContactsClient(source = 'tanim-islam-cloud-storage-2')
+        gd_client.ClientLogin(email, password, gd_client.source)
 
-        query = gdata.contacts.service.ContactsQuery()
+        query = gdata.contacts.client.ContactsQuery()
         query.max_results = maxnum
-        contacts = gd_client.GetContactsFeed(query.ToUri())
+        contacts = gd_client.GetContacts(q = query)
         contacts_dict = { entry.title.text : entry for entry in contacts.entry }
         #
         groups = gd_client.GetGroupsFeed(gdata.service.Query(feed='/m8/feeds/groups/default/full').ToUri())
