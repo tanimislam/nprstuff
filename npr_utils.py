@@ -68,8 +68,9 @@ def get_saturday_times_in_year(year):
                     month in xrange(1, 13) for day in saturdays_of_month_of_year(year, month) ])
     
 def get_weekday_times_in_year(year):
-    return sorted([ time.strptime('%d-%d-%04d' % ( day, month, year), '%d-%m-%Y') for
-                    month in xrange(1, 13) for day in weekdays_of_month_of_year(year, month) ])
+    inittimes = sorted([ time.strptime('%d-%d-%04d' % ( day, month, year), '%d-%m-%Y') for
+                         month in xrange(1, 13) for day in weekdays_of_month_of_year(year, month) ])
+    return inittimes
 
 
 class NoDaemonProcess(multiprocessing.Process):
