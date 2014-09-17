@@ -64,13 +64,31 @@ def get_order_number_saturday_in_year(dtime):
     return (num+1), len( all_saturdays_sorted )
 
 def get_saturday_times_in_year(year):
-    return sorted([ time.strptime('%d-%d-%04d' % ( day, month, year), '%d-%m-%Y') for
-                    month in xrange(1, 13) for day in saturdays_of_month_of_year(year, month) ])
+    import datetime
+    datenow = datetime.datetime.now()
+    nowd = datetime.date( datenow.year, datenow.month, datenow.day )
+    def filter_before_today(tm):
+        yr, mon, day = tm[:3]
+        actd = datetime.date( yr, mon, day)
+        return actd < nowd
+    initsats = filter(filter_before_today,
+                      sorted([ time.strptime('%d-%d-%04d' % ( day, month, year), '%d-%m-%Y') for
+                               month in xrange(1, 13) for day in saturdays_of_month_of_year(year, month) ]))
+    return initsats
+
     
 def get_weekday_times_in_year(year):
+    import datetime
     inittimes = sorted([ time.strptime('%d-%d-%04d' % ( day, month, year), '%d-%m-%Y') for
                          month in xrange(1, 13) for day in weekdays_of_month_of_year(year, month) ])
-    return inittimes
+    datenow = datetime.datetime.now()
+    nowd = datetime.date( datenow.year, datenow.month, datenow.day )    
+    def filter_before_today(tm):
+        yr, mon, day = tm[:3]
+        actd = datetime.date( yr, mon, day )
+        return actd < nowd
+
+    return filter(filter_before_today, inittimes )
 
 
 class NoDaemonProcess(multiprocessing.Process):
