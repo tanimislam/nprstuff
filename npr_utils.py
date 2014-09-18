@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import calendar, numpy, time
+import calendar, numpy, time, datetime
 import multiprocessing, multiprocessing.pool
 
 def get_decdate(datetime_s):
@@ -11,7 +11,8 @@ def get_NPR_URL(datetime_s, program_id, NPR_API_key):
     get the NPR API tag for this Fresh Air episode 
     """
     nprApiDate = time.strftime('%Y-%m-%d', datetime_s)
-    return 'http://api.npr.org/query?id=%d&date=%s&dateType=story&output=NPRML&apiKey=%s' % ( program_id, nprApiDate, NPR_API_key )
+    return 'http://api.npr.org/query?id=%d&date=%s&dateType=story&output=NPRML&apiKey=%s' % \
+        ( program_id, nprApiDate, NPR_API_key )
 
 def weekdays_of_month_of_year(year, month):
     days = filter(lambda day: day != 0,
@@ -63,32 +64,32 @@ def get_order_number_saturday_in_year(dtime):
                           enumerate( all_saturdays_sorted) ) )
     return (num+1), len( all_saturdays_sorted )
 
-def get_saturday_times_in_year(year):
-    import datetime
+def get_saturday_times_in_year(year, getAll = True):
     datenow = datetime.datetime.now()
     nowd = datetime.date( datenow.year, datenow.month, datenow.day )
     def filter_before_today(tm):
         yr, mon, day = tm[:3]
         actd = datetime.date( yr, mon, day)
         return actd < nowd
-    initsats = filter(filter_before_today,
-                      sorted([ time.strptime('%d-%d-%04d' % ( day, month, year), '%d-%m-%Y') for
-                               month in xrange(1, 13) for day in saturdays_of_month_of_year(year, month) ]))
+    initsats = sorted([ time.strptime('%d-%d-%04d' % ( day, month, year), '%d-%m-%Y') for
+                            month in xrange(1, 13) for day in saturdays_of_month_of_year(year, month) ])
+    if not getAll:
+        initsats = filter(filter_before_today, initSats) 
     return initsats
-
     
-def get_weekday_times_in_year(year):
-    import datetime
+def get_weekday_times_in_year(year, getAll = True):
     inittimes = sorted([ time.strptime('%d-%d-%04d' % ( day, month, year), '%d-%m-%Y') for
                          month in xrange(1, 13) for day in weekdays_of_month_of_year(year, month) ])
-    datenow = datetime.datetime.now()
-    nowd = datetime.date( datenow.year, datenow.month, datenow.day )    
-    def filter_before_today(tm):
-        yr, mon, day = tm[:3]
-        actd = datetime.date( yr, mon, day )
-        return actd < nowd
-
-    return filter(filter_before_today, inittimes )
+    if not getAll:
+        datenow = datetime.datetime.now()
+        nowd = datetime.date( datenow.year, datenow.month, datenow.day )    
+        def filter_before_today(tm):
+            yr, mon, day = tm[:3]
+            actd = datetime.date( yr, mon, day )
+            return actd < nowd
+        inittimes = filter(filter_before_today, inittimes )
+        
+    return inittimes
 
 
 class NoDaemonProcess(multiprocessing.Process):
