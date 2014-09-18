@@ -42,7 +42,8 @@ def get_freshair_valid_dates_remaining_tuples(yearnum, inputdir):
                               freshair_files_downloaded ] )
     all_order_weekdays = { datetime : (num+1) for (num, datetime) in
                            enumerate( npr_utils.get_weekday_times_in_year(yearnum) ) }
-    weekdays_left = filter(lambda datetime: datetime < time.localtime(), set( all_order_weekdays . keys() ) - set( dates_downloaded ) )
+    weekdays_left = filter(lambda datetime: datetime < time.localtime(), set( all_order_weekdays . keys() ) - 
+                           set( dates_downloaded ) )
     totnum = len(all_order_weekdays.keys() )
     order_dates_remain = sorted([ ( all_order_weekdays[datetime], totnum, datetime ) for
                                   datetime in weekdays_left ], key = lambda tup: tup[0] ) 
