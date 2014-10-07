@@ -5,7 +5,6 @@ from PyQt4.QtCore import *
 import os, sys, numpy, glob, requests, json, textwrap
 import lxml.html, datetime, pytz, urllib2, cStringIO
 import titlecase, codecs
-from PIL import Image
 
 _styleSheetUnselect = 'background-color: #ffffff'
 _styleSheetSelect = 'background-color: #cbdbff'
@@ -193,8 +192,9 @@ class URLInfoBox(QLineEdit):
             return
 
         try:
-            data = cStringIO.StringIO(urllib2.urlopen( meta_dict['image_url'] ).read() )
-            img = Image.open(data)
+            # data = cStringIO.StringIO(urllib2.urlopen( meta_dict['image_url'] ).read() )
+            qpm = QPixmap()
+            qpm.loadFromData( urllib2.urlopen( meta_dict['image_url'] ).read() )
         except Exception:
             self.setStyleSheet( _styleSheetUnselect )
             self.setText( self.currentURL )
@@ -217,7 +217,7 @@ class URLInfoBox(QLineEdit):
         data_dict = { 'title'  : titlecase.titlecase( meta_dict['title'] ),
                       'author' : meta_dict['author'],
                       'date' : dt,
-                      'imageURL' : img }
+                      'imageURL' : qpm }
         self.myParent.updateData( data_dict )
 
 if __name__=='__main__':
