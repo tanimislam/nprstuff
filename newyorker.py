@@ -13,6 +13,7 @@ _send = u'\xa0\u2666'
 class MainDialog(QGroupBox):
     def __init__(self, myParent):
         super(MainDialog, self).__init__()
+        self.setWindowTitle('New Yorker Printer')
         self.urlInfoBox = URLInfoBox( myParent )
         self.defaultFont = myParent.defaultFont
         self.authorName = QLabel('')
@@ -22,9 +23,11 @@ class MainDialog(QGroupBox):
         self.toFileButton = QPushButton('Save to File')
         self.printButton = QPushButton('Print')
         self.printPreviewButton = QPushButton('Print Preview')
+        self.showPictureButton = QPushButton('Show Article Pic')
         self.toFileButton.setEnabled(False)
         self.printButton.setEnabled(False)
         self.printPreviewButton.setEnabled(False)
+        self.showPictureButton.setEnabled(False)
         #
         # set font for articleText
         qf = QFont( self.defaultFont, pointSize = 12 )
@@ -44,6 +47,7 @@ class MainDialog(QGroupBox):
         self.toFileButton.clicked.connect( myParent.toFile )
         self.printButton.clicked.connect( myParent.printData )
         self.printPreviewButton.clicked.connect( myParent.printPreviewData )
+        self.showPictureButton.clicked.connect( myParent.showPicture )
         #
         # make visible, resize to something nice
         qfm = QFontMetrics( qf )
@@ -67,6 +71,7 @@ class MainDialog(QGroupBox):
         qgl.addWidget( self.toFileButton, 4, 0, 1, 1)
         qgl.addWidget( self.printButton, 4, 1, 1, 1)
         qgl.addWidget( self.printPreviewButton, 4, 2, 1, 1)
+        qgl.addWidget( self.showPictureButton, 4, 3, 1, 1)
         return topBox
 
     def getQTextDocument(self):
@@ -88,6 +93,29 @@ class MainDialog(QGroupBox):
                 outfile.write('%s\n\n' % textwrap.fill(ptext) )
             outfile.write('%s\n' % textwrap.fill( self.urlInfoBox.currentData[-1] ) )
 
+class PictureLabel(QLabel):
+    def __init__(self, myParent):
+        super(PictureLabel, self).__init__('')
+        self.myParent = myParent
+        self.resize(400, 400)
+        self.setFixedSize(400, 400)
+        self.hide()
+
+    def closeEvent(self, evt):
+        evt.ignore()
+        self.myParent.closePicture()
+
+    def mousePressEvent(self, evt):
+        if evt.button() == Qt.RightButton:
+            while( True ):
+                fname = str(QFileDialog.getSaveFileName(self, 'Save Picture',
+                                                        os.getcwd(), filter = '*.png') )
+                if fname.lower().endswith('.png') or len(os.path.basename(fname)) == 0:
+                    break
+        if fname.lower().endswith('.png'):
+            qpm = self.pixmap()
+            qpm.save( fname )
+
 class NewYorkerFrame(QApplication):
     def __init__(self, args):
         super(NewYorkerFrame, self).__init__(args)
@@ -97,11 +125,17 @@ class NewYorkerFrame(QApplication):
             raise ValueError("Error, could find no fixed width fonts.")
         self.defaultFont = defaultFont
         self.mainDialog = MainDialog( self )
+        self.pictureLabel = PictureLabel( self )
 
     def updateData(self, data_dict):
         self.mainDialog.authorName.setText( data_dict['author'] )
         self.mainDialog.titleLabel.setText( data_dict['title'] )
         self.mainDialog.dateLabel.setText( data_dict['date'].strftime('%B %d, %Y' ) )
+        qpm = data_dict['image']
+        self.pictureLabel.resize( qpm.size() )
+        self.pictureLabel.setFixedSize( qpm.size() )
+        self.pictureLabel.setPixmap( qpm )
+        self.pictureLabel.setWindowTitle( data_dict['title'] )
         #
         # now set the text
         article_text = ''
@@ -114,6 +148,7 @@ class NewYorkerFrame(QApplication):
         self.mainDialog.toFileButton.setEnabled(True)
         self.mainDialog.printButton.setEnabled(True)
         self.mainDialog.printPreviewButton.setEnabled(True)
+        self.mainDialog.showPictureButton.setEnabled(True)
 
     def toFile(self):
         if self.mainDialog.urlInfoBox.currentData is not None:
@@ -140,6 +175,14 @@ class NewYorkerFrame(QApplication):
         self.mainDialog.setEnabled(False)
         if dialog.exec_() == QDialog.Accepted:
             qtd = self.mainDialog.getQTextDocument()
+        self.mainDialog.setEnabled(True)
+
+    def showPicture(self):
+        self.mainDialog.setEnabled(False)
+        self.pictureLabel.show()
+
+    def closePicture(self):
+        self.pictureLabel.hide()
         self.mainDialog.setEnabled(True)
 
 class URLInfoBox(QLineEdit):
@@ -200,7 +243,6 @@ class URLInfoBox(QLineEdit):
             return
 
         try:
-            # data = cStringIO.StringIO(urllib2.urlopen( meta_dict['image_url'] ).read() )
             qpm = QPixmap()
             qpm.loadFromData( urllib2.urlopen( meta_dict['image_url'] ).read() )
         except Exception:
@@ -225,7 +267,7 @@ class URLInfoBox(QLineEdit):
         data_dict = { 'title'  : titlecase.titlecase( meta_dict['title'] ),
                       'author' : meta_dict['author'],
                       'date' : dt,
-                      'imageURL' : qpm }
+                      'image' : qpm }
         self.myParent.updateData( data_dict )
 
 if __name__=='__main__':
