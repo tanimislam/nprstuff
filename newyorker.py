@@ -14,6 +14,7 @@ class MainDialog(QGroupBox):
     def __init__(self, myParent):
         super(MainDialog, self).__init__()
         self.urlInfoBox = URLInfoBox( myParent )
+        self.defaultFont = myParent.defaultFont
         self.authorName = QLabel('')
         self.dateLabel = QLabel('')
         self.titleLabel = QLabel('')
@@ -26,7 +27,7 @@ class MainDialog(QGroupBox):
         self.printPreviewButton.setEnabled(False)
         #
         # set font for articleText
-        qf = QFont( 'Liberation Mono', pointSize = 12 )
+        qf = QFont( self.defaultFont, pointSize = 12 )
         self.articleText.setFont( qf )
         #
         # set layout
@@ -46,7 +47,7 @@ class MainDialog(QGroupBox):
         #
         # make visible, resize to something nice
         qfm = QFontMetrics( qf )
-        wdth = int( 70 * qfm.averageCharWidth() * 1.05 )
+        wdth = int( 70 * qfm.averageCharWidth() * 1.15 )
         self.resize( wdth, 900)
         self.setFixedWidth( wdth )
         self.show()
@@ -74,7 +75,7 @@ class MainDialog(QGroupBox):
         tottext += u'%s\n\n' % self.dateLabel.text()
         tottext += self.articleText.text()
         qtd = QTextDocument( tottext )
-        qtd.setDefaultFont( QFont(  'Liberation Mono', pointSize = 10 ) )
+        qtd.setDefaultFont( QFont( self.defaultFont, pointSize = 11 ) )
         qtd.setTextWidth( 85.0 )
         return qtd
 
@@ -90,6 +91,11 @@ class MainDialog(QGroupBox):
 class NewYorkerFrame(QApplication):
     def __init__(self, args):
         super(NewYorkerFrame, self).__init__(args)
+        qfd = QFontDatabase()
+        defaultFont = min(filter(lambda fam: qfd.isFixedPitch(fam), qfd.families()))
+        if defaultFont is None:
+            raise ValueError("Error, could find no fixed width fonts.")
+        self.defaultFont = defaultFont
         self.mainDialog = MainDialog( self )
 
     def updateData(self, data_dict):
@@ -123,16 +129,18 @@ class NewYorkerFrame(QApplication):
         
     def printPreviewData(self):
         dialog = QPrintPreviewDialog()
-        #if dialog.exec_() == QDialog.Accepted:
+        self.mainDialog.setEnabled(False)
         qtd =  self.mainDialog.getQTextDocument()
         dialog.paintRequested.connect( qtd.print_ )
         dialog.exec_()
+        self.mainDialog.setEnabled(True)
         
     def printData(self):
         dialog = QPrintDialog()
+        self.mainDialog.setEnabled(False)
         if dialog.exec_() == QDialog.Accepted:
             qtd = self.mainDialog.getQTextDocument()
-            
+        self.mainDialog.setEnabled(True)
 
 class URLInfoBox(QLineEdit):
     def __init__(self, myParent):
