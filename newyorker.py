@@ -4,31 +4,35 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 import os, sys, numpy, glob, requests, json, textwrap
 import lxml.html, datetime, pytz, urllib2, cStringIO
+import titlecase, codecs
 from PIL import Image
 
 _styleSheetUnselect = 'background-color: #ffffff'
 _styleSheetSelect = 'background-color: #cbdbff'
 _send = u'\xa0\u2666'
 
-class NewYorkerFrame(QApplication):
-    def __init__(self, args):
-        super(NewYorkerFrame, self).__init__(args)
-        self.urlInfoBox = URLInfoBox( self )
+class MainDialog(QGroupBox):
+    def __init__(self, myParent):
+        super(MainDialog, self).__init__()
+        self.urlInfoBox = URLInfoBox( myParent )
         self.authorName = QLabel('')
         self.dateLabel = QLabel('')
         self.titleLabel = QLabel('')
         self.articleText = QLabel('')
         self.toFileButton = QPushButton('Save to File')
         self.printButton = QPushButton('Print')
+        self.printPreviewButton = QPushButton('Print Preview')
+        self.toFileButton.setEnabled(False)
+        self.printButton.setEnabled(False)
+        self.printPreviewButton.setEnabled(False)
         #
         # set font for articleText
         qf = QFont( 'Liberation Mono', pointSize = 12 )
         self.articleText.setFont( qf )
         #
-        # add main frame
-        self.mainFrame = QGroupBox()
+        # set layout
         qvlayout = QVBoxLayout()
-        self.mainFrame.setLayout( qvlayout )
+        self.setLayout( qvlayout )
         qvlayout.addWidget( self._createTopWidget() )
         qsa = QScrollArea()
         qsa.setWidget( self.articleText )
@@ -37,16 +41,17 @@ class NewYorkerFrame(QApplication):
         #
         # add slots
         self.urlInfoBox.returnPressed.connect( self.urlInfoBox.validateAndGetData )
-        self.toFileButton.clicked.connect( self.toFile )
-        self.printButton.clicked.connect( self.printData )
+        self.toFileButton.clicked.connect( myParent.toFile )
+        self.printButton.clicked.connect( myParent.printData )
+        self.printPreviewButton.clicked.connect( myParent.printPreviewData )
         #
         # make visible, resize to something nice
         qfm = QFontMetrics( qf )
         wdth = int( 70 * qfm.averageCharWidth() * 1.05 )
-        self.mainFrame.resize(wdth, 400)
-        self.mainFrame.setFixedWidth(wdth)
-        self.mainFrame.show()
-        
+        self.resize( wdth, 900)
+        self.setFixedWidth( wdth )
+        self.show()
+
     def _createTopWidget(self):
         topBox = QGroupBox()
         qgl = QGridLayout()
@@ -59,27 +64,76 @@ class NewYorkerFrame(QApplication):
         qgl.addWidget( self.dateLabel, 2, 1, 1, 2)
         qgl.addWidget( QLabel('Title'), 3, 0, 1, 1)
         qgl.addWidget( self.titleLabel, 3, 1, 1, 2)
-        qgl.addWidget( self.toFileButton, 4, 0, 1, 2)
-        qgl.addWidget( self.printButton, 4, 2, 1, 2)
+        qgl.addWidget( self.toFileButton, 4, 0, 1, 1)
+        qgl.addWidget( self.printButton, 4, 1, 1, 1)
+        qgl.addWidget( self.printPreviewButton, 4, 2, 1, 1)
         return topBox
 
-    def updatemeta(self, data_dict):
-        self.authorName.setText( data_dict['author'] )
-        self.titleLabel.setText( data_dict['title'] )
-        self.dateLabel.setText( data_dict['date'].strftime('%B %d, %Y' ) )
+    def getQTextDocument(self):
+        tottext =  u'%s\n\n' % self.titleLabel.text()
+        tottext += u'by %s\n\n' % self.authorName.text()
+        tottext += u'%s\n\n' % self.dateLabel.text()
+        tottext += self.articleText.text()
+        qtd = QTextDocument( tottext )
+        qtd.setDefaultFont( QFont(  'Liberation Mono', pointSize = 10 ) )
+        qtd.setTextWidth( 85.0 )
+        return qtd
+
+    def writeToFile(self, filename):
+        with codecs.open(filename, 'wb', 'utf-8') as outfile:
+            outfile.write(u'%s\n\n' % self.titleLabel.text() )
+            outfile.write(u'by %s\n\n' % self.authorName.text() )
+            outfile.write(u'%s\n\n' % self.dateLabel.text() )
+            for ptext in self.urlInfoBox.currentData[:-1]:
+                outfile.write('%s\n\n' % textwrap.fill(ptext) )
+            outfile.write('%s\n' % textwrap.fill( self.urlInfoBox.currentData[-1] ) )
+
+class NewYorkerFrame(QApplication):
+    def __init__(self, args):
+        super(NewYorkerFrame, self).__init__(args)
+        self.mainDialog = MainDialog( self )
+
+    def updateData(self, data_dict):
+        self.mainDialog.authorName.setText( data_dict['author'] )
+        self.mainDialog.titleLabel.setText( data_dict['title'] )
+        self.mainDialog.dateLabel.setText( data_dict['date'].strftime('%B %d, %Y' ) )
         #
         # now set the text
         article_text = ''
-        for ptext in self.urlInfoBox.currentData[:-1]:
+        for ptext in self.mainDialog.urlInfoBox.currentData[:-1]:
             article_text += '%s\n\n' % textwrap.fill(ptext)
-        article_text += '%s\n' % textwrap.fill( self.urlInfoBox.currentData[-1] )
-        self.articleText.setText( article_text )
+        article_text += '%s\n' % textwrap.fill( self.mainDialog.urlInfoBox.currentData[-1] )
+        self.mainDialog.articleText.setText( article_text )
+        #
+        # now make those buttons enabled
+        self.mainDialog.toFileButton.setEnabled(True)
+        self.mainDialog.printButton.setEnabled(True)
+        self.mainDialog.printPreviewButton.setEnabled(True)
 
     def toFile(self):
-        print 'CLICKED TO FILE BUTTON'
+        if self.mainDialog.urlInfoBox.currentData is not None:
+            self.mainDialog.setEnabled(False)
+            while(True):
+                fname = str(QFileDialog.getSaveFileName(self.mainDialog, 'Save File', 
+                                                        os.getcwd(), filter = '*.txt' ) )
+                if fname.lower().endswith('.txt') or len(os.path.basename(fname)) == 0:
+                    break
+            if fname.lower().endswith('.txt'):
+                self.mainDialog.writeToFile( fname )
+            self.mainDialog.setEnabled(True)
+        
+    def printPreviewData(self):
+        dialog = QPrintPreviewDialog()
+        #if dialog.exec_() == QDialog.Accepted:
+        qtd =  self.mainDialog.getQTextDocument()
+        dialog.paintRequested.connect( qtd.print_ )
+        dialog.exec_()
         
     def printData(self):
-        print 'CLICKED PRINT ARTICLE'
+        dialog = QPrintDialog()
+        if dialog.exec_() == QDialog.Accepted:
+            qtd = self.mainDialog.getQTextDocument()
+            
 
 class URLInfoBox(QLineEdit):
     def __init__(self, myParent):
@@ -158,12 +212,13 @@ class URLInfoBox(QLineEdit):
 
         self.currentData = [ para.text_content() for para in paras[:last_idx+1] ]
         self.currentURL = candURL
+        self.setStyleSheet( _styleSheetUnselect )
         
-        data_dict = { 'title'  : meta_dict['title'],
+        data_dict = { 'title'  : titlecase.titlecase( meta_dict['title'] ),
                       'author' : meta_dict['author'],
                       'date' : dt,
                       'imageURL' : img }
-        self.myParent.updatemeta( data_dict )
+        self.myParent.updateData( data_dict )
 
 if __name__=='__main__':
     nyf = NewYorkerFrame(sys.argv)
