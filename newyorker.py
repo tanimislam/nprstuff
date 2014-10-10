@@ -2,9 +2,9 @@
 
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
-import os, sys, numpy, glob, requests, json, textwrap
-import lxml.html, datetime, pytz, urllib2, cStringIO
-import titlecase, codecs
+import os, sys, numpy, glob, requests, json
+import lxml.html, datetime, pytz, textwrap
+import titlecase, codecs, urllib2
 
 _styleSheetUnselect = 'background-color: #ffffff'
 _styleSheetSelect = 'background-color: #cbdbff'
@@ -186,6 +186,17 @@ class NewYorkerFrame(QApplication):
         self.mainDialog.setEnabled(True)
 
 class URLInfoBox(QLineEdit):
+    
+    @staticmethod
+    def getHTMLTree(req):
+        return lxml.html.fromstring( req.text )
+
+    @staticmethod
+    def getMetaData(tree):
+        return filter(lambda elem: 'name' in elem.keys() and
+                      elem.get('name') == 'parsely-page' and
+                      'content' in elem.keys() , tree.iter('meta'))
+
     def __init__(self, myParent):
         assert(myParent is not None)
         assert(isinstance( myParent, NewYorkerFrame ) )
@@ -212,13 +223,12 @@ class URLInfoBox(QLineEdit):
             print 'ERROR, COULD NOT LOAD IN URL = %s.' % candURL
             return
 
-        tree = lxml.html.fromstring( req.text )
+        tree = URLInfoBox.getHTMLTree( req )
         
         #
         # look for metadata
-        meta_elems = filter(lambda elem: 'name' in elem.keys() and
-                            elem.get('name') == 'parsely-page' and
-                            'content' in elem.keys() , tree.iter('meta'))
+        meta_elems = URLInfoBox.getMetaData( tree )
+
         if len(meta_elems) != 1:
             self.setStyleSheet( _styleSheetUnselect )
             self.setText( self.currentURL )
