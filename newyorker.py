@@ -8,7 +8,6 @@ import titlecase, codecs, urllib2
 
 _styleSheetUnselect = 'background-color: #ffffff'
 _styleSheetSelect = 'background-color: #cbdbff'
-_send = u'\xa0\u2666'
 
 class MainDialog(QGroupBox):
     def __init__(self, myParent):
@@ -197,6 +196,15 @@ class URLInfoBox(QLineEdit):
                       elem.get('name') == 'parsely-page' and
                       'content' in elem.keys() , tree.iter('meta'))
 
+    @staticmethod
+    def getData( tree ):
+        s_end = u'\xa0\u2666'
+        paras = list( tree.iter('p') )
+        last_idx =  max( enumerate(paras), key = lambda tup:
+                             s_end in tup[1].text_content() )[0]
+        textData = [  para.text_content() for para in paras[:last_idx+1] ]
+        return last_idx, textData
+
     def __init__(self, myParent):
         assert(myParent is not None)
         assert(isinstance( myParent, NewYorkerFrame ) )
@@ -260,17 +268,15 @@ class URLInfoBox(QLineEdit):
             self.setText( self.currentURL )
             print 'ERROR, COULD NOT LOAD IMAGE URL = %s.' % meta_dict['image_url']
             return
-
-        paras = list( tree.iter('p') )
-        last_idx =  max( enumerate(paras), key = lambda tup:
-                             _send in tup[1].text_content() )[0]
-        if last_idx is None:
+        
+        last_idx, textData = URLInfoBox.getData( tree )
+        if last_idx == 0:
             self.setStyleSheet( _styleSheetUnselect )
             self.setText( self.currentURL )
             print 'ERROR, COULD NOT FIND ENDING CHARACTER IN %s.' % candURL
-            return None
+            return
 
-        self.currentData = [ para.text_content() for para in paras[:last_idx+1] ]
+        self.currentData = textData
         self.currentURL = candURL
         self.setStyleSheet( _styleSheetUnselect )
         
