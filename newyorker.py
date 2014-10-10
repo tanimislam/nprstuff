@@ -137,10 +137,11 @@ class NewYorkerFrame(QApplication):
         self.pictureLabel.setWindowTitle( data_dict['title'] )
         #
         # now set the text
-        article_text = ''
-        for ptext in self.mainDialog.urlInfoBox.currentData[:-1]:
-            article_text += '%s\n\n' % textwrap.fill(ptext)
-        article_text += '%s\n' % textwrap.fill( self.mainDialog.urlInfoBox.currentData[-1] )
+        article_text = u'\n\n'.join([ textwrap.fill(txt) for txt in
+                                      self.mainDialog.urlInfoBox.currentData ] )
+        #for ptext in self.mainDialog.urlInfoBox.currentData[:-1]:
+        #    article_text += '%s\n\n' % textwrap.fill(ptext)
+        #article_text += '%s\n' % textwrap.fill( self.mainDialog.urlInfoBox.currentData[-1] )
         self.mainDialog.articleText.setText( article_text )
         #
         # now make those buttons enabled
@@ -198,11 +199,11 @@ class URLInfoBox(QLineEdit):
 
     @staticmethod
     def getData( tree ):
-        s_end = u'\xa0\u2666'
+        s_end = u'\u2666'
         paras = list( tree.iter('p') )
         last_idx =  max( enumerate(paras), key = lambda tup:
-                             s_end in tup[1].text_content() )[0]
-        textData = [  para.text_content() for para in paras[:last_idx+1] ]
+                             s_end in unicode(tup[1].text_content()) )[0]
+        textData = [  unicode(para.text_content()) for para in paras[:last_idx+1] ]
         return last_idx, textData
 
     def __init__(self, myParent):
