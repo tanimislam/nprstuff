@@ -208,9 +208,9 @@ if __name__=='__main__':
                       help = 'Name of the directory to store the file. Default is %s.' %
                       '/mnt/media/freshair')
     parser.add_option('--date', dest='date', type=str,
-                      action = 'store', default = npr_utils.get_datestring(time.localtime()),
+                      action = 'store', default = npr_utils.get_datestring( datetime.datetime.now()),
                       help = 'The date, in the form of "January 1, 2014." The default is today\'s date, %s.' %
-                      npr_utils.get_datestring( time.localtime() ) )
+                      npr_utils.get_datestring( datetime.datetime.now() ) )
     parser.add_option('--debug', dest='debug', action='store_true',
                       help = 'If chosen, run freshair.py in debug mode. Useful for debugging :)',
                       default = False)
