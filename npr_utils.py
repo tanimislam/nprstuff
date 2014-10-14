@@ -3,17 +3,17 @@
 import calendar, numpy, time, datetime
 import multiprocessing, multiprocessing.pool
 
-def get_decdate(datetime_s):
-    return time.strftime('%d.%m.%Y', datetime_s)
+def get_decdate(date_s):
+    return date_s.strftime('%d.%m.%Y')
 
-def get_NPR_URL(datetime_s, program_id, NPR_API_key):
+def get_NPR_URL(date_s, program_id, NPR_API_key):
     """
     get the NPR API tag for this Fresh Air episode 
     """
-    nprApiDate = time.strftime('%Y-%m-%d', datetime_s)
+    nprApiDate = date_s.strftime('%Y-%m-%d')
     return 'http://api.npr.org/query?id=%d&date=%s&dateType=story&output=NPRML&apiKey=%s' % \
         ( program_id, nprApiDate, NPR_API_key )
-
+    
 def weekdays_of_month_of_year(year, month):
     days = filter(lambda day: day != 0,
                   numpy.array( calendar.monthcalendar(year, month), dtype=int)[:,0:5].flatten() )
@@ -26,68 +26,52 @@ def saturdays_of_month_of_year(year, month):
 
 # must be formatted in the form of a string of the form January 1, 2014
 def get_time_from_datestring(datestring):
-    return time.strptime(datestring, '%B %d, %Y') 
+    dt = datetime.datetime.strptime(datestring, '%B %d, %Y')
+    return datetime.date( dt.year, dt.month, dt.day )
 
 # given a struct_time object, returns the date formatted in the form, January 1, 2014  
 def get_datestring(dtime):
     return time.strftime('%B %d, %Y', dtime)
 
-def get_sanitized_time(dtime):
-    return get_time_from_datestring( get_datestring( dtime ) )
+def is_weekday(date_s):
+    return date_s.weekday() in xrange(5)
 
-def is_weekday(dtime):
-    return dtime.tm_wday in xrange(5)
-
-def is_saturday(dtime):
-    return dtime.tm_wday == 5
+def is_saturday(date_s):
+    return date_s.weekday() == 5
 
 def is_sunday(dtime):
-    return dtime.tm_wday == 6
+    return date_s.weekday() == 6
 
-def get_order_number_weekday_in_year(dtime):
-    dtime_s = get_sanitized_time(dtime)
-    if not is_weekday(dtime_s):
-        raise ValueError("Error, day = %s is not a weekday" % get_datestring(dtime_s) )
-    year_of_dtime = dtime_s.tm_year
+def get_order_number_weekday_in_year(date_s):
+    assert( is_weekday(date_s ) )
+    year_of_dtime = date_s.year
     all_wkdays_sorted = get_weekday_times_in_year( year_of_dtime )
-    num, tm = max(filter( lambda tup: tup[1] == dtime_s,
-                          enumerate( all_wkdays_sorted ) ) )
+    num = all_wkdays_sorted.index( date_s )
     return (num+1), len( all_wkdays_sorted )
 
-def get_order_number_saturday_in_year(dtime):
-    dtime_s = get_sanitized_time(dtime)
-    if not is_saturday(dtime_s):
-        raise ValueError("Error, day = %s is not a Saturday." % get_datestring(dtime_s) )
-    year_of_dtime = dtime_s.tm_year
+def get_order_number_saturday_in_year(date_s):
+    assert( is_saturday(date_s ) )
+    year_of_dtime = date_s.year
     all_saturdays_sorted = get_saturday_times_in_year( year_of_dtime )
-    num, tm = max(filter( lambda tup: tup[1] == dtime_s,
-                          enumerate( all_saturdays_sorted) ) )
+    num = all_saturdays_sorted.index( date_s )
     return (num+1), len( all_saturdays_sorted )
 
 def get_saturday_times_in_year(year, getAll = True):
     datenow = datetime.datetime.now()
     nowd = datetime.date( datenow.year, datenow.month, datenow.day )
-    def filter_before_today(tm):
-        yr, mon, day = tm[:3]
-        actd = datetime.date( yr, mon, day)
-        return actd < nowd
-    initsats = sorted([ time.strptime('%d-%d-%04d' % ( day, month, year), '%d-%m-%Y') for
-                            month in xrange(1, 13) for day in saturdays_of_month_of_year(year, month) ])
+    initsats = sorted([ datetime.date(year, month, day) for
+                        month in xrange(1, 13) for day in saturdays_of_month_of_year(year, month) ])
     if not getAll:
-        initsats = filter(filter_before_today, initSats) 
+        initsats = filter(lambda actd: actd < nowd, initSats) 
     return initsats
     
 def get_weekday_times_in_year(year, getAll = True):
-    inittimes = sorted([ time.strptime('%d-%d-%04d' % ( day, month, year), '%d-%m-%Y') for
+    inittimes = sorted([ datetime.date(year, month, day) for 
                          month in xrange(1, 13) for day in weekdays_of_month_of_year(year, month) ])
     if not getAll:
         datenow = datetime.datetime.now()
         nowd = datetime.date( datenow.year, datenow.month, datenow.day )    
-        def filter_before_today(tm):
-            yr, mon, day = tm[:3]
-            actd = datetime.date( yr, mon, day )
-            return actd < nowd
-        inittimes = filter(filter_before_today, inittimes )
+        inittimes = filter(lambda actd: actd < nowd, inittimes )
         
     return inittimes
 
