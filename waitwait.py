@@ -8,18 +8,16 @@ from optparse import OptionParser
 _npr_waitwait_key = 'MDA2OTgzNTcwMDEyOTc1NDg4NTNmMWI5Mg001'
 _npr_waitwait_progid = 35
 
-def _get_last_saturday(dt):
-    datetime_s = npr_utils.get_sanitized_time(dt)
+def _get_last_saturday(datetime_s):
+    date_s = datetime.date(datetime_s.year, datetime_s.month, datetime_s.day)
 
     # first find today's date
-    tm_wday = datetime_s.tm_wday
+    tm_wday = date_s.weekday()
     if tm_wday < 5:
         tm_wday = tm_wday + 7
     days_go_back = tm_wday - 5
-    dt_s = datetime.datetime( datetime_s.tm_year, datetime_s.tm_mon,
-                              datetime_s.tm_mday )
-    dt_sat = dt_s - datetime.timedelta(days_go_back, 0, 0)
-    return dt_sat.timetuple()
+    date_sat = date_s - datetime.timedelta(days_go_back, 0, 0)
+    return date_sat
 
 def get_waitwait_image():
     return urllib2.urlopen('http://upload.wikimedia.org/wikipedia/en/f/f4/WaitWait.png').read()
@@ -37,7 +35,7 @@ def get_waitwait_date_from_name(candidateNPRWaitWaitFile):
     if not os.path.basename(candidateNPRWaitWaitFile).startswith('NPR.WaitWait.'):
         raise ValueError("Error, %s is not a valid file" % candidateNPRWaitWaitFile )
     day, mon, year = [ int(tok) for tok in os.path.basename(candidateNPRWaitWaitFile).split('.')[2:5] ]
-    return time.strptime('%d-%d-%04d' % ( day, mon, year ), '%d-%m-%Y' )
+    return datetime.date(year, mon, day)
 
 def get_waitwait_valid_dates_remaining_tuples(yearnum, inputdir):
     waitwait_files_downloaded = glob.glob( os.path.join(inputdir, 'NPR.WaitWait.*.%04d.m4a' % yearnum ) )
@@ -45,7 +43,9 @@ def get_waitwait_valid_dates_remaining_tuples(yearnum, inputdir):
                              waitwait_files_downloaded ])
     all_order_saturdays = { datetime : (num+1) for (num, datetime) in
                             enumerate( npr_utils.get_saturday_times_in_year( yearnum ) ) }
-    saturdays_left = filter(lambda datetime: datetime < time.localtime(), set( all_order_saturdays.keys() ) - 
+    dtime_now = datetime.datetime.now()
+    nowd = datetime.date(dtime_now.year, dtime_now.month, dtime_now.day)
+    saturdays_left = filter(lambda date_s: date_s < nowd, set( all_order_saturdays.keys() ) - 
                             set( dates_downloaded ) )
     totnum = len( all_order_saturdays.keys() )
     order_dates_remain = sorted([ ( all_order_saturdays[datetime], totnum, datetime ) for
@@ -81,13 +81,13 @@ def get_all_waitwaits_year( yearnum,
     if verbose:
         print 'processed all Wait Wait downloads for %04d in %0.3f seconds.' % ( yearnum, time.time() - time0 )
 
-def get_title_wavfile_standard(datetime_s, outputdir, debugonly = False):
+def get_title_wavfile_standard(date_s, outputdir, debugonly = False):
     
     # download this data into an lxml elementtree
-    nprURL = npr_utils.get_NPR_URL(datetime_s, 
+    nprURL = npr_utils.get_NPR_URL(date_s, 
                                    _npr_waitwait_progid, 
                                    _npr_waitwait_key )
-    decdate = npr_utils.get_decdate( datetime_s )
+    decdate = npr_utils.get_decdate( date_s )
     tree = lxml.etree.fromstring( urllib2.urlopen(nprURL).read())
     if debugonly:
         openfile = os.path.join( outputdir, 'NPR.WaitWait.tree.%s.xml' %
@@ -111,7 +111,7 @@ def get_title_wavfile_standard(datetime_s, outputdir, debugonly = False):
             pass
             
     titles, mp3urls, orders = zip(*sorted(title_mp3_urls, key = lambda tup: tup[2]))
-    title = time.strftime('%B %d, %Y', datetime_s)
+    title = time.strftime('%B %d, %Y', date_s)
     title = '%s: %s.' % ( title,
                           '; '.join([ '%d) %s' % ( num + 1, titl ) for
                                       (num, titl) in enumerate(titles) ]) )
@@ -126,7 +126,7 @@ def get_title_wavfile_standard(datetime_s, outputdir, debugonly = False):
     
     # sox magic command
     time0 = time.time()
-    wgdate = time.strftime('%d-%b-%Y', datetime_s)
+    wgdate = time.strftime('%d-%b-%Y', date_s)
     wavfile = os.path.join(outputdir, 'waitwait%s.wav' % wgdate ).replace(' ', '\ ')
     fnames = [ filename.replace(' ', '\ ') for filename in outfiles ]
     split_cmd = [ '(for', 'file', 'in', ] + fnames + [ 
@@ -140,7 +140,7 @@ def get_title_wavfile_standard(datetime_s, outputdir, debugonly = False):
         os.remove(filename)
     return title, wavfile
         
-def get_waitwait(outputdir, datetime_saturday, order_totnum = None,
+def get_waitwait(outputdir, date_s, order_totnum = None,
                  file_data = None, debugonly = False):
     
     # check if outputdir is a directory
@@ -148,32 +148,31 @@ def get_waitwait(outputdir, datetime_saturday, order_totnum = None,
         raise ValueError("Error, %s is not a directory." % outputdir)
 
     # check if actually saturday
-    datetime_s = npr_utils.get_sanitized_time(datetime_saturday)
-    if not npr_utils.is_saturday(datetime_s):
+    if not npr_utils.is_saturday(date_s):
         raise ValueError("Error, date = %s not a Saturday." %
-                         npr_utils.get_datestring(datetime_s) )
+                         npr_utils.get_datestring(date_s) )
 
     if order_totnum is None:
-        order_totnum = npr_utils.get_order_number_saturday_in_year(datetime_s)
+        order_totnum = npr_utils.get_order_number_saturday_in_year(date_s)
     order_in_year, tot_in_year = order_totnum
         
     if file_data is None:
         file_data = get_waitwait_image()
         
-    year = datetime_s.tm_year
-    decdate = npr_utils.get_decdate( datetime_s )
+    year = date_s.year
+    decdate = npr_utils.get_decdate( date_s )
 
     if year >= 2006:
-        tup = get_title_wavfile_standard(datetime_s, outputdir, 
+        tup = get_title_wavfile_standard(date_s, outputdir, 
                                          debugonly = debugonly )
         if tup is None:
             return
         title, wavfile = tup
     else:
-        title = waitwait_realmedia.rm_get_title_from_url( datetime_s )
-        rmfile = waitwait_realmedia.rm_download_file( datetime_s, 
+        title = waitwait_realmedia.rm_get_title_from_url( date_s )
+        rmfile = waitwait_realmedia.rm_download_file( date_s, 
                                                       outdir = outputdir )
-        wavfile = waitwait_realmedia.rm_create_wav_file( datetime_s, rmfile,
+        wavfile = waitwait_realmedia.rm_create_wav_file( date_s, rmfile,
                                                          outdir = outputdir )
         os.remove( rmfile )
 
@@ -208,9 +207,9 @@ if __name__=='__main__':
                       help = 'Name of the directory to store the file. Default is %s.' %
                       '/mnt/media/waitwait')
     parser.add_option('--date', dest='date', type=str,
-                      action = 'store', default = npr_utils.get_datestring(_get_last_saturday(time.localtime())),
+                      action = 'store', default = npr_utils.get_datestring(_get_last_saturday( datetime.datetime.now())),
                       help = 'The date, in the form of "January 1, 2014." The default is last Saturday, %s.' %
-                      npr_utils.get_datestring( _get_last_saturday( time.localtime() ) ) )
+                      npr_utils.get_datestring( _get_last_saturday( datetime.datetime.now() ) ) )
     parser.add_option('--debugonly', dest='debugonly', action='store_true', default = False,
                       help = 'If chosen, download the NPR XML data sheet for this Wait Wait episode.')
     opts, args = parser.parse_args()

@@ -30,8 +30,8 @@ def get_time_from_datestring(datestring):
     return datetime.date( dt.year, dt.month, dt.day )
 
 # given a struct_time object, returns the date formatted in the form, January 1, 2014  
-def get_datestring(dtime):
-    return time.strftime('%B %d, %Y', dtime)
+def get_datestring(date_s):
+    return date_s.strftime('%B %d, %Y')
 
 def is_weekday(date_s):
     return date_s.weekday() in xrange(5)
