@@ -111,7 +111,7 @@ def get_title_wavfile_standard(date_s, outputdir, debugonly = False):
             pass
             
     titles, mp3urls, orders = zip(*sorted(title_mp3_urls, key = lambda tup: tup[2]))
-    title = time.strftime('%B %d, %Y', date_s)
+    title = date_s.strftime('%B %d, %Y')
     title = '%s: %s.' % ( title,
                           '; '.join([ '%d) %s' % ( num + 1, titl ) for
                                       (num, titl) in enumerate(titles) ]) )
@@ -126,7 +126,7 @@ def get_title_wavfile_standard(date_s, outputdir, debugonly = False):
     
     # sox magic command
     time0 = time.time()
-    wgdate = time.strftime('%d-%b-%Y', date_s)
+    wgdate = date_s.strftime('%d-%b-%Y')
     wavfile = os.path.join(outputdir, 'waitwait%s.wav' % wgdate ).replace(' ', '\ ')
     fnames = [ filename.replace(' ', '\ ') for filename in outfiles ]
     split_cmd = [ '(for', 'file', 'in', ] + fnames + [ 
