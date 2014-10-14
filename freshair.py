@@ -39,29 +39,29 @@ def get_freshair_valid_dates_remaining_tuples(yearnum, inputdir):
     weekdays_left = filter(lambda date_s: date_s < nowd, set( all_order_weekdays . keys() ) - 
                            set( dates_downloaded ) )
     totnum = len( all_order_weekdays.keys() )
-    order_dates_remain = sorted([ ( all_order_weekdays[datetime], totnum, date_s ) for
+    order_dates_remain = sorted([ ( all_order_weekdays[date_s], totnum, date_s ) for
                                   date_s in weekdays_left ], key = lambda tup: tup[0] ) 
     return order_dates_remain
 
 def _process_freshairs_by_year_tuple(input_tuple):
     outputdir, totnum, verbose, datetimes_order_tuples = input_tuple
     fa_image = get_freshair_image()
-    for datetime, order in datetimes_order_tuples:
+    for date_s, order in datetimes_order_tuples:
         time0 = time.time()
         try:
-            fname = get_freshair(outputdir, datetime, order_totnum = ( order, totnum),
+            fname = get_freshair(outputdir, date_s, order_totnum = ( order, totnum),
                                  file_data = fa_image )
             if verbose:
                 print 'processed %s in %0.3f seconds.' % ( os.path.basename(fname), time.time() - time0 )
         except Exception as e:
-            print 'Could not create Fresh Air episode for date %s for some reason' % npr_utils.get_datestring( datetime )
+            print 'Could not create Fresh Air episode for date %s for some reason' % npr_utils.get_datestring( date_s )
             
 def process_all_freshairs_by_year(yearnum, inputdir, verbose = True):
     order_dates_remain = get_freshair_valid_dates_remaining_tuples( yearnum, inputdir )
     if len(order_dates_remain) == 0: return
     totnum = order_dates_remain[0][1]
     nprocs = multiprocessing.cpu_count() 
-    input_tuples = [ ( inputdir, totnum, verbose, [ ( datetime, order ) for ( order, totnum, datetime) in 
+    input_tuples = [ ( inputdir, totnum, verbose, [ ( date_s, order ) for ( order, totnum, date_s) in 
                                                     order_dates_remain if (order - 1) % nprocs == procno ] ) for
                      procno in xrange(nprocs) ]
     time0 = time.time()
