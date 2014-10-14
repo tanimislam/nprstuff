@@ -41,30 +41,30 @@ def get_waitwait_valid_dates_remaining_tuples(yearnum, inputdir):
     waitwait_files_downloaded = glob.glob( os.path.join(inputdir, 'NPR.WaitWait.*.%04d.m4a' % yearnum ) )
     dates_downloaded = set([ get_waitwait_date_from_name(filename) for filename in
                              waitwait_files_downloaded ])
-    all_order_saturdays = { datetime : (num+1) for (num, datetime) in
+    all_order_saturdays = { date_s : (num+1) for (num, date_s) in
                             enumerate( npr_utils.get_saturday_times_in_year( yearnum ) ) }
     dtime_now = datetime.datetime.now()
     nowd = datetime.date(dtime_now.year, dtime_now.month, dtime_now.day)
     saturdays_left = filter(lambda date_s: date_s < nowd, set( all_order_saturdays.keys() ) - 
                             set( dates_downloaded ) )
     totnum = len( all_order_saturdays.keys() )
-    order_dates_remain = sorted([ ( all_order_saturdays[datetime], totnum, datetime ) for
-                                  datetime in saturdays_left ], key = lambda tup: tup[0] )
+    order_dates_remain = sorted([ ( all_order_saturdays[date_s], totnum, date_s ) for
+                                  date_s in saturdays_left ], key = lambda tup: tup[0] )
     return order_dates_remain
 
 def _process_waitwaits_by_year_tuple(input_tuple):
     outputdir, totnum, verbose, datetimes_order_tuples = input_tuple
     ww_image = get_waitwait_image()
-    for datetime, order in datetimes_order_tuples:
+    for date_s, order in datetimes_order_tuples:
         time0 = time.time()
         try:
-            fname = get_waitwait(outputdir, datetime, order_totnum = ( order, totnum),
+            fname = get_waitwait(outputdir, date_s, order_totnum = ( order, totnum),
                                  file_data = ww_image)
             if verbose:
                 print 'Processed %s in %0.3f seconds.' % ( fname, time.time() - time0 )
         except Exception as e:
             print 'Could not create Wait Wait episode for date %s for some reason.' % (
-                npr_utils.get_datestring( datetime ) )
+                npr_utils.get_datestring( date_s ) )
 
 def get_all_waitwaits_year( yearnum,
                             inputdir, verbose = True):
@@ -72,7 +72,7 @@ def get_all_waitwaits_year( yearnum,
     if len( order_dates_remain ) == 0: return
     totnum = order_dates_remain[0][1]
     nprocs = multiprocessing.cpu_count()
-    input_tuples = [ ( inputdir, totnum, verbose, [ ( datetime, order) for ( order, totnum, datetime ) in
+    input_tuples = [ ( inputdir, totnum, verbose, [ ( date_s, order) for ( order, totnum, date_s ) in
                                                     order_dates_remain if ( order - 1 ) % nprocs == procno ] ) for
                      procno in xrange( nprocs ) ]
     time0 = time.time()
