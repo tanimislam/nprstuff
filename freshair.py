@@ -94,7 +94,8 @@ def _process_freshair_titlemp3_tuples_two(tree):
     return title_mp3_urls
 
 def get_freshair(outputdir, date_s, order_totnum = None,
-                 file_data = None, debug = False):
+                 file_data = None, debug = False,
+                 exec_dict = None):
     
     # check if outputdir is a directory
     if not os.path.isdir(outputdir):
@@ -102,10 +103,13 @@ def get_freshair(outputdir, date_s, order_totnum = None,
 
     # check if actually a weekday
     assert( npr_utils.is_weekday(date_s) )
-    #if not npr_utils.is_weekday(date_s):
-    #    raise ValueError("Error, date = %s not a weekday." %
-    #                     npr_utils.get_datestring(date_s) )
 
+    if exec_dict is None:
+        exec_dict = npr_utils.find_necessary_executables()
+    assert( exec_dict is not None )
+    sox_exec = exec_dict['sox']
+    avconv_exec = exec_dict['avconv']
+    
     if order_totnum is None:
         order_totnum = npr_utils.get_order_number_weekday_in_year(date_s)
     order_in_year, tot_in_year = order_totnum
@@ -168,18 +172,19 @@ def get_freshair(outputdir, date_s, order_totnum = None,
     wavfile = os.path.join(outputdir, 'freshair%s.wav' % wgdate ).replace(' ', '\ ')
     fnames = [ filename.replace(' ', '\ ') for filename in outfiles ]
     split_cmd = [ '(for', 'file', 'in', ] + fnames + [ 
-        ';', '/usr/bin/sox', '$file', '-t', 'cdr', '-', ';', 'done)' ] + [ 
-            '|', '/usr/bin/sox', 't-', 'cdr', '-', wavfile ]
-    split_cmd = [ '/usr/bin/sox', ] + fnames + [ wavfile, ]
+        ';', sox_exec, '$file', '-t', 'cdr', '-', ';', 'done)' ] + [ 
+            '|', sox_exec, 't-', 'cdr', '-', wavfile ]
+    split_cmd = [ sox_exec, ] + fnames + [ wavfile, ]
     proc = subprocess.Popen(split_cmd, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
     stdout_val, stderr_val = proc.communicate()
+    assert( len(stderr_val.strip()) == 0 ) # check that we do not have error messages here
     for filename in outfiles:
         os.remove(filename)
 
     # now convert to m4a file
     # /usr/bin/avconv -y -i freshair$wgdate.wav -ar 44100 -ac 2 -aq 400 -acodec libfaac NPR.FreshAir."$decdate".m4a ;
     m4afile = os.path.join(outputdir, 'NPR.FreshAir.%s.m4a' % decdate )
-    split_cmd = [ '/usr/bin/avconv', '-y', '-i', wavfile, '-ar', '44100', '-ac', '2', '-threads', '%d' % multiprocessing.cpu_count(),
+    split_cmd = [ avconv_exec, '-y', '-i', wavfile, '-ar', '44100', '-ac', '2', '-threads', '%d' % multiprocessing.cpu_count(),
                   '-strict', 'experimental', '-acodec', 'aac', m4afile ]
     proc = subprocess.Popen(split_cmd, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
     stdout_val, stderr_val = proc.communicate()
