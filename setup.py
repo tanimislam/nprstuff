@@ -3,7 +3,7 @@ from distutils.core import setup
 setup(
     name='nprstuff',
     version='0.4',
-    packages=["mutagen", "lxml", 'magic', 'PIL' ],
+    packages=["mutagen", "lxml", 'magic', 'PIL', 'xdg' ],
     url='',
     license='GPL',
     author='Tanim Islam',
