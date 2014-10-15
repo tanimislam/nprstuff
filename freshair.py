@@ -7,7 +7,6 @@ import mutagen.mp4, subprocess, multiprocessing.pool
 from optparse import OptionParser
 import lxml.etree, npr_utils
 
-_npr_FreshAir_Key = 'MDA2OTgzNTcwMDEyOTc1NDg4NTNmMWI5Mg001' 
 _npr_FreshAir_progid = 13
 
 def get_freshair_image():
@@ -114,9 +113,8 @@ def get_freshair(outputdir, date_s, order_totnum = None,
     if file_data is None:
         file_data = get_freshair_image()
     
-    nprURL = npr_utils.get_NPR_URL(date_s, 
-                                   _npr_FreshAir_progid, 
-                                   _npr_FreshAir_Key )
+    nprURL = npr_utils.get_NPR_URL(date_s, _npr_FreshAir_progid, 
+                                   npr_utils.get_api_key() )
     year = date_s.year
     
     # download this data into an lxml elementtree

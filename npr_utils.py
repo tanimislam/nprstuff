@@ -1,14 +1,48 @@
 #!/usr/bin/env python
 
-import calendar, numpy, time, datetime
+import calendar, numpy, time, datetime, os
+import xdg.BaseDirectory, ConfigParser
 import multiprocessing, multiprocessing.pool
+
+def store_api_key(npr_API_key):
+    resource = 'nprstuff'
+    filename = '%s.conf' % resource
+    baseConfDir = xdg.BaseDirectory.save_config_path( resource )
+    absPath = os.path.join( baseConfDir, filename )
+    if os.path.isdir( absPath ):
+        shutil.rmtree( absPath )
+    elif os.path.isfile( absPath ):
+        os.remove( absPath )
+    #
+    cparser = ConfigParser.RawConfigParser()
+    cparser.add_section('NPR_DATA')
+    cparser.set('NPR_DATA', 'apikey', npr_API_key)
+    with open( absPath, 'wb') as openfile:
+        cparser.write( openfile )
+    os.chmod( absPath, '0600' )
+
+def get_api_key():
+    resource = 'nprstuff'
+    filename = '%s.conf' % resource
+    baseConfDir = xdg.BaseDirectory.save_config_path( resource )
+    absPath = os.path.join( baseConfDir, filename )
+    if not os.path.isfile( absPath ):
+        raise ValueError("Error, default configuration file = %s does not exist." % absPath )
+    cparser = ConfigParser.ConfigParser()
+    cparser.read( absPath )
+    if not cparser.has_section('NPR_DATA'):
+        raise ValueError("Error, configuration file has not defined NPR_DATA section.")
+    if not cparser.has_option('NPR_DATA', 'apikey'):
+        raise ValueError("Error, configuration files has not defined an apikey.")
+    npr_api_key = cparser.get('NPR_DATA', 'apikey')
+    return npr_api_key
 
 def get_decdate(date_s):
     return date_s.strftime('%d.%m.%Y')
 
 def get_NPR_URL(date_s, program_id, NPR_API_key):
     """
-    get the NPR API tag for this Fresh Air episode 
+    get the NPR API tag for a specific NPR program 
     """
     nprApiDate = date_s.strftime('%Y-%m-%d')
     return 'http://api.npr.org/query?id=%d&date=%s&dateType=story&output=NPRML&apiKey=%s' % \
