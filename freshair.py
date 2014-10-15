@@ -177,7 +177,6 @@ def get_freshair(outputdir, date_s, order_totnum = None,
     split_cmd = [ sox_exec, ] + fnames + [ wavfile, ]
     proc = subprocess.Popen(split_cmd, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
     stdout_val, stderr_val = proc.communicate()
-    assert( len(stderr_val.strip()) == 0 ) # check that we do not have error messages here
     for filename in outfiles:
         os.remove(filename)
 
