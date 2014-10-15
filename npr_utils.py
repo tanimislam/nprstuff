@@ -3,7 +3,20 @@
 import calendar, numpy, time, datetime, os
 import xdg.BaseDirectory, ConfigParser
 import multiprocessing, multiprocessing.pool
+from distutils.spawn import find_executable
 
+def find_necessary_executables():
+    sox_exec = find_executable('sox')
+    if sox_exec is None: return None
+    ffmpeg_exec = None
+    for ffmpeg_exc in ('avconv', 'ffmpeg'):
+        ffmpeg_exec = find_executable(ffmpeg_exc)
+        if ffmpeg_exec is not None: break
+    if ffmpeg_exec is None: return None
+    #
+    return { 'sox' : sox_exec,
+             'avconv' : ffmpeg_exec }
+        
 def store_api_key(npr_API_key):
     resource = 'nprstuff'
     filename = '%s.conf' % resource
@@ -19,7 +32,7 @@ def store_api_key(npr_API_key):
     cparser.set('NPR_DATA', 'apikey', npr_API_key)
     with open( absPath, 'wb') as openfile:
         cparser.write( openfile )
-    os.chmod( absPath, '0600' )
+    os.chmod( absPath, 0600 )
 
 def get_api_key():
     resource = 'nprstuff'
