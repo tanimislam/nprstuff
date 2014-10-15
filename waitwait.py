@@ -80,7 +80,8 @@ def get_all_waitwaits_year( yearnum,
     if verbose:
         print 'processed all Wait Wait downloads for %04d in %0.3f seconds.' % ( yearnum, time.time() - time0 )
 
-def get_title_wavfile_standard(date_s, outputdir, debugonly = False, npr_api_key = None):
+def get_title_wavfile_standard(date_s, outputdir, sox_exec, 
+                               debugonly = False, npr_api_key = None):
     if npr_api_key is None:
         npr_api_key = npr_utils.get_api_key()
     
@@ -131,9 +132,9 @@ def get_title_wavfile_standard(date_s, outputdir, debugonly = False, npr_api_key
     wavfile = os.path.join(outputdir, 'waitwait%s.wav' % wgdate ).replace(' ', '\ ')
     fnames = [ filename.replace(' ', '\ ') for filename in outfiles ]
     split_cmd = [ '(for', 'file', 'in', ] + fnames + [ 
-        ';', '/usr/bin/sox', '$file', '-t', 'cdr', '-', ';', 'done)' ] + [ 
-            '|', '/usr/bin/sox', 't-', 'cdr', '-', wavfile ]
-    split_cmd = [ '/usr/bin/sox', ] + fnames + [ wavfile, ]
+        ';', sox_exec, '$file', '-t', 'cdr', '-', ';', 'done)' ] + [ 
+            '|', sox_exec, 't-', 'cdr', '-', wavfile ]
+    split_cmd = [ sox_exec, ] + fnames + [ wavfile, ]
     proc = subprocess.Popen(split_cmd, stdout = subprocess.PIPE,
                             stderr = subprocess.PIPE)
     stdout_val, stderr_val = proc.communicate()
@@ -142,7 +143,8 @@ def get_title_wavfile_standard(date_s, outputdir, debugonly = False, npr_api_key
     return title, wavfile
         
 def get_waitwait(outputdir, date_s, order_totnum = None,
-                 file_data = None, debugonly = False):
+                 file_data = None, debugonly = False,
+                 exec_dict = None):
     
     # check if outputdir is a directory
     if not os.path.isdir(outputdir):
@@ -152,6 +154,12 @@ def get_waitwait(outputdir, date_s, order_totnum = None,
     if not npr_utils.is_saturday(date_s):
         raise ValueError("Error, date = %s not a Saturday." %
                          npr_utils.get_datestring(date_s) )
+
+    if exec_dict is None:
+        exec_dict = npr_utils.find_necessary_executables()
+    assert( exec_dict is not None )
+    sox_exec = exec_dict['sox']
+    avconv_exec = exec_dict['avconv']
 
     if order_totnum is None:
         order_totnum = npr_utils.get_order_number_saturday_in_year(date_s)
@@ -164,7 +172,7 @@ def get_waitwait(outputdir, date_s, order_totnum = None,
     decdate = npr_utils.get_decdate( date_s )
 
     if year >= 2006:
-        tup = get_title_wavfile_standard(date_s, outputdir, 
+        tup = get_title_wavfile_standard(date_s, outputdir, sox_exec,
                                          debugonly = debugonly )
         if tup is None:
             return
@@ -179,7 +187,7 @@ def get_waitwait(outputdir, date_s, order_totnum = None,
 
     # now convert to m4a file
     m4afile = os.path.join(outputdir, 'NPR.WaitWait.%s.m4a' % decdate )
-    split_cmd = [ '/usr/bin/avconv', '-y', '-i', wavfile, '-ar', '44100',
+    split_cmd = [ avconv_exec, '-y', '-i', wavfile, '-ar', '44100',
                   '-ac', '2', '-threads', '%d' % multiprocessing.cpu_count(),
                   '-strict', 'experimental', '-acodec', 'aac', m4afile ]
     proc = subprocess.Popen(split_cmd, stdout = subprocess.PIPE,
