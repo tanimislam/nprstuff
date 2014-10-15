@@ -5,7 +5,6 @@ import subprocess, lxml.etree, urllib2, datetime, time
 import npr_utils, mutagen.mp4, waitwait_realmedia
 from optparse import OptionParser
 
-_npr_waitwait_key = 'MDA2OTgzNTcwMDEyOTc1NDg4NTNmMWI5Mg001'
 _npr_waitwait_progid = 35
 
 def _get_last_saturday(datetime_s):
@@ -81,12 +80,14 @@ def get_all_waitwaits_year( yearnum,
     if verbose:
         print 'processed all Wait Wait downloads for %04d in %0.3f seconds.' % ( yearnum, time.time() - time0 )
 
-def get_title_wavfile_standard(date_s, outputdir, debugonly = False):
+def get_title_wavfile_standard(date_s, outputdir, debugonly = False, npr_api_key = None):
+    if npr_api_key is None:
+        npr_api_key = npr_utils.get_api_key()
     
     # download this data into an lxml elementtree
     nprURL = npr_utils.get_NPR_URL(date_s, 
                                    _npr_waitwait_progid, 
-                                   _npr_waitwait_key )
+                                   npr_api_key )
     decdate = npr_utils.get_decdate( date_s )
     tree = lxml.etree.fromstring( urllib2.urlopen(nprURL).read())
     if debugonly:
