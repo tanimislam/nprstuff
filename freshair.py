@@ -146,11 +146,6 @@ def get_freshair(outputdir, date_s, order_totnum = None,
         title_mp3_urls = _process_freshair_titlemp3_tuples_one(tree)
     except ValueError:
         title_mp3_urls = _process_freshair_titlemp3_tuples_two(tree)
-    #for elem in tree.iter('story'):
-    #    title = list(elem.iter('title'))[0].text.strip()
-    #    m3uurl = max( elem.iter('mp3') ).text.strip()
-    #    mp3url = urllib2.urlopen( m3uurl ).read().strip()
-    #    title_mp3_urls.append( ( title, mp3url ) )
         
     titles, mp3urls = zip(*title_mp3_urls)
     title = date_s.strftime('%A, %B %d, %Y')
