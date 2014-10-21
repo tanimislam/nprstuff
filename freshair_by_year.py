@@ -16,12 +16,15 @@ if __name__=='__main__':
                       'to store the NPR Fresh Air episodes. Default is %s.' %
                       _default_inputdir)
     parser.add_option('--quiet', dest='is_quiet', action='store_true', default = False,
-                      help = 'If chosen, do not print verbose output from the action of this ' +
-                      'script. By default this is false.')
+                      help = ' '.join([ 'If chosen, do not print verbose output from the action of this',
+                                        'script. By default this is false.' ]) )
+    parser.add_option('--coverage', dest = 'get_coverage', action = 'store_true', default = False,
+                      help = 'If chosen, just give the list of missing Fresh Air episodes and nothing else.')
     opts, args = parser.parse_args()
     verbose = not opts.is_quiet
     freshair.process_all_freshairs_by_year( opts.year,
                                             opts.inputdir,
-                                            verbose = verbose )
+                                            verbose = verbose,
+                                            justCoverage = opts.get_coverage )
     
 
