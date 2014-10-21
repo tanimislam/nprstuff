@@ -190,7 +190,7 @@ class URLInfoBox(QLineEdit):
     @staticmethod
     def getHTMLTree(req):
         return lxml.html.fromstring( req.text )
-
+        
     @staticmethod
     def getMetaData(tree):
         return filter(lambda elem: 'name' in elem.keys() and
