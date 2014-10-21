@@ -13,8 +13,12 @@ def get_freshair_image():
     
 def _download_file(input_tuple):
     mp3URL, filename = input_tuple
-    with open(filename, 'wb') as openfile:
-        openfile.write( urllib2.urlopen(mp3URL).read() )
+    try:
+        with open(filename, 'wb') as openfile:
+            openfile.write( urllib2.urlopen(mp3URL).read() )
+        return filename
+    except Exception:
+        return None
 
 def get_freshair_date_from_name(candidateNPRFreshAirFile):
     if not os.path.isfile(candidateNPRFreshAirFile):
@@ -165,7 +169,7 @@ def get_freshair(outputdir, date_s, order_totnum = None,
     # download those files
     time0 = time.time()
     pool = multiprocessing.Pool(processes = len(mp3urls) )
-    pool.map(_download_file, zip( mp3urls, outfiles ) )
+    outfiles = filter(None, pool.map(_download_file, zip( mp3urls, outfiles ) ) )
     
     # sox magic command
     time0 = time.time()
