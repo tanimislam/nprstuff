@@ -54,7 +54,7 @@ def _process_freshairs_by_year_tuple(input_tuple):
         except Exception as e:
             print 'Could not create Fresh Air episode for date %s for some reason' % npr_utils.get_datestring( date_s )
             
-def process_all_freshairs_by_year(yearnum, inputdir, verbose = True):
+def process_all_freshairs_by_year(yearnum, inputdir, verbose = True, justCoverage = False):
     order_dates_remain = get_freshair_valid_dates_remaining_tuples( yearnum, inputdir )
     if len(order_dates_remain) == 0: return
     totnum = order_dates_remain[0][1]
@@ -63,10 +63,15 @@ def process_all_freshairs_by_year(yearnum, inputdir, verbose = True):
                                                     order_dates_remain if (order - 1) % nprocs == procno ] ) for
                      procno in xrange(nprocs) ]
     time0 = time.time()
-    pool = npr_utils.MyPool(processes = multiprocessing.cpu_count())
-    pool.map(_process_freshairs_by_year_tuple, input_tuples)
+    if not justCoverage:
+        pool = npr_utils.MyPool(processes = multiprocessing.cpu_count())
+        pool.map(_process_freshairs_by_year_tuple, input_tuples)
+    else:
+        print 'Missing %d episodes for %04d.' % ( len(order_dates_remain), yearnum )
+        for order, totnum, date_s in order_dates_remain:
+            print 'Missing NPR FreshAir episode for %s.' % date_s.strftime('%B %d, %Y')
     if verbose:
-        print 'processed all Fresh Air downloads for %04d in %0.3f seconds.' % ( yearnum, time.time() - time0 ) 
+            print 'processed all Fresh Air downloads for %04d in %0.3f seconds.' % ( yearnum, time.time() - time0 ) 
 
 def _process_freshair_titlemp3_tuples_one(tree):
     title_mp3_urls = []
@@ -124,8 +129,10 @@ def get_freshair(outputdir, date_s, order_totnum = None,
     tree = lxml.etree.fromstring( urllib2.urlopen(nprURL).read())
     decdate = date_s.strftime('%d.%m.%Y')
     if debug:
+        print 'URL = %s' % nprURL
         with open(os.path.join(outputdir, 'NPR.FreshAir.tree.%s.xml' % decdate), 'w') as openfile:
             openfile.write( lxml.etree.tostring( tree ) )
+        return
     
     # check for unavailable tag
     if len(filter(lambda elem: 'value' in elem.keys() and 
