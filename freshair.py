@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 
-__author__ = "Tanim Islam"
-
 import os, glob, urllib2, multiprocessing, datetime, time
 import mutagen.mp4, subprocess, multiprocessing.pool
 from optparse import OptionParser
@@ -10,7 +8,8 @@ import lxml.etree, npr_utils
 _npr_FreshAir_progid = 13
 
 def get_freshair_image():
-    return urllib2.urlopen('http://media.npr.org/images/podcasts/2013/primary/fresh_air.png').read()
+    myURL = 'http://media.npr.org/images/podcasts/2013/primary/fresh_air.png'
+    return urllib2.urlopen(myURL).read()
     
 def _download_file(input_tuple):
     mp3URL, filename = input_tuple
