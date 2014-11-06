@@ -40,6 +40,7 @@ class MainDialog(QGroupBox):
         qsa.setWidget( self.articleText )
         qsa.setWidgetResizable(True)        
         qvlayout.addWidget( qsa )
+        self.articleText.setStyleSheet('QLabel { background-color: white; }')
         #
         # add slots
         self.urlInfoBox.returnPressed.connect( self.urlInfoBox.validateAndGetData )
