@@ -27,6 +27,21 @@ class MainDialog(QGroupBox):
         self.printButton.setEnabled(False)
         self.printPreviewButton.setEnabled(False)
         self.showPictureButton.setEnabled(False)
+        self.setStyleSheet('QGroupBox { background-color: #FCF5F5; }')
+        for button in ( self.toFileButton, self.showPictureButton,
+                        self.printButton, self.printPreviewButton ):
+            button.setStyleSheet("""
+            QPushButton { background-color: #EBF7EC;
+            border-style: outset;
+            border-width: 2px;
+            border-radius: 10px;
+            border-color: #EBF7EC;
+            padding: 6px; }
+            QPushButton:pressed {
+            background-color: #FCF5F5;
+            border-style: inset;
+            }
+            """)
         #
         # set font for articleText
         qf = QFont( self.defaultFont, pointSize = 12 )
@@ -49,6 +64,12 @@ class MainDialog(QGroupBox):
         self.printPreviewButton.clicked.connect( myParent.printPreviewData )
         self.showPictureButton.clicked.connect( myParent.showPicture )
         #
+        # ctrl-Q
+        exitAction = QAction(self)
+        exitAction.setShortcut('Ctrl+Q')
+        exitAction.triggered.connect(qApp.quit)
+        self.addAction(exitAction)
+        #
         # make visible, resize to something nice
         qfm = QFontMetrics( qf )
         wdth = int( 70 * qfm.averageCharWidth() * 1.25 )
@@ -58,6 +79,7 @@ class MainDialog(QGroupBox):
 
     def _createTopWidget(self):
         topBox = QGroupBox()
+        topBox.setStyleSheet('QGroupBox { background-color: #E4EEF2; }')
         qgl = QGridLayout()
         topBox.setLayout( qgl )
         qgl.addWidget( QLabel('New Yorker URL'), 0, 0, 1, 1)
@@ -140,9 +162,6 @@ class NewYorkerFrame(QApplication):
         # now set the text
         article_text = u'\n\n'.join([ textwrap.fill(txt) for txt in
                                       self.mainDialog.urlInfoBox.currentData ] )
-        #for ptext in self.mainDialog.urlInfoBox.currentData[:-1]:
-        #    article_text += '%s\n\n' % textwrap.fill(ptext)
-        #article_text += '%s\n' % textwrap.fill( self.mainDialog.urlInfoBox.currentData[-1] )
         self.mainDialog.articleText.setText( article_text )
         #
         # now make those buttons enabled
