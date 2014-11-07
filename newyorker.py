@@ -6,9 +6,6 @@ import os, sys, numpy, glob, requests, json
 import lxml.html, datetime, pytz, textwrap
 import titlecase, codecs, urllib2
 
-_styleSheetUnselect = 'background-color: #ffffff'
-_styleSheetSelect = 'background-color: #cbdbff'
-
 class MainDialog(QGroupBox):
     def __init__(self, myParent):
         super(MainDialog, self).__init__()
@@ -35,7 +32,7 @@ class MainDialog(QGroupBox):
             border-style: outset;
             border-width: 2px;
             border-radius: 10px;
-            border-color: #EBF7EC;
+            border-color: #E4EEF2 ;
             padding: 6px; }
             QPushButton:pressed {
             background-color: #FCF5F5;
@@ -117,10 +114,11 @@ class MainDialog(QGroupBox):
 
 class PictureLabel(QLabel):
     def __init__(self, myParent):
-        super(PictureLabel, self).__init__('')
+        super(PictureLabel, self).__init__()
         self.myParent = myParent
         self.resize(400, 400)
         self.setFixedSize(400, 400)
+        self.setStyleSheet( 'background-color: #faf2e3' )
         self.hide()
 
     def closeEvent(self, evt):
@@ -168,7 +166,7 @@ class NewYorkerFrame(QApplication):
         self.mainDialog.toFileButton.setEnabled(True)
         self.mainDialog.printButton.setEnabled(True)
         self.mainDialog.printPreviewButton.setEnabled(True)
-        self.mainDialog.showPictureButton.setEnabled(True)
+        if qpm.size().width() != 0: self.mainDialog.showPictureButton.setEnabled(True)
 
     def toFile(self):
         if self.mainDialog.urlInfoBox.currentData is not None:
@@ -198,7 +196,9 @@ class NewYorkerFrame(QApplication):
         self.mainDialog.setEnabled(True)
 
     def showPicture(self):
+        print 'Got Here in showPicture'
         self.mainDialog.setEnabled(False)
+        print 'pictureLabel size = ', self.pictureLabel.size()
         self.pictureLabel.show()
 
     def closePicture(self):
@@ -233,21 +233,24 @@ class URLInfoBox(QLineEdit):
         self.myParent = myParent
         self.currentURL = ''
         self.currentData = None
-        self.setStyleSheet( _styleSheetUnselect )
+        self.setStyleSheet( 'background-color: white' )
 
     def mousePressEvent(self, evt):
-        self.setStyleSheet( _styleSheetSelect )
+        self.setStyleSheet( 'background-color: #f3f1ff' )
 
     def validateAndGetData(self):
-        candURL = str(self.text()).strip()
-        if candURL == self.currentURL:
-            self.setStyleSheet( _styleSheetUnselect )
+        data_dict = self._validateAndGetData(str(self.text()).strip(), updateText = False)
+        self.myParent.updateData( data_dict )
+
+    def _validateAndGetData(self, candURL, updateText = False):
+        if candURL == self.currentURL and not updateText:
+            self.setStyleSheet( 'background-color: white' )
             return
         
         try:
             req = requests.get(candURL)
         except Exception:
-            self.setStyleSheet( _styleSheetUnselect )
+            self.setStyleSheet( 'background-color: white' )
             self.setText( self.currentURL )
             print 'ERROR, COULD NOT LOAD IN URL = %s.' % candURL
             return
@@ -259,7 +262,7 @@ class URLInfoBox(QLineEdit):
         meta_elems = URLInfoBox.getMetaData( tree )
 
         if len(meta_elems) != 1:
-            self.setStyleSheet( _styleSheetUnselect )
+            self.setStyleSheet( 'background-color: white' )
             self.setText( self.currentURL )
             print 'ERROR, COULD NOT FIND METADATA FOR URL = %s.' % candURL
             return
@@ -267,7 +270,7 @@ class URLInfoBox(QLineEdit):
         meta_elem = max(meta_elems)
         meta_dict = json.loads( meta_elem.get('content') )
         if len(set([ 'author', 'title', 'pub_date', 'image_url' ]) - set(meta_dict.keys())) != 0:
-            self.setStyleSheet( _styleSheetUnselect )
+            self.setStyleSheet( 'background-color: white' )
             self.setText( self.currentURL )
             print 'ERROR, THESE ENTRIES = %s COULD NOT BE FOUND.' % \
                 ( set([ 'author', 'title', 'pub_date', 'image_url' ]) - set(meta_dict.keys()) )
@@ -276,36 +279,36 @@ class URLInfoBox(QLineEdit):
             dt = datetime.datetime.strptime( meta_dict['pub_date'],
                                              '%Y-%m-%dT%H:%M:%SZ' )
         except Exception:
-            self.setStyleSheet( _styleSheetUnselect )
+            self.setStyleSheet( 'background-color: white' )
             self.setText( self.currentURL )
             print 'ERROR, COULD NOT PARSE DATE STRING = %s.' % meta_dict['pub_date']
             return
 
         try:
             qpm = QPixmap()
-            qpm.loadFromData( urllib2.urlopen( meta_dict['image_url'] ).read() )
+            stat = qpm.loadFromData( urllib2.urlopen( meta_dict['image_url'] ).read() )
         except Exception:
-            self.setStyleSheet( _styleSheetUnselect )
+            self.setStyleSheet( 'background-color: white' )
             self.setText( self.currentURL )
             print 'ERROR, COULD NOT LOAD IMAGE URL = %s.' % meta_dict['image_url']
             return
         
         last_idx, textData = URLInfoBox.getData( tree )
         if last_idx == 0:
-            self.setStyleSheet( _styleSheetUnselect )
+            self.setStyleSheet( 'background-color: white' )
             self.setText( self.currentURL )
             print 'ERROR, COULD NOT FIND ENDING CHARACTER IN %s.' % candURL
             return
 
         self.currentData = textData
         self.currentURL = candURL
-        self.setStyleSheet( _styleSheetUnselect )
+        self.setStyleSheet( 'background-color: white' )
         
         data_dict = { 'title'  : titlecase.titlecase( meta_dict['title'] ),
                       'author' : meta_dict['author'],
                       'date' : dt,
-                      'image' : qpm }
-        self.myParent.updateData( data_dict )
+                      'image' : qpm, 'image-url' : meta_dict['image_url'] }
+        return data_dict
 
 if __name__=='__main__':
     nyf = NewYorkerFrame(sys.argv)
