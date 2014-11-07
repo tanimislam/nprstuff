@@ -196,9 +196,7 @@ class NewYorkerFrame(QApplication):
         self.mainDialog.setEnabled(True)
 
     def showPicture(self):
-        print 'Got Here in showPicture'
         self.mainDialog.setEnabled(False)
-        print 'pictureLabel size = ', self.pictureLabel.size()
         self.pictureLabel.show()
 
     def closePicture(self):
