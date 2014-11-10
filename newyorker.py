@@ -48,7 +48,7 @@ class MainDialog(QGroupBox):
         qvlayout = QVBoxLayout()
         self.setLayout( qvlayout )
         qvlayout.addWidget( self._createTopWidget() )
-        qsa = QScrollArea()
+        qsa = CustomScrollArea()
         qsa.setWidget( self.articleText )
         qsa.setWidgetResizable(True)        
         qvlayout.addWidget( qsa )
@@ -111,6 +111,28 @@ class MainDialog(QGroupBox):
             for ptext in self.urlInfoBox.currentData[:-1]:
                 outfile.write('%s\n\n' % textwrap.fill(ptext) )
             outfile.write('%s\n' % textwrap.fill( self.urlInfoBox.currentData[-1] ) )
+
+class CustomScrollArea(QScrollArea):
+    def __init__(self):
+        super(CustomScrollArea, self).__init__()
+        #
+        toEndAction = QAction(self)
+        toEndAction.setShortcut('End')
+        toEndAction.triggered.connect( self.scrollToBottom )
+        self.addAction(toEndAction)
+        #
+        toStartAction = QAction(self)
+        toStartAction.setShortcut('Home')
+        toStartAction.triggered.connect( self.scrollToTop )
+        self.addAction(toStartAction)
+
+    def scrollToBottom(self):
+        sb = self.verticalScrollBar()
+        sb.setValue( sb.maximum() )
+
+    def scrollToTop(self):
+        sb = self.verticalScrollBar()
+        sb.setValue( sb.minimum())
 
 class PictureLabel(QLabel):
     def __init__(self, myParent):
