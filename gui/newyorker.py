@@ -4,7 +4,7 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 import os, sys, numpy, glob, requests, json
 import lxml.html, datetime, pytz, textwrap
-import titlecase, codecs, urllib2
+import titlecase, codecs, urllib2, gui_common
 
 class MainDialog(QGroupBox):
     def __init__(self, myParent):
@@ -48,7 +48,7 @@ class MainDialog(QGroupBox):
         qvlayout = QVBoxLayout()
         self.setLayout( qvlayout )
         qvlayout.addWidget( self._createTopWidget() )
-        qsa = CustomScrollArea()
+        qsa = gui_common.CustomScrollArea()
         qsa.setWidget( self.articleText )
         qsa.setWidgetResizable(True)        
         qvlayout.addWidget( qsa )
@@ -112,52 +112,6 @@ class MainDialog(QGroupBox):
                 outfile.write('%s\n\n' % textwrap.fill(ptext) )
             outfile.write('%s\n' % textwrap.fill( self.urlInfoBox.currentData[-1] ) )
 
-class CustomScrollArea(QScrollArea):
-    def __init__(self):
-        super(CustomScrollArea, self).__init__()
-        #
-        toEndAction = QAction(self)
-        toEndAction.setShortcut('End')
-        toEndAction.triggered.connect( self.scrollToBottom )
-        self.addAction(toEndAction)
-        #
-        toStartAction = QAction(self)
-        toStartAction.setShortcut('Home')
-        toStartAction.triggered.connect( self.scrollToTop )
-        self.addAction(toStartAction)
-
-    def scrollToBottom(self):
-        sb = self.verticalScrollBar()
-        sb.setValue( sb.maximum() )
-
-    def scrollToTop(self):
-        sb = self.verticalScrollBar()
-        sb.setValue( sb.minimum())
-
-class PictureLabel(QLabel):
-    def __init__(self, myParent):
-        super(PictureLabel, self).__init__()
-        self.myParent = myParent
-        self.resize(400, 400)
-        self.setFixedSize(400, 400)
-        self.setStyleSheet( 'background-color: #faf2e3' )
-        self.hide()
-
-    def closeEvent(self, evt):
-        evt.ignore()
-        self.myParent.closePicture()
-
-    def mousePressEvent(self, evt):
-        if evt.button() == Qt.RightButton:
-            while( True ):
-                fname = str(QFileDialog.getSaveFileName(self, 'Save Picture',
-                                                        os.getcwd(), filter = '*.png') )
-                if fname.lower().endswith('.png') or len(os.path.basename(fname)) == 0:
-                    break
-        if fname.lower().endswith('.png'):
-            qpm = self.pixmap()
-            qpm.save( fname )
-
 class NewYorkerFrame(QApplication):
     def __init__(self, args):
         super(NewYorkerFrame, self).__init__(args)
@@ -167,7 +121,7 @@ class NewYorkerFrame(QApplication):
             raise ValueError("Error, could find no fixed width fonts.")
         self.defaultFont = defaultFont
         self.mainDialog = MainDialog( self )
-        self.pictureLabel = PictureLabel( self )
+        self.pictureLabel = gui_common.PictureLabel( self )
 
     def updateData(self, data_dict):
         self.mainDialog.authorName.setText( data_dict['author'] )
