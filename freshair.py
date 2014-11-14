@@ -55,7 +55,7 @@ def _process_freshairs_by_year_tuple(input_tuple):
                                  file_data = fa_image )
             if verbose:
                 print 'processed %s in %0.3f seconds.' % ( os.path.basename(fname), time.time() - time0 )
-        except Exception as e:
+        except Exception:
             print 'Could not create Fresh Air episode for date %s for some reason' % npr_utils.get_datestring( date_s )
             
 def process_all_freshairs_by_year(yearnum, inputdir, verbose = True, justCoverage = False):
@@ -63,8 +63,9 @@ def process_all_freshairs_by_year(yearnum, inputdir, verbose = True, justCoverag
     if len(order_dates_remain) == 0: return
     totnum = order_dates_remain[0][1]
     nprocs = multiprocessing.cpu_count() 
-    input_tuples = [ ( inputdir, totnum, verbose, [ ( date_s, order ) for ( order, totnum, date_s) in 
-                                                    order_dates_remain if (order - 1) % nprocs == procno ] ) for
+    input_tuples = [ ( inputdir, totnum, verbose, 
+                       [ ( date_s, order ) for ( order, totnum, date_s) in 
+                         order_dates_remain if (order - 1) % nprocs == procno ] ) for
                      procno in xrange(nprocs) ]
     time0 = time.time()
     if not justCoverage:
@@ -75,7 +76,8 @@ def process_all_freshairs_by_year(yearnum, inputdir, verbose = True, justCoverag
         for order, totnum, date_s in order_dates_remain:
             print 'Missing NPR FreshAir episode for %s.' % date_s.strftime('%B %d, %Y')
     if verbose:
-            print 'processed all Fresh Air downloads for %04d in %0.3f seconds.' % ( yearnum, time.time() - time0 ) 
+            print 'processed all Fresh Air downloads for %04d in %0.3f seconds.' % \
+                ( yearnum, time.time() - time0 ) 
 
 def _process_freshair_titlemp3_tuples_one(tree):
     title_mp3_urls = []
