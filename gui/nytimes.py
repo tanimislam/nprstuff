@@ -7,7 +7,7 @@ import lxml.html, datetime, pytz, textwrap
 import titlecase, codecs, urllib2, gui_common
 
 class NYTimesFrame(QGroupBox):
-    def __init__(self):
+    def __init__(self, mainFrame = True):
         super(NYTimesFrame, self).__init__()
         self.setWindowTitle('New York Times Printer')
         self.urlInfoBox = URLInfoBox( self )
@@ -43,8 +43,8 @@ class NYTimesFrame(QGroupBox):
             """)
         #
         # set font for articleText
-        qf = QFont( self.defaultFont, pointSize = 12 )
-        self.articleText.setFont( qf )
+        self.qf = QFont( self.defaultFont, pointSize = 12 )
+        self.articleText.setFont( self.qf )
         #
         # set layout
         qvlayout = QVBoxLayout()
@@ -62,29 +62,29 @@ class NYTimesFrame(QGroupBox):
         self.printButton.clicked.connect( self.printData )
         self.printPreviewButton.clicked.connect( self.printPreviewData )
         self.showPictureButton.clicked.connect( self.showPicture )
-        #
-        # ctrl-Q
-        exitAction = QAction(self)
-        exitAction.setShortcut('Ctrl+Q')
-        exitAction.triggered.connect(qApp.quit)
-        self.addAction(exitAction)        
-        #
-        # make visible, resize to something nice
         self._disableMainDialog()
-        qfm = QFontMetrics( qf )
-        wdth = int( 70 * qfm.averageCharWidth() * 1.25 )
-        self.resize( wdth, 900)
-        self.setFixedWidth( wdth )
-        self.show()
+        
+        if mainFrame:
+            #
+            # ctrl-Q
+            exitAction = QAction(self)
+            exitAction.setShortcut('Ctrl+Q')
+            exitAction.triggered.connect(qApp.quit)
+            self.addAction(exitAction)        
+            #
+            # make visible, resize to something nice
+            qfm = QFontMetrics( self.qf )
+            wdth = int( 70 * qfm.averageCharWidth() * 1.25 )
+            self.resize( wdth, 900)
+            self.setFixedWidth( wdth )
+            self.show()
 
     def _disableMainDialog(self):
-        for widg in ( self.toFileButton, self.printButton, self.printPreviewButton, self.showPictureButton,
-                      self.qsa ):
+        for widg in ( self.toFileButton, self.printButton, self.printPreviewButton, self.showPictureButton):
             widg.setEnabled(False)
 
     def _enableMainDialog(self):
-        for widg in ( self.toFileButton, self.printButton, self.printPreviewButton, self.showPictureButton,
-                      self.qsa ):
+        for widg in ( self.toFileButton, self.printButton, self.printPreviewButton, self.showPictureButton):
             widg.setEnabled(True)
 
     def _createTopWidget(self):
@@ -125,7 +125,6 @@ class NYTimesFrame(QGroupBox):
                 outfile.write('%s\n\n' % textwrap.fill(ptext) )
             outfile.write('%s\n' % textwrap.fill( self.urlInfoBox.currentData[-1] ) )
 
-    
     def updateData(self, data_dict):
         self.authorName.setText( data_dict['author'] )
         self.titleLabel.setText( data_dict['title'] )
@@ -280,7 +279,8 @@ class URLInfoBox(QLineEdit):
         data_dict = { 'title'  : titlecase.titlecase( meta_dict['hdl'] ),
                       'author' : meta_dict['author'],
                       'date' : dt,
-                      'image' : qpm, 'image-url' : meta_dict['pic_url'] }
+                      'image' : qpm,
+                      'image-url' : meta_dict['pic_url'] }
         return data_dict
 
 if __name__=='__main__':
