@@ -6,12 +6,18 @@ import os, sys, numpy, glob, requests, json
 import lxml.html, datetime, pytz, textwrap
 import titlecase, codecs, urllib2, gui_common
 
-class MainDialog(QGroupBox):
-    def __init__(self, myParent):
-        super(MainDialog, self).__init__()
+class NewYorkerFrame(QGroupBox):
+    def __init__(self, mainFrame = True):
+        super(NewYorkerFrame, self).__init__()
+        qfd = QFontDatabase()
+        self.defaultFont = min(filter(lambda fam: qfd.isFixedPitch(fam), qfd.families()))
+        if self.defaultFont is None:
+            raise ValueError("Error, could find no fixed width fonts.")
+        #
+        self.pictureLabel = gui_common.PictureLabel( self )
+        #
         self.setWindowTitle('New Yorker Printer')
-        self.urlInfoBox = URLInfoBox( myParent )
-        self.defaultFont = myParent.defaultFont
+        self.urlInfoBox = URLInfoBox( self )
         self.authorName = QLabel('')
         self.dateLabel = QLabel('')
         self.titleLabel = QLabel('')
@@ -41,38 +47,49 @@ class MainDialog(QGroupBox):
             """)
         #
         # set font for articleText
-        qf = QFont( self.defaultFont, pointSize = 12 )
-        self.articleText.setFont( qf )
+        self.qf = QFont( self.defaultFont, pointSize = 12 )
+        self.articleText.setFont( self.qf )
         #
         # set layout
         qvlayout = QVBoxLayout()
         self.setLayout( qvlayout )
         qvlayout.addWidget( self._createTopWidget() )
-        qsa = gui_common.CustomScrollArea()
-        qsa.setWidget( self.articleText )
-        qsa.setWidgetResizable(True)        
-        qvlayout.addWidget( qsa )
+        self.qsa = gui_common.CustomScrollArea()
+        self.qsa.setWidget( self.articleText )
+        self.qsa.setWidgetResizable(True)        
+        qvlayout.addWidget( self.qsa )
         self.articleText.setStyleSheet('QLabel { background-color: white; }')
         #
         # add slots
         self.urlInfoBox.returnPressed.connect( self.urlInfoBox.validateAndGetData )
-        self.toFileButton.clicked.connect( myParent.toFile )
-        self.printButton.clicked.connect( myParent.printData )
-        self.printPreviewButton.clicked.connect( myParent.printPreviewData )
-        self.showPictureButton.clicked.connect( myParent.showPicture )
-        #
-        # ctrl-Q
-        exitAction = QAction(self)
-        exitAction.setShortcut('Ctrl+Q')
-        exitAction.triggered.connect(qApp.quit)
-        self.addAction(exitAction)
-        #
-        # make visible, resize to something nice
-        qfm = QFontMetrics( qf )
-        wdth = int( 70 * qfm.averageCharWidth() * 1.25 )
-        self.resize( wdth, 900)
-        self.setFixedWidth( wdth )
-        self.show()
+        self.toFileButton.clicked.connect( self.toFile )
+        self.printButton.clicked.connect( self.printData )
+        self.printPreviewButton.clicked.connect( self.printPreviewData )
+        self.showPictureButton.clicked.connect( self.showPicture )
+        self._disableMainDialog()
+
+        if mainFrame:
+            #
+            # ctrl-Q
+            exitAction = QAction(self)
+            exitAction.setShortcut('Ctrl+Q')
+            exitAction.triggered.connect(qApp.quit)
+            self.addAction(exitAction)
+            #
+            # make visible, resize to something nice
+            qfm = QFontMetrics( self.qf )
+            wdth = int( 70 * qfm.averageCharWidth() * 1.25 )
+            self.resize( wdth, 900)
+            self.setFixedWidth( wdth )
+            self.show()
+
+    def _disableMainDialog(self):
+        for widg in ( self.toFileButton, self.printButton, self.printPreviewButton, self.showPictureButton):
+            widg.setEnabled(False)
+
+    def _enableMainDialog(self):
+        for widg in ( self.toFileButton, self.printButton, self.printPreviewButton, self.showPictureButton):
+            widg.setEnabled(True)
 
     def _createTopWidget(self):
         topBox = QGroupBox()
@@ -112,21 +129,10 @@ class MainDialog(QGroupBox):
                 outfile.write('%s\n\n' % textwrap.fill(ptext) )
             outfile.write('%s\n' % textwrap.fill( self.urlInfoBox.currentData[-1] ) )
 
-class NewYorkerFrame(QApplication):
-    def __init__(self, args):
-        super(NewYorkerFrame, self).__init__(args)
-        qfd = QFontDatabase()
-        defaultFont = min(filter(lambda fam: qfd.isFixedPitch(fam), qfd.families()))
-        if defaultFont is None:
-            raise ValueError("Error, could find no fixed width fonts.")
-        self.defaultFont = defaultFont
-        self.mainDialog = MainDialog( self )
-        self.pictureLabel = gui_common.PictureLabel( self )
-
     def updateData(self, data_dict):
-        self.mainDialog.authorName.setText( data_dict['author'] )
-        self.mainDialog.titleLabel.setText( data_dict['title'] )
-        self.mainDialog.dateLabel.setText( data_dict['date'].strftime('%B %d, %Y' ) )
+        self.authorName.setText( data_dict['author'] )
+        self.titleLabel.setText( data_dict['title'] )
+        self.dateLabel.setText( data_dict['date'].strftime('%B %d, %Y' ) )
         qpm = data_dict['image']
         self.pictureLabel.resize( qpm.size() )
         self.pictureLabel.setFixedSize( qpm.size() )
@@ -135,49 +141,50 @@ class NewYorkerFrame(QApplication):
         #
         # now set the text
         article_text = u'\n\n'.join([ textwrap.fill(txt) for txt in
-                                      self.mainDialog.urlInfoBox.currentData ] )
-        self.mainDialog.articleText.setText( article_text )
+                                      self.urlInfoBox.currentData ] )
+        self.articleText.setText( article_text )
         #
         # now make those buttons enabled
-        self.mainDialog.toFileButton.setEnabled(True)
-        self.mainDialog.printButton.setEnabled(True)
-        self.mainDialog.printPreviewButton.setEnabled(True)
-        if qpm.size().width() != 0: self.mainDialog.showPictureButton.setEnabled(True)
+        self.toFileButton.setEnabled(True)
+        self.printButton.setEnabled(True)
+        self.printPreviewButton.setEnabled(True)
+        if qpm.size().width() != 0: self.showPictureButton.setEnabled(True)
 
     def toFile(self):
-        if self.mainDialog.urlInfoBox.currentData is not None:
-            self.mainDialog.setEnabled(False)
+        if self.urlInfoBox.currentData is not None:
+            self._disableMainDialog()
             while(True):
-                fname = str(QFileDialog.getSaveFileName(self.mainDialog, 'Save File', 
+                fname = str(QFileDialog.getSaveFileName(self, 'Save File', 
                                                         os.getcwd(), filter = '*.txt' ) )
                 if fname.lower().endswith('.txt') or len(os.path.basename(fname)) == 0:
                     break
             if fname.lower().endswith('.txt'):
-                self.mainDialog.writeToFile( fname )
-            self.mainDialog.setEnabled(True)
-        
+                self.writeToFile( fname )
+            self._enableMainDialog()
+
     def printPreviewData(self):
         dialog = QPrintPreviewDialog()
-        self.mainDialog.setEnabled(False)
-        qtd =  self.mainDialog.getQTextDocument()
+        self._disableMainDialog()
+        qtd =  self.getQTextDocument()
         dialog.paintRequested.connect( qtd.print_ )
         dialog.exec_()
-        self.mainDialog.setEnabled(True)
+        self._enableMainDialog()
         
     def printData(self):
         dialog = QPrintDialog()
-        self.mainDialog.setEnabled(False)
+        self._disableMainDialog()
         if dialog.exec_() == QDialog.Accepted:
-            qtd = self.mainDialog.getQTextDocument()
-        self.mainDialog.setEnabled(True)
+            qtd = self.getQTextDocument()
+        self._enableMainDialog()
 
     def showPicture(self):
-        self.mainDialog.setEnabled(False)
+        self._disableMainDialog()
         self.pictureLabel.show()
 
     def closePicture(self):
         self.pictureLabel.hide()
-        self.mainDialog.setEnabled(True)
+        self._enableMainDialog()
+
 
 class URLInfoBox(QLineEdit):
     
@@ -285,5 +292,6 @@ class URLInfoBox(QLineEdit):
         return data_dict
 
 if __name__=='__main__':
-    nyf = NewYorkerFrame(sys.argv)
-    sys.exit( nyf.exec_() )
+    qApp = QApplication(sys.argv)
+    nyf = NewYorkerFrame()
+    sys.exit( qApp.exec_() )
