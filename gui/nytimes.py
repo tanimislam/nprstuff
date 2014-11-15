@@ -5,9 +5,9 @@ from PyQt4.QtCore import *
 import gui_common, sys, datetime
 
 class NYTimesFrame(gui_common.MainFrame):
-    def __init__(self, showFrame = True):
+    def __init__(self, showFrame = True, iconPath = None):
         super(NYTimesFrame, self).__init__('New York Times Printer', NYTimesURLInfoBox(),
-                                           showFrame = showFrame)
+                                           showFrame = showFrame, iconPath = iconPath)
 
 class NYTimesURLInfoBox(gui_common.URLInfoBox):
     def getMetaDataDict(self, tree):
@@ -37,5 +37,5 @@ class NYTimesURLInfoBox(gui_common.URLInfoBox):
 
 if __name__=='__main__':
     qApp = QApplication(sys.argv)
-    nyf = NYTimesFrame()
+    nyf = NYTimesFrame(iconPath = 'icons/nytimes.png')
     sys.exit( qApp.exec_() )

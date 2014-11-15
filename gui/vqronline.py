@@ -5,10 +5,11 @@ from PyQt4.QtCore import *
 import gui_common, sys, datetime, titlecase, re
 
 class VQROnlineFrame(gui_common.MainFrame):
-    def __init__(self, showFrame = True):
+    def __init__(self, showFrame = True, iconPath = None):
         super(VQROnlineFrame, self).__init__('Virginia Quarterly Review Online Printer',
                                             VQROnlineURLInfoBox(),
-                                            showFrame = showFrame)
+                                            showFrame = showFrame,
+                                            iconPath = iconPath)
 
 class VQROnlineURLInfoBox(gui_common.URLInfoBox):
     def getMetaDataDict(self, tree):

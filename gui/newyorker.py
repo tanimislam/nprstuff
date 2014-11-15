@@ -5,9 +5,9 @@ from PyQt4.QtCore import *
 import json, gui_common, sys, datetime
 
 class NewYorkerFrame(gui_common.MainFrame):
-    def __init__(self, showFrame = True):
+    def __init__(self, showFrame = True, iconPath = None):
         super(NewYorkerFrame, self).__init__('New Yorker Printer', NewYorkerURLInfoBox(),
-                                             showFrame = showFrame)        
+                                             showFrame = showFrame, iconPath = iconPath)        
         
 class NewYorkerURLInfoBox(gui_common.URLInfoBox):
     def getMetaDataDict(self, tree):
