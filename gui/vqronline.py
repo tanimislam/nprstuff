@@ -2,13 +2,13 @@
 
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
-import gui_common, sys, datetime
+import gui_common, sys, datetime, titlecase
 
 class VQROnlineFrame(gui_common.MainFrame):
     def __init__(self, showFrame = True):
-        super(NYTimesFrame, self).__init__('Virginia Quarterly Review Online Printer',
-                                           VQROnlineURLInfoBox(),
-                                           showFrame = showFrame)
+        super(VQROnlineFrame, self).__init__('Virginia Quarterly Review Online Printer',
+                                            VQROnlineURLInfoBox(),
+                                            showFrame = showFrame)
 
 class VQROnlineURLInfoBox(gui_common.URLInfoBox):
     def getMetaDataDict(self, tree):
@@ -26,15 +26,32 @@ class VQROnlineURLInfoBox(gui_common.URLInfoBox):
         if len(img_subelems) != 1: return {}
         meta_dict['pic_url'] = max(img_subelems).get('src')
         #
-        
-        elems_one = filter(lambda elem: 'name' in elem.keys() and
-                           'content' in elem.keys() and
-                           elem.get('name') in ( 'hdl', 'author', 'ptime'), tree.iter('meta'))
-        meta_dict = { remap[elem.get('name')] : elem.get('content') for elem in elems_one }
-        elems_two = filter(lambda elem: 'property' in elem.keys() and
-                           elem.get('property') == 'og:image', tree.iter('meta'))
-        for elem in elems_two:
-            meta_dict['pic_url'] = elem.get('content')
+        # title
+        title_elems = filter(lambda elem: 'content' in elem.keys() and
+                             'property' in elem.keys() and
+                             elem.get('property') == 'dc:title',
+                             tree.iter('meta'))
+        if len(title_elems) != 1: return meta_dict
+        title_elem = max(title_elems)
+        meta_dict['title'] = titlecase.titlecase( title_elem.get('content') )
+        #
+        # date_string
+        date_elems = filter(lambda elem: 'class' in elem.keys() and
+                            elem.get('class') == 'issue-title' and
+                            len(list(elem.iter('a'))) == 1 and
+                            max(list(elem.iter('a'))).text is not None,
+                            tree.iter('div'))
+        if len(date_elems) != 1: return meta_dict
+        meta_dict['date_string'] = max(list(max(date_elems).iter('a'))).text_content().strip()
+        #
+        # author
+        author_elems = filter(lambda elem: 'class' in elem.keys() and
+                              elem.get('class') == 'byline' and
+                              len(list(elem.iter('a'))) == 1 and
+                              max(list(elem.iter('a'))).text is not None,
+                              tree.iter('h3'))
+        if len(author_elems) != 1: return meta_dict
+        meta_dict['author'] = titlecase.titlecase(max(list(max(author_elems))).text_content().strip())            
         return meta_dict
 
     def getData(self, tree ):
@@ -48,12 +65,18 @@ class VQROnlineURLInfoBox(gui_common.URLInfoBox):
         return textData
 
     def getDate(self, dateString):
-        return datetime.datetime.strptime( dateString, '%Y%m%d%H%M%S' )
+        date_map = { 'Fall' : 'September 15',
+                     'Winter' : 'December 15',
+                     'Summer' : 'June 15',
+                     'Spring' : 'March 15' }
+        fixedString = ', '.join([ date_map[ dateString.split()[0] ],
+                                  dateString.split()[1] ])
+        return datetime.datetime.strptime( fixedString, '%B %d, %Y')
 
     def __init__(self):
-        super(NYTimesURLInfoBox, self).__init__('NY Times URL')
+        super(VQROnlineURLInfoBox, self).__init__('VQR Online URL')
 
 if __name__=='__main__':
     qApp = QApplication(sys.argv)
-    nyf = NYTimesFrame()
+    nyf = VQROnlineFrame()
     sys.exit( qApp.exec_() )
