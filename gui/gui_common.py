@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 from PyQt4.QtGui import *
+from PyQt4.QtCore import *
+import os
 
 class CustomScrollArea(QScrollArea):
     def __init__(self):
