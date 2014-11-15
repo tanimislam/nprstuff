@@ -34,6 +34,12 @@ class PictureLabel(QLabel):
         self.setFixedSize(400, 400)
         self.setStyleSheet( 'background-color: #faf2e3' )
         self.hide()
+        #
+        # default action when pressing the escape key
+        closeEscAction = QAction(self)
+        closeEscAction.setShortcut('Esc')
+        closeEscAction.triggered.connect(self.myParent.closePicture)
+        self.addAction(closeEscAction)
 
     def closeEvent(self, evt):
         evt.ignore()
