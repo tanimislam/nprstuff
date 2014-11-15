@@ -2,7 +2,7 @@
 
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
-import gui_common, sys, datetime, titlecase
+import gui_common, sys, datetime, titlecase, re
 
 class VQROnlineFrame(gui_common.MainFrame):
     def __init__(self, showFrame = True):
@@ -24,7 +24,7 @@ class VQROnlineURLInfoBox(gui_common.URLInfoBox):
                               elem.get('typeof') == 'foaf:Image' and
                               'src' in elem.keys(), img_elem.iter('img'))
         if len(img_subelems) != 1: return {}
-        meta_dict['pic_url'] = max(img_subelems).get('src')
+        meta_dict['pic_url'] = re.sub('^/+', 'http://', max(img_subelems).get('src'))
         #
         # title
         title_elems = filter(lambda elem: 'content' in elem.keys() and
@@ -33,7 +33,8 @@ class VQROnlineURLInfoBox(gui_common.URLInfoBox):
                              tree.iter('meta'))
         if len(title_elems) != 1: return meta_dict
         title_elem = max(title_elems)
-        meta_dict['title'] = titlecase.titlecase( title_elem.get('content') )
+        meta_dict['title'] = title_elem.get('content')
+        print meta_dict
         #
         # date_string
         date_elems = filter(lambda elem: 'class' in elem.keys() and
