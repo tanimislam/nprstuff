@@ -10,9 +10,10 @@ class MainGui(QTabWidget):
         nyf = newyorker.NewYorkerFrame(showFrame = False)
         nyt = nytimes.NYTimesFrame(showFrame = False)
         self.setStyleSheet('QTabWidget {background-color: #f4faff; }')
-        self.addTab( nyf, 'New Yorker Printer' )
-        self.addTab( nyt, 'NYTimes Printer' )
-        self.addTab( vqronline.VQROnlineFrame(showFrame = False), 'VQR Online Printer')
+        self.addTab( nyf, QIcon('icons/newyorker.png'), 'New Yorker Printer' )
+        self.addTab( nyt, QIcon('icons/nytimes.png'), 'NYTimes Printer' )
+        self.addTab( vqronline.VQROnlineFrame(showFrame = False),
+                     QIcon('icons/vqr.png'), 'VQR Online Printer')
         self.setWindowTitle('Main Printing GUI')
         self.setCurrentIndex(0)
         #

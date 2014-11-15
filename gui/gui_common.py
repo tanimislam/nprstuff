@@ -151,7 +151,7 @@ class URLInfoBox(QLineEdit):
         return data_dict
 
 class MainFrame(QGroupBox):
-    def __init__(self, windowTitle, urlInfoBox, showFrame = True):
+    def __init__(self, windowTitle, urlInfoBox, showFrame = True, iconPath = None):
         super(MainFrame, self).__init__()
         qfd = QFontDatabase()
         self.defaultFont = min(filter(lambda fam: qfd.isFixedPitch(fam), qfd.families()))
@@ -159,6 +159,9 @@ class MainFrame(QGroupBox):
             raise ValueError("Error, could find no fixed width fonts.")
         #
         self.pictureLabel = PictureLabel( self )
+        #
+        if iconPath is not None and os.path.isfile( iconPath ):
+            self.setWindowIcon( QIcon( iconPath ) )
         #
         self.setWindowTitle(windowTitle)
         urlInfoBox.addParent( self )
