@@ -2,7 +2,7 @@
 
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
-import newyorker, nytimes, sys
+import newyorker, nytimes, vqronline, sys
 
 class MainGui(QTabWidget):
     def __init__(self):
@@ -12,6 +12,7 @@ class MainGui(QTabWidget):
         self.setStyleSheet('QTabWidget {background-color: #f4faff; }')
         self.addTab( nyf, 'New Yorker Printer' )
         self.addTab( nyt, 'NYTimes Printer' )
+        self.addTab( vqronline.VQROnlineFrame(showFrame = False), 'VQR Online Printer')
         self.setWindowTitle('Main Printing GUI')
         self.setCurrentIndex(0)
         #
