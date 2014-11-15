@@ -241,7 +241,7 @@ class MainFrame(QGroupBox):
         topBox.setStyleSheet('QGroupBox { background-color: #E4EEF2; }')
         qgl = QGridLayout()
         topBox.setLayout( qgl )
-        qgl.addWidget( QLabel('New Yorker URL'), 0, 0, 1, 1)
+        qgl.addWidget( QLabel( self.urlInfoBox.urlInfoLabel), 0, 0, 1, 1)
         qgl.addWidget( self.urlInfoBox, 0, 1, 1, 3)
         qgl.addWidget( QLabel('Author'), 1, 0, 1, 1)
         qgl.addWidget( self.authorName, 1, 1, 1, 2)
