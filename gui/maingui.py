@@ -7,8 +7,8 @@ import newyorker, nytimes, sys
 class MainGui(QTabWidget):
     def __init__(self):
         super(MainGui, self).__init__()
-        nyf = newyorker.NewYorkerFrame(mainFrame = False)
-        nyt = nytimes.NYTimesFrame(mainFrame = False)
+        nyf = newyorker.NewYorkerFrame(showFrame = False)
+        nyt = nytimes.NYTimesFrame(showFrame = False)
         self.setStyleSheet('QTabWidget {background-color: #f4faff; }')
         self.addTab( nyf, 'New Yorker Printer' )
         self.addTab( nyt, 'NYTimes Printer' )
