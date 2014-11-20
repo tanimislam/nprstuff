@@ -159,6 +159,11 @@ def get_freshair(outputdir, date_s, order_totnum = None,
     except ValueError:
         title_mp3_urls = _process_freshair_titlemp3_tuples_two(tree)
         
+    if len(title_mp3_urls) == 0:
+        print 'Error, could not find any Fresh Air episodes for date %s.' % \
+            npr_utils.get_datestring( date_s )
+        return
+
     titles, mp3urls = zip(*title_mp3_urls)
     title = date_s.strftime('%A, %B %d, %Y')
     title = '%s: %s.' % ( title,
