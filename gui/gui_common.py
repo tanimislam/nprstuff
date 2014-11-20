@@ -51,7 +51,7 @@ class PictureLabel(QLabel):
         if evt.button() == Qt.RightButton:
             while( True ):
                 fname = str(QFileDialog.getSaveFileName(self, 'Save Picture',
-                                                        os.getcwd(), filter = '*.png') )
+                                                        os.path.expanduser('~'), filter = '*.png') )
                 if fname.lower().endswith('.png') or len(os.path.basename(fname)) == 0:
                     break
         if fname.lower().endswith('.png'):
@@ -303,7 +303,7 @@ class MainFrame(QGroupBox):
             self._disableMainDialog()
             while(True):
                 fname = str(QFileDialog.getSaveFileName(self, 'Save File', 
-                                                        os.getcwd(), filter = '*.txt' ) )
+                                                        os.path.expanduser('~'), filter = '*.txt' ) )
                 if fname.lower().endswith('.txt') or len(os.path.basename(fname)) == 0:
                     break
             if fname.lower().endswith('.txt'):

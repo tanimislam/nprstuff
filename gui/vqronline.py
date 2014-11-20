@@ -19,8 +19,8 @@ class VQROnlineURLInfoBox(gui_common.URLInfoBox):
         # pic_url
         img_elems = filter(lambda elem: 'class' in elem.keys() and
                            elem.get('class') == 'field-image-file', tree.iter('figure'))
-        if len(img_elems) != 1: return {}
-        img_elem = max(img_elems)
+        if len(img_elems) == 0: return {}
+        img_elem = img_elems[0]
         img_subelems = filter(lambda elem: 'typeof' in elem.keys() and
                               elem.get('typeof') == 'foaf:Image' and
                               'src' in elem.keys(), img_elem.iter('img'))
@@ -35,7 +35,6 @@ class VQROnlineURLInfoBox(gui_common.URLInfoBox):
         if len(title_elems) != 1: return meta_dict
         title_elem = max(title_elems)
         meta_dict['title'] = title_elem.get('content')
-        print meta_dict
         #
         # date_string
         date_elems = filter(lambda elem: 'class' in elem.keys() and
@@ -80,5 +79,5 @@ class VQROnlineURLInfoBox(gui_common.URLInfoBox):
 
 if __name__=='__main__':
     qApp = QApplication(sys.argv)
-    nyf = VQROnlineFrame()
+    nyf = VQROnlineFrame(iconPath = 'icons/vqr.png')
     sys.exit( qApp.exec_() )
