@@ -22,13 +22,24 @@ class NewYorkerURLInfoBox(gui_common.URLInfoBox):
                   'image_url' : 'pic_url' }
         return { remap[ key ] : meta_dict[key] for key in set(meta_dict.keys()) and set(remap.keys()) }
 
-    def getData( self, tree ):
+    def getData(self, tree):
+        textData = self._getDataOne(tree)
+        if textData is not None: return textData
+        return self._getDataTwo(tree)
+
+    def _getDataOne( self, tree ):
         s_end = u'\u2666'
         paras = list( tree.iter('p') )
         last_idx =  max( enumerate(paras), key = lambda tup:
-                             s_end in unicode(tup[1].text_content()) )[0]
+                         s_end in unicode(tup[1].text_content()) )[0]
         textData = [  unicode(para.text_content()) for para in paras[:last_idx+1] ]
         if last_idx == 0: return None
+        return textData
+
+    def _getDataTwo(self, tree):
+        paras = filter(lambda elem: 'word_count' in elem.keys(), tree.iter('p'))
+        if len(paras) == 0: return None
+        textData = [ unicode(para.text_content()) for para in paras ]
         return textData
 
     def getDate( self, dateString ):
