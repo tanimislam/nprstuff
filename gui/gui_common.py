@@ -154,7 +154,9 @@ class MainFrame(QGroupBox):
     def __init__(self, windowTitle, urlInfoBox, showFrame = True, iconPath = None):
         super(MainFrame, self).__init__()
         qfd = QFontDatabase()
-        self.defaultFont = min(filter(lambda fam: qfd.isFixedPitch(fam), qfd.families()))
+        qfd.addApplicationFont('fonts/OxygenMono-Regular.otf')
+        #fams = filter(lambda fam: qfd.isFixedPitch(fam), qfd.families())
+        self.defaultFont = u'Oxygen Mono'
         if self.defaultFont is None:
             raise ValueError("Error, could find no fixed width fonts.")
         #
