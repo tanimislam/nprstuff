@@ -155,8 +155,12 @@ class MainFrame(QGroupBox):
         super(MainFrame, self).__init__()
         qfd = QFontDatabase()
         qfd.addApplicationFont('fonts/OxygenMono-Regular.otf')
+        qfd.addApplicationFont('fonts/monof55.ttf')
+        qfd.addApplicationFont('fonts/Anonymous Pro.ttf')
         #fams = filter(lambda fam: qfd.isFixedPitch(fam), qfd.families())
-        self.defaultFont = u'Oxygen Mono'
+        #self.defaultFont = u'Oxygen Mono'
+        #self.defaultFont = u'monofur'
+        self.defaultFont = u'Anonymous Pro'
         if self.defaultFont is None:
             raise ValueError("Error, could find no fixed width fonts.")
         #
@@ -197,7 +201,7 @@ class MainFrame(QGroupBox):
             """)
         #
         # set font for articleText
-        self.qf = QFont( self.defaultFont, pointSize = 12 )
+        self.qf = QFont( self.defaultFont, pointSize = 14 )
         self.articleText.setFont( self.qf )
         #
         # set layout

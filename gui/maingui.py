@@ -37,7 +37,7 @@ class MainGui(QTabWidget):
         #
         # make visible
         qfm = QFontMetrics( nyf.qf )
-        wdth = int( 70 * qfm.averageCharWidth() * 1.25 )
+        wdth = int( 70 * qfm.averageCharWidth() * 1.15 )
         self.resize( wdth, 900)
         self.setFixedWidth( wdth )
         self.show()
