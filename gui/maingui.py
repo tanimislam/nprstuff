@@ -55,6 +55,6 @@ class MainGui(QTabWidget):
         self.setCurrentIndex( nIndx )
 
 if __name__=='__main__':
-    qApp = QApplication(sys.argv)
+    qApp = QApplication(sys.argv)    
     mg = MainGui()
     sys.exit(qApp.exec_() )
