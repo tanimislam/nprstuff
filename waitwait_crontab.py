@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-import waitwait, time
+import waitwait, time, datetime
+import npr_utils
 
 def waitwait_crontab():
     """
@@ -8,14 +9,14 @@ def waitwait_crontab():
     """
 
     # get current time
-    current_time = time.localtime()
-    if current_time.tm_wday != 5:
+    current_date = datetime.date.fromtimestamp( time.time())
+    if not npr_utils.is_saturday( current_date ):
         print "Error, today is not a Saturday. Instead, today is %s." % \
-            time.strftime('%A', current_time)
+            current_date.strftime('%A')
         return
     
     # now download the episode into the correct directory
-    waitwait.get_waitwait('/mnt/media/waitwait', current_time)
+    waitwait.get_waitwait('/mnt/media/waitwait', current_date)
 
 if __name__=='__main__':
     waitwait_crontab()
