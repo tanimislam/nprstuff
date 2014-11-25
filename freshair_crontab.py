@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-import freshair, time
+import freshair, datetime, time
+import npr_utils
 
 def freshair_crontab():
     """
@@ -8,14 +9,14 @@ def freshair_crontab():
     """
 
     # get current time
-    current_time = time.localtime()
-    if current_time.tm_wday not in xrange(6):
+    current_date = datetime.date.fromtimestamp(time.time())
+    if not npr_utils.is_weekday( current_date ):
         print "Error, today is not a weekday. Instead, today is %s." % \
-            time.strftime('%w', current_time)
+            current_date.strftime('%A')
         return
     
     # now download the episode into the correct directory
-    freshair.get_freshair('/mnt/media/freshair', current_time)
+    freshair.get_freshair('/mnt/media/freshair', current_date)
 
 if __name__=='__main__':
     freshair_crontab()
