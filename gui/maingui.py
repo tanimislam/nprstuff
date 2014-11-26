@@ -7,6 +7,7 @@ import newyorker, nytimes, vqronline, sys
 class MainGui(QTabWidget):
     def __init__(self):
         super(MainGui, self).__init__()
+        self.setWindowIcon( QIcon('icons/maingui.png') )
         nyf = newyorker.NewYorkerFrame(showFrame = False)
         nyt = nytimes.NYTimesFrame(showFrame = False)
         self.setStyleSheet('QTabWidget {background-color: #f4faff; }')
