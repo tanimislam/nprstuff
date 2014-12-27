@@ -6,10 +6,10 @@ import gui_common, sys, datetime, titlecase, re
 
 class MediumFrame(gui_common.MainFrame):
     def __init__(self, showFrame = True, iconPath = None):
-        super(VQROnlineFrame, self).__init__('Medium.com',
-                                            MediumURLInfoBox(),
-                                            showFrame = showFrame,
-                                            iconPath = iconPath)
+        super(MediumFrame, self).__init__('Medium.com',
+                                          MediumURLInfoBox(),
+                                          showFrame = showFrame,
+                                          iconPath = iconPath)
 
 class MediumURLInfoBox(gui_common.URLInfoBox):
     def getMetaDataDict(self, tree):
@@ -51,7 +51,7 @@ class MediumURLInfoBox(gui_common.URLInfoBox):
 
     def getDate(self, dateString):
         tStamp = int( dateString) / 1000.0
-        return datetime.datetime.fromtimestam( tStamp )
+        return datetime.datetime.fromtimestamp( tStamp )
 
     def __init__(self):
         super(MediumURLInfoBox, self).__init__('Medium.com')
