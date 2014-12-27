@@ -14,27 +14,24 @@ class VQROnlineFrame(gui_common.MainFrame):
 class VQROnlineURLInfoBox(gui_common.URLInfoBox):
     def getMetaDataDict(self, tree):
         meta_dict = {}
-        remap = { 'hdl' : 'title', 'author' : 'author', 'ptime' : 'date_string' }
+        #remap = { 'hdl' : 'title', 'author' : 'author', 'ptime' : 'date_string' }
+        paras = filter(lambda elem: elem.text_content(), tree.iter('p'))
         #
         # pic_url
-        img_elems = filter(lambda elem: 'class' in elem.keys() and
-                           elem.get('class') == 'field-image-file', tree.iter('figure'))
-        if len(img_elems) == 0: return {}
-        img_elem = img_elems[0]
-        img_subelems = filter(lambda elem: 'typeof' in elem.keys() and
-                              elem.get('typeof') == 'foaf:Image' and
-                              'src' in elem.keys(), img_elem.iter('img'))
-        if len(img_subelems) != 1: return {}
-        meta_dict['pic_url'] = re.sub('^/+', 'http://', max(img_subelems).get('src'))
+        #img_elems = filter(lambda elem: 'class' in elem.keys() and
+        #                   elem.get('class') == 'field-image-file', tree.iter('figure'))
+        #if len(img_elems) == 0: return {}
+        #img_elem = img_elems[0]
+        #img_subelems = filter(lambda elem: 'typeof' in elem.keys() and
+        #                      elem.get('typeof') == 'foaf:Image' and
+        #                      'src' in elem.keys(), img_elem.iter('img'))
+        #if len(img_subelems) != 1: return {}
+        #meta_dict['pic_url'] = re.sub('^/+', 'http://', max(img_subelems).get('src'))
+        meta_dict['pic_url'] = 'https://medium.com/apple-touch-icon-precomposed-152.png'
         #
         # title
-        title_elems = filter(lambda elem: 'content' in elem.keys() and
-                             'property' in elem.keys() and
-                             elem.get('property') == 'dc:title',
-                             tree.iter('meta'))
-        if len(title_elems) != 1: return meta_dict
-        title_elem = max(title_elems)
-        meta_dict['title'] = title_elem.get('content')
+        title = titlecase.titlecase( ' '.join(paras[0].text_content().split()[1:] ) )
+        meta_dict['title'] = title
         #
         # date_string
         date_elems = filter(lambda elem: 'class' in elem.keys() and
