@@ -8,13 +8,15 @@ class MainGui(QTabWidget):
     def __init__(self):
         super(MainGui, self).__init__()
         self.setWindowIcon( QIcon('icons/maingui.png') )
-        nyf = newyorker.NewYorkerFrame(showFrame = False)
-        nyt = nytimes.NYTimesFrame(showFrame = False)
         self.setStyleSheet('QTabWidget {background-color: #f4faff; }')
-        self.addTab( nyf, QIcon('icons/newyorker.png'), 'New Yorker Printer' )
-        self.addTab( nyt, QIcon('icons/nytimes.png'), 'NYTimes Printer' )
+        self.addTab( newyorker.NewYorkerFrame(showFrame = False),
+                     QIcon('icons/newyorker.png'), 'New Yorker Printer' )
+        self.addTab( nytimes.NYTimesFrame(showFrame = False),
+                     QIcon('icons/nytimes.png'), 'NYTimes Printer' )
         self.addTab( vqronline.VQROnlineFrame(showFrame = False),
                      QIcon('icons/vqr.png'), 'VQR Online Printer')
+        self.addTab( medium.MediumFrame(showFrame = False),
+                     QIcon('icons/medium.png'), 'Medium.com')
         self.setWindowTitle('Main Printing GUI')
         self.setCurrentIndex(0)
         #
@@ -53,6 +55,12 @@ class MainGui(QTabWidget):
         thirdTabAction.setShortcut('Ctrl+3')
         thirdTabAction.triggered.connect(self.thirdIndex)
         self.addAction(thirdTabAction)
+        #
+        # Ctrl+4 -> medium.com
+        fourthTabAction = QAction(self)
+        fourthTabAction.setShortcut('Ctrl+4')
+        fourthTabAction.triggered.connect(self.fourthIndex)
+        self.addAction(fourthTabAction)
         
         #
         # make visible
@@ -70,6 +78,9 @@ class MainGui(QTabWidget):
         
     def thirdIndex(self):
         self.setCurrentIndex(2)
+        
+    def fourthIndex(self):
+        self.setCurrentIndex(3)
         
     def nextTab(self):
         cIndx = self.currentIndex()
