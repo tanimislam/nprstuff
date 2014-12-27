@@ -28,8 +28,13 @@ class VQROnlineURLInfoBox(gui_common.URLInfoBox):
         meta_dict['pic_url'] = re.sub('^/+', 'http://', max(img_subelems).get('src'))
         #
         # title
-        title = titlecase.titlecase( ' '.join(paras[0].text_content().split()[1:] ) )
-        meta_dict['title'] = title
+        title_elems = filter(lambda elem: 'content' in elem.keys() and
+                             'property' in elem.keys() and
+                             elem.get('property') == 'dc:title',
+                             tree.iter('span'))
+        if len(title_elems) != 1: return meta_dict
+        title_elem = max(title_elems)
+        meta_dict['title'] = title_elem.get('content')
         #
         # date_string
         date_elems = filter(lambda elem: 'class' in elem.keys() and
