@@ -179,29 +179,33 @@ def get_freshair(outputdir, date_s, order_totnum = None,
     outfiles = filter(None, pool.map(_download_file, zip( mp3urls, outfiles ) ) )
     
     # sox magic command
-    time0 = time.time()
-    wgdate = date_s.strftime('%d-%b-%Y')
-    wavfile = os.path.join(outputdir, 'freshair%s.wav' % wgdate ).replace(' ', '\ ')
-    fnames = [ filename.replace(' ', '\ ') for filename in outfiles ]
-    split_cmd = [ '(for', 'file', 'in', ] + fnames + [ 
-        ';', sox_exec, '$file', '-t', 'cdr', '-', ';', 'done)' ] + [ 
-            '|', sox_exec, 't-', 'cdr', '-', wavfile ]
-    split_cmd = [ sox_exec, ] + fnames + [ wavfile, ]
-    proc = subprocess.Popen(split_cmd, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-    stdout_val, stderr_val = proc.communicate()
-    for filename in outfiles:
-        os.remove(filename)
+    #wgdate = date_s.strftime('%d-%b-%Y')
+    #wavfile = os.path.join(outputdir, 'freshair%s.wav' % wgdate ).replace(' ', '\ ')
+    #split_cmd = [ '(for', 'file', 'in', ] + fnames + [ 
+    #    ';', sox_exec, '$file', '-t', 'cdr', '-', ';', 'done)' ] + [ 
+    #        '|', sox_exec, 't-', 'cdr', '-', wavfile ]
+    #split_cmd = [ sox_exec, ] + fnames + [ wavfile, ]
+    #print split_cmd
+    #return
+    #proc = subprocess.Popen(split_cmd, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+    #stdout_val, stderr_val = proc.communicate()
+    #for filename in outfiles:
+    #    os.remove(filename)
 
     # now convert to m4a file
     # /usr/bin/avconv -y -i freshair$wgdate.wav -ar 44100 -ac 2 -aq 400 -acodec libfaac NPR.FreshAir."$decdate".m4a ;
+    time0 = time.time()
+    fnames = [ filename.replace(' ', '\ ') for filename in outfiles ]
+    sox_string_cmd = 'concat:%s' % '|'.join(fnames)
     m4afile = os.path.join(outputdir, 'NPR.FreshAir.%s.m4a' % decdate )
-    split_cmd = [ avconv_exec, '-y', '-i', wavfile, '-ar', '44100', '-ac', '2', '-threads', '%d' % multiprocessing.cpu_count(),
+    split_cmd = [ avconv_exec, '-y', '-i', sox_string_cmd, '-ar', '44100', '-ac', '2', '-threads', '%d' % multiprocessing.cpu_count(),
                   '-strict', 'experimental', '-acodec', 'aac', m4afile ]
     proc = subprocess.Popen(split_cmd, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
     stdout_val, stderr_val = proc.communicate()
-    
+
     # remove wav file
-    os.remove( wavfile )
+    for filename in outfiles:
+        os.remove(filename)
     
     # now put in metadata
     mp4tags = mutagen.mp4.MP4(m4afile)
