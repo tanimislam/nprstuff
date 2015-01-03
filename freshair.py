@@ -229,6 +229,7 @@ if __name__=='__main__':
                       help = 'If chosen, run freshair.py in debug mode. Useful for debugging :)',
                       default = False)
     opts, args = parser.parse_args()
-    fname = get_freshair( opts.dirname, npr_utils.get_time_from_datestring( opts.date ),
+    dirname = os.path.expanduser( opts.dirname )
+    fname = get_freshair( dirname, npr_utils.get_time_from_datestring( opts.date ),
                           debug = opts.debug )
     
