@@ -80,7 +80,7 @@ def get_all_waitwaits_year( yearnum,
     if verbose:
         print 'processed all Wait Wait downloads for %04d in %0.3f seconds.' % ( yearnum, time.time() - time0 )
 
-def get_title_wavfile_standard(date_s, outputdir, sox_exec, 
+def get_title_wavfile_standard(date_s, outputdir, avconv_exec, 
                                debugonly = False, npr_api_key = None):
     if npr_api_key is None:
         npr_api_key = npr_utils.get_api_key()
@@ -131,10 +131,13 @@ def get_title_wavfile_standard(date_s, outputdir, sox_exec,
     wgdate = date_s.strftime('%d-%b-%Y')
     wavfile = os.path.join(outputdir, 'waitwait%s.wav' % wgdate ).replace(' ', '\ ')
     fnames = [ filename.replace(' ', '\ ') for filename in outfiles ]
-    split_cmd = [ '(for', 'file', 'in', ] + fnames + [ 
-        ';', sox_exec, '$file', '-t', 'cdr', '-', ';', 'done)' ] + [ 
-            '|', sox_exec, 't-', 'cdr', '-', wavfile ]
-    split_cmd = [ sox_exec, ] + fnames + [ wavfile, ]
+    #split_cmd = [ '(for', 'file', 'in', ] + fnames + [ 
+    #    ';', sox_exec, '$file', '-t', 'cdr', '-', ';', 'done)' ] + [ 
+    #        '|', sox_exec, 't-', 'cdr', '-', wavfile ]
+    # split_cmd = [ sox_exec, ] + fnames + [ wavfile, ]
+    sox_string_cmd = 'concat:%s' % '|'.join( fnames )
+    split_cmd = [ avconv_exec, '-y', '-i', sox_string_cmd, '-ar', '44100', '-ac', '2', '-threads', 
+                  '%d' % multiprocessing.cpu_count(), wavfile ]
     proc = subprocess.Popen(split_cmd, stdout = subprocess.PIPE,
                             stderr = subprocess.PIPE)
     stdout_val, stderr_val = proc.communicate()
@@ -172,7 +175,7 @@ def get_waitwait(outputdir, date_s, order_totnum = None,
     decdate = npr_utils.get_decdate( date_s )
 
     if year >= 2006:
-        tup = get_title_wavfile_standard(date_s, outputdir, sox_exec,
+        tup = get_title_wavfile_standard(date_s, outputdir, avconv_exec,
                                          debugonly = debugonly )
         if tup is None:
             return
