@@ -220,6 +220,7 @@ def get_waitwait(outputdir, date_s, order_totnum = None,
     mp4tags.tags['\xa9cmt'] = [ "more info at : NPR Web site", ]
     mp4tags.tags['trkn'] = [ ( order_in_year, tot_in_year ), ]
     mp4tags.tags['covr'] = [ mutagen.mp4.MP4Cover(file_data, mutagen.mp4.MP4Cover.FORMAT_PNG ), ]
+    mp4tags.tags['\xa9gen'] = [ 'Podcast', ]
     mp4tags.save()
     return m4afile
 
