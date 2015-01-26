@@ -17,13 +17,13 @@ def get_americanlife_info(epno):
         raise ValueError("Error, could not find This American Life episode %d, because could not open webpage." % epno)
 
     enc = req.headers['content-type'].split(';')[-1].split('=')[-1].strip().upper()
-    if enc != 'UTF-8':
+    if enc not in ( 'UTF-8', ):
         tree = lxml.html.fromstring(unicode(req.read(), encoding=enc))
     else:
         tree = lxml.html.fromstring(req.read())
 
     elem_info_list = filter(lambda elem: 'class' in elem.keys() and
-                                         elem.get('class') == "top-inner clearfix", tree.iter('div'))
+                            elem.get('class') == "top-inner clearfix", tree.iter('div'))
     if len(elem_info_list) != 1:
         raise ValueError("Error, cannot find date and title for This American Life episode #%d," % epno +
                          " because could not get proper elem from HTML source.")
@@ -63,7 +63,9 @@ def get_american_life(epno, directory = '/mnt/media/thisamericanlife'):
     if not os.path.isdir(directory):
         raise ValueError("Error, %s is not a directory." % directory)
     outfile = os.path.join(directory, 'PRI.ThisAmericanLife.%03d.mp3' % epno)
-    urlopn = 'http://audio.thisamericanlife.org/jomamashouse/ismymamashouse/%d.mp3' % epno
+    #urlopn = 'http://audio.thisamericanlife.org/jomamashouse/ismymamashouse/%d.mp3' % epno
+    urlopn = 'http://www.podtrac.com/pts/redirect.mp3/podcast.thisamericanlife.org/podcast/%d.mp3' % epno
+    
     try:
         with open(outfile, 'wb') as openfile: openfile.write(urllib2.urlopen(urlopn).read())
     except urllib2.HTTPError:
