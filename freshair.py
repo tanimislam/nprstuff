@@ -105,7 +105,7 @@ def _process_freshair_titlemp3_tuples_two(tree):
 
 def get_freshair(outputdir, date_s, order_totnum = None,
                  file_data = None, debug = False,
-                 exec_dict = None):
+                 exec_dict = None, check_if_exist = False):
     
     # check if outputdir is a directory
     if not os.path.isdir(outputdir):
@@ -126,6 +126,11 @@ def get_freshair(outputdir, date_s, order_totnum = None,
 
     if file_data is None:
         file_data = get_freshair_image()
+
+    decdate = date_s.strftime('%d.%m.%Y')
+    m4afile = os.path.join(outputdir, 'NPR.FreshAir.%s.m4a' % decdate )
+    if check_if_exist and os.path.isfile(m4afile):
+        return
     
     nprURL = npr_utils.get_NPR_URL(date_s, _npr_FreshAir_progid, 
                                    npr_utils.get_api_key() )
@@ -133,7 +138,8 @@ def get_freshair(outputdir, date_s, order_totnum = None,
     
     # download this data into an lxml elementtree
     tree = lxml.etree.fromstring( urllib2.urlopen(nprURL).read())
-    decdate = date_s.strftime('%d.%m.%Y')
+    
+    
     if debug:
         print 'URL = %s' % nprURL
         with open(os.path.join(outputdir, 'NPR.FreshAir.tree.%s.xml' % decdate), 'w') as openfile:
@@ -197,7 +203,6 @@ def get_freshair(outputdir, date_s, order_totnum = None,
     time0 = time.time()
     fnames = [ filename.replace(' ', '\ ') for filename in outfiles ]
     sox_string_cmd = 'concat:%s' % '|'.join(fnames)
-    m4afile = os.path.join(outputdir, 'NPR.FreshAir.%s.m4a' % decdate )
     split_cmd = [ avconv_exec, '-y', '-i', sox_string_cmd, '-ar', '44100', '-ac', '2', '-threads', '%d' % multiprocessing.cpu_count(),
                   '-strict', 'experimental', '-acodec', 'aac', m4afile ]
     proc = subprocess.Popen(split_cmd, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
