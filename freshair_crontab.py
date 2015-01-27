@@ -16,7 +16,8 @@ def freshair_crontab():
         return
     
     # now download the episode into the correct directory
-    freshair.get_freshair('/mnt/media/freshair', current_date)
+    freshair.get_freshair('/mnt/media/freshair', current_date,
+                          check_if_exist = True)
 
 if __name__=='__main__':
     freshair_crontab()
