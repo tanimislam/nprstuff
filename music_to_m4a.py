@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import os, magic, tagpy, subprocess
+import os, magic, tagpy, subprocess, filecmp
 import mutagen.mp4, urlparse, urllib2
 from cStringIO import StringIO
 from PIL import Image
@@ -42,6 +42,24 @@ def _get_file_type(file_data):
         return None
            
 
+def rename_m4a(m4afilename):
+    if not os.path.isfile(m4afilename):
+        return
+    if not m4afilename.endswith('.m4a'):
+        return
+    if magic.from_file(m4afilename, mime = True).strip() != 'audio/mp4':
+        return
+    mp4tags = mutagen.mp4.MP4(m4afilename)
+    curdir = os.path.dirname( os.path.abspath( m4afilename ) )
+    if len(set([ '\xa9nam', '\xa9ART' ]) - set(mp4tags.keys())) != 0:
+        return
+    song_title = max(mp4tags.tags['\xa9nam'])
+    song_artist = max(mp4tags.tags['\xa9ART'])
+    newfile = os.path.join(curdir, '%s.%s.m4a' % ( song_artist, song_title ) )
+    if os.path.isfile(newfile) and filecmp.cmp(newfile, m4afilename):
+        return
+    os.rename(m4afilename, newfile)
+    
 def music_to_m4a(filename, tottracks = None,
                  album_path = None, outfile = None,
                  verbose = True):
@@ -96,6 +114,8 @@ if __name__=='__main__':
                       help = 'Optional path to location of the album cover image file. Must be in JPEG or PNG.')
     parser.add_option('--quiet', dest='quiet', action='store_true', default = False,
                       help = 'If chosen, then verbosely print output of processing.')
+    parser.add_option('--rename', dest='do_rename', action='store_true', default = False,
+                      help = 'If chosen, simply rename the m4a file to the form <artist>.<song title>.m4a') 
     opts, args = parser.parse_args()
     if opts.inputfile is None:
         raise ValueError("Error, input file must be defined.")
@@ -105,9 +125,12 @@ if __name__=='__main__':
         raise ValueError("Error, given total number of tracks = %d <= 0." % opts.tottracks)
     verbose = not opts.quiet
     
-    music_to_m4a( opts.inputfile,
-                  tottracks = opts.tottracks,
-                  album_path = opts.albumloc,
-                  outfile = opts.outfile,
-                  verbose = verbose)
+    if not opts.do_rename:
+        music_to_m4a( opts.inputfile,
+                      tottracks = opts.tottracks,
+                      album_path = opts.albumloc,
+                      outfile = opts.outfile,
+                      verbose = verbose)
+    else:
+        rename_m4a( opts.inputfile )
                   
