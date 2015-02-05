@@ -5,7 +5,6 @@ import mutagen.mp4, urlparse, urllib2
 from cStringIO import StringIO
 from PIL import Image
 from optparse import OptionParser
-
 _files_to_convert_from = ( 'application/x-flac',
                            'audio/x-flac',
                            'application/ogg',
