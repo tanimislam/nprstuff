@@ -14,7 +14,7 @@ def change_date_of_file(input_tuple):
     if minus:
         yrs = -1
     for tagname in filter(lambda tn: tn in metadata,
-                          ( 'Exif.Image.Datetime',
+                          ( 'Exif.Image.DateTime',
                             'Exif.Photo.DateTimeOriginal',
                             'Exif.Photo.DateTimeDigitized' ) ):
         tag = metadata[tagname]
