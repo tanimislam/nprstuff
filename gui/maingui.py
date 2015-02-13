@@ -2,7 +2,7 @@
 
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
-import newyorker, nytimes, vqronline, medium, sys
+import newyorker, nytimes, vqronline, medium, lightspeed, sys
 
 class MainGui(QTabWidget):
     def __init__(self):
@@ -18,6 +18,8 @@ class MainGui(QTabWidget):
                      QIcon('icons/vqr.png'), 'VQR Online Printer')
         self.addTab( medium.MediumFrame(showFrame = False),
                      QIcon('icons/medium.png'), 'Medium.com')
+        self.addTab( lightspeed.LightSpeedFrame(showFrame = False),
+                     QIcon('icons/lightspeed.png'), 'Lightspeed Magazine')
         self.setWindowTitle('Main Printing GUI')
         self.setCurrentIndex(0)
         #
@@ -62,6 +64,12 @@ class MainGui(QTabWidget):
         fourthTabAction.setShortcut('Ctrl+4')
         fourthTabAction.triggered.connect(self.fourthIndex)
         self.addAction(fourthTabAction)
+        #
+        # Ctrl+5 -> lightspeed magazine
+        fifthTabAction = QAction(self)
+        fifthTabAction.setShortcut('Ctrl+5')
+        fifthTabAction.triggered.connect(self.fifthIndex)
+        self.addAction(fifthTabAction)
         
         #
         # make visible
@@ -82,6 +90,9 @@ class MainGui(QTabWidget):
         
     def fourthIndex(self):
         self.setCurrentIndex(3)
+
+    def fifthIndex(self):
+        self.setCurrentIndex(4)
         
     def nextTab(self):
         cIndx = self.currentIndex()
