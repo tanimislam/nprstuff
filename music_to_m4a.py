@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 
 import os, magic, tagpy, subprocess, filecmp
-import mutagen.mp4, urlparse, urllib2
+import mutagen.mp4, urlparse, urllib2, titlecase
 from cStringIO import StringIO
 from PIL import Image
 from optparse import OptionParser
-
 _files_to_convert_from = ( 'application/x-flac',
                            'audio/x-flac',
                            'application/ogg',
@@ -53,7 +52,7 @@ def rename_m4a(m4afilename):
     curdir = os.path.dirname( os.path.abspath( m4afilename ) )
     if len(set([ '\xa9nam', '\xa9ART' ]) - set(mp4tags.keys())) != 0:
         return
-    song_title = max(mp4tags.tags['\xa9nam'])
+    song_title = titlecase.titlecase( max(mp4tags.tags['\xa9nam']) )
     song_artist = max(mp4tags.tags['\xa9ART'])
     newfile = os.path.join(curdir, '%s.%s.m4a' % ( song_artist, song_title ) )
     if os.path.isfile(newfile) and filecmp.cmp(newfile, m4afilename):
@@ -68,14 +67,14 @@ def music_to_m4a(filename, tottracks = None,
     
     tags = tagpy.FileRef(filename).tag()
     artist = tags.artist
-    title = tags.title
+    title = titlecase.titlecase( tags.title )
     trackno = tags.track
     #
     if outfile is None:
         outfile = '%s.%s.m4a' % ( artist, title )
     
-    exec_path = [ '/usr/bin/avconv', '-y', '-i', filename, '-strict', 
-                  'experimental', '-aq', '400', outfile ]
+    exec_path = [ '/usr/bin/avconv', '-y', '-i', filename, '-map', '0:0', 
+                  '-strict', 'experimental', '-aq', '400', outfile ]
     proc = subprocess.Popen( exec_path, stdout = subprocess.PIPE,
                              stderr = subprocess.PIPE)
     stdout_val, stderr_val = proc.communicate()
@@ -83,6 +82,7 @@ def music_to_m4a(filename, tottracks = None,
         print stdout_val
 
     mp4tags = mutagen.mp4.MP4(outfile)
+    mp4tags['\xa9nam'] = [ title, ]
     if tottracks is not None:
         if 'trkn' not in mp4tags.tags.keys():
             mp4tags.tags['trkn'] = [ ( trackno, tottracks), ]
