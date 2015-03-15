@@ -67,7 +67,6 @@ class URLInfoBox(QLineEdit):
         
     def getDate(self, dateString):
         raise NotImplementedError("Error, abstract method must be implemented here")
-        # return datetime.datetime.strptime( dateString, '%Y%m%d%H%M%S' )
         
     def __init__(self, urlInfoLabel):
         super(URLInfoBox, self).__init__('')
