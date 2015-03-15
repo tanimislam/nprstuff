@@ -5,7 +5,7 @@ import os, sys, tagpy, time
 import urllib2, lxml.html
 from optparse import OptionParser
 
-def get_americanlife_info(epno):
+def get_americanlife_info(epno, throwException = True):
     """
     Returns a tuple of title, year given the episode number for This American Life.
     """
@@ -14,7 +14,10 @@ def get_americanlife_info(epno):
     try:
         req = urllib2.urlopen('http://www.thisamericanlife.org/radio-archives/episode/%d' % epno)
     except urllib2.HTTPError as e:
-        raise ValueError("Error, could not find This American Life episode %d, because could not open webpage." % epno)
+        if throwException:
+            raise ValueError("Error, could not find This American Life episode %d, because could not open webpage." % epno)
+        else:
+            return None
 
     enc = req.headers['content-type'].split(';')[-1].split('=')[-1].strip().upper()
     if enc not in ( 'UTF-8', ):
@@ -25,13 +28,19 @@ def get_americanlife_info(epno):
     elem_info_list = filter(lambda elem: 'class' in elem.keys() and
                             elem.get('class') == "top-inner clearfix", tree.iter('div'))
     if len(elem_info_list) != 1:
-        raise ValueError("Error, cannot find date and title for This American Life episode #%d," % epno +
-                         " because could not get proper elem from HTML source.")
+        if throwException:
+            raise ValueError("Error, cannot find date and title for This American Life episode #%d," % epno +
+                             " because could not get proper elem from HTML source.")
+        else:
+            return None
     elem_info = max(elem_info_list)
     date_list = filter(lambda elem: 'class' in elem.keys() and elem.get('class') == 'date',
                         elem_info.iter('div'))
     if len(date_list) != 1:
-        raise ValueError("Error, cannot find date and title for This American Life episode #%d." % epno)
+        if throwException:
+            raise ValueError("Error, cannot find date and title for This American Life episode #%d." % epno)
+        else:
+            return None
     date_s = max(date_list).text.strip()
     date_act = time.strptime(date_s, '%b %d, %Y')
     year = date_act.tm_year
@@ -62,15 +71,18 @@ def get_american_life(epno, directory = '/mnt/media/thisamericanlife'):
 
     if not os.path.isdir(directory):
         raise ValueError("Error, %s is not a directory." % directory)
-    outfile = os.path.join(directory, 'PRI.ThisAmericanLife.%03d.mp3' % epno)
-    #urlopn = 'http://audio.thisamericanlife.org/jomamashouse/ismymamashouse/%d.mp3' % epno
+    outfile = os.path.join(directory, 'PRI.ThisAmericanLife.%03d.mp3' % epno)    
     urlopn = 'http://www.podtrac.com/pts/redirect.mp3/podcast.thisamericanlife.org/podcast/%d.mp3' % epno
     
     try:
         with open(outfile, 'wb') as openfile: openfile.write(urllib2.urlopen(urlopn).read())
     except urllib2.HTTPError:
-        print "Error, could not download This American Life episode #%d. Exiting..." % epno
-        return
+        try:
+            urlopn = 'http://audio.thisamericanlife.org/jomamashouse/ismymamashouse/%d.mp3' % epno
+            with open(outfile, 'wb') as openfile: openfile.write(urllib2.urlopen(urlopn).read())
+        except urllib2.HTTPError:
+            print "Error, could not download This American Life episode #%d. Exiting..." % epno
+            return
 
     f = tagpy.FileRef(outfile)
     t = f.tag()
