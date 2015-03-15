@@ -7,8 +7,8 @@ import json, gui_common, sys, datetime
 class NewYorkerFrame(gui_common.MainFrame):
     def __init__(self, showFrame = True, iconPath = None):
         super(NewYorkerFrame, self).__init__('New Yorker Printer', NewYorkerURLInfoBox(),
-                                             showFrame = showFrame, iconPath = iconPath)        
-        
+                                             showFrame = showFrame, iconPath = iconPath)
+
 class NewYorkerURLInfoBox(gui_common.URLInfoBox):
     def getMetaDataDict(self, tree):
         meta_elems = filter(lambda elem: 'name' in elem.keys() and
@@ -45,7 +45,7 @@ class NewYorkerURLInfoBox(gui_common.URLInfoBox):
     def getDate( self, dateString ):
         return datetime.datetime.strptime( dateString,
                                            '%Y-%m-%dT%H:%M:%SZ' )
-    
+
     def __init__(self):
         super(NewYorkerURLInfoBox, self).__init__('New Yorker URL')
 
