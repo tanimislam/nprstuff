@@ -113,11 +113,10 @@ def get_freshair(outputdir, date_s, order_totnum = None,
 
     # check if actually a weekday
     assert( npr_utils.is_weekday(date_s) )
-
+    
     if exec_dict is None:
         exec_dict = npr_utils.find_necessary_executables()
     assert( exec_dict is not None )
-    sox_exec = exec_dict['sox']
     avconv_exec = exec_dict['avconv']
     
     if order_totnum is None:
