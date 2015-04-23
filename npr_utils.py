@@ -4,18 +4,16 @@ import calendar, numpy, time, datetime, os
 import xdg.BaseDirectory, ConfigParser
 import multiprocessing, multiprocessing.pool
 from distutils.spawn import find_executable
+import urlparse, urllib
 
 def find_necessary_executables():
-    sox_exec = find_executable('sox')
-    if sox_exec is None: return None
     ffmpeg_exec = None
     for ffmpeg_exc in ('avconv', 'ffmpeg'):
         ffmpeg_exec = find_executable(ffmpeg_exc)
         if ffmpeg_exec is not None: break
     if ffmpeg_exec is None: return None
     #
-    return { 'sox' : sox_exec,
-             'avconv' : ffmpeg_exec }
+    return { 'avconv' : ffmpeg_exec }
         
 def store_api_key(npr_API_key):
     resource = 'nprstuff'
@@ -58,8 +56,16 @@ def get_NPR_URL(date_s, program_id, NPR_API_key):
     get the NPR API tag for a specific NPR program 
     """
     nprApiDate = date_s.strftime('%Y-%m-%d')
-    return 'http://api.npr.org/query?id=%d&date=%s&dateType=story&output=NPRML&apiKey=%s' % \
-        ( program_id, nprApiDate, NPR_API_key )
+    result = urlparse.ParseResult(scheme = 'http', netloc = 'api.npr.org', path='/query', params='',
+                                  query = urllib.urlencode({
+                                      'id' : program_id,
+                                      'date' : nprApiDate,
+                                      'dateType' : 'story',
+                                      'output' : 'NPRML',
+                                      'apiKey' : NPR_API_key }), fragment = '')
+    return result.geturl()
+    #return 'http://api.npr.org/query?id=%d&date=%s&dateType=story&output=NPRML&apiKey=%s' % \
+    #    ( program_id, nprApiDate, NPR_API_key )
     
 def weekdays_of_month_of_year(year, month):
     days = filter(lambda day: day != 0,
