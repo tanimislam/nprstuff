@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 __author__ = 'Tanim Islam'
 
-import os, sys, tagpy, time
+import os, sys, time
 import urllib2, lxml.html
+from mutagen.id3 import APIC, TDRC, TALB, COMM, TRCK, TPE2, TPE1, TIT2, TCON, ID3
 from optparse import OptionParser
 
 def get_americanlife_info(epno, throwException = True):
@@ -84,14 +85,15 @@ def get_american_life(epno, directory = '/mnt/media/thisamericanlife'):
             print "Error, could not download This American Life episode #%d. Exiting..." % epno
             return
 
-    f = tagpy.FileRef(outfile)
-    t = f.tag()
-    t.title = '#%d: %s' % ( epno, title)
-    t.year = year
-    t.artist = 'Ira Glass'
-    t.album = 'This American Life'
-    t.track = epno
-    f.save()
+    mp3tags = ID3( outfile )
+    mp3tags['TDRC'] = TDRC(encoding = 0, text = [ u'%d' % year ])
+    mp3tags['TALB'] = TALB(encoding = 0, text = [ u'This American Life' ])
+    mp3tags['TRCK'] = TRCK(encoding = 0, text = [ u'%d' % epno ])
+    mp3tags['TPE2'] = TPE2(encoding = 0, text = [u'Chicago Public Media'])
+    mp3tags['TPE1'] = TPE1(encoding = 0, text = [u'Ira Glass'])
+    mp3tags['TIT2'] = TIT2(encoding = 0, text = [u'%d: %s' % ( epno, title ) ])
+    mp3tags['TCON'] = TCON(encoding = 0, text = [u'Podcast'])
+    mp3tags.save()
 
 if __name__=='__main__':
     parser = OptionParser()
