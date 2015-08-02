@@ -6,14 +6,18 @@ import urllib2, lxml.html
 from mutagen.id3 import APIC, TDRC, TALB, COMM, TRCK, TPE2, TPE1, TIT2, TCON, ID3
 from optparse import OptionParser
 
-def get_americanlife_info(epno, throwException = True):
+def get_americanlife_info(epno, throwException = True, extraStuff = None):
     """
     Returns a tuple of title, year given the episode number for This American Life.
     """
 
     # first see if this episode of this american life exists...
     try:
-        req = urllib2.urlopen('http://www.thisamericanlife.org/radio-archives/episode/%d' % epno)
+        if extraStuff is None:
+            req = urllib2.urlopen('http://www.thisamericanlife.org/radio-archives/episode/%d' % epno)
+        else:
+            req = urllib2.urlopen('http://www.thisamericanlife.org/radio-archives/episode/%d/%s' % 
+                                  ( epno, extraStuff) )
     except urllib2.HTTPError as e:
         if throwException:
             raise ValueError("Error, could not find This American Life episode %d, because could not open webpage." % epno)
@@ -54,7 +58,7 @@ def get_americanlife_info(epno, throwException = True):
     title = ':'.join(title.split(':')[1:]).strip()
     return title, year
 
-def get_american_life(epno, directory = '/mnt/media/thisamericanlife'):
+def get_american_life(epno, directory = '/mnt/media/thisamericanlife', extraStuff = None):
     """
     Downloads an episode of This American Life into a given directory.
     The description of which URL the episodes are downloaded from is given in
@@ -64,7 +68,7 @@ def get_american_life(epno, directory = '/mnt/media/thisamericanlife'):
     """
 
     try:
-        title, year = get_americanlife_info(epno)
+        title, year = get_americanlife_info(epno, extraStuff = extraStuff)
     except ValueError as e:
         print e
         print 'Cannot find date and title for This American Life episode #%d.' % epno
@@ -103,6 +107,8 @@ if __name__=='__main__':
                       default = '/mnt/media/thisamericanlife',
                       help = 'Directory into which to download This American Life episodes. Default is %s.' %
                       '/mnt/media/thisamericanlife')
+    parser.add_option('--extra', dest='extraStuff', type=str, action='store',
+                      help = 'If defined, some extra stuff in the URL to get a This American Life episode.')
     options, args = parser.parse_args()
     direct = os.path.expanduser( options.directory )
-    get_american_life(options.episode, directory=direct)
+    get_american_life(options.episode, directory=direct, extraStuff = options.extraStuff)
