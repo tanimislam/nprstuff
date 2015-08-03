@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 __author__ = 'Tanim Islam'
 
-import os, sys, time
+import os, sys, time, titlecase
 import urllib2, lxml.html
 from mutagen.id3 import APIC, TDRC, TALB, COMM, TRCK, TPE2, TPE1, TIT2, TCON, ID3
 from optparse import OptionParser
@@ -34,8 +34,8 @@ def get_americanlife_info(epno, throwException = True, extraStuff = None):
                             elem.get('class') == "top-inner clearfix", tree.iter('div'))
     if len(elem_info_list) != 1:
         if throwException:
-            raise ValueError("Error, cannot find date and title for This American Life episode #%d," % epno +
-                             " because could not get proper elem from HTML source.")
+            raise ValueError(" ".join([ "Error, cannot find date and title for This American Life episode #%d," % epno,
+                                        "because could not get proper elem from HTML source." ]) )
         else:
             return None
     elem_info = max(elem_info_list)
@@ -55,7 +55,7 @@ def get_americanlife_info(epno, throwException = True, extraStuff = None):
     if len(title_elem_list) != 1:
         raise ValueError("Error, cannot find date and title for This American Life episode #%d." % epno)
     title = max(title_elem_list).text.strip()
-    title = ':'.join(title.split(':')[1:]).strip()
+    title = titlecase.titlecase( ':'.join( title.split(':')[1:]).strip() )
     return title, year
 
 def get_american_life(epno, directory = '/mnt/media/thisamericanlife', extraStuff = None):
@@ -95,7 +95,7 @@ def get_american_life(epno, directory = '/mnt/media/thisamericanlife', extraStuf
     mp3tags['TRCK'] = TRCK(encoding = 0, text = [ u'%d' % epno ])
     mp3tags['TPE2'] = TPE2(encoding = 0, text = [u'Chicago Public Media'])
     mp3tags['TPE1'] = TPE1(encoding = 0, text = [u'Ira Glass'])
-    mp3tags['TIT2'] = TIT2(encoding = 0, text = [u'%d: %s' % ( epno, title ) ])
+    mp3tags['TIT2'] = TIT2(encoding = 0, text = [u'#%03d: %s' % ( epno, title ) ])
     mp3tags['TCON'] = TCON(encoding = 0, text = [u'Podcast'])
     mp3tags.save()
 
