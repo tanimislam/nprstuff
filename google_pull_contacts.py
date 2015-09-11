@@ -2,16 +2,17 @@
 
 import webbrowser, gdata.auth, requests, xdg.BaseDirectory, tempfile, json, os
 import gdata.data, gdata.contacts.client, gdata.contacts.data, gdata.service
-import oauth2client.file
+import oauth2client.file, httplib2
 from optparse import OptionParser
 from oauth2client import client
 
 def create_authorized_gdclient():
     baseDir = xdg.BaseDirectory.save_config_path( 'nprstuff' )
-    credPath = os.path.join( baseDir, 'credentials.json' )
+    credPath = os.path.join( baseDir, 'credentials.json' )    
+    storage = oauth2client.file.Storage( credPath )
     if os.path.isfile( credPath ): # file exists
-        storage = oauth2client.file.Storage( credPath )
         credentials = storage.get()
+        credentials.refresh( httplib2.Http() )
         if not credentials.access_token_expired:
             return create_authorized_gdclient_credential( credentials )
     
@@ -41,7 +42,6 @@ def create_authorized_gdclient():
     webbrowser.open( authorize_url )
     auth_code = raw_input('Enter the auth code: ')
     credentials = flow.step2_exchange( auth_code )
-    storage = oauth2client.file.Storage( credPath )
     storage.put( credentials )
     return create_authorized_gdclient_credential( credentials )
     #auth_token.get_access_token( auth_code )
