@@ -1,38 +1,57 @@
 #!/usr/bin/env python
 
-import os, sys, getpass, xdg.BaseDirectory, json, webbrowser, gdata.gauth, requests
-import atom.data, gdata.data, gdata.contacts.client, gdata.contacts.data, gdata.service
+import webbrowser, gdata.auth, requests, xdg.BaseDirectory, tempfile, json, os
+import gdata.data, gdata.contacts.client, gdata.contacts.data, gdata.service
+import oauth2client.file
 from optparse import OptionParser
+from oauth2client import client
 
 def create_authorized_gdclient():
-    #resource = 'tanim_flask_app'
-    #filename = 'client_secret.json'
-    #baseConfDir = xdg.BaseDirectory.save_config_path( resource )
-    #resourceFile = os.path.join( baseConfDir, filename )
-    #assert( os.path.isfile( resourceFile ) )
-    #
-    #data = json.load( open( resourceFile, 'r' ) )['installed']
+    baseDir = xdg.BaseDirectory.save_config_path( 'nprstuff' )
+    credPath = os.path.join( baseDir, 'credentials.json' )
+    if os.path.isfile( credPath ): # file exists
+        storage = oauth2client.file.Storage( credPath )
+        credentials = storage.get()
+        if not credentials.access_token_expired:
+            return create_authorized_gdclient_credential( credentials )
+    
     response = requests.get( 'https://tanimislam.ddns.net/flask/api/pythonclient',
                              auth = ( 'tanim.islam@gmail.com', 'fannagoganna' ),
                              verify = False )
     data = response.json()
-    client_id = data['client_id']
-    client_secret = data['client_secret']
-    scope = 'https://www.googleapis.com/auth/contacts.readonly'
-    application_redirect_uri = data['redirect_uris'][0]
-    auth_token = gdata.gauth.OAuth2Token( client_id = client_id, client_secret = client_secret,
-                                          scope = scope, user_agent = 'dummy-sample' )
-    authorize_url = auth_token.generate_authorize_url(redirect_uri=application_redirect_uri)
+    print data
+    fd, jsonfile = tempfile.mkstemp( suffix = '.json' )
+    json.dump( data, open( jsonfile, 'w' ) )
+    flow = client.flow_from_clientsecrets(
+        jsonfile,
+        scope = 'https://www.googleapis.com/auth/contacts.readonly',
+        redirect_uri = 'urn:ietf:wg:oauth:2.0:oob')
+    os.remove( jsonfile )
+    flow.params['include_granted_scopes'] = 'true'
+    flow.params['access_type'] = 'offline'
+    #
+    #client_id = data['client_id']
+    #client_secret = data['client_secret']
+    #scope = 'https://www.googleapis.com/auth/contacts.readonly'
+    #application_redirect_uri = data['redirect_uris'][0]
+    #auth_token = gdata.gauth.OAuth2Token( client_id = client_id, client_secret = client_secret,
+    #                                      scope = scope, user_agent = 'dummy-sample' )
+    #authorize_url = auth_token.generate_authorize_url(redirect_uri=application_redirect_uri)
+    authorize_url = flow.step1_get_authorize_url()
     webbrowser.open( authorize_url )
     auth_code = raw_input('Enter the auth code: ')
-    response = requests.post( 'https://tanimislam.ddns.net/flask/api/pythonclient/oauthurl',
-                              auth = ( 'tanim.islam@gmail.com', 'fannagoganna'),
-                              headers = { 'Content-Type' : 'application/json' },
-                              verify = False,
-                              data = { 'authcode' : auth_code } )
-    auth_token.get_access_token( auth_code )
+    credentials = flow.step2_exchange( auth_code )
+    storage = oauth2client.file.Storage( credPath )
+    storage.put( credentials )
+    return create_authorized_gdclient_credential( credentials )
+    #auth_token.get_access_token( auth_code )
+    #gd_client = gdata.contacts.client.ContactsClient(source = 'tanim-islam-cloud-storage-2')
+    #auth_token.authorize( gd_client )
+    #return gd_client
+
+def create_authorized_gdclient_credential(credentials):
     gd_client = gdata.contacts.client.ContactsClient(source = 'tanim-islam-cloud-storage-2')
-    auth_token.authorize( gd_client )
+    gd_client.auth_token = gdata.gauth.OAuth2TokenFromCredentials( credentials )
     return gd_client
     
 class GoogleContacts(object):
@@ -123,6 +142,13 @@ class GoogleContacts(object):
         groups_by_status = {}
         groups_by_status['email'] = sorted(self.gmail_contacts.keys())
         groups_by_status['im'] = sorted(self.gmail_im_contacts.keys())
+
+    def to_json(self):
+        all_contacts_email = { contact_name : self.gmail_contacts[group_name][contact_name] for 
+                               group_name in self.gmail_contacts.keys() for
+                               contact_name in self.gmail_contacts[group_name].keys() }
+        return all_contacts_email
+            
         
 if __name__ == '__main__':
     #parser = OptionParser()
@@ -140,5 +166,5 @@ if __name__ == '__main__':
     #    # raise ValueError("Error, must give the password")
     gd_client = create_authorized_gdclient()
     gcontacts = GoogleContacts(gd_client)
-    # gcontacts.print_pine_addresses()
+    gcontacts.print_pine_addresses()
 
