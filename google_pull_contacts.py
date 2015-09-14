@@ -16,7 +16,7 @@ def create_authorized_gdclient():
         if not credentials.access_token_expired:
             return create_authorized_gdclient_credential( credentials )
     
-    response = requests.get( 'https://tanimislam.ddns.net/flask/api/pythonclient',
+    response = requests.get( 'https://tanimislam.ddns.net/flask/api/google/pythonclient',
                              auth = ( 'tanim.islam@gmail.com', 'fannagoganna' ),
                              verify = False )
     data = response.json()
