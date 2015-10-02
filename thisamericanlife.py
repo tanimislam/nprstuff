@@ -2,7 +2,7 @@
 __author__ = 'Tanim Islam'
 
 import os, sys, time, titlecase
-import urllib2, lxml.html
+import lxml.html, requests
 from mutagen.id3 import APIC, TDRC, TALB, COMM, TRCK, TPE2, TPE1, TIT2, TCON, ID3
 from optparse import OptionParser
 
@@ -12,23 +12,18 @@ def get_americanlife_info(epno, throwException = True, extraStuff = None):
     """
 
     # first see if this episode of this american life exists...
-    try:
-        if extraStuff is None:
-            req = urllib2.urlopen('http://www.thisamericanlife.org/radio-archives/episode/%d' % epno)
-        else:
-            req = urllib2.urlopen('http://www.thisamericanlife.org/radio-archives/episode/%d/%s' % 
-                                  ( epno, extraStuff) )
-    except urllib2.HTTPError as e:
-        if throwException:
-            raise ValueError("Error, could not find This American Life episode %d, because could not open webpage." % epno)
-        else:
-            return None
-
-    enc = req.headers['content-type'].split(';')[-1].split('=')[-1].strip().upper()
-    if enc not in ( 'UTF-8', ):
-        tree = lxml.html.fromstring(unicode(req.read(), encoding=enc))
+    if extraStuff is None:
+        resp = requests.get( 'http://www.thisamericanlife.org/radio-archives/episode/%d' % epno )
     else:
-        tree = lxml.html.fromstring(req.read())
+        resp = requests.get( 'http://www.thisamericanlife.org/radio-archives/episode/%d/%s' % ( epno, extraStuff ) )
+    if resp.status_code != 200:
+        raise ValueError("Error, could not find This American Life episode %d, because could not open webpage." % epno)
+    
+    enc = resp.headers['content-type'].split(';')[-1].split('=')[-1].strip().upper()
+    if enc not in ( 'UTF-8', ):
+        tree = lxml.html.fromstring(unicode(resp.text, encoding=enc))
+    else:
+        tree = lxml.html.fromstring(resp.text )
 
     elem_info_list = filter(lambda elem: 'class' in elem.keys() and
                             elem.get('class') == "top-inner clearfix", tree.iter('div'))
@@ -78,16 +73,17 @@ def get_american_life(epno, directory = '/mnt/media/thisamericanlife', extraStuf
         raise ValueError("Error, %s is not a directory." % directory)
     outfile = os.path.join(directory, 'PRI.ThisAmericanLife.%03d.mp3' % epno)    
     urlopn = 'http://www.podtrac.com/pts/redirect.mp3/podcast.thisamericanlife.org/podcast/%d.mp3' % epno
-    
-    try:
-        with open(outfile, 'wb') as openfile: openfile.write(urllib2.urlopen(urlopn).read())
-    except urllib2.HTTPError:
-        try:
-            urlopn = 'http://audio.thisamericanlife.org/jomamashouse/ismymamashouse/%d.mp3' % epno
-            with open(outfile, 'wb') as openfile: openfile.write(urllib2.urlopen(urlopn).read())
-        except urllib2.HTTPError:
+
+    resp = requests.get( urlopn, stream = True )
+    if not resp.ok:
+        urlopn = 'http://audio.thisamericanlife.org/jomamashouse/ismymamashouse/%d.mp3' % epno
+        resp = requests.get( urlopn, stream = True )
+        if not resp.ok:
             print "Error, could not download This American Life episode #%d. Exiting..." % epno
             return
+    with open( outfile, 'wb') as openfile:
+        for chunk in resp.iter_content(65536):
+            openfile.write( chunk )
 
     mp3tags = ID3( outfile )
     mp3tags['TDRC'] = TDRC(encoding = 0, text = [ u'%d' % year ])
