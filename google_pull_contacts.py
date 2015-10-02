@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import webbrowser, gdata.auth, requests, xdg.BaseDirectory, tempfile, json, os
+import webbrowser, gdata.auth, requests, xdg.BaseDirectory, tempfile, json, os, copy
 import gdata.data, gdata.contacts.client, gdata.contacts.data, gdata.service
 import oauth2client.file, httplib2
 from optparse import OptionParser
@@ -53,7 +53,22 @@ def create_authorized_gdclient_credential(credentials):
     gd_client = gdata.contacts.client.ContactsClient(source = 'tanim-islam-cloud-storage-2')
     gd_client.auth_token = gdata.gauth.OAuth2TokenFromCredentials( credentials )
     return gd_client
+
+class GoogleContactsSimple( object ):
+    def __init__(self, gd_client, maxnum = 5000):
+        query = gdata.contacts.client.ContactsQuery()
+        query.max_results = maxnum
+        contacts = gd_client.GetContacts( q = query )
+        contacts_dict = { entry.title.text : entry for entry in contacts.entry }
+        contacts_val = filter(lambda name: len(contacts_dict[name].email) > 0, contacts_dict )
+        self.emails_dict = { name : sorted(set([ eml.address.lower() for eml in contacts_dict[name].email ])) for
+                             name in contacts_val }
+                              
+    def to_json(self):
+        return copy.deepcopy( self.emails_dict )
+
     
+
 class GoogleContacts(object):
     def __init__(self, gd_client, maxnum=5000):
         #gd_client = gdata.contacts.client.ContactsClient(source = 'tanim-islam-cloud-storage-2')
