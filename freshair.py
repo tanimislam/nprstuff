@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-import os, glob, urllib2, multiprocessing, datetime, time
-import mutagen.mp4, subprocess, multiprocessing.pool
+import os, glob, multiprocessing, datetime, time
+import mutagen.mp4, subprocess, multiprocessing.pool, requests
 from optparse import OptionParser
 import lxml.etree, npr_utils
 
@@ -9,15 +9,19 @@ _npr_FreshAir_progid = 13
 
 def get_freshair_image():
     myURL = 'http://media.npr.org/images/podcasts/2013/primary/fresh_air.png'
-    return urllib2.urlopen(myURL).read()
+    # return urllib2.urlopen(myURL).read()
+    return requests.get( myURL ).content
     
 def _download_file(input_tuple):
     mp3URL, filename = input_tuple
-    try:
+    resp = requests.get( mp3URL, stream = True )
+    if resp.ok:
         with open(filename, 'wb') as openfile:
-            openfile.write( urllib2.urlopen(mp3URL).read() )
+            for chunk in resp.iter_content(65536):
+                openfile.write( chunk )
         return filename
-    except Exception:
+    else:
+        print 'SOMETHING HAPPENED WITH %s' % filename
         return None
 
 def get_freshair_date_from_name(candidateNPRFreshAirFile):
@@ -86,7 +90,7 @@ def _process_freshair_titlemp3_tuples_one(tree):
         if len( list( elem.iter('mp3'))) == 0:
             continue
         m3uurl = max( elem.iter('mp3') ).text.strip()
-        mp3url = urllib2.urlopen( m3uurl ).read().strip()
+        mp3url = requests.get( m3uurl ).text.strip()
         title_mp3_urls.append( ( title, mp3url ) )
     return title_mp3_urls
 
@@ -98,7 +102,7 @@ def _process_freshair_titlemp3_tuples_two(tree):
         titles.append(title)
     for elem in elem.iter('mp3'):
         m3uurl = elem.text.strip()
-        mp3url = urllib2.urlopen( m3uurl ).read().strip()
+        mp3url = requests.get( m3uurl ).text.strip()
         mp3s.append( mp3url )
     title_mp3_urls = filter(None, zip( titles, mp3s ) )
     return title_mp3_urls
@@ -136,7 +140,7 @@ def get_freshair(outputdir, date_s, order_totnum = None,
     year = date_s.year
     
     # download this data into an lxml elementtree
-    tree = lxml.etree.fromstring( urllib2.urlopen(nprURL).read())
+    tree = lxml.etree.fromstring( requests.get(nprURL).content )
     
     
     if debug:
@@ -201,12 +205,12 @@ def get_freshair(outputdir, date_s, order_totnum = None,
     # /usr/bin/avconv -y -i freshair$wgdate.wav -ar 44100 -ac 2 -aq 400 -acodec libfaac NPR.FreshAir."$decdate".m4a ;
     time0 = time.time()
     fnames = [ filename.replace(' ', '\ ') for filename in outfiles ]
-    sox_string_cmd = 'concat:%s' % '|'.join(fnames)
-    split_cmd = [ avconv_exec, '-y', '-i', sox_string_cmd, '-ar', '44100', '-ac', '2', '-threads', '%d' % multiprocessing.cpu_count(),
+    avconv_concat_cmd = 'concat:%s' % '|'.join(fnames)
+    split_cmd = [ avconv_exec, '-y', '-i', avconv_concat_cmd, '-ar', '44100', '-ac', '2', '-threads', '%d' % multiprocessing.cpu_count(),
                   '-strict', 'experimental', '-acodec', 'aac', m4afile ]
     proc = subprocess.Popen(split_cmd, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
     stdout_val, stderr_val = proc.communicate()
-
+    
     # remove wav file
     for filename in outfiles:
         os.remove(filename)
