@@ -10,91 +10,109 @@ _badDate = datetime.datetime.strptime("January 1, 1000", "%B %d, %Y")
 def demo_get_articles(email, password):
     if not os.path.isfile( 'articledata.pkl.gz' ):
         url = urljoin( 'https://tanimislam.ddns.net',
-                       '/flask/api/nprstuff/readability/getarticles' )
+                       '/flask/api/nprstuff/readability/login')
         response = requests.get( url, auth = ( email, password ) )
+        cookie = response.cookies
+        url = urljoin( 'https://tanimislam.ddns.net',
+                       '/flask/api/nprstuff/readability/getarticles' )
+        response = requests.get( url, auth = ( email, password ), cookies = cookie )
         data = json.loads( binascii.a2b_hex( response.json()['data'] ).decode('bz2' ) )
         pickle.dump(data, gzip.open( 'articledata.pkl.gz', 'w') )
         return data
     else:
         return pickle.load( gzip.open( 'articledata.pkl.gz', 'r' ) )
 
-# fix this part here
-# self.table.clicked.connect( self.doClickedTable )
-def doClickedTable(self, clickedIndex):
-    row = clickedIndex.row()
-    model = clickedIndex.model()
-    act_index = model.index( row, 4 )
-    articleId = str( model.data( act_index, Qt.DisplayRole ).toString() )
+class DemoWidget(QWidget):
+    def __init__(self):
+        super(DemoWidget, self).__init__()
+        assert( os.path.isfile( 'articledata.pkl.gz' ) )        
+        layout = QVBoxLayout()
+        self.setLayout( layout )
+        self.create_table_and_model( )
+        layout.addWidget( self.table )
+        data = demo_get_articles('', '')
+        self.table.clicked.connect( self.doClickedTable )
+        self.articles = data['articles']
+        self.pushTableData( data['articles'], data['ids_ordered'] )
+        #
+        self.show() 
     
-def pushTableData( articles, ordered_ids, tableModel ):
-    tabledata = []
-    for articleId in ordered_ids:
-        artsub = articles[articleId]
-        title = titlecase.titlecase( artsub['title'] )
-        s_dt = artsub['date_published']
-        if s_dt is None:
-            dtime = _badDate
-            date_string = 'NODATE'
-            time_string = 'NOTIME'
-        else:
-            dtime = datetime.datetime.strptime( s_dt, '%Y-%m-%d %H:%M:%S' )
-            date_string = dtime.strftime('%m/%d/%Y')
-            time_string = dt.strftime('%H:%M:%S')
-        tabledata.append( [ title, date_string, time_string, dtime, articleId ])
-    tableModel.pushData( tableData )
+    # fix this part here
+    # self.table.clicked.connect( self.doClickedTable )
+    def doClickedTable(self, clickedIndex):
+        row = clickedIndex.row()
+        model = clickedIndex.model()
+        act_index = model.index( row, 4 )
+        articleId = str( model.data( act_index, Qt.DisplayRole ).toString() )
+        assert( articleId in self.articles )
+    
+    def pushTableData( self, articles, ordered_ids ):
+        tabledata = []
+        for articleId in ordered_ids:
+            artsub = articles[articleId]
+            title = titlecase.titlecase( artsub['title'] )
+            s_dt = artsub['date_published']
+            if s_dt is None:
+                dtime = _badDate
+                date_string = 'NODATE'
+                time_string = 'NOTIME'
+            else:
+                dtime = datetime.datetime.strptime( s_dt, '%Y-%m-%d %H:%M:%S' )
+                date_string = dtime.strftime('%m/%d/%Y')
+                time_string = dt.strftime('%H:%M:%S')
+            tabledata.append( [ title, date_string, time_string, dtime, articleId ])
+        self.tm.pushData( tableData )
             
-def create_table_and_model( parent ):
-    table = QTableView( parent )
-    tm = MyTableModel( parent )
-    table.setModel( tm )
-    table.setColumnHidden(3, True)
-    table.setColumnHidden(4, True)
-    table.setItemDelegateForColumn(0, TitleDelegate( parent ) )
-    table.setItemDelegateForColumn(1, DateDelegate( parent ) )
-    table.setItemDelegateForColumn(2, TimeDelegate( parent ) )
+    def create_table_and_model( self ):
+        self.table = QTableView( self )
+        self.tm = MyTableModel( self )
+        self.table.setModel( self.tm )
+        self.table.setColumnHidden(3, True)
+        self.table.setColumnHidden(4, True)
+        self.table.setItemDelegateForColumn(0, TitleDelegate( parent ) )
+        self.table.setItemDelegateForColumn(1, DateDelegate( parent ) )
+        self.table.setItemDelegateForColumn(2, TimeDelegate( parent ) )
 
-    # set the minimum size
-    table.setMinimumSize( 500, 400 )
+        # set the minimum size
+        self.table.setMinimumSize( 500, 400 )
+        
+        # show grid
+        self.table.setShowGrid( True )
+        
+        # set fixed vertical headers
+        self.table.verticalHeader().setResizeModel( QHeaderView.Fixed )
+        
+        # hide vertical header
+        self.table.verticalHeader().setVisible( False )
+        
+        # set sorting enabled
+        self.table.setSortingEnabled( True )
+        
+        # other stuff
+        self.table.setSelectionBehavior( QTableView.SelectRows )
+        
+        # slots
+        self.tm.layoutChanged.connect( table.resizeColumnsToContents )
 
-    # show grid
-    table.setShowGrid( True )
+        # end button scroll to bottom
+        toBotAction = QAction( self.table )
+        toBotAction.setShortcut( 'End' )
+        toBotAction.triggered.connect( self.table.scrollToBottom )
+        self.table.addAction( toBotAction )
 
-    # set fixed vertical headers
-    table.verticalHeader().setResizeModel( QHeaderView.Fixed )
-
-    # hide vertical header
-    table.verticalHeader().setVisible( False )
-
-    # set sorting enabled
-    table.setSortingEnabled( True )
-
-    # other stuff
-    table.setSelectionBehavior( QTableView.SelectRows )
-
-    # slots
-    tm.layoutChanged.connect( table.resizeColumnsToContents )
-
-    # end button scroll to bottom
-    toBotAction = QAction( table )
-    toBotAction.setShortcut( 'End' )
-    toBotAction.triggered.connect( table.scrollToBottom )
-    table.addAction( toBotAction )
-
-    # home button scroll to top
-    toTopAction = QAction( table )
-    toTopAction.setShortcut( 'Home' )
-    toTopAction.triggered.connect( table.scrollToTop )
-    table.addAction( toTopAction )
-    
-    return table, tm
+        # home button scroll to top
+        toTopAction = QAction( self.table )
+        toTopAction.setShortcut( 'Home' )
+        toTopAction.triggered.connect( self.table.scrollToTop )
+        self.table.addAction( toTopAction )
 
 class MyDemoWindow(QWidget):
     def __init__(self):
         super(MyDemoWindow, self).__init__()
+        assert( os.path.isfile( 
         layout = QHBoxLayout()
         self.setLayout( layout )
         
-
 class TitleDelegate(QItemDelegate):
     def __init__(self, owner):
         super(AuthorDelegate, self).__init__(owner)
@@ -169,7 +187,6 @@ class MyTableModel(QAbstractTableModel):
         super(MyTableModel, self).__init__(parent)
         self.arrayData = []
         self.headerData = [ "title", "date" , "time", "datetime", "articleId" ]
-        self.myParent = parent
 
     def pushData(self, tabledata):
         #
@@ -186,7 +203,7 @@ class MyTableModel(QAbstractTableModel):
         self.sort(0, Qt.AscendingOrder )
 
     def rowCount(self, parent):
-        return len( self.arraydata )
+        return len( self.arrayData )
 
     def columnCount( self, parent ):
         return len( self.headerData )
@@ -199,15 +216,15 @@ class MyTableModel(QAbstractTableModel):
         elif role != Qt.DisplayRole:
             return QVariant()
         else:
-            return QVariant( self.arraydata[ index.row() ][ index.column() ] )
+            return QVariant( self.arrayData[ index.row() ][ index.column() ] )
 
     def setData( self, index, value, role ):
         if not index.isValid():
             return
         if index.column() in (0, 1, 2, 4):
-            self.arraydata[ index.row() ][ index.column() ] = str( value.toString() )
+            self.arrayData[ index.row() ][ index.column() ] = str( value.toString() )
         elif index.column() == 3:
-            self.arraydata[ index.row() ][ 3 ] = value.toDateTime().toPyDateTime() 
+            self.arrayData[ index.row() ][ 3 ] = value.toDateTime().toPyDateTime() 
 
     def flags( self, index ):
         return Qt.ItemFlags( Qt.ItemIsSelectable | Qt.ItemIsEnabled )
@@ -219,5 +236,13 @@ class MyTableModel(QAbstractTableModel):
 
     def sort(self, ncol, order):
         self.layoutAboutToBeChanged.emit()
-        self.arraydata = sorted(self.arraydata, key = lambda tup: tup[3] )
+        if order == Qt.AscendingOrder:
+            self.arrayData = sorted(self.arrayData, key = lambda tup: tup[3] )
+        else:
+            self.arrayData = sorted(self.arrayData, key = lambda tup: tup[3] )[::-1]
         self.layoutChanged.emit()
+
+if __name__=='__main__':
+    qApp = QApplication( sys.argv )
+    dw = DemoWidget( )
+    sys.exit( qApp.exec_() )

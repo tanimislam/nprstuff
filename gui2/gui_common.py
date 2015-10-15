@@ -4,6 +4,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 import os, sys, numpy, requests, json
 import xdg.BaseDirectory, ConfigParser
+from urlparse import urljoin
 
 colorwheel = [ QColor( QString( name ) ) for name in
                [ '#E5EDE9', '#EDE6CE', '#EDDFEB', '#F1EDFE', '#CCD9FD', '#F9EBFD' ] ]
@@ -166,7 +167,7 @@ def get_database_data( ):
     #
     ## now check that we have actual readability data here
     url = urljoin( 'https://tanimislam.ddns.net',
-                   '/flask/api/nprstuff/readability/checkaccount' )
+                   '/flask/api/nprstuff/readability/login' )
     try:
         response = requests.get( url, auth = ( email, password ) )
     except Exception as e:
@@ -176,12 +177,13 @@ def get_database_data( ):
         return { 'email' : email, 'password' : password,
                  'message' : "Error, could not login to database" }
     status = response.json()['status']
-    if status == 'FAILURE':
+    if 'FAILURE' in status:
         return { 'email' : email, 'password' : password,
                  'message' : "Error, no readability data exists" }
     else:
         return { 'email' : email, 'password' : password,
-                 'message' : 'SUCCESS' }
+                 'message' : 'SUCCESS',
+                 'cookie' : response.cookies }
 
 
 class CustomScrollArea(QScrollArea):
