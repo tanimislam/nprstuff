@@ -1,47 +1,25 @@
 #!/usr/bin/env python
 
-import os, sys
+import os, sys, requests
+from urlparse import urljoin
+from gui_common import push_database_data, get_database_data, QLineEditCustom, QPushButtonCustom
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 
 class LoginWindow(QWidget):
-    def __init__(self, parent = None, showFrame = True):
+    def __init__(self, statusdict, parent = None):
         super(LoginWindow, self).__init__()
         self.myParent = parent
         self.setWindowTitle("LOGIN SCREEN")
         #
-        self.dbEmailLineEdit = QLineEdit("")
-        self.dbPasswdLineEdit = QLineEdit("")
-        self.rdEmailLineEdit = QLineEdit("")
-        self.rdPasswdLineEdit = QLineEdit("")
+        self.dbEmailLineEdit = QLineEditCustom("", self)
+        self.dbPasswdLineEdit = QLineEditCustom("", self)
+        self.rdEmailLineEdit = QLineEditCustom("", self)
+        self.rdPasswdLineEdit = QLineEditCustom("", self)
         self.dbPasswdLineEdit.setEchoMode( QLineEdit.Password )
         self.rdPasswdLineEdit.setEchoMode( QLineEdit.Password )
-        for qle in ( self.dbEmailLineEdit, self.dbPasswdLineEdit,
-                     self.rdEmailLineEdit, self.rdPasswdLineEdit):
-            qle.setStyleSheet("""
-            QLineEdit {
-            background-color: white;
-            }
-            """)
         #
-        self.actionButton = QPushButton("Action!")
-        self.actionButton.setStyleSheet("""
-        QPushButton {
-        border-width: 3px;
-        border-color: red;
-        border-style: solid;
-        border-radius: 7px;
-        padding: 3px;
-        font-size: 12px;
-        font-weight: bold;
-        padding-left: 5px;
-        padding-right: 5px;
-        min-width: 50px;
-        max-width: 50px;
-        min-height: 13px;
-        max-height: 13px;
-        }
-        """)
+        self.actionButton = QPushButtonCustom("Action!")
         self.actionButton.clicked.connect( self.pushAction )
         #
         self.chooseCreate = QRadioButton("Create Accounts", self)
@@ -106,56 +84,134 @@ class LoginWindow(QWidget):
         exitAction = QAction(self)
         exitAction.setShortcut('Ctrl+Q')
         exitAction.triggered.connect( qApp.quit )
+        self.addAction( exitAction )
+        mySize = self.sizeHint()            
+        self.resize( mySize.width(), mySize.height() )
+        self.setFixedWidth( mySize.width() )
+        self.setFixedHeight( mySize.height() )
         #
-        if showFrame:
-            mySize = self.sizeHint()            
-            self.addAction( exitAction )
-            self.resize( mySize.width(), mySize.height() )
-            self.setFixedWidth( mySize.width() )
-            self.setFixedHeight( mySize.height() )
-            self.show()
+        ## now check to see if we have non-null emails and passwords
+        # assert(statusdict['message'] != 'SUCCESS' )        
+        self.statusLabel.setText( statusdict['message'] )
+        if statusdict['message'] == 'SUCCESS':
+            return
+        if statusdict['email'] != '':
+            self.dbEmailLineEdit.setEnabled( False )
+            self.dbPasswdLineEdit.setEnabled( False )
+            self.dbEmailLineEdit.setText( statusdict['email'] )
+            self.dbPasswdLineEdit.setText( statusdict['password'] )
+            self.chooseJustRead.setEnabled( False )
+            self.chooseCreate.toggle()
+        self.show()
         
     def pushAction(self):
-        text = "CLICKED!"
-        if self.chooseCreate.isChecked():
-            text = "%s CREATE ACCOUNT!" % text
-        else:
-            text = "%s ONLY LOGIN!" % text
-        self.statusLabel.setText(text)
-        
+        #
+        ## sanitize inputs
+        dbEmail = str(self.dbEmailLineEdit.text()).strip()
+        self.dbEmailLineEdit.setText( dbEmail )
+        dbPasswd = str(self.dbPasswdLineEdit.text()).strip()
+        self.dbPasswdLineEdit.setText( dbPasswd )
 
+        if self.dbEmailLineEdit.isEnabled():
+            #
+            ## check if valid password
+            url = urljoin('https://tanimislam.ddns.net',
+                          '/flask/accounts/checkpassword')
+            try:
+                response = requests.post( url, json = { 'username' : dbEmail,
+                                                        'password' : dbPasswd } )
+            except Exception:
+                self.statusLabel.setText( "ERROR, COULD NOT CHECK DB UNAME/PASSWD")
+                return
+            if response.status_code != 200:
+                self.statusLabel.setText( "ERROR, COULD NOT CHECK DB UNAME/PASSWD")
+                return
+            status = response.json()['data']
+            if status == 'NO':
+                self.statusLabel.setText( "ERROR, BAD DB UNAME/PASSWD" )
+                self.dbEmailLineEdit.setText( "" )
+                self.dbPasswdLineEdit.setText( "" )
+                return
+            #
+            ## now put in the DB username and password
+            push_database_data( dbEmail, dbPasswd )
+            
+        # first check that we have created the account
+        #
+        ## sanitize inputs
+        rdEmail = str(self.rdEmailLineEdit.text()).strip()
+        self.rdEmailLineEdit.setText( rdEmail )
+        rdPasswd = str(self.rdPasswdLineEdit.text()).strip()
+        self.rdPasswdLineEdit.setText( rdPasswd )
+        if self.chooseCreate.isChecked():
+            #
+            ## check that this is a good email/password combo
+            url = urljoin( 'https://tanimislam.ddns.net',
+                           '/flask/api/nprstuff/readability/checkuser' )
+            try:
+                response = requests.post( url, json = { 'readability_email' : rdEmail,
+                                                        'readability_password' : rdPasswd })
+            except Exception:
+                self.statusLabel.setText("ERROR, COULD NOT CHECK READABILITY UNAME/PASSWD")
+                return
+            if response.status_code != 200:
+                self.statusLabel.setText("ERROR, COULD NOT CHECK READABILITY UNAME/PASSWD")
+                return
+            status = response.json()['status']
+            if status == 'FAILURE':
+                self.statusLabel.setText("ERROR, BAD READABILITY UNAME/PASSWD COMBO")
+                self.rdEmailLineEdit.setText( "" )
+                self.rdPasswdLineEdit.setText( "" )
+                return
+            #
+            ## now create the user
+            url = urljoin( 'https://tanimislam.ddns.net',
+                           '/flask/api/nprstuff/readability/createuser' )
+            response = requests.post( url, json = { 'readability_email' : rdEmail,
+                                                    'readability_password' : rdPasswd,
+                                                    'no_check_user' : 1 },
+                                      auth = ( dbEmail, dbPasswd ) )
+            if response.status_code != 200:
+                self.statusLabel.setText("ERROR, COULD NOT CREATE READABILITY ACCOUNT")
+                return
+            self.statusLabel.setText("SUCCESS, CREATED USER")
+            self.hide()
+            return
+        else:  # implies that we have username and password already defined
+            #
+            ## check that we already have a readability account
+            url = urljoin( 'https://tanimislam.ddns.net',
+                           '/flask/api/nprstuff/readability/checkaccount' )
+            try:
+                response = requests.get( url, auth = ( dbEmail, dbPasswd ) )
+            except Exception:
+                self.statusLabel.setText("ERROR, COULD NOT CHECK READABILITY ACCOUNT")
+                return
+            if response.status_code != 200:
+                self.statusLabel.setText("ERROR, COULD NOT CHECK READABILITY ACCOUNT")
+                return
+            status = response.json()['status']
+            if status == 'FAILURE':
+                self.statusLabel.setText("ERROR, NEED TO CREATE READABILITY ACCOUNT")
+                self.chooseCreate.toggle()
+                return
+            self.statusLabel.setText("SUCCESS, FOUND USER")
+            self.hide()
+            return
             
     def chooseStateCreate( self, enabled ):
         if enabled:
             self.rdEmailLineEdit.setEnabled( True )
             self.rdPasswdLineEdit.setEnabled( True )
-            self.rdEmailLineEdit.setStyleSheet( """
-            QLineEdit { 
-            background-color: white;            
-            }
-            """)
-            self.rdPasswdLineEdit.setStyleSheet("""
-            QLineEdit { 
-            background-color: white;           
-            }
-            """)
 
     def chooseStateJustRead( self, enabled ):
         if enabled:
             self.rdEmailLineEdit.setEnabled( False )
             self.rdPasswdLineEdit.setEnabled( False )
-            self.rdEmailLineEdit.setStyleSheet( """
-            QLineEdit { 
-            background-color: #DAE9F0;       
-            }
-            """)
-            self.rdPasswdLineEdit.setStyleSheet("""
-            QLineEdit { 
-            background-color: #DAE9F0;           
-            }
-            """)
 
 if __name__=='__main__':
+    statusdict = get_database_data( )
+    print 'message = %s' % statusdict['message']
     qApp = QApplication( sys.argv )
-    lw = LoginWindow()
+    lw = LoginWindow( statusdict )
     sys.exit( qApp.exec_() )
