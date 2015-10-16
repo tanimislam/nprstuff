@@ -23,7 +23,7 @@ def demo_get_articles(email, password):
     else:
         return pickle.load( gzip.open( 'articledata.pkl.gz', 'r' ) )
 
-class ArticleWidget(QWidget):
+class ArticleWidget(QGroupBox):
     def __init__(self, parent):
         super(ArticleWidget, self).__init__()
         self.setWindowTitle("ARTICLE TEXT")
@@ -101,7 +101,13 @@ class ArticleWidget(QWidget):
 
 
     def printArticle(self):
-        print 'PRINT ARTICLE'
+        dialog = QPrintPreviewDialog()
+        #self._disableMainDialog()
+        qtd = QTextDocument()
+        qtd.setHtml( self.articlePanel.toHtml() )
+        dialog.paintRequested.connect( qtd.print_ )
+        dialog.exec_()
+        #self._enableMainDialog()
 
     def makeEbook(self):
         print 'MAKING EBOOK'
