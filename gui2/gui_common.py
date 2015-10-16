@@ -2,56 +2,16 @@
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-import os, sys, numpy, requests, json
+import os, sys, numpy, requests, json, binascii
 import xdg.BaseDirectory, ConfigParser
 from urlparse import urljoin
 
 colorwheel = [ QColor( QString( name ) ) for name in
                [ '#E5EDE9', '#EDE6CE', '#EDDFEB', '#F1EDFE', '#CCD9FD', '#F9EBFD' ] ]
 
-class QPushButtonCustom( QPushButton ):
-    def __init__(self, parent = None):
-        super(QPushButton, self).__init__( parent = parent )
-        self.setStyleSheet("""
-        QPushButtonCustom {
-        border-width: 3px;
-        border-color: red;
-        border-style: solid;
-        border-radius: 7px;
-        padding: 3px;
-        font-size: 12px;
-        font-weight: bold;
-        padding-left: 5px;
-        padding-right: 5px;
-        min-width: 50px;
-        max-width: 50px;
-        min-height: 13px;
-        max-height: 13px;
-        }
-        """)
-    
+class QPushButtonCustom( QPushButton ):    
     def __init__(self, text, parent = None):
         super(QPushButton, self).__init__( text, parent = parent )
-        self.setStyleSheet("""
-        QPushButtonCustom {
-        border-width: 3px;
-        border-color: red;
-        border-style: solid;
-        border-radius: 7px;
-        padding: 3px;
-        font-size: 12px;
-        font-weight: bold;
-        padding-left: 5px;
-        padding-right: 5px;
-        min-width: 50px;
-        max-width: 50px;
-        min-height: 13px;
-        max-height: 13px;
-        }
-        """)
-
-    def __init__(self, icon, text, parent = None):
-        super(QPushButton, self).__init__( icon, text, parent = parent )
         self.setStyleSheet("""
         QPushButtonCustom {
         border-width: 3px;
@@ -183,27 +143,14 @@ def get_database_data( ):
     else:
         return { 'email' : email, 'password' : password,
                  'message' : 'SUCCESS',
-                 'cookie' : response.cookies }
+                 'cookies' : response.cookies }
 
-
-class CustomScrollArea(QScrollArea):
-    def __init__(self):
-        super(CustomScrollArea, self).__init__()
-        #
-        toEndAction = QAction(self)
-        toEndAction.setShortcut('End')
-        toEndAction.triggered.connect( self.scrollToBottom )
-        self.addAction( toEndAction )
-        #
-        toStartAction = QAction(self)
-        toStartAction.setShortcut('Home')
-        toStartAction.triggered.connect( self.scrollToTop )
-        self.addAction( toStartAction )
-
-    def scrollToBottom(self):
-        sb = self.verticalScrollBar()
-        sb.setValue( sb.maximum() )
-
-    def scrollTopTop(self):
-        sb = self.verticalScrollBar()
-        sb.setValue( sb.minimum() )
+def get_article_data( email, password, cookies ):
+    url = urljoin( 'https://tanimislam.ddns.net',
+                   '/flask/api/nprstuff/readability/login')
+    response = requests.get( url, auth = ( email, password ), cookies = cookies )
+    url = urljoin( 'https://tanimislam.ddns.net',
+                   '/flask/api/nprstuff/readability/getarticles' )
+    response = requests.get( url, auth = ( email, password ), cookies = cookies )
+    data = json.loads( binascii.a2b_hex( response.json()['data'] ).decode('bz2' ) )
+    return data
