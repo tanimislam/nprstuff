@@ -129,7 +129,7 @@ class ArticlesListWidget(QWidget):
     def doClickedTable(self, clickedIndex):
         row = clickedIndex.row()
         model = clickedIndex.model()
-        act_index = model.index( row, 4 )
+        act_index = model.index( row, 5 )
         articleId = str( model.data( act_index, Qt.DisplayRole ).toString() )
         self.parent.pushContent( articleId )
                 
@@ -144,11 +144,13 @@ class ArticlesListWidget(QWidget):
         lengths = []
         lengths_ds = []
         lengths_ts = []
+        lengths_wc = []
         qfm = QFontMetrics( self.table.font() )
         for articleId in ordered_ids:
             artsub = articles[articleId]
             title = titlecase.titlecase( artsub['title'] )
             s_dt = artsub['date_published']
+            wc = artsub['word_count']
             lengths.append( qfm.boundingRect( title ).width( ) )
             if s_dt is None:
                 dtime = _badDate
@@ -157,12 +159,13 @@ class ArticlesListWidget(QWidget):
             else:
                 dtime = datetime.datetime.strptime( s_dt, '%Y-%m-%d %H:%M:%S' )
                 date_string = dtime.strftime('%m/%d/%Y')
-                time_string = dtime.strftime('%H:%M:%S')
+                time_string = dtime.strftime('%H:%M:%S')            
             lengths_ds.append( qfm.boundingRect( date_string ).width( ) )
             lengths_ts.append( qfm.boundingRect( time_string ).width( ) )
-            tabledata.append( [ title, date_string, time_string, dtime, articleId ])
+            lengths_wc.append( qfm.boundingRect( '%d' % wc ).width( ) )
+            tabledata.append( [ title, date_string, time_string, wc, dtime, articleId ])
         self.tm.pushData( tabledata )
-        for column in (1, 2):
+        for column in (1, 2, 3):
             self.table.resizeColumnToContents( column )        
         #
         ## 75% bar set length for title column
@@ -172,10 +175,11 @@ class ArticlesListWidget(QWidget):
         self.table.setColumnWidth(0, length_to_set )
         self.table.setColumnWidth(1, 1.5 * max( lengths_ds ) )
         self.table.setColumnWidth(2, 1.5 * max( lengths_ts ) )
+        self.table.setColumnWidth(3, 2 * max( lengths_wc ) )
         #
         ## set length
         setTotalLength = sum([ self.table.columnWidth( idx ) for
-                               idx in (0, 1, 2) ])
+                               idx in (0, 1, 2, 3) ])
         self.resize( setTotalLength * 1.1, 450 )
         self.setFixedWidth( setTotalLength * 1.1 )
         self.setFixedHeight( 450 )
@@ -184,14 +188,15 @@ class ArticlesListWidget(QWidget):
         self.table = QTableView( self )
         self.tm = MyTableModel( self )
         self.table.setModel( self.tm )
-        self.table.setColumnHidden(3, True)
         self.table.setColumnHidden(4, True)
+        self.table.setColumnHidden(5, True)
         self.table.setItemDelegateForColumn(0, TitleDelegate( self ) )
         self.table.setItemDelegateForColumn(1, DateDelegate( self ) )
         self.table.setItemDelegateForColumn(2, TimeDelegate( self ) )
+        self.table.setItemDelegateForColumn(3, WordcountDelegate( self ) )
 
         # set the minimum size
-        self.table.setMinimumSize( 500, 400 )
+        # self.table.setMinimumSize( 500, 400 )
         
         # show grid
         self.table.setShowGrid( True )
@@ -209,13 +214,13 @@ class ArticlesListWidget(QWidget):
         self.table.verticalHeader().setVisible( False )
         
         # set sorting enabled
-        self.table.setSortingEnabled( False )
+        self.table.setSortingEnabled( True )
         
         # other stuff
         self.table.setSelectionBehavior( QTableView.SelectRows )
         
         # slots
-        self.tm.layoutChanged.connect( self.table.resizeColumnsToContents )
+        # self.tm.layoutChanged.connect( self.table.resizeColumnsToContents )
 
         # end button scroll to bottom
         toBotAction = QAction( self.table )
@@ -267,7 +272,7 @@ class DateDelegate(QItemDelegate):
     def createEditor(self, parent, option, index):
         rowNumber = index.row()
         model = index.model()
-        act_index = model.index( rowNumber, 3 )
+        act_index = model.index( rowNumber, 4 )
         dtime = model.data( act_index, Qt.DisplayRole).toDateTime().toPyDateTime()
         if dtime == _badDate:
             editor = QLabel("NODATE", parent = parent)
@@ -278,7 +283,7 @@ class DateDelegate(QItemDelegate):
     def setEditorData(self, editor, index):
         rowNumber = index.row()
         model = index.model()
-        act_index = model.index( rowNumber, 3 )
+        act_index = model.index( rowNumber, 4 )
         dtime = model.data( act_index, Qt.DisplayRole).toDateTime().toPyDateTime()
         if dtime == _badDate:
             editor.setText( "NODATE" )
@@ -292,7 +297,7 @@ class TimeDelegate(QItemDelegate):
     def createEditor(self, parent, option, index):
         rowNumber = index.row()
         model = index.model()
-        act_index = model.index( rowNumber, 3 )
+        act_index = model.index( rowNumber, 4 )
         dtime = model.data( act_index, Qt.DisplayRole).toDateTime().toPyDateTime()
         if dtime == _badDate:
             editor = QLabel("NOTIME", parent = parent)
@@ -303,18 +308,37 @@ class TimeDelegate(QItemDelegate):
     def setEditorData(self, editor, index):
         owNumber = index.row()
         model = index.model()
-        act_index = model.index( rowNumber, 3 )
+        act_index = model.index( rowNumber, 4 )
         dtime = model.data( act_index, Qt.DisplayRole).toDateTime().toPyDateTime()
         if dtime == _badDate:
             editor.setText( "NOTIME" )
         else:
             editor.setText( dtime.strftime( '%H:%M:%S' ) )
 
+class WordcountDelegate(QItemDelegate):
+    def __init__(self, owner):
+        super(WordcountDelegate, self).__init__(owner)
+
+    def createEditor(self, parent, option, index):
+        rowNumber = index.row()
+        model = index.model()
+        act_index = model.index( rowNumber, 3 )
+        wc = model.data( act_index, Qt.DisplayRole).toInt( )
+        editor = QLabel("%d" % wc, parent = parent )
+        return editor
+
+    def setEditorData(self, editor, index):
+        owNumber = index.row()
+        model = index.model()
+        act_index = model.index( rowNumber, 3 )
+        wc = model.data( act_index, Qt.DisplayRole).toInt( )
+        editor.setText( '%d' % wc )
+
 class MyTableModel(QAbstractTableModel):
     def __init__(self, parent = None):
         super(MyTableModel, self).__init__(parent)
         self.arrayData = []
-        self.headerData = [ "title", "date" , "time", "datetime", "articleId" ]
+        self.headerData = [ "title", "date" , "time", "word count", "datetime", "articleId" ]
 
     def pushData(self, tabledata):
         #
@@ -349,10 +373,12 @@ class MyTableModel(QAbstractTableModel):
     def setData( self, index, value, role ):
         if not index.isValid():
             return
-        if index.column() in (0, 1, 2, 4):
+        if index.column() in (0, 1, 2, 5):
             self.arrayData[ index.row() ][ index.column() ] = str( value.toString() )
         elif index.column() == 3:
-            self.arrayData[ index.row() ][ 3 ] = value.toDateTime().toPyDateTime() 
+            self.arrayData[ index.row() ][ 3 ] = value.toInt( )
+        elif index.column() == 4:
+            self.arrayData[ index.row() ][ 4 ] = value.toDateTime().toPyDateTime() 
 
     def flags( self, index ):
         return Qt.ItemFlags( Qt.ItemIsSelectable | Qt.ItemIsEnabled )
@@ -364,8 +390,12 @@ class MyTableModel(QAbstractTableModel):
 
     def sort(self, ncol, order):
         self.layoutAboutToBeChanged.emit()
-        if order == Qt.AscendingOrder:
-            self.arrayData = sorted(self.arrayData, key = lambda tup: tup[3] )
+        if ncol != 3:
+            mycol = 4
         else:
-            self.arrayData = sorted(self.arrayData, key = lambda tup: tup[3] )[::-1]
+            mycol = 3
+        if order == Qt.AscendingOrder:
+            self.arrayData = sorted(self.arrayData, key = lambda tup: tup[ mycol ] )
+        else:
+            self.arrayData = sorted(self.arrayData, key = lambda tup: tup[ mycol ] )[::-1]
         self.layoutChanged.emit()

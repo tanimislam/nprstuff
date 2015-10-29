@@ -1,41 +1,59 @@
 #!/usr/bin/env python
 
 from PyQt4.QtGui import *
-import copy, os, sys, titlecase, datetime
+import copy, os, sys, titlecase, datetime, time, requests
 from gui_common import get_database_data, get_article_data
 from login_window import LoginWindow
 from main_gui import ArticleWidget, ArticlesListWidget
 from main_gui import demo_get_articles
 from bs4 import BeautifulSoup
+from urlparse import urljoin
 
 class MainApp(QApplication):
     def __init__(self, args):
         super(MainApp, self).__init__(args)
+        self.cookies = None
         self.aw = ArticleWidget( self )
         self.alw = ArticlesListWidget( self )
         self.lw = LoginWindow( self )
         self.aw.hide()
         self.alw.hide()
         self.lw.hide()
-        #
+        self.aboutToQuit.connect( self.cleanUp )
+
+    def doLogon(self):
+        time0 = time.time()
+        print 'STARTING TO LOGIN'
         statusdict = get_database_data( )
+        print 'FINISHED LOGIN STUFF IN %0.3f SECONDS: %s' % (
+            time.time() - time0, statusdict['message'] )
         if statusdict['message'] != 'SUCCESS':
             self.lw.setFromStatus( statusdict )
             self.lw.show()
         else:
-            cookies = statusdict['cookies']
+            self.cookies = statusdict['cookies']
             email = statusdict['email']
             password = statusdict['password']
-            data = get_article_data( email, password, cookies )
+            data = get_article_data( email, password, self.cookies )
             self.pushData( data['articles'], data['ids_ordered'] )
+            
+    def pushDataFromCreds(self, email, password, cookies ):
+        self.cookies = cookies
+        data = get_article_data( email, password, cookies )
+        self.pushData( data['articles'], data['ids_ordered'] )        
             
     def pushData(self, articles, ordered_ids ):
         self.articles = copy.deepcopy( articles )
         self.alw.pushTableData( articles, ordered_ids )
-        self.alw.show()
-        self.aw.show()
         self.lw.hide()
         self.lw.wipeAllData()
+        self.alw.show()
+        self.aw.show()
+
+    def cleanUp(self):
+        url = urljoin( 'https://tanimislam.ddns.net',
+                       '/flask/api/nprstuff/readability/logout' )
+        resp = requests.get( url, cookies = self.cookies )        
 
     def pushContent(self, articleId ):
         assert(articleId in self.articles )
@@ -61,9 +79,6 @@ class MainApp(QApplication):
 if __name__=='__main__':
     #data = demo_get_articles('', '')
     ma = MainApp(sys.argv)
-    #ma.pushData( data['articles'], data['ids_ordered'] )
+    ma.doLogon( )
+    # ma.pushData( data['articles'], data['ids_ordered'] )
     sys.exit( ma.exec_() )
-
-
-
-    
