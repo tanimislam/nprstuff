@@ -99,7 +99,7 @@ class LoginWindow(QWidget):
         
     ## now check to see if we have non-null emails and passwords
     # assert(statusdict['message'] != 'SUCCESS' )        
-    def setFromStatus( statusdict ):
+    def setFromStatus(self, statusdict ):
         self.statusLabel.setText( statusdict['message'] )
         if statusdict['message'] == 'SUCCESS':
             return
@@ -191,8 +191,7 @@ class LoginWindow(QWidget):
                 self.statusLabel.setText("ERROR, COULD NOT CREATE READABILITY ACCOUNT")
                 return
             self.statusLabel.setText("SUCCESS, CREATED USER")
-            self.sessioncookie = response.cookies
-            self.hide()
+            self.parent.pushDataFromCreds( dbEmail, dbPasswd, response.cookies )
         else:  # implies that we have username and password already defined
             #
             ## check that we already have a readability account
@@ -212,9 +211,8 @@ class LoginWindow(QWidget):
                 self.chooseCreate.toggle()
                 return
             self.statusLabel.setText("SUCCESS, LOGGED IN AS USER")
-            self.sessioncookie = response.cookies
-            self.hide()
-            
+            self.parent.pushDataFromCreds( dbEmail, dbPasswd, response.cookies )
+                        
     def chooseStateCreate( self, enabled ):
         if enabled:
             self.rdEmailLineEdit.setEnabled( True )
