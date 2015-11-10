@@ -14,6 +14,42 @@ def find_necessary_executables():
     if ffmpeg_exec is None: return None
     #
     return { 'avconv' : ffmpeg_exec }
+
+def store_cloudconvert_api_key( cloudconvert_API_key ):
+    resource = 'nprstuff'
+    filename = '%s.conf' % resource
+    baseConfDir = xdg.BaseDirectory.save_config_path( resource )
+    absPath = os.path.join( baseConfDir, filename )
+    if os.path.isdir( absPath ):
+        shutil.rmtree( absPath )
+    if not os.path.isfile( absPath ):
+        cparser = ConfigParser.RawConfigParser( )
+    else:
+        cparser = ConfigParser.ConfigParser( )
+        cparser.read( absPath )
+
+    cparser.remove_section( 'CLOUDCONVERT_DATA' )
+    cparser.add_section( 'CLOUDCONVERT_DATA' )
+    cparser.set( 'CLOUDCONVERT_DATA', 'apikey', cloudconvert_API_key )
+    with open( absPath, 'wb') as openfile:
+        cparser.write( openfile )
+    os.chmod( absPath, 0600 )
+
+def get_cloudconvert_api_key():
+    resource = 'nprstuff'
+    filename = '%s.conf' % resource
+    baseConfDir = xdg.BaseDirectory.save_config_path( resource )
+    absPath = os.path.join( baseConfDir, filename )
+    if not os.path.isfile( absPath ):
+        raise ValueError("Error, default configuration file = %s does not exist." % absPath )
+    cparser = ConfigParser.ConfigParser( )
+    cparser.read( absPath )
+    if not cparser.has_section( 'CLOUDCONVERT_DATA' ):
+        raise ValueError("Error, configuration file has not defined CLOUDCONVERT_DATA section.")
+    if not cparser.has_option( 'CLOUDCONVERT_DATA', 'apikey' ):
+        raise ValueError("Error, configuration file has not defined an apikey.")
+    cloudconvert_api_key = cparser.get( "CLOUDCONVERT_DATA", "apikey" )
+    return cloudconvert_api_key
         
 def store_api_key(npr_API_key):
     resource = 'nprstuff'
@@ -22,10 +58,13 @@ def store_api_key(npr_API_key):
     absPath = os.path.join( baseConfDir, filename )
     if os.path.isdir( absPath ):
         shutil.rmtree( absPath )
-    elif os.path.isfile( absPath ):
-        os.remove( absPath )
+    if not os.path.isfile( absPath ):
+        cparser = ConfigParser.RawConfigParser( )
+    else:
+        cparser = ConfigParser.ConfigParser( )
+        cparser.read( absPath )
     #
-    cparser = ConfigParser.RawConfigParser()
+    cparser.remove_section( 'NPR_DATA' )
     cparser.add_section('NPR_DATA')
     cparser.set('NPR_DATA', 'apikey', npr_API_key)
     with open( absPath, 'wb') as openfile:
