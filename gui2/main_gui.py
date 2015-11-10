@@ -237,13 +237,13 @@ class ArticlesListWidget(QWidget):
         # up one page
         upOnePageAction = QAction( self.table )
         upOnePageAction.setShortcut( 'PgUp' )
-        upOnePageAction.triggered.connect( self.scrollUpOnePage )
+        upOnePageAction.triggered.connect( self.table.scrollUpOnePage )
         self.table.addAction( upOnePageAction )
 
         # down one page
         downOnePageAction = QAction( self.table )
         downOnePageAction.setShortcut( 'PgDown' )
-        downOnePageAction.triggered.connect( self.scrollDownOnePage )
+        downOnePageAction.triggered.connect( self.table.scrollDownOnePage )
         self.table.addAction( downOnePageAction )        
         
 class TitleDelegate(QItemDelegate):
