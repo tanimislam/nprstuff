@@ -13,7 +13,6 @@ class QPushButtonCustom( QPushButton ):
     def __init__(self, text, parent = None):
         super(QPushButton, self).__init__( text, parent = parent )
         self.setStyleSheet("""
-        QPushButtonCustom {
         border-width: 3px;
         border-color: red;
         border-style: solid;
@@ -27,31 +26,24 @@ class QPushButtonCustom( QPushButton ):
         max-width: 50px;
         min-height: 13px;
         max-height: 13px;
-        }
         """)
 
 class QLineEditCustom( QLineEdit ):
     def __init__(self, contents, parent = None ):
         super(QLineEditCustom, self).__init__( contents, parent = parent )
         self.setStyleSheet("""
-        QLineEditCustom {
         background-color: white;
-        }
         """)
 
     def setEnabled(self, val ):
         super(QLineEditCustom, self).setEnabled( val )
         if val:
             self.setStyleSheet("""
-            QLineEditCustom {
             background-color: white;
-            }
             """)
         else:
             self.setStyleSheet("""
-            QLineEditCustom {
             background-color: #DAE9F0;
-            }
             """)
 
 def nuke_database_data( ):
