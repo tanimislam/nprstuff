@@ -8,7 +8,7 @@ from gui_common import QPushButtonCustom
 
 _badDate = datetime.datetime.strptime("January 1, 1000", "%B %d, %Y")
 
-def demo_get_articles(email, password):
+def _demo_get_articles(email, password):
     if not os.path.isfile( 'articledata.pkl.gz' ):
         url = urljoin( 'https://tanimislam.ddns.net',
                        '/flask/api/nprstuff/readability/login')
@@ -237,13 +237,13 @@ class ArticlesListWidget(QWidget):
         # up one page
         upOnePageAction = QAction( self.table )
         upOnePageAction.setShortcut( 'PgUp' )
-        upOnePageAction.triggered.connect( self.table.scrollUpOnePage )
+        upOnePageAction.triggered.connect( self.scrollUpOnePage )
         self.table.addAction( upOnePageAction )
 
         # down one page
         downOnePageAction = QAction( self.table )
         downOnePageAction.setShortcut( 'PgDown' )
-        downOnePageAction.triggered.connect( self.table.scrollDownOnePage )
+        downOnePageAction.triggered.connect( self.scrollDownOnePage )
         self.table.addAction( downOnePageAction )        
         
 class TitleDelegate(QItemDelegate):

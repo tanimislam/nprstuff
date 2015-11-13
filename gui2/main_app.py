@@ -5,7 +5,7 @@ import copy, os, sys, titlecase, datetime, time, requests
 from gui_common import get_database_data, get_article_data
 from login_window import LoginWindow
 from main_gui import ArticleWidget, ArticlesListWidget
-from main_gui import demo_get_articles
+from main_gui import _demo_get_articles
 from bs4 import BeautifulSoup
 from urlparse import urljoin
 
@@ -77,7 +77,7 @@ class MainApp(QApplication):
         
 
 if __name__=='__main__':
-    #data = demo_get_articles('', '')
+    #data = _demo_get_articles('', '')
     ma = MainApp(sys.argv)
     ma.doLogon( )
     # ma.pushData( data['articles'], data['ids_ordered'] )
