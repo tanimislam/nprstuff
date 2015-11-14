@@ -54,7 +54,12 @@ I like NPR, so I made some scripts to download my favorite programs from NPR. Fo
 
 Although this project started off as a way to download these three programs, I have expanded it to include a grab bag of altogether different types of functionalities. What remains the same? This distribution consists mainly of executable python scripts.
 
-I organize this document into the following sections: Core Functionality, New Functionality, Graphics Functionality (in folders {\verb|gui|} and {\verb|gui2|}), and a small section called Oldstuff. 
+I organize this document into the following sections: Core Functionality, New Functionality, Graphics Functionality (in folders {\verb|gui|} and {\verb|gui2|}), and a small section called Oldstuff.
+
+This document was converted from a \LaTeX source using \href{http://pandoc.org/index.html}{\texttt{Pandoc}}, via
+\begin{verbatim}
+pandoc -s README.tex -o README.rst
+\end{verbatim}
 
 \section{Core Functionality}\label{sec:core_functionality}
 This consists of functionality to grab episodes from \href{http://www.npr.org/programs/fresh-air/}{Fresh Air},  \href{http://www.npr.org/programs/wait-wait-dont-tell-me/}{Wait Wait..Don't Tell Me}, and \href{http://www.thisamericanlife.org/}{This American Life}. These consist of the following pieces of python code:
@@ -96,7 +101,7 @@ This consists of newer functionality that does not download NPR episodes, nor ca
  \item {\verb|convertImage.py|} uses the \href{https://cloudconvert.com/apiconsole}{CloudConvert REST API} to \textit{smoothly and without pain points} convert and resize SVG images to PNG images of the same base name. The help screen for this command line tool is here,
  \include{convertImage_help}
  
- \item {\verb|changedates.py|} changes the creation date of JPG and MOV files, that my Canon digital camera creates, by up and down one year. I created this tool because my Canon digital camera does not set the right year on the creation date for image files it creates. This caused problems when I uploaded those images to \href{https://picasa.google.com/}{Google Picasa} or \href{https://plus.google.com/}{Google+}. The help screen for this command line tool is here,
+ \item {\verb|changedates.py|} changes the creation date of JPG and MOV files, that my Canon digital camera creates, by up and down one year. I created this tool because my Canon digital camera does not set the right year on the creation date for image files it creates. This caused problems when I uploaded those images to \href{https://picasaweb.google.com/home}{Google Picasa} or \href{https://plus.google.com/}{Google+}. The help screen for this command line tool is here,
  \include{changedates_help}
  
  \item {\verb|music_to_m4a.py|} can convert a single file from mp3/ogg/flac format to m4a format while preserving music file metadata, and can optionally set the total number of album tracks and the album cover if the music files is in an album. It can also rename an m4a music file into the format ``\textit{artist name} - \textit{song name}.m4a.'' The help screen for this command line tool is here,

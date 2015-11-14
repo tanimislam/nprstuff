@@ -18,6 +18,13 @@ I organize this document into the following sections: Core
 Functionality, New Functionality, Graphics Functionality (in folders
 ``gui`` and ``gui2``), and a small section called Oldstuff.
 
+This document was converted from a LaTeXsource using
+```Pandoc`` <http://pandoc.org/index.html>`__, via
+
+::
+
+    pandoc -s README.tex -o README.rst
+
 Core Functionality
 ==================
 
@@ -161,7 +168,7 @@ episodes. These consist of the following pieces of python code.
    created this tool because my Canon digital camera does not set the
    right year on the creation date for image files it creates. This
    caused problems when I uploaded those images to `Google
-   Picasa <https://picasa.google.com/>`__ or
+   Picasa <https://picasaweb.google.com/home>`__ or
    `Google+ <https://plus.google.com/>`__. The help screen for this
    command line tool is here,
 
