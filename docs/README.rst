@@ -19,7 +19,7 @@ Functionality, New Functionality, Graphics Functionality (in folders
 ``gui`` and ``gui2``), and a small section called Oldstuff.
 
 This document was converted from a LaTeXsource using
-```Pandoc`` <http://pandoc.org/index.html>`__, via
+`Pandoc <http://pandoc.org/index.html>`__, via
 
 ::
 
