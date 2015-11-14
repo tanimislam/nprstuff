@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from PyQt4.QtGui import *
-import copy, os, sys, titlecase, datetime, time, requests
+import copy, os, sys, titlecase, datetime, time, requests, glob
 from gui_common import get_database_data, get_article_data
 from login_window import LoginWindow
 from main_gui import ArticleWidget, ArticlesListWidget
@@ -13,6 +13,13 @@ class MainApp(QApplication):
     def __init__(self, args):
         super(MainApp, self).__init__(args)
         self.cookies = None
+        mainPath = os.path.join( os.path.dirname(
+            os.path.abspath(__file__) ), 'fonts' )
+        for fontFile in glob.glob( os.path.join( mainPath ,
+                                                 '*.ttf' ) ):
+            QFontDatabase.addApplicationFont( fontFile )
+        #
+        ##
         self.aw = ArticleWidget( self )
         self.alw = ArticlesListWidget( self )
         self.lw = LoginWindow( self )

@@ -1,8 +1,8 @@
 \documentclass[]{article}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
-\usepackage{amssymb,amsmath}
-\usepackage{ifxetex,ifluatex}
+\usepackage{amssymb,amsmath, graphicx}
+\usepackage{ifxetex, ifluatex, floatflt}
 \usepackage{fixltx2e} % provides \textsubscript
 % use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
@@ -112,7 +112,98 @@ This consists of newer functionality that does not download NPR episodes, nor ca
 \end{itemize}
 
 \section{Graphics Functionality}\label{sec:graphics_functionality}
+This section describes the two graphical tools I have developed:
+{\verb|gui|} matches a small subset of functionality that the
+\href{https://www.readability.com}{Readability} tool handles
+excellently; {\verb|gui2|} is a
+\href{https://www.riverbankcomputing.com/software/pyqt/download}{PyQt4}
+GUI front-end to the \href{https://www.readability.com}{Readability}
+API.
+
+\subsection{GUI: Media Website Text Formatter} \label{subsec:gui}
+This GUI can read from the following media websites:
+\href{http://www.lightspeedmagazine.com/}{Lightspeed Magazine},
+\href{https://medium.com/}{Medium},
+\href{http://www.newyorker.com/}{The New Yorker},
+\href{http://www.nytimes.com/?WT.z_jog=1}{The New York Times}, and the
+\href{http://www.vqronline.org/}{Virginia Quarterly Review}. Here is a
+screenshot!
+\begin{figure}[!ht]
+  \parbox[!ht]{0.65\linewidth}{%
+    \includegraphics[width=\linewidth]{images/gui_screenshot.png}
+  } \hfill
+  \parbox[!ht]{0.34\linewidth}{%
+    \caption{A screenshot of the GUI reader, converting the URL for
+      the \href{http://www.nytimes.com}{The New York Times} into
+      text. Note the separate icons above for the five media websites
+      from which this GUI can read.} \label{fig:gui_screenshot}}
+\end{figure}
+The screenshots of the save file dialog and the print preview dialog
+are shown Fig.~\ref{fig:gui_screenshot_save} and
+Fig.~\ref{fig:gui_screenshot_printpreview}, respectively.
+\begin{figure}[!ht]
+  \parbox[!ht]{0.4\linewidth}{%
+    \includegraphics[width=\linewidth]{images/gui_screenshot_save.png}
+    \caption{The GUI screenshot of the save
+      dialog.} \label{fig:gui_screenshot_save}} \hfill
+  \parbox[!ht]{0.5\linewidth}{%
+    \includegraphics[width=\linewidth]{images/gui_screenshot_printpreview.png}
+    \caption{The GUI screenshot of the print preview
+      dialog.} \label{fig:gui_screenshot_printpreview}}
+\end{figure}
+Note, here I do not support or maintain this tool after I found out
+about \href{https://www.readability.com}{Readability}.
+
+\subsection{GUI2: Readability GUI Front-End} \label{subsec:gui2}
+This is the PyQt4 GUI front-end to
+\href{https://www.readability.com}{Readability}. A screenshot of the
+list of articles widget is shown in
+Fig.~(\ref{fig:gui2_screenshot_articlelist}, and a screenshot of the
+article text widget is shown in
+Fig.~(\ref{fig:gui2_screenshot_articletext}.
+\begin{figure}[!ht]
+  \parbox[!ht]{0.52\linewidth}{%
+    \includegraphics[width=\linewidth]{images/gui2_screenshot_articlelist.png}
+    \caption{List of bookmarked (stored) articles under the user's
+      account.} \label{fig:gui2_screenshot_articlelist} } \hfill
+  \parbox[!ht]{0.45\linewidth}{%
+    \includegraphics[width=\linewidth]{images/gui2_screenshot_articletext.png}
+    \caption{The text form of the article's content, with working
+      dialogs for \texttt{Font} and \texttt{Print
+        Preview}.} \label{fig:gui2_screenshot_articletext} }
+\end{figure}
+A screenshot of the font changing dialog, the {\verb|Font|} button,
+is shown in Fig.~(\ref{fig:gui2_screenshot_fontdialog}). A screenshot
+of the print preview dialog, the {\verb|Print|} button, is shown in
+Fig.~(\ref{fig:gui2_screenshot_printpreviewdialog}).
+\begin{figure}[!ht]
+  \parbox[!ht]{0.3\linewidth}{%
+    \includegraphics[width=\linewidth]{images/gui2_screenshot_fontdialog.png}
+    \caption{The font changing dialog launched by the \texttt{Font}
+      button in the article text widget. The initial preference for
+      the font to display are fixed width
+      fonts.} \label{fig:gui2_screenshot_fontdialog} } \hfill
+  \parbox[!ht]{0.6\linewidth}{%
+    \includegraphics[width=\linewidth]{images/gui2_screenshot_printpreviewdialog.png}
+    \caption{The print preview dialog launched by the \texttt{Print}
+      button in the article text
+      widget.} \label{fig:gui2_screenshot_printpreviewdialog} }
+\end{figure}
+In the immediate future, I plan on at least implementing the
+follwoing, all using the Readability API.
+\begin{itemize}
+\item {\verb|EPUB|} button, to create the article in
+  \href{https://en.wikipedia.org/wiki/EPUB}{EPUB} format.
+  
+\item Adding and deleting articles through the article list widget.
+\end{itemize}
 
 \section{Oldstuff}\label{sec:oldstuff}
+These are tools that I do not maintain, located in the
+{\verb|oldstuff|} folder, but which others may find
+useful. These are pieces of code that I have started, but which are
+unmaintained. These are the following pieces of code:
+{\verb|freshair.sh|}, {\verb|waitwait.sh|}, and
+{\verb|google_pull_contacts.py|}.
 
 \end{document}

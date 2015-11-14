@@ -28,6 +28,7 @@ class ArticleWidget(QGroupBox):
         super(ArticleWidget, self).__init__()
         self.setWindowTitle("ARTICLE TEXT")
         self.parent = parent
+        self.setStyleSheet( 'font-family: Alef;' )
         #
         layout = QVBoxLayout()
         self.setLayout( layout )
@@ -117,6 +118,7 @@ class ArticlesListWidget(QWidget):
     def __init__(self, parent):
         super(ArticlesListWidget, self).__init__()
         self.setWindowTitle("ARTICLE TITLES")
+        self.setStyleSheet( 'font-family: Alef;' )
         layout = QVBoxLayout()
         self.setLayout( layout )
         self.create_table_and_model( )
