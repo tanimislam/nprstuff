@@ -4,6 +4,10 @@ nprstuff
 
 :Author: Tanim Islam
 
+.. role:: math(raw)
+   :format: html latex
+..
+
 I like NPR, so I made some scripts to download my favorite programs from
 NPR. For now, I have something that downloads `Fresh
 Air <http://www.npr.org/programs/fresh-air/>`__, `Wait Wait..Don’t Tell
