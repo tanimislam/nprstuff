@@ -156,6 +156,25 @@ episodes. These consist of the following pieces of python code.
          --filename=FILENAME  Name of the input SVG file.
          --width=WIDTH        If defined, new width of the file. Optional
 
+-  ``changedates.py`` changes the creation date of JPG and MOV files,
+   that my Canon digital camera creates, by up and down one year. I
+   created this tool because my Canon digital camera does not set the
+   right year on the creation date for image files it creates. This
+   caused problems when I uploaded those images to `Google
+   Picasa <https://picasa.google.com/>`__ or
+   `Google+ <https://plus.google.com/>`__. The help screen for this
+   command line tool is here,
+
+   ::
+
+       Usage: changedates.py [options]
+
+       Options:
+         -h, --help         show this help message and exit
+         --dirname=DIRNAME  Name of the directory to look for jpeg files.
+         --movs             If chosen, process MOV files instead.
+         --minus            If chosen, subtract a year from the files.
+
 Graphics Functionality
 ======================
 
