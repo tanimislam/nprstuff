@@ -195,3 +195,6 @@ pythontex-files-*/
 # WinEdt
 *.bak
 *.sav
+
+# PDF files
+docs/*pdf
