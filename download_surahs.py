@@ -2,6 +2,7 @@
 
 import lxml.html, urllib2, urlparse, time, os
 from multiprocessing import Pool, cpu_count
+from optparse import OptionParser
 
 def get_surahs(outdir = os.getcwd()):
     surahs = []

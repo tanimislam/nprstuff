@@ -175,6 +175,44 @@ episodes. These consist of the following pieces of python code.
          --movs             If chosen, process MOV files instead.
          --minus            If chosen, subtract a year from the files.
 
+-  ``music_to_m4a.py`` can convert a single file from mp3/ogg/flac
+   format to m4a format while preserving music file metadata, and can
+   optionally set the total number of album tracks and the album cover
+   if the music files is in an album. It can also rename an m4a music
+   file into the format “*artist name* - *song name*.m4a.” The help
+   screen for this command line tool is here,
+
+   ::
+
+       Usage: music_to_m4a.py [options]
+
+       Options:
+         -h, --help            show this help message and exit
+         --inputfile=INPUTFILE
+                               Name of the input audio file to convert.
+         --outfile=OUTFILE     Optional name of the output file.
+         --tottracks=TOTTRACKS
+                               Optional total number of tracks in album of which song
+                               is a part.
+         --albumloc=ALBUMLOC   Optional path to location of the album cover image
+                               file. Must be in JPEG or PNG.
+         --quiet               If chosen, then verbosely print output of processing.
+         --rename              If chosen, simply rename the m4a file to the form
+                               <artist>.<song title>.m4a
+
+-  ``download_surahs.py`` downloads recorded surahs located
+   `here <http://quranicaudio.com/quran/109>`__ to a directory of your
+   choice. The help screen for this command line tool is here,
+
+   ::
+
+       Usage: download_surahs.py [options]
+
+       Options:
+         -h, --help       show this help message and exit
+         --outdir=OUTDIR  Directory to put this data into. Default is
+                          /mnt/software/sources/pythonics/nprstuff.
+
 Graphics Functionality
 ======================
 
