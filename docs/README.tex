@@ -1,29 +1,25 @@
 \documentclass[]{article}
+\usepackage[T1]{fontenc}
 \usepackage{lmodern}
 \usepackage{amssymb,amsmath}
 \usepackage{ifxetex,ifluatex}
 \usepackage{fixltx2e} % provides \textsubscript
-\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
-  \usepackage[T1]{fontenc}
-  \usepackage[utf8]{inputenc}
-\else % if luatex or xelatex
-  \ifxetex
-    \usepackage{mathspec}
-  \else
-    \usepackage{fontspec}
-  \fi
-  \defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
-  \newcommand{\euro}{€}
-\fi
 % use upquote if available, for straight quotes in verbatim environments
 \IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+\usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+\ifxetex
+\usepackage{mathspec}
+\usepackage{xltxtra,xunicode}
+\else
+\usepackage{fontspec}
+\fi
+\defaultfontfeatures{Mapping=tex-text,Scale=MatchLowercase}
+\newcommand{\euro}{€}
+\fi
 % use microtype if available
-\IfFileExists{microtype.sty}{%
-\usepackage{microtype}
-\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
-}{}
-\makeatletter
-\@ifpackageloaded{hyperref}{}{%
+\IfFileExists{microtype.sty}{\usepackage{microtype}}{}
 \ifxetex
   \usepackage[setpagesize=false, % page size defined by xetex
               unicode=false, % unicode breaks when used with xetex
@@ -31,81 +27,81 @@
 \else
   \usepackage[unicode=true]{hyperref}
 \fi
-}
-\@ifpackageloaded{color}{
-    \PassOptionsToPackage{usenames,dvipsnames}{color}
-}{%
-    \usepackage[usenames,dvipsnames]{color}
-}
-\makeatother
 \hypersetup{breaklinks=true,
   bookmarks=true,
   pdfauthor={},
-  pdftitle={nprstuff},
+  pdftitle={},
   colorlinks=true,
   citecolor=blue,
   urlcolor=blue,
   linkcolor=magenta,
-  pdfborder={0 0 0}
-}
+  pdfborder={0 0 0}}
 \urlstyle{same}  % don't use monospace font for urls
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{6pt plus 2pt minus 1pt}
 \setlength{\emergencystretch}{3em}  % prevent overfull lines
-\providecommand{\tightlist}{%
-  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \setcounter{secnumdepth}{0}
 
 \title{nprstuff}
 \date{\today}
 \author{Tanim Islam}
 
-% Redefines (sub)paragraphs to behave more like sections
-\ifx\paragraph\undefined\else
-\let\oldparagraph\paragraph
-\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
-\fi
-\ifx\subparagraph\undefined\else
-\let\oldsubparagraph\subparagraph
-\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
-\fi
-
 \begin{document}
 \maketitle
 
-I like NPR, so I made some scripts to download my favorite programs from
-NPR. For now, I have something that downloads
-\href{http://www.npr.org/programs/fresh-air/}{Fresh Air},
-\href{http://www.npr.org/programs/wait-wait-dont-tell-me/}{Wait
-Wait..Don't Tell Me}, and \href{http://www.thisamericanlife.org/}{This
-American Life}. This package can probably, straightforwardly be
-extended to other NPR and PRI programs.
+I like NPR, so I made some scripts to download my favorite programs from NPR. For now, I have something that downloads \href{http://www.npr.org/programs/fresh-air/}{Fresh Air},
+\href{http://www.npr.org/programs/wait-wait-dont-tell-me/}{Wait Wait..Don't Tell Me}, and \href{http://www.thisamericanlife.org/}{This American Life}. This package can probably, straightforwardly be extended to other NPR and PRI programs.
 
-Although this project started off as a way to download these three
-programs, I have expanded it to include a grab bag of altogether
-different types of functionalities. What remains the same? This
-distribution consists mainly of executable python scripts.
+Although this project started off as a way to download these three programs, I have expanded it to include a grab bag of altogether different types of functionalities. What remains the same? This distribution consists mainly of executable python scripts.
 
-I organize this document into the following sections: Core
-Functionality \ref{sec:core_functionality}, New Functionality
-\ref{sec:new_functionality}, Graphics Functionality (in folders
-``gui'' and ``gui2'')\ref{sec:graphics_functionality}, and a small
-section on Oldstuff\ref{sec:oldstuff}
+I organize this document into the following sections: Core Functionality, New Functionality, Graphics Functionality (in folders {\verb|gui|} and {\verb|gui2|}), and a small section called Oldstuff. 
 
-\section{Core Functionality} \label{sec:core_functionality}
-This consists of functionality to grab episodes from
-\href{http://www.npr.org/programs/fresh-air/}{Fresh Air}, 
-\href{http://www.npr.org/programs/wait-wait-dont-tell-me/}{Wait
-Wait..Don't Tell Me}, and \href{http://www.thisamericanlife.org/}{This
-American Life}. These consist of the following pieces of python code:
+\section{Core Functionality}\label{sec:core_functionality}
+This consists of functionality to grab episodes from \href{http://www.npr.org/programs/fresh-air/}{Fresh Air},  \href{http://www.npr.org/programs/wait-wait-dont-tell-me/}{Wait Wait..Don't Tell Me}, and \href{http://www.thisamericanlife.org/}{This American Life}. These consist of the following pieces of python code:
 \begin{itemize}
-  \item Utility functionality is stored in \verb{npr_uutils.py}
+  \item {\verb|npr_utils.py|} contains common utilities to get the proper metadata for NPR programs, to name these media files in the proper date format, and to get the full paths to the \href{https://libav.org}{LibAV/FFMPEG} and \href{https://handbrake.fr/}{HandBrakeCLI} tools to create the NPR programs in m4a and mp3 formats (among other functionalities).
+  
+  \item These four files handle NPR Fresh Air downloads: {\verb|freshair.py|}, {\verb|freshair_crontab.py|}, {\verb|freshair_fix_crontab.py|}, and {\verb|freshair_by_year.py|}.
+  \begin{itemize}
+    \item {\verb|freshair.py|} is the main executable that downloads NPR Fresh Air episodes, converts them to m4a format, and then applies correct metadata. The help screen for this command line tool is here,
+    \include{freshair_help}
+    
+    \item {\verb|freshair_crontab.py|} downloads an NPR Fresh Air episode on a given weekday. It should be called by a cron job that should be run every weekday.
+    
+    \item {\verb|freshair_fix_crontab.py|} tries to re-download NPR Fresh Air episodes that may be incomplete -- defined as shorter than 30 minutes -- and which are 90 days or older. This executable searches through the library of all NPR Fresh Air episodes, and tries to re-download older, possibly incomplete episodes.
+    
+    \item {\verb|freshair_by_year.py|} downloads all the NPR Fresh Air episodes in a given year.
+  \end{itemize}
+  
+  \item These four files handle NPR Wait Wait downloads: {\verb|waitwait.py|}, {\verb|waitwait_realmedia.py|}, {\verb|waitwait_crontab.py|}, and {\verb|waitwait_by_year.py|}.
+  \begin{itemize}
+   \item {\verb|freshair.py|} is the main executable that downloads NPR Wait Wait episodes, converts them to m4a format, and then applies correct metadata. {\verb|waitwait_realmedia.py|} is a python module that allows one to download NPR Wait Wait episodes older than 2004, which are in \href{https://en.wikipedia.org/wiki/RealMedia}{RealMedia} format. The help screen for this command line tool is here,
+   \include{waitwait_help}
+   
+   \item {\verb|waitwait_crontab.py|} downloads an NPR Wait Wait episode on a given Saturday. It should be called by a cron job that should be run every Saturday.
+   
+   \item {\verb|waitwait_by_year.py|} downloads all the NPR Wait Wait episodes in a given year.
+  \end{itemize}
+
+  \item {\verb|thisamericanlife.py|} \textit{manually} downloads a given episode number of This American Life. This executable uses a custom online archive for older This American Life episodes that are described \href{http://www.dirtygreek.org/t/download-this-american-life-episodes}{here}. The help screen for this command line tool is here,
+  \include{thisamericanlife_help}
 \end{itemize}
 
-\section{New Functionality} \label{sec:new_functionality}
+\section{New Functionality}\label{sec:new_functionality}
+This consists of newer functionality that does not download NPR episodes, nor can one straightforwardly modify them to download NPR episodes. These consist of the following pieces of python code.
+\begin{itemize}
+ \item {\verb|autoCropImage.py|} automatically crops image (png, jpeg, tiff, etc.) files to remove whitespace. The default whitespace color is {\verb|white|}. The help screen for this command line tool is here,
+ \include{autoCropImage_help}
+ 
+ \item {\verb|convertImage.py|} uses the \href{https://cloudconvert.com/apiconsole}{CloudConvert REST API} to \textit{smoothly and without pain points} convert and resize SVG images to PNG images of the same base name. The help screen for this command line tool is here,
+ \include{convertImage_help}
+ 
+ \item {\verb|changedates.py|} changes the creation date of JPG and MOV files, that my Canon digital camera creates, by up and down one year. I created this tool because my Canon digital camera does not set the right year on the creation date for image files it creates. This caused problems when I uploaded those images to \href{https://picasa.google.com/}{Google Picasa} or \href{https://plus.google.com/}{Google+}. The help screen for this command line tool is here,
+ \include{changedates_help}
+\end{itemize}
 
-\section{Graphics Functionality} \label{sec:graphics_functionality}
+\section{Graphics Functionality}\label{sec:graphics_functionality}
 
-\section{Oldstuff} \label{sec:oldstuff}
+\section{Oldstuff}\label{sec:oldstuff}
 
 \end{document}
