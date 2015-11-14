@@ -29,6 +29,11 @@ Oldstuff[sec:oldstuff]
 Core Functionality
 ==================
 
+This consists of functionality to grab episodes from `Fresh
+Air <http://www.npr.org/programs/fresh-air/>`__, `Wait Wait..Don’t Tell
+Me <http://www.npr.org/programs/wait-wait-dont-tell-me/>`__, and `This
+American Life <http://www.thisamericanlife.org/>`__.
+
 New Functionality
 =================
 
