@@ -200,8 +200,8 @@ episodes. These consist of the following pieces of python code.
          --rename              If chosen, simply rename the m4a file to the form
                                <artist>.<song title>.m4a
 
--  ``download_surahs.py`` downloads recorded surahs located
-   `here <http://quranicaudio.com/quran/109>`__ to a directory of your
+-  ``download_surahs.py`` downloads recorded surahs (`Abdur-Rashid
+   Sufi <http://quranicaudio.com/quran/109>`__) to a directory of your
    choice. The help screen for this command line tool is here,
 
    ::
