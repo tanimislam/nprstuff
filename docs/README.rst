@@ -1,9 +1,3 @@
-========
-nprstuff
-========
-
-:Author: Tanim Islam
-
 I like NPR, so I made some scripts to download my favorite programs from
 NPR. For now, I have something that downloads `Fresh
 Air <http://www.npr.org/programs/fresh-air/>`__, `Wait Wait..Don’t Tell
@@ -243,8 +237,9 @@ Times <http://www.nytimes.com/?WT.z_jog=1>`__, and the `Virginia
 Quarterly Review <http://www.vqronline.org/>`__. Here is a screenshot!
 
 The screenshots of the save file dialog and the print preview dialog are
-shown Fig. [fig:gui\_screenshot\_save] and
-Fig. [fig:gui\_screenshot\_printpreview], respectively.
+shown Fig. [fig:gui\ :sub:`s`\ creenshot\ :sub:`s`\ ave] and
+Fig. [fig:gui\ :sub:`s`\ creenshot\ :sub:`p`\ rintpreview],
+respectively.
 
 Note, here I do not support or maintain this tool after I found out
 about `Readability <https://www.readability.com>`__.
@@ -255,14 +250,14 @@ GUI2: Readability GUI Front-End
 This is the PyQt4 GUI front-end to
 `Readability <https://www.readability.com>`__. A screenshot of the list
 of articles widget is shown in
-Fig. ([fig:gui2\_screenshot\_articlelist], and a screenshot of the
-article text widget is shown in
-Fig. ([fig:gui2\_screenshot\_articletext].
+Fig. ([fig:gui2\ :sub:`s`\ creenshot\ :sub:`a`\ rticlelist]), and a
+screenshot of the article text widget is shown in
+Fig. ([fig:gui2\ :sub:`s`\ creenshot\ :sub:`a`\ rticletext]).
 
 A screenshot of the font changing dialog, the ``Font`` button, is shown
-in Fig. ([fig:gui2\_screenshot\_fontdialog]). A screenshot of the print
-preview dialog, the ``Print`` button, is shown in
-Fig. ([fig:gui2\_screenshot\_printpreviewdialog]).
+in Fig. ([fig:gui2\ :sub:`s`\ creenshot\ :sub:`f`\ ontdialog]). A
+screenshot of the print preview dialog, the ``Print`` button, is shown
+in Fig. ([fig:gui2\ :sub:`s`\ creenshot\ :sub:`p`\ rintpreviewdialog]).
 
 In the immediate future, I plan on at least implementing the follwoing,
 all using the Readability API.
