@@ -81,10 +81,10 @@ Mode=LaTeX
 
 [item:README.tex]
 archive=true
-column=91
+column=21
 encoding=UTF-8
 highlight=LaTeX
-line=58
+line=51
 mode=LaTeX
 open=true
 order=0
@@ -180,10 +180,10 @@ open=false
 order=-1
 
 [view-settings,view=0,item:README.tex]
-CursorColumn=91
-CursorLine=58
+CursorColumn=21
+CursorLine=51
 JumpList=
-ViMarks=.,58,91,[,58,91,],58,91
+ViMarks=.,51,20,[,51,20,],51,20
 
 [view-settings,view=0,item:autoCropImage_help.tex]
 CursorColumn=14
