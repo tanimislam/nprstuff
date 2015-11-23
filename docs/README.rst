@@ -1,9 +1,3 @@
-========
-nprstuff
-========
-
-:Author: Tanim Islam
-
 I like NPR, so I made some scripts to download my favorite programs from
 NPR. For now, I have something that downloads `Fresh
 Air <http://www.npr.org/programs/fresh-air/>`__, `Wait Wait..Don’t Tell
@@ -137,9 +131,7 @@ This consists of newer functionality that does not download NPR
 episodes, nor can one straightforwardly modify them to download NPR
 episodes. These consist of the following pieces of python code.
 
--  ``autoCropImage.py`` automatically crops image (png, jpeg, tiff,
-   etc.) files to remove whitespace. The default whitespace color is
-   ``white``. The help screen for this command line tool is here,
+-  https://github.com/tanimislam/nprstuff/blob/master/docs/erb\|white\|
 
    ::
 
@@ -242,20 +234,29 @@ Yorker <http://www.newyorker.com/>`__, `The New York
 Times <http://www.nytimes.com/?WT.z_jog=1>`__, and the `Virginia
 Quarterly Review <http://www.vqronline.org/>`__. Here is a screenshot!
 
-[!ht]0.65 |A screenshot of the GUI reader, converting the URL for the
-`The New York Times <http://www.nytimes.com>`__ into text. Note the
-separate icons above for the five media websites from which this GUI can
-read.|
+.. figure:: https://github.com/tanimislam/nprstuff/blob/master/docs/images/gui_screenshot.png
+   :alt: A screenshot of the GUI reader, converting the URL for the `The
+   New York Times <http://www.nytimes.com>`__ into text. Note the
+   separate icons above for the five media websites from which this GUI
+   can read.
 
-[!ht]0.34
+   A screenshot of the GUI reader, converting the URL for the `The New
+   York Times <http://www.nytimes.com>`__ into text. Note the separate
+   icons above for the five media websites from which this GUI can read.
 
 The screenshots of the save file dialog and the print preview dialog are
 shown Fig. [fig:gui\_screenshot\_save] and
 Fig. [fig:gui\_screenshot\_printpreview], respectively.
 
-[!ht]0.4 |The GUI screenshot of the print preview dialog.|
+.. figure:: https://github.com/tanimislam/nprstuff/blob/master/docs/images/gui_screenshot_save.png
+   :alt: The GUI screenshot of the print preview dialog.
 
-[!ht]0.5 |The GUI screenshot of the print preview dialog.|
+   The GUI screenshot of the print preview dialog.
+
+.. figure:: https://github.com/tanimislam/nprstuff/blob/master/docs/images/gui_screenshot_printpreview.png
+   :alt: The GUI screenshot of the print preview dialog.
+
+   The GUI screenshot of the print preview dialog.
 
 Note, here I do not support or maintain this tool after I found out
 about `Readability <https://www.readability.com>`__.
@@ -270,22 +271,38 @@ Fig. ([fig:gui2\_screenshot\_articlelist]), and a screenshot of the
 article text widget is shown in
 Fig. ([fig:gui2\_screenshot\_articletext]).
 
-[!ht]0.52 |The text form of the article’s content, with working dialogs
-for ``Font`` and ``Print Preview``.|
+.. figure:: https://github.com/tanimislam/nprstuff/blob/master/docs/images/gui2_screenshot_articlelist.png
+   :alt: The text form of the article’s content, with working dialogs
+   for ``Font`` and ``Print Preview``.
 
-[!ht]0.45 |The text form of the article’s content, with working dialogs
-for ``Font`` and ``Print Preview``.|
+   The text form of the article’s content, with working dialogs for
+   ``Font`` and ``Print Preview``.
+
+.. figure:: https://github.com/tanimislam/nprstuff/blob/master/docs/images/gui2_screenshot_articletext.png
+   :alt: The text form of the article’s content, with working dialogs
+   for ``Font`` and ``Print Preview``.
+
+   The text form of the article’s content, with working dialogs for
+   ``Font`` and ``Print Preview``.
 
 A screenshot of the font changing dialog, the ``Font`` button, is shown
 in Fig. ([fig:gui2\_screenshot\_fontdialog]). A screenshot of the print
 preview dialog, the ``Print`` button, is shown in
 Fig. ([fig:gui2\_screenshot\_printpreviewdialog]).
 
-[!ht]0.3 |The print preview dialog launched by the ``Print`` button in
-the article text widget.|
+.. figure:: https://github.com/tanimislam/nprstuff/blob/master/docs/images/gui2_screenshot_fontdialog.png
+   :alt: The print preview dialog launched by the ``Print`` button in
+   the article text widget.
 
-[!ht]0.6 |The print preview dialog launched by the ``Print`` button in
-the article text widget.|
+   The print preview dialog launched by the ``Print`` button in the
+   article text widget.
+
+.. figure:: https://github.com/tanimislam/nprstuff/blob/master/docs/images/gui2_screenshot_printpreviewdialog.png
+   :alt: The print preview dialog launched by the ``Print`` button in
+   the article text widget.
+
+   The print preview dialog launched by the ``Print`` button in the
+   article text widget.
 
 In the immediate future, I plan on at least implementing the following,
 all using the Readability API.
@@ -303,11 +320,3 @@ folder, but which others may find useful. These are pieces of code that
 I have started, but which are unmaintained. These are the following
 pieces of code: ``freshair.sh``, ``waitwait.sh``, and
 ``google_pull_contacts.py``.
-
-.. |A screenshot of the GUI reader, converting the URL for the `The New York Times <http://www.nytimes.com>`__ into text. Note the separate icons above for the five media websites from which this GUI can read.| image:: images/gui_screenshot.png
-.. |The GUI screenshot of the print preview dialog.| image:: images/gui_screenshot_save.png
-.. |The GUI screenshot of the print preview dialog.| image:: images/gui_screenshot_printpreview.png
-.. |The text form of the article’s content, with working dialogs for ``Font`` and ``Print Preview``.| image:: images/gui2_screenshot_articlelist.png
-.. |The text form of the article’s content, with working dialogs for ``Font`` and ``Print Preview``.| image:: images/gui2_screenshot_articletext.png
-.. |The print preview dialog launched by the ``Print`` button in the article text widget.| image:: images/gui2_screenshot_fontdialog.png
-.. |The print preview dialog launched by the ``Print`` button in the article text widget.| image:: images/gui2_screenshot_printpreviewdialog.png

@@ -11,6 +11,7 @@ class LoginWindow(QWidget):
         super(LoginWindow, self).__init__()
         self.parent = parent
         self.setWindowTitle("LOGIN SCREEN")
+        self.setStyleSheet( 'font-family: Alef;' )
         #
         self.dbEmailLineEdit = QLineEditCustom("", self)
         self.dbPasswdLineEdit = QLineEditCustom("", self)
