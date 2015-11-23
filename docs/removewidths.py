@@ -25,6 +25,8 @@ def full_links_images( latexfile, newfile ):
 if __name__=='__main__':
     remove_minipages_widths( 'README.tex', 'foo.tex')
     full_links_images( 'foo.tex', 'foo.tex' )
-    pypandoc.convert( 'foo.tex', 'rst', outputfile = 'README.rst' )
-    pypandoc.convert( 'foo.tex', 'md', outputfile = 'README.md' )
+    # pypandoc.convert( 'foo.tex', 'rst', outputfile = 'README.rst' )
+    pypandoc.convert( 'foo.tex', 'md', outputfile = 'README.md',
+                      filters = [ os.path.join( os.path.expanduser('~/.cabal/bin'), fname ) for
+                                  fname in ( 'pandoc-citeproc', 'pandoc-crossref' ) ] )
     os.remove( 'foo.tex' )
