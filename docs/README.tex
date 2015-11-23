@@ -10,7 +10,7 @@
 \usepackage[utf8]{inputenc}
 \else % if luatex or xelatex
 \ifxetex
-\usepackage{mathspec}
+\usepackage{mathspec, cleveref}
 \usepackage{xltxtra,xunicode}
 \else
 \usepackage{fontspec}
@@ -53,11 +53,11 @@ I like NPR, so I made some scripts to download my favorite programs from NPR. Fo
 
 Although this project started off as a way to download these three programs, I have expanded it to include a grab bag of altogether different types of functionalities. What remains the same? This distribution consists mainly of executable python scripts.
 
-I organize this document into the following sections: Core Functionality\ref{sec:core_functionality}, New Functionality\ref{sec:new_functionality}, Graphics Functionality (in folders {\verb|gui|} and {\verb|gui2|}), and a small section called Oldstuff.
+I organize this document into the following sections: \hyperref[sec:core_functionality]{Core Functionality}, \hyperref[sec:new_functionality]{New Functionality}, \hyperref[sec:graphics_functionality]{Graphics Functionality} (in folders {\verb|gui|} and {\verb|gui2|}), and a small section called \hyperref[sec:oldstuff]{Oldstuff}.
 
 This document was converted from a \LaTeX source using \href{http://pandoc.org/index.html}{Pandoc}, via
 \begin{verbatim}
-pandoc -s README.tex -o README.rst
+pandoc -s README.tex -o README.md
 \end{verbatim}
 
 \section{Core Functionality}\label{sec:core_functionality}
@@ -67,8 +67,20 @@ This consists of functionality to grab episodes from \href{http://www.npr.org/pr
   
   \item These four files handle NPR Fresh Air downloads: {\verb|freshair.py|}, {\verb|freshair_crontab.py|}, {\verb|freshair_fix_crontab.py|}, and {\verb|freshair_by_year.py|}.
   \begin{itemize}
-    \item {\verb|freshair.py|} is the main executable that downloads NPR Fresh Air episodes, converts them to m4a format, and then applies correct metadata. The help screen for this command line tool is here,
-    \include{freshair_help}
+  \item {\verb|freshair.py|} is the main executable that downloads NPR Fresh Air episodes, converts them to m4a format, and then applies correct metadata. The help screen for this command line tool is here,
+    % \include{freshair_help}
+\begin{verbatim}
+Usage: freshair.py [options]
+
+Options:
+  -h, --help         show this help message and exit
+  --dirname=DIRNAME  Name of the directory to store the file. Default is
+                     /mnt/media/freshair.
+  --date=DATE        The date, in the form of "January 1, 2014." The default
+                     is today's date, November 14, 2015.
+  --debug            If chosen, run freshair.py in debug mode. Useful for
+                     debugging :)
+\end{verbatim}
     
     \item {\verb|freshair_crontab.py|} downloads an NPR Fresh Air episode on a given weekday. It should be called by a cron job that should be run every weekday.
     
@@ -80,7 +92,19 @@ This consists of functionality to grab episodes from \href{http://www.npr.org/pr
   \item These four files handle NPR Wait Wait downloads: {\verb|waitwait.py|}, {\verb|waitwait_realmedia.py|}, {\verb|waitwait_crontab.py|}, and {\verb|waitwait_by_year.py|}.
   \begin{itemize}
    \item {\verb|freshair.py|} is the main executable that downloads NPR Wait Wait episodes, converts them to m4a format, and then applies correct metadata. {\verb|waitwait_realmedia.py|} is a python module that allows one to download NPR Wait Wait episodes older than 2004, which are in \href{https://en.wikipedia.org/wiki/RealMedia}{RealMedia} format. The help screen for this command line tool is here,
-   \include{waitwait_help}
+     % \include{waitwait_help}
+\begin{verbatim}
+Usage: waitwait.py [options]
+
+Options:
+  -h, --help         show this help message and exit
+  --dirname=DIRNAME  Name of the directory to store the file. Default is
+                     /mnt/media/waitwait.
+  --date=DATE        The date, in the form of "January 1, 2014." The default
+                     is last Saturday, November 14, 2015.
+  --debugonly        If chosen, download the NPR XML data sheet for this Wait
+                     Wait episode.
+\end{verbatim}
    
    \item {\verb|waitwait_crontab.py|} downloads an NPR Wait Wait episode on a given Saturday. It should be called by a cron job that should be run every Saturday.
    
@@ -88,26 +112,90 @@ This consists of functionality to grab episodes from \href{http://www.npr.org/pr
   \end{itemize}
 
   \item {\verb|thisamericanlife.py|} \textit{manually} downloads a given episode number of This American Life. This executable uses a custom online archive for older This American Life episodes that are described \href{http://www.dirtygreek.org/t/download-this-american-life-episodes}{here}. The help screen for this command line tool is here,
-  \include{thisamericanlife_help}
+  % \include{thisamericanlife_help}
+\begin{verbatim}
+Usage: thisamericanlife.py [options]
+
+Options:
+  -h, --help            show this help message and exit
+  --episode=EPISODE     Episode number of This American Life to download.
+                        Default is 150.
+  --directory=DIRECTORY
+                        Directory into which to download This American Life
+                        episodes. Default is /mnt/media/thisamericanlife.
+  --extra=EXTRASTUFF    If defined, some extra stuff in the URL to get a This
+                        American Life episode.
+\end{verbatim}
 \end{itemize}
 
 \section{New Functionality}\label{sec:new_functionality}
 This consists of newer functionality that does not download NPR episodes, nor can one straightforwardly modify them to download NPR episodes. These consist of the following pieces of python code.
 \begin{itemize}
  \item {\verb|autoCropImage.py|} automatically crops image (png, jpeg, tiff, etc.) files to remove whitespace. The default whitespace color is {\verb|white|}. The help screen for this command line tool is here,
- \include{autoCropImage_help}
+   % \include{autoCropImage_help}
+\begin{verbatim}
+Usage: autoCropImage.py [options]
+
+Options:
+  -h, --help       show this help message and exit
+  --input=INPUT    Name of the input file.
+  --output=OUTPUT  Name of the output file. Optional.
+  --color=COLOR    Name of the color over which to autocrop. Default is white.
+\end{verbatim}
  
  \item {\verb|convertImage.py|} uses the \href{https://cloudconvert.com/apiconsole}{CloudConvert REST API} to \textit{smoothly and without pain points} convert and resize SVG images to PNG images of the same base name. The help screen for this command line tool is here,
- \include{convertImage_help}
+   % \include{convertImage_help}
+\begin{verbatim}
+Usage: convertImage.py [options]
+
+Options:
+  -h, --help           show this help message and exit
+  --filename=FILENAME  Name of the input SVG file.
+  --width=WIDTH        If defined, new width of the file. Optional
+\end{verbatim}
  
  \item {\verb|changedates.py|} changes the creation date of JPG and MOV files, that my Canon digital camera creates, by up and down one year. I created this tool because my Canon digital camera does not set the right year on the creation date for image files it creates. This caused problems when I uploaded those images to \href{https://picasaweb.google.com/home}{Google Picasa} or \href{https://plus.google.com/}{Google+}. The help screen for this command line tool is here,
- \include{changedates_help}
+   % \include{changedates_help}
+\begin{verbatim}
+Usage: changedates.py [options]
+
+Options:
+  -h, --help         show this help message and exit
+  --dirname=DIRNAME  Name of the directory to look for jpeg files.
+  --movs             If chosen, process MOV files instead.
+  --minus            If chosen, subtract a year from the files.
+\end{verbatim}
  
  \item {\verb|music_to_m4a.py|} can convert a single file from mp3/ogg/flac format to m4a format while preserving music file metadata, and can optionally set the total number of album tracks and the album cover if the music files is in an album. It can also rename an m4a music file into the format ``\textit{artist name} - \textit{song name}.m4a.'' The help screen for this command line tool is here,
- \include{music_to_m4a_help}
+   % \include{music_to_m4a_help}
+\begin{verbatim}
+Usage: music_to_m4a.py [options]
+
+Options:
+  -h, --help            show this help message and exit
+  --inputfile=INPUTFILE
+                        Name of the input audio file to convert.
+  --outfile=OUTFILE     Optional name of the output file.
+  --tottracks=TOTTRACKS
+                        Optional total number of tracks in album of which song
+                        is a part.
+  --albumloc=ALBUMLOC   Optional path to location of the album cover image
+                        file. Must be in JPEG or PNG.
+  --quiet               If chosen, then verbosely print output of processing.
+  --rename              If chosen, simply rename the m4a file to the form
+                        <artist>.<song title>.m4a
+\end{verbatim}
  
  \item {\verb|download_surahs.py|} downloads recorded surahs (\href{http://quranicaudio.com/quran/109}{Abdur-Rashid Sufi}) to a directory of your choice. The help screen for this command line tool is here,
- \include{download_surahs_help}
+   % \include{download_surahs_help}
+\begin{verbatim}
+Usage: download_surahs.py [options]
+
+Options:
+  -h, --help       show this help message and exit
+  --outdir=OUTDIR  Directory to put this data into. Default is
+                   /mnt/software/sources/pythonics/nprstuff.
+\end{verbatim}
 \end{itemize}
 
 \section{Graphics Functionality}\label{sec:graphics_functionality}
@@ -171,11 +259,11 @@ This is the PyQt4 GUI front-end to \href{https://www.readability.com}{Readabilit
 \end{figure}
 A screenshot of the font changing dialog, the {\verb|Font|} button, is shown in Fig.~(\ref{fig:gui2_screenshot_fontdialog}). A screenshot of the print preview dialog, the {\verb|Print|} button, is shown in Fig.~(\ref{fig:gui2_screenshot_printpreviewdialog}).
 \begin{figure}[!ht]
-  \begin{minipage}[!ht]{0.3\linewidth}
+  \begin{minipage}[!ht]{0.53\linewidth}
    \includegraphics[width=\linewidth]{images/gui2_screenshot_fontdialog.png}
     \caption{The font changing dialog launched by the \texttt{Font} button in the article text widget. The initial preference for the font to display are fixed width fonts.} \label{fig:gui2_screenshot_fontdialog}
   \end{minipage} \hfill
-  \begin{minipage}[!ht]{0.6\linewidth}
+  \begin{minipage}[!ht]{0.45\linewidth}
    \includegraphics[width=\linewidth]{images/gui2_screenshot_printpreviewdialog.png}
     \caption{The print preview dialog launched by the \texttt{Print} button in the article text widget.} \label{fig:gui2_screenshot_printpreviewdialog}
   \end{minipage}

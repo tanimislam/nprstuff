@@ -28,5 +28,5 @@ if __name__=='__main__':
     # pypandoc.convert( 'foo.tex', 'rst', outputfile = 'README.rst' )
     pypandoc.convert( 'foo.tex', 'md', outputfile = 'README.md',
                       filters = [ os.path.join( os.path.expanduser('~/.cabal/bin'), fname ) for
-                                  fname in ( 'pandoc-citeproc', 'pandoc-crossref' ) ] )
+                                  fname in ( 'pandoc-citeproc', 'pandoc-crossref', 'pandoc-internalref' ) ] )
     os.remove( 'foo.tex' )

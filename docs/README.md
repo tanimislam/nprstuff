@@ -10,11 +10,9 @@ programs, I have expanded it to include a grab bag of altogether
 different types of functionalities. What remains the same? This
 distribution consists mainly of executable python scripts.
 
-I organize this document into the following sections: Core
-Functionality\[sec:core\_functionality\], New
-Functionality\[sec:new\_functionality\], Graphics Functionality (in
-folders <span>`gui`</span> and <span>`gui2`</span>), and a small section
-called Oldstuff.
+I organize this document into the following sections: , , (in folders
+<span>`gui`</span> and <span>`gui2`</span>), and a small section called
+.
 
 This document was converted from a LaTeXsource using
 [Pandoc](http://pandoc.org/index.html), via
