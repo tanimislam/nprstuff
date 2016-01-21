@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 import freshair, os, glob, sys
+import calendar, pylab, numpy, datetime
+from matplotlib.patches import Rectangle
 from optparse import OptionParser
 
 _default_inputdir = '/mnt/media/freshair'
@@ -22,12 +24,32 @@ def create_plot_year( year = _default_year ):
                          [7, 8, 9],
                          [10, 11, 12] ],
                        dtype=int ).flatten()
+    data = {}
+    nwkdays = 0
+    nmiss = 0
+    for mon in xrange(1, 13):
+        cal = numpy.array( calendar.monthcalendar( year, mon ),
+                           dtype = int )
+        act_days = find_occupied_days( mon, year )
+        data[mon] = (cal, act_days)
+        wkdays = set( cal[:,1:-1].flatten() ) - set([ 0, ])
+        nwkdays += len( wkdays )
+        nmiss += len( wkdays - act_days )        
+        
     #
     ## these are empty plots
     ax = fig.add_subplot(5,3,3)
     pylab.axis('off')
     ax.set_xlim([0,1])
     ax.set_ylim([0,1])
+    ax.text(0.15, 0.725, '\n'.join([ '%d / %d' % (nmiss, nwkdays),
+                                     '%0.2f%% missing' % ( 100.0 * nmiss / nwkdays ) ]),
+            fontdict = { 'fontsize' : 32, 'fontweight' : 'bold' },
+            horizontalalignment = 'left', verticalalignment = 'center',
+            color = 'red' )
+    ax.text(0.15, 0.275, '%0.2f%% coverage' % ( 100.0 - 100.0 * nmiss / nwkdays ),
+            fontdict = { 'fontsize' : 32, 'fontweight' : 'bold' },
+            horizontalalignment = 'left', verticalalignment = 'center' )
     #
     ax = fig.add_subplot(5,3,2)
     pylab.axis('off')
@@ -51,15 +73,13 @@ def create_plot_year( year = _default_year ):
              verticalalignment = 'center', horizontalalignment = 'left' )
     
     for mon in xrange(1, 13):
-        cal = numpy.array( calendar.monthcalendar( year, mon ),
-                           dtype = int )
+        cal, act_days = data[ mon ]
         nweeks = cal.shape[0]
         iidx = max( numpy.where( matr == mon )[0] ) + 1
         ax = fig.add_subplot(5, 3, mon + 3 )
         ax.set_xlim([0,1])
         ax.set_ylim([0,1])
         pylab.axis('off')
-        act_days = find_occupied_days( mon, year )
         for jdx in xrange(7):
             ax.text( 0.01 + 0.14 * (jdx + 0.5), 0.93, days[jdx],
                      fontdict = { 'fontsize' : 14, 'fontweight' : 'bold' },
@@ -88,7 +108,7 @@ def create_plot_year( year = _default_year ):
         monname = datetime.datetime.strptime('%02d.%d' % ( mon, year ),
                                              '%m.%Y' ).strftime('%B').upper( )
         ax.set_title( monname, fontsize = 14, fontweight = 'bold' )
-    fig.savefig( 'freshair.%d.svg' % year, bbox_inches = 'tight' )
+    fig.savefig( 'freshair.%d.svgz' % year, bbox_inches = 'tight' )
     pylab.close( )
 
 if __name__=='__main__':
@@ -105,11 +125,14 @@ if __name__=='__main__':
                                         'script. By default this is false.' ]) )
     parser.add_option('--coverage', dest = 'get_coverage', action = 'store_true', default = False,
                       help = 'If chosen, just give the list of missing Fresh Air episodes and nothing else.')
+    parser.add_option('--audit', dest = 'do_audit', action = 'store_true', default = False,
+                      help = 'If chosen, do the audit picture here.')
     opts, args = parser.parse_args()
-    verbose = not opts.is_quiet
-    freshair.process_all_freshairs_by_year( opts.year,
-                                            opts.inputdir,
-                                            verbose = verbose,
-                                            justCoverage = opts.get_coverage )
-    
-
+    if not opts.do_audit:
+        verbose = not opts.is_quiet
+        freshair.process_all_freshairs_by_year( opts.year,
+                                                opts.inputdir,
+                                                verbose = verbose,
+                                                justCoverage = opts.get_coverage )
+    else:
+        create_plot_year( opts.year )
