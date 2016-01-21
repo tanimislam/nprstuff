@@ -58,7 +58,23 @@ def rename_m4a(m4afilename):
     if os.path.isfile(newfile) and filecmp.cmp(newfile, m4afilename):
         return
     os.rename(m4afilename, newfile)
-    
+
+def get_defaultname( m4afilename, showalbum = False ):
+    mp4tags = mutagen.mp4.MP4(m4afilename)
+    curdir = os.path.dirname( os.path.abspath( m4afilename ) )
+    if len(set([ '\xa9nam', '\xa9ART' ]) - set(mp4tags.keys())) != 0:
+        return
+    song_title = titlecase.titlecase( max(mp4tags.tags['\xa9nam']) )
+    song_artist = max(mp4tags.tags['\xa9ART'])
+    song_title = song_title.replace('/', '-')
+    song_artist = song_artist.replace('/', '-')
+    if not showalbum:
+        return '%s.%s.m4a' % ( song_artist, song_title )
+    else:
+        song_album = titlecase.titlecase( max( mp4tags.tags['\xa9alb'] ) )
+        song_album = song_album.replace('/', '-')
+        return '%s.%s.%s.m4a' % ( song_artist, song_album, song_title )
+
 def music_to_m4a(filename, tottracks = None,
                  album_path = None, outfile = None,
                  verbose = True):
