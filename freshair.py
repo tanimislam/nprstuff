@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import os, glob, multiprocessing, datetime, time
+import os, glob, multiprocessing, datetime, time, urlparse
 import mutagen.mp4, subprocess, multiprocessing.pool, requests
 from optparse import OptionParser
 import lxml.etree, npr_utils
@@ -83,6 +83,18 @@ def process_all_freshairs_by_year(yearnum, inputdir, verbose = True, justCoverag
             print 'processed all Fresh Air downloads for %04d in %0.3f seconds.' % \
                 ( yearnum, time.time() - time0 ) 
 
+def _process_freshair_titlemp4_tuples( tree ):
+    title_mp4_urls = []
+    for elem in tree.iter('story'):
+        title = list( elem.iter('title'))[0].text.strip( )
+        mp4elems = list( elem.iter('mp4' ) )
+        if len( mp4elems ) == 0:
+            continue
+        urlobj = urlparse.urlparse( max( mp4elems ).text.strip( ) )
+        mp4url = urlparse.urlunparse( urlparse.ParseResult( urlobj.scheme, urlobj.netloc, urlobj.path, '', '', '') )
+        title_mp4_urls.append( ( title, mp4url ) )
+    return title_mp4_urls
+            
 def _process_freshair_titlemp3_tuples_one(tree):
     title_mp3_urls = []
     for elem in tree.iter('story'):
@@ -108,7 +120,7 @@ def _process_freshair_titlemp3_tuples_two(tree):
     return title_mp3_urls
 
 def get_freshair(outputdir, date_s, order_totnum = None,
-                 file_data = None, debug = False,
+                 file_data = None, debug = False, do_mp4 = False,
                  exec_dict = None, check_if_exist = False):
     
     # check if outputdir is a directory
@@ -142,7 +154,6 @@ def get_freshair(outputdir, date_s, order_totnum = None,
     # download this data into an lxml elementtree
     tree = lxml.etree.fromstring( requests.get(nprURL).content )
     
-    
     if debug:
         print 'URL = %s' % nprURL
         with open(os.path.join(outputdir, 'NPR.FreshAir.tree.%s.xml' % decdate), 'w') as openfile:
@@ -163,44 +174,56 @@ def get_freshair(outputdir, date_s, order_totnum = None,
         return
 
     # now get tuple of title to mp3 file
-    try:
-        title_mp3_urls = _process_freshair_titlemp3_tuples_one(tree)
-    except ValueError:
-        title_mp3_urls = _process_freshair_titlemp3_tuples_two(tree)
+    if not do_mp4:
+        try:
+            title_mp3_urls = _process_freshair_titlemp3_tuples_one(tree)
+        except ValueError:
+            title_mp3_urls = _process_freshair_titlemp3_tuples_two(tree)
         
-    if len(title_mp3_urls) == 0:
-        print 'Error, could not find any Fresh Air episodes for date %s.' % \
-            npr_utils.get_datestring( date_s )
-        return
+        if len(title_mp3_urls) == 0:
+            print 'Error, could not find any Fresh Air episodes for date %s.' % \
+                npr_utils.get_datestring( date_s )
+            return
 
-    titles, mp3urls = zip(*title_mp3_urls)
+        titles, songurls = zip(*title_mp3_urls)
+        outfiles = [ os.path.join(outputdir, 'freshair.%s.%d.mp3' % 
+                                  ( decdate, num + 1) ) for
+                     (num, mp3url) in enumerate( songurls ) ]
+    else:
+        title_mp4_urls = _process_freshair_titlemp4_tuples( tree )
+        if len(title_mp4_urls) == 0:
+            print 'Error, could not find any Fresh Air episodes for date %s.' % \
+                npr_utils.get_datestring( date_s )
+            return
+        titles, songurls = zip(*title_mp4_urls)
+        outfiles = [ os.path.join(outputdir, 'freshair.%s.%d.mp4' % 
+                                  ( decdate, num + 1) ) for
+                     (num, mp4url) in enumerate( songurls ) ]
+        
     title = date_s.strftime('%A, %B %d, %Y')
     title = '%s: %s.' % ( title,
                           '; '.join([ '%d) %s' % ( num + 1, titl ) for
                                       (num, titl) in enumerate(titles) ]) )    
-    outfiles = [ os.path.join(outputdir, 'freshair.%s.%d.mp3' % 
-                              ( decdate, num + 1) ) for
-                 (num, mp3url) in enumerate( mp3urls) ]
     
     # download those files
     time0 = time.time()
-    pool = multiprocessing.Pool(processes = len(mp3urls) )
-    outfiles = filter(None, pool.map(_download_file, zip( mp3urls, outfiles ) ) )
+    pool = multiprocessing.Pool(processes = len(songurls) )
+    outfiles = filter(None, pool.map(_download_file, zip( songurls, outfiles ) ) )
     
-    # sox magic command
-    #wgdate = date_s.strftime('%d-%b-%Y')
-    #wavfile = os.path.join(outputdir, 'freshair%s.wav' % wgdate ).replace(' ', '\ ')
-    #split_cmd = [ '(for', 'file', 'in', ] + fnames + [ 
-    #    ';', sox_exec, '$file', '-t', 'cdr', '-', ';', 'done)' ] + [ 
-    #        '|', sox_exec, 't-', 'cdr', '-', wavfile ]
-    #split_cmd = [ sox_exec, ] + fnames + [ wavfile, ]
-    #print split_cmd
-    #return
-    #proc = subprocess.Popen(split_cmd, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-    #stdout_val, stderr_val = proc.communicate()
-    #for filename in outfiles:
-    #    os.remove(filename)
-
+        # sox magic command
+        #wgdate = date_s.strftime('%d-%b-%Y')
+        #wavfile = os.path.join(outputdir, 'freshair%s.wav' % wgdate ).replace(' ', '\ ')
+        #split_cmd = [ '(for', 'file', 'in', ] + fnames + [ 
+        #    ';', sox_exec, '$file', '-t', 'cdr', '-', ';', 'done)' ] + [ 
+        #        '|', sox_exec, 't-', 'cdr', '-', wavfile ]
+        #split_cmd = [ sox_exec, ] + fnames + [ wavfile, ]
+        #print split_cmd
+        #return
+        #proc = subprocess.Popen(split_cmd, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+        #stdout_val, stderr_val = proc.communicate()
+        #for filename in outfiles:
+        #    os.remove(filename)
+        
     # now convert to m4a file
     # /usr/bin/avconv -y -i freshair$wgdate.wav -ar 44100 -ac 2 -aq 400 -acodec libfaac NPR.FreshAir."$decdate".m4a ;
     time0 = time.time()
@@ -239,11 +262,13 @@ if __name__=='__main__':
                       action = 'store', default = npr_utils.get_datestring( datetime.datetime.now()),
                       help = 'The date, in the form of "January 1, 2014." The default is today\'s date, %s.' %
                       npr_utils.get_datestring( datetime.datetime.now() ) )
+    parser.add_option('--mp4', dest='do_mp4', action='store_true', default = False,
+                      help = 'If chosen, construct an NPR Fresh Air episode from MP4, rather than MP3, source files.' )
     parser.add_option('--debug', dest='debug', action='store_true',
                       help = 'If chosen, run freshair.py in debug mode. Useful for debugging :)',
                       default = False)
     opts, args = parser.parse_args()
     dirname = os.path.expanduser( opts.dirname )
     fname = get_freshair( dirname, npr_utils.get_time_from_datestring( opts.date ),
-                          debug = opts.debug )
+                          debug = opts.debug, do_mp4 = opts.do_mp4 )
     
