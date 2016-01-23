@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import os, glob, multiprocessing, datetime, time, urlparse
+import os, glob, multiprocessing, datetime, time, urlparse, re
 import mutagen.mp4, subprocess, multiprocessing.pool, requests
 from optparse import OptionParser
 import lxml.etree, npr_utils
@@ -209,6 +209,17 @@ def get_freshair(outputdir, date_s, order_totnum = None,
     time0 = time.time()
     pool = multiprocessing.Pool(processes = len(songurls) )
     outfiles = filter(None, pool.map(_download_file, zip( songurls, outfiles ) ) )
+    if do_mp4: # replace mp4 with ac3
+        newouts = []
+        for outfile in outfiles:
+            newfile = re.sub('\.mp4$', '.ac3', outfile )
+            split_cmd = [ avconv_exec, '-y', '-i', outfile, newfile ]
+            proc = subprocess.Popen( split_cmd, stdout = subprocess.PIPE, stderr = subprocess.PIPE )
+            stdout_val, stderr_val = proc.communicate( )
+            os.remove( outfile )
+            newouts.append( newfile )
+        outfiles = newouts
+            
     
         # sox magic command
         #wgdate = date_s.strftime('%d-%b-%Y')
