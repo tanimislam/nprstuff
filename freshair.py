@@ -121,7 +121,8 @@ def _process_freshair_titlemp3_tuples_two(tree):
 
 def get_freshair(outputdir, date_s, order_totnum = None,
                  file_data = None, debug = False, do_mp4 = False,
-                 exec_dict = None, check_if_exist = False):
+                 exec_dict = None, check_if_exist = False,
+                 mp3_exist = False, to_file_debug = True ):
     
     # check if outputdir is a directory
     if not os.path.isdir(outputdir):
@@ -155,10 +156,11 @@ def get_freshair(outputdir, date_s, order_totnum = None,
     tree = lxml.etree.fromstring( requests.get(nprURL).content )
     
     if debug:
-        print 'URL = %s' % nprURL
-        with open(os.path.join(outputdir, 'NPR.FreshAir.tree.%s.xml' % decdate), 'w') as openfile:
-            openfile.write( lxml.etree.tostring( tree ) )
-        return
+        # print 'URL = %s' % nprURL
+        if to_file_debug:
+            with open(os.path.join(outputdir, 'NPR.FreshAir.tree.%s.xml' % decdate), 'w') as openfile:
+                openfile.write( lxml.etree.tostring( tree ) )
+        return tree
     
     # check for unavailable tag
     if len(filter(lambda elem: 'value' in elem.keys() and 
@@ -179,7 +181,7 @@ def get_freshair(outputdir, date_s, order_totnum = None,
             title_mp3_urls = _process_freshair_titlemp3_tuples_one(tree)
         except ValueError:
             title_mp3_urls = _process_freshair_titlemp3_tuples_two(tree)
-        
+            
         if len(title_mp3_urls) == 0:
             print 'Error, could not find any Fresh Air episodes for date %s.' % \
                 npr_utils.get_datestring( date_s )
@@ -189,6 +191,9 @@ def get_freshair(outputdir, date_s, order_totnum = None,
         outfiles = [ os.path.join(outputdir, 'freshair.%s.%d.mp3' % 
                                   ( decdate, num + 1) ) for
                      (num, mp3url) in enumerate( songurls ) ]
+        if mp3_exist:
+            assert(all([ os.path.isfile( outfile ) for outfile in outfiles ]) )
+            
     else:
         title_mp4_urls = _process_freshair_titlemp4_tuples( tree )
         if len(title_mp4_urls) == 0:
@@ -208,7 +213,8 @@ def get_freshair(outputdir, date_s, order_totnum = None,
     # download those files
     time0 = time.time()
     pool = multiprocessing.Pool(processes = len(songurls) )
-    outfiles = filter(None, pool.map(_download_file, zip( songurls, outfiles ) ) )
+    if not mp3_exist:
+        outfiles = filter(None, pool.map(_download_file, zip( songurls, outfiles ) ) )
     if do_mp4: # replace mp4 with ac3
         newouts = []
         for outfile in outfiles:
@@ -219,7 +225,6 @@ def get_freshair(outputdir, date_s, order_totnum = None,
             os.remove( outfile )
             newouts.append( newfile )
         outfiles = newouts
-            
     
         # sox magic command
         #wgdate = date_s.strftime('%d-%b-%Y')
@@ -275,11 +280,15 @@ if __name__=='__main__':
                       npr_utils.get_datestring( datetime.datetime.now() ) )
     parser.add_option('--mp4', dest='do_mp4', action='store_true', default = False,
                       help = 'If chosen, construct an NPR Fresh Air episode from MP4, rather than MP3, source files.' )
+    parser.add_option('--mp3exist', dest='mp3_exist', action='store_true', default = False,
+                      help = 'If chosen, then do not download the transitional mp3 files. Use the ones that'+
+                      ' already exist.')
     parser.add_option('--debug', dest='debug', action='store_true',
                       help = 'If chosen, run freshair.py in debug mode. Useful for debugging :)',
                       default = False)
     opts, args = parser.parse_args()
     dirname = os.path.expanduser( opts.dirname )
     fname = get_freshair( dirname, npr_utils.get_time_from_datestring( opts.date ),
-                          debug = opts.debug, do_mp4 = opts.do_mp4 )
+                          debug = opts.debug, do_mp4 = opts.do_mp4,
+                          mp3_exist = opts.mp3_exist )
     
