@@ -65,7 +65,7 @@ def get_png_image_frompdf( input_pdf_file, newWidth = None ):
     #
     ##    
     response = requests.post( "https://api.cloudconvert.com/convert", params = params,
-                              files = files, verify = False )
+                              files = files )
     if response.status_code != 200:
         raise ValueError("Error, could not upload and convert PDF file %s." % input_pdf_file )
     img = Image.open( StringIO( response.content ) )
