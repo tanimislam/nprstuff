@@ -33,7 +33,7 @@ def store_cloudconvert_api_key( cloudconvert_API_key ):
     cparser.set( 'CLOUDCONVERT_DATA', 'apikey', cloudconvert_API_key )
     with open( absPath, 'wb') as openfile:
         cparser.write( openfile )
-    os.chmod( absPath, 0600 )
+    os.chmod( absPath, 0o600 )
 
 def get_cloudconvert_api_key():
     resource = 'nprstuff'
@@ -69,7 +69,7 @@ def store_api_key(npr_API_key):
     cparser.set('NPR_DATA', 'apikey', npr_API_key)
     with open( absPath, 'wb') as openfile:
         cparser.write( openfile )
-    os.chmod( absPath, 0600 )
+    os.chmod( absPath, 0o600 )
 
 def get_api_key():
     resource = 'nprstuff'

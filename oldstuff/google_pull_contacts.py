@@ -15,12 +15,12 @@ def create_authorized_gdclient():
         credentials.refresh( httplib2.Http() )
         if not credentials.access_token_expired:
             return create_authorized_gdclient_credential( credentials )
-    
+
+    password = raw_input('Enter the password: ')
     response = requests.get( 'https://tanimislam.ddns.net/flask/api/google/pythonclient',
-                             auth = ( 'tanim.islam@gmail.com', 'fannagoganna' ),
-                             verify = False )
+                             auth = ( 'tanim.islam@gmail.com', password ) )
     data = response.json()
-    print data
+    print(data)
     fd, jsonfile = tempfile.mkstemp( suffix = '.json' )
     json.dump( data, open( jsonfile, 'w' ) )
     flow = client.flow_from_clientsecrets(
@@ -55,7 +55,7 @@ def create_authorized_gdclient_credential(credentials):
     return gd_client
 
 class GoogleContactsSimple( object ):
-    def __init__(self, gd_client, maxnum = 5000):
+    def __init__(self, gd_client, maxnum = 50000):
         query = gdata.contacts.client.ContactsQuery()
         query.max_results = maxnum
         contacts = gd_client.GetContacts( q = query )
@@ -67,10 +67,8 @@ class GoogleContactsSimple( object ):
     def to_json(self):
         return copy.deepcopy( self.emails_dict )
 
-    
-
 class GoogleContacts(object):
-    def __init__(self, gd_client, maxnum=5000):
+    def __init__(self, gd_client, maxnum=50000):
         #gd_client = gdata.contacts.client.ContactsClient(source = 'tanim-islam-cloud-storage-2')
         #gd_client.ClientLogin(email, password, gd_client.source)
 
@@ -146,12 +144,10 @@ class GoogleContacts(object):
         #    print '%s => %s' % (contact_name, gmail_im_contacts[contact_name])
 
     def print_pine_addresses(self):
-        all_contacts_email = { contact_name : self.gmail_contacts[group_name][contact_name] for 
-                               group_name in self.gmail_contacts.keys() for
-                               contact_name in self.gmail_contacts[group_name].keys() }
-        for contact_name in sorted(all_contacts_email.keys()):
+        all_contacts_email = to_json( )
+        for contact_name in sorted(all_contacts_email):
             for email_address in sorted(all_contacts_email[contact_name]):
-                print '%s\t%s\t"%s" <%s>' % ("", contact_name, contact_name, email_address)
+                print( '%s\t%s\t"%s" <%s>' % ("", contact_name, contact_name, email_address) )
 
     def get_groups(self):
         groups_by_status = {}
