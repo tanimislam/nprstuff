@@ -9,7 +9,7 @@ from PyQt4.QtSvg import QSvgRenderer
 from PyQt4.QtCore import QByteArray
 from PyPDF2 import PdfFileReader
 
-def get_png_image( input_svg_file, newWidth = None ):
+def get_png_image( input_svg_file, newWidth = None, verify = True ):
     assert( os.path.basename( input_svg_file ).endswith( '.svg' ) or
             os.path.basename( input_svg_file ).endswith( '.svgz') )
     assert( os.path.isfile( input_svg_file ) )
@@ -36,13 +36,13 @@ def get_png_image( input_svg_file, newWidth = None ):
     #
     ##    
     response = requests.post( "https://api.cloudconvert.com/convert", params = params,
-                              files = files )
+                              files = files, verify = verify )
     if response.status_code != 200:
         raise ValueError("Error, could not upload and convert SVG file %s." % input_svg_file )
     img = Image.open( StringIO( response.content ) )
     return img
 
-def get_png_image_frompdf( input_pdf_file, newWidth = None ):
+def get_png_image_frompdf( input_pdf_file, newWidth = None, verify = True ):
     assert( os.path.basename( input_pdf_file ).endswith( '.pdf' ) )
     assert( os.path.isfile( input_pdf_file ) )
     ipdf = PdfFileReader( open( input_pdf_file, 'rb' ) )
@@ -65,7 +65,7 @@ def get_png_image_frompdf( input_pdf_file, newWidth = None ):
     #
     ##    
     response = requests.post( "https://api.cloudconvert.com/convert", params = params,
-                              files = files )
+                              files = files, verify = verify )
     if response.status_code != 200:
         raise ValueError("Error, could not upload and convert PDF file %s." % input_pdf_file )
     img = Image.open( StringIO( response.content ) )
@@ -79,15 +79,17 @@ if __name__=='__main__':
                       help = 'If defined, new width of the file. Optional')
     parser.add_option('--pdf', dest='do_pdf', action='store_true', default = False,
                       help = 'If chosen, convert a PDF, instead of SVG(Z), file into PNG.')
+    parser.add_option('--noverify', dest='do_noverify', action='store_true', default = False,
+                      help = 'If chosen, do not verify the SSL connection.')
     opts, args = parser.parse_args()
     assert( opts.filename is not None )
     #
     ##
     if not opts.do_pdf:
-        img = get_png_image( opts.filename, newWidth = opts.width )        
+        img = get_png_image( opts.filename, newWidth = opts.width, verify = not opts.do_noverify )        
         imgFile = os.path.basename( opts.filename ).replace('.svgz', '.png' ).replace('.svg', '.png')
     else:
-        img = get_png_image_frompdf( opts.filename, newWidth = opts.width )
+        img = get_png_image_frompdf( opts.filename, newWidth = opts.width, verify = not opts.do_noverify )
         imgFile = os.path.basename( opts.filename ).replace('.pdf', '.png' )
     dirName = os.path.dirname( os.path.abspath( opts.filename ) )  
     img.save( os.path.join( dirName, imgFile ) )
