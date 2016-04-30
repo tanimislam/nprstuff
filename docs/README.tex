@@ -60,7 +60,7 @@ This document was converted from a \LaTeX source using \href{http://pandoc.org/i
 pandoc -s README.tex -o README.md
 \end{verbatim}
 
-\section{Core Functionality}\label{sec:core_functionality}
+\section{Core Functionality}
 This consists of functionality to grab episodes from \href{http://www.npr.org/programs/fresh-air/}{Fresh Air},  \href{http://www.npr.org/programs/wait-wait-dont-tell-me/}{Wait Wait..Don't Tell Me}, and \href{http://www.thisamericanlife.org/}{This American Life}. These consist of the following pieces of python code:
 \begin{itemize}
   \item {\verb|npr_utils.py|} contains common utilities to get the proper metadata for NPR programs, to name these media files in the proper date format, and to get the full paths to the \href{https://libav.org}{LibAV/FFMPEG} and \href{https://handbrake.fr/}{HandBrakeCLI} tools to create the NPR programs in m4a and mp3 formats (among other functionalities).
@@ -128,7 +128,7 @@ Options:
 \end{verbatim}
 \end{itemize}
 
-\section{New Functionality}\label{sec:new_functionality}
+\section{New Functionality}
 This consists of newer functionality that does not download NPR episodes, nor can one straightforwardly modify them to download NPR episodes. These consist of the following pieces of python code.
 \begin{itemize}
  \item {\verb|autoCropImage.py|} automatically crops image (png, jpeg, tiff, etc.) files to remove whitespace. The default whitespace color is {\verb|white|}. The help screen for this command line tool is here,
@@ -198,7 +198,7 @@ Options:
 \end{verbatim}
 \end{itemize}
 
-\section{Graphics Functionality}\label{sec:graphics_functionality}
+\section{Graphics Functionality}
 This section describes the two graphical tools I have developed:
 {\verb|gui|} matches a small subset of functionality that the
 \href{https://www.readability.com}{Readability} tool handles
@@ -207,7 +207,7 @@ excellently; {\verb|gui2|} is a
 GUI front-end to the \href{https://www.readability.com}{Readability}
 API.
 
-\subsection{GUI: Media Website Text Formatter} \label{subsec:gui}
+\subsection{GUI: Media Website Text Formatter}
 This GUI can read from the following media websites:
 \href{http://www.lightspeedmagazine.com/}{Lightspeed Magazine},
 \href{https://medium.com/}{Medium},
@@ -244,7 +244,7 @@ Fig.~\ref{fig:gui_screenshot_printpreview}, respectively.
 Note, here I do not support or maintain this tool after I found out
 about \href{https://www.readability.com}{Readability}.
 
-\subsection{GUI2: Readability GUI Front-End} \label{subsec:gui2}
+\subsection{GUI2: Readability GUI Front-End}
 This is the PyQt4 GUI front-end to \href{https://www.readability.com}{Readability}. A screenshot of the list of articles widget is shown in Fig.~(\ref{fig:gui2_screenshot_articlelist}), and a screenshot of the article text widget is shown in Fig.~(\ref{fig:gui2_screenshot_articletext}).
 \begin{figure}[!ht]
   \begin{minipage}[!ht]{0.52\linewidth}
@@ -275,7 +275,7 @@ In the immediate future, I plan on at least implementing the following, all usin
   \item Adding and deleting articles through the article list widget.
 \end{itemize}
 
-\section{Oldstuff}\label{sec:oldstuff}
+\section{Oldstuff}
 These are tools that I do not maintain, located in the {\verb|oldstuff|} folder, but which others may find useful. These are pieces of code that I have started, but which are unmaintained. These are the following pieces of code: {\verb|freshair.sh|}, {\verb|waitwait.sh|}, and {\verb|google_pull_contacts.py|}.
 
 \end{document}
