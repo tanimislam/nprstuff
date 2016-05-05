@@ -1,3 +1,9 @@
+---
+author:
+- Tanim Islam
+title: nprstuff
+...
+
 I like NPR, so I made some scripts to download my favorite programs from
 NPR. For now, I have something that downloads [Fresh
 Air](http://www.npr.org/programs/fresh-air/), [Wait Wait..Don’t Tell
@@ -17,9 +23,9 @@ I organize this document into the following sections: , , (in folders
 This document was converted from a LaTeXsource using
 [Pandoc](http://pandoc.org/index.html), via
 
-    pandoc -s README.tex -o README.rst
+    pandoc -s README.tex -o README.md
 
-Core Functionality {#sec:core_functionality}
+Core Functionality
 ==================
 
 This consists of functionality to grab episodes from [Fresh
@@ -120,14 +126,17 @@ following pieces of python code:
           --extra=EXTRASTUFF    If defined, some extra stuff in the URL to get a This
                                 American Life episode.
 
-New Functionality {#sec:new_functionality}
+New Functionality
 =================
 
 This consists of newer functionality that does not download NPR
 episodes, nor can one straightforwardly modify them to download NPR
 episodes. These consist of the following pieces of python code.
 
--   <span>https://github.com/tanimislam/nprstuff/blob/master/docs/erb|white|</span>
+-   <span>`autoCropImage.py`</span> automatically crops image (png,
+    jpeg, tiff, etc.) files to remove whitespace. The default whitespace
+    color is <span>`white`</span>. The help screen for this command line
+    tool is here,
 
         Usage: autoCropImage.py [options]
 
@@ -201,7 +210,7 @@ episodes. These consist of the following pieces of python code.
           --outdir=OUTDIR  Directory to put this data into. Default is
                            /mnt/software/sources/pythonics/nprstuff.
 
-Graphics Functionality {#sec:graphics_functionality}
+Graphics Functionality
 ======================
 
 This section describes the two graphical tools I have developed:
@@ -211,7 +220,7 @@ This section describes the two graphical tools I have developed:
 [PyQt4](https://www.riverbankcomputing.com/software/pyqt/download) GUI
 front-end to the [Readability](https://www.readability.com) API.
 
-GUI: Media Website Text Formatter {#subsec:gui}
+GUI: Media Website Text Formatter
 ---------------------------------
 
 This GUI can read from the following media websites: [Lightspeed
@@ -221,25 +230,30 @@ Yorker](http://www.newyorker.com/), [The New York
 Times](http://www.nytimes.com/?WT.z_jog=1), and the [Virginia Quarterly
 Review](http://www.vqronline.org/). Here is a screenshot!
 
-![A screenshot of the GUI reader, converting the URL for the [The New
-York Times](http://www.nytimes.com) into text. Note the separate icons
-above for the five media websites from which this GUI can read.<span
-data-label="fig:gui_screenshot"></span>](https://github.com/tanimislam/nprstuff/blob/master/docs/images/gui_screenshot.png)
+\[!ht\]<span>0.65</span> ![A screenshot of the GUI reader, converting
+the URL for the [The New York Times](http://www.nytimes.com) into text.
+Note the separate icons above for the five media websites from which
+this GUI can read.<span
+data-label="fig:gui_screenshot"></span>](images/gui_screenshot.png "fig:"){width="\linewidth"}
+
+\[!ht\]<span>0.34</span>
 
 The screenshots of the save file dialog and the print preview dialog are
 shown Fig. \[fig:gui\_screenshot\_save\] and
 Fig. \[fig:gui\_screenshot\_printpreview\], respectively.
 
-![The GUI screenshot of the print preview dialog.<span
-data-label="fig:gui_screenshot_printpreview"></span>](https://github.com/tanimislam/nprstuff/blob/master/docs/images/gui_screenshot_save.png)
+\[!ht\]<span>0.4</span> ![The GUI screenshot of the print preview
+dialog.<span
+data-label="fig:gui_screenshot_printpreview"></span>](images/gui_screenshot_save.png "fig:"){width="\linewidth"}
 
-![The GUI screenshot of the print preview dialog.<span
-data-label="fig:gui_screenshot_printpreview"></span>](https://github.com/tanimislam/nprstuff/blob/master/docs/images/gui_screenshot_printpreview.png)
+\[!ht\]<span>0.5</span> ![The GUI screenshot of the print preview
+dialog.<span
+data-label="fig:gui_screenshot_printpreview"></span>](images/gui_screenshot_printpreview.png "fig:"){width="\linewidth"}
 
 Note, here I do not support or maintain this tool after I found out
 about [Readability](https://www.readability.com).
 
-GUI2: Readability GUI Front-End {#subsec:gui2}
+GUI2: Readability GUI Front-End
 -------------------------------
 
 This is the PyQt4 GUI front-end to
@@ -249,26 +263,26 @@ Fig. (\[fig:gui2\_screenshot\_articlelist\]), and a screenshot of the
 article text widget is shown in
 Fig. (\[fig:gui2\_screenshot\_articletext\]).
 
-![The text form of the article’s content, with working dialogs for
-`Font` and `Print Preview`.<span
-data-label="fig:gui2_screenshot_articletext"></span>](https://github.com/tanimislam/nprstuff/blob/master/docs/images/gui2_screenshot_articlelist.png)
+\[!ht\]<span>0.52</span> ![The text form of the article’s content, with
+working dialogs for `Font` and `Print Preview`.<span
+data-label="fig:gui2_screenshot_articletext"></span>](images/gui2_screenshot_articlelist.png "fig:"){width="\linewidth"}
 
-![The text form of the article’s content, with working dialogs for
-`Font` and `Print Preview`.<span
-data-label="fig:gui2_screenshot_articletext"></span>](https://github.com/tanimislam/nprstuff/blob/master/docs/images/gui2_screenshot_articletext.png)
+\[!ht\]<span>0.45</span> ![The text form of the article’s content, with
+working dialogs for `Font` and `Print Preview`.<span
+data-label="fig:gui2_screenshot_articletext"></span>](images/gui2_screenshot_articletext.png "fig:"){width="\linewidth"}
 
 A screenshot of the font changing dialog, the <span>`Font`</span>
 button, is shown in Fig. (\[fig:gui2\_screenshot\_fontdialog\]). A
 screenshot of the print preview dialog, the <span>`Print`</span> button,
 is shown in Fig. (\[fig:gui2\_screenshot\_printpreviewdialog\]).
 
-![The print preview dialog launched by the `Print` button in the article
-text widget.<span
-data-label="fig:gui2_screenshot_printpreviewdialog"></span>](https://github.com/tanimislam/nprstuff/blob/master/docs/images/gui2_screenshot_fontdialog.png)
+\[!ht\]<span>0.53</span> ![The print preview dialog launched by the
+`Print` button in the article text widget.<span
+data-label="fig:gui2_screenshot_printpreviewdialog"></span>](images/gui2_screenshot_fontdialog.png "fig:"){width="\linewidth"}
 
-![The print preview dialog launched by the `Print` button in the article
-text widget.<span
-data-label="fig:gui2_screenshot_printpreviewdialog"></span>](https://github.com/tanimislam/nprstuff/blob/master/docs/images/gui2_screenshot_printpreviewdialog.png)
+\[!ht\]<span>0.45</span> ![The print preview dialog launched by the
+`Print` button in the article text widget.<span
+data-label="fig:gui2_screenshot_printpreviewdialog"></span>](images/gui2_screenshot_printpreviewdialog.png "fig:"){width="\linewidth"}
 
 In the immediate future, I plan on at least implementing the following,
 all using the Readability API.
@@ -278,7 +292,7 @@ all using the Readability API.
 
 -   Adding and deleting articles through the article list widget.
 
-Oldstuff {#sec:oldstuff}
+Oldstuff
 ========
 
 These are tools that I do not maintain, located in the
