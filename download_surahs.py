@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 
-import lxml.html, urllib2, urlparse, time, os
+import lxml.html, requests, urlparse, time, os
 from multiprocessing import Pool, cpu_count
 from optparse import OptionParser
 
 def get_surahs(outdir = os.getcwd()):
     surahs = []
     top_url = 'http://quranicradio.com'
-    tree = lxml.html.fromstring( urllib2.urlopen( 'http://quranicaudio.com/quran/109').read() )
+    tree = lxml.html.fromstring( requests.get( 'http://quranicaudio.com/quran/109').content )
     for elem in tree.iter('tr'):
         sura_elems = list(elem.iter('td'))
         if len(sura_elems) != 4:
@@ -25,7 +25,7 @@ def _download_per_tuple(input_tuple):
     num, name, mp3_url, outdir = input_tuple
     filename = os.path.join(outdir, '%03d.%s.mp3' % ( num, name ) )
     with open(filename, 'wb') as openfile:
-        openfile.write( urllib2.urlopen( mp3_url ).read() )
+        openfile.write( requests.get( mp3_url ).content )
     print 'Downloaded Sura %03d - %s, in %0.3f seconds.' % ( num, name, time.time() - time0 )
 
 def download_all_surahs(surahs):
