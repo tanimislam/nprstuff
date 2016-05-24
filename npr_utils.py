@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import calendar, numpy, time, datetime, os
 import xdg.BaseDirectory, ConfigParser
 import multiprocessing, multiprocessing.pool

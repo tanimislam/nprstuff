@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-__author__ = 'Tanim Islam'
+#!/usr/bin/env python3
 
 import os, sys, time, titlecase
 import lxml.html, requests
@@ -65,8 +64,8 @@ def get_american_life(epno, directory = '/mnt/media/thisamericanlife', extraStuf
     try:
         title, year = get_americanlife_info(epno, extraStuff = extraStuff)
     except ValueError as e:
-        print e
-        print 'Cannot find date and title for This American Life episode #%d.' % epno
+        print(e)
+        print('Cannot find date and title for This American Life episode #%d.' % epno)
         return
 
     if not os.path.isdir(directory):
@@ -79,7 +78,7 @@ def get_american_life(epno, directory = '/mnt/media/thisamericanlife', extraStuf
         urlopn = 'http://audio.thisamericanlife.org/jomamashouse/ismymamashouse/%d.mp3' % epno
         resp = requests.get( urlopn, stream = True )
         if not resp.ok:
-            print "Error, could not download This American Life episode #%d. Exiting..." % epno
+            print("Error, could not download This American Life episode #%d. Exiting..." % epno)
             return
     with open( outfile, 'wb') as openfile:
         for chunk in resp.iter_content(65536):
