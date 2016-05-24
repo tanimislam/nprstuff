@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-import os, sys, glob, re, multiprocessing
-import subprocess, lxml.etree, urllib2, datetime, time
+import os, sys, glob, re, multiprocessing, requests
+import subprocess, lxml.etree, datetime, time
 import npr_utils, mutagen.mp4, waitwait_realmedia
 from optparse import OptionParser
 
@@ -19,12 +19,12 @@ def _get_last_saturday(datetime_s):
     return date_sat
 
 def get_waitwait_image():
-    return urllib2.urlopen('http://upload.wikimedia.org/wikipedia/en/f/f4/WaitWait.png').read()
+    return requests.get('https://upload.wikimedia.org/wikipedia/en/f/f4/WaitWait.png').content
     
 def _download_file( input_tuple ):
     mp3URL, filename = input_tuple
     with open(filename, 'wb') as openfile:
-        openfile.write( urllib2.urlopen(mp3URL).read() )
+        openfile.write( requests.get( mp3URL ).content )
 
 def get_waitwait_date_from_name(candidateNPRWaitWaitFile):
     if not os.path.isfile(candidateNPRWaitWaitFile):
@@ -60,10 +60,10 @@ def _process_waitwaits_by_year_tuple(input_tuple):
             fname = get_waitwait(outputdir, date_s, order_totnum = ( order, totnum),
                                  file_data = ww_image)
             if verbose:
-                print 'Processed %s in %0.3f seconds.' % ( fname, time.time() - time0 )
+                print('Processed %s in %0.3f seconds.' % ( fname, time.time() - time0 ))
         except Exception as e:
-            print 'Could not create Wait Wait episode for date %s for some reason.' % (
-                npr_utils.get_datestring( date_s ) )
+            print('Could not create Wait Wait episode for date %s for some reason.' % (
+                npr_utils.get_datestring( date_s ) ) )
 
 def get_all_waitwaits_year( yearnum,
                             inputdir, verbose = True):
@@ -78,7 +78,7 @@ def get_all_waitwaits_year( yearnum,
     pool = npr_utils.MyPool(processes = nprocs )
     pool.map(_process_waitwaits_by_year_tuple, input_tuples)
     if verbose:
-        print 'processed all Wait Wait downloads for %04d in %0.3f seconds.' % ( yearnum, time.time() - time0 )
+        print('processed all Wait Wait downloads for %04d in %0.3f seconds.' % ( yearnum, time.time() - time0 ) )
 
 def get_title_wavfile_standard(date_s, outputdir, avconv_exec, 
                                debugonly = False, npr_api_key = None):
@@ -90,7 +90,7 @@ def get_title_wavfile_standard(date_s, outputdir, avconv_exec,
                                    _npr_waitwait_progid, 
                                    npr_api_key )
     decdate = npr_utils.get_decdate( date_s )
-    tree = lxml.etree.fromstring( urllib2.urlopen(nprURL).read())
+    tree = lxml.etree.fromstring( requests.get( nprURL ).content )
     if debugonly:
         openfile = os.path.join( outputdir, 'NPR.WaitWait.tree.%s.xml' %
                                  decdate )
@@ -105,8 +105,7 @@ def get_title_wavfile_standard(date_s, outputdir, avconv_exec,
         m3uurl = max( filter(lambda elm: 'type' in elm.keys() and
                              elm.get('type') == 'm3u', elem.iter('mp3') ) ).text.strip()
         try:
-            mp3url = urllib2.urlopen( m3uurl ).read().strip()
-            mp3h = urllib2.urlopen( mp3url )
+            mp3url = requests.get( m3uurl ).content.strip( )
             order = int( mp3url.split('_')[-1].replace('.mp3', '') )
             title_mp3_urls.append( ( title, mp3url, order ) )
         except Exception:
