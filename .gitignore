@@ -60,6 +60,7 @@ docs/_build/
 *.fls
 *.out
 *.toc
+*.backup
 
 ## Intermediate documents:
 *.dvi
