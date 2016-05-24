@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 
-import os, sys, webcolors, multiprocessing
+import os, sys, webcolors, multiprocessing, functools, operator
 from PIL import Image, ImageChops
 from optparse import OptionParser
 
-_all_possible_colornames = set( reduce( lambda y, x: y + x, [ webcolors.html4_names_to_hex.keys(),
-                                                              webcolors.css2_names_to_hex.keys(),
-                                                              webcolors.css21_names_to_hex.keys(),
-                                                              webcolors.css3_names_to_hex.keys() ] ) )
+_all_possible_colornames = set( reduce( lambda y,x: y + x, [ webcolors.html4_names_to_hex.keys(),
+                                                             webcolors.css2_names_to_hex.keys(),
+                                                             webcolors.css21_names_to_hex.keys(),
+                                                             webcolors.css3_names_to_hex.keys() ] ) )
 
 def autocrop_perproc(input_tuple):
     inputfilename, outputfilename, color = input_tuple
