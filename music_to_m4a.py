@@ -40,14 +40,13 @@ def _get_file_type(file_data):
     except IOError:
         return None
            
-
 def rename_m4a(m4afilename):
     if not os.path.isfile(m4afilename):
         return
     if not m4afilename.endswith('.m4a'):
         return
-    if magic.from_file(m4afilename, mime = True).strip() != 'audio/mp4':
-        return
+    #if magic.from_file(m4afilename, mime = True).strip() != 'audio/mp4':
+    #    return
     mp4tags = mutagen.mp4.MP4(m4afilename)
     curdir = os.path.dirname( os.path.abspath( m4afilename ) )
     if len(set([ '\xa9nam', '\xa9ART' ]) - set(mp4tags.keys())) != 0:
