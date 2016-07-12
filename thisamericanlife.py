@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-__author__ = 'Tanim Islam'
+#!/usr/bin/env python3
 
 import os, sys, time, titlecase
 import lxml.html, requests
@@ -25,8 +24,8 @@ def get_americanlife_info(epno, throwException = True, extraStuff = None):
     else:
         tree = lxml.html.fromstring(resp.text )
 
-    elem_info_list = filter(lambda elem: 'class' in elem.keys() and
-                            elem.get('class') == "top-inner clearfix", tree.iter('div'))
+    elem_info_list = list(filter(lambda elem: 'class' in elem.keys() and
+                                 elem.get('class') == "top-inner clearfix", tree.iter('div')))
     if len(elem_info_list) != 1:
         if throwException:
             raise ValueError(" ".join([ "Error, cannot find date and title for This American Life episode #%d," % epno,
@@ -34,8 +33,8 @@ def get_americanlife_info(epno, throwException = True, extraStuff = None):
         else:
             return None
     elem_info = max(elem_info_list)
-    date_list = filter(lambda elem: 'class' in elem.keys() and elem.get('class') == 'date',
-                        elem_info.iter('div'))
+    date_list = list(filter(lambda elem: 'class' in elem.keys() and elem.get('class') == 'date',
+                            elem_info.iter('div')))
     if len(date_list) != 1:
         if throwException:
             raise ValueError("Error, cannot find date and title for This American Life episode #%d." % epno)
@@ -45,8 +44,8 @@ def get_americanlife_info(epno, throwException = True, extraStuff = None):
     date_act = time.strptime(date_s, '%b %d, %Y')
     year = date_act.tm_year
 
-    title_elem_list = filter(lambda elem: 'class' in elem.keys() and
-                                          elem.get('class') == 'node-title', elem_info.iter('h1'))
+    title_elem_list = list(filter(lambda elem: 'class' in elem.keys() and
+                                  elem.get('class') == 'node-title', elem_info.iter('h1')))
     if len(title_elem_list) != 1:
         raise ValueError("Error, cannot find date and title for This American Life episode #%d." % epno)
     title = max(title_elem_list).text.strip()
@@ -65,8 +64,8 @@ def get_american_life(epno, directory = '/mnt/media/thisamericanlife', extraStuf
     try:
         title, year = get_americanlife_info(epno, extraStuff = extraStuff)
     except ValueError as e:
-        print e
-        print 'Cannot find date and title for This American Life episode #%d.' % epno
+        print(e)
+        print('Cannot find date and title for This American Life episode #%d.' % epno)
         return
 
     if not os.path.isdir(directory):
@@ -79,7 +78,7 @@ def get_american_life(epno, directory = '/mnt/media/thisamericanlife', extraStuf
         urlopn = 'http://audio.thisamericanlife.org/jomamashouse/ismymamashouse/%d.mp3' % epno
         resp = requests.get( urlopn, stream = True )
         if not resp.ok:
-            print "Error, could not download This American Life episode #%d. Exiting..." % epno
+            print("Error, could not download This American Life episode #%d. Exiting..." % epno)
             return
     with open( outfile, 'wb') as openfile:
         for chunk in resp.iter_content(65536):

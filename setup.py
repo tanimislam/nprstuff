@@ -2,7 +2,7 @@ from distutils.core import setup
 
 setup(
     name='nprstuff',
-    version='0.4',
+    version='1.0',
     packages=["mutagen", "lxml", 'magic', 'PIL', 'pyxdg', 'ConfigParser' ],
     url='',
     license='GPL',
