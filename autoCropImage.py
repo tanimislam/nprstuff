@@ -20,7 +20,8 @@ def autocrop_perproc(input_tuple):
     return inputfilename, val
     
 
-def autocrop_image(inputfilename, outputfilename = None, color = 'white', newWidth = None):
+def autocrop_image(inputfilename, outputfilename = None, color = 'white', newWidth = None,
+                   doShow = False ):
     im = Image.open(inputfilename)
     try:
         # get hex colors
@@ -42,6 +43,8 @@ def autocrop_image(inputfilename, outputfilename = None, color = 'white', newWid
             cropped.save(inputfilename)
         else:
             cropped.save(os.path.expanduser(outputfilename))
+        if doShow:
+            cropped.show( )
         return True
     else:
         return False
@@ -57,10 +60,12 @@ if __name__=='__main__':
                       default = 'white')
     parser.add_option('--newwidth', dest='newwidth', action='store', type=int,
                       help = 'New width of the image.' )
+    parser.add_option('--show', dest='do_show', action='store_true', default = False,
+                      help = 'If chosen, then show the final image after cropped.' )
     opts, args = parser.parse_args()
     if opts.input is None:
         raise ValueError("Error, input file path must be defined.")
     if not os.path.isfile(os.path.expanduser(opts.input)):
         raise ValueError("Error, candidate file = %s is not a file." % os.path.expanduser(opts.input))
     autocrop_image( os.path.expanduser(opts.input), outputfilename = opts.output, color = opts.color,
-                    newWidth = opts.newwidth )
+                    newWidth = opts.newwidth, doShow = opts.do_show )
