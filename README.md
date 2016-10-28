@@ -259,7 +259,7 @@ A screen shot of the font changing dialog, the `Font` button, and a screenshot o
 | ![fig:gui2_screenshot_printpreviewdialog](docs/images/gui2_screenshot_fontdialog.png) | ![fig:gui2_screenshot_printpreviewdialog](docs/images/gui2_screenshot_printpreviewdialog.png) |
 | The `Font` button dialog. | The print preview dialog launched by the `Print` button in the article text widget. |
 
-In the immediate future, I plan on at least implementing the following,
+In the future, I plan on at least implementing the following,
 all using the Readability API.
 
 -   `EPUB` button, to create the article in
