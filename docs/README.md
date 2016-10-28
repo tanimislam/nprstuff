@@ -250,26 +250,17 @@ Note, here I do not support or maintain this tool after I found out about [Reada
 GUI2: Readability GUI Front-End
 -------------------------------
 
-This is the PyQt4 GUI front-end to [Readability](https://www.readability.com). A screenshot of the list of articles widget is shown in
-Fig. (\[fig:gui2\_screenshot\_articlelist\]), and a screenshot of the
-article text widget is shown in
-Fig. (\[fig:gui2\_screenshot\_articletext\]).
+This is the PyQt4 GUI front-end to [Readability](https://www.readability.com).
 
-\[!ht\]0.52 ![The text form of the article’s content, with
-working dialogs for `Font` and `Print Preview`.<span
-data-label="fig:gui2_screenshot_articletext">](images/gui2_screenshot_articlelist.png "fig:"){width="\linewidth"}
+|        |        |
+| :----- | :----- |
+| ![fig:gui2_screenshot_articlelist](docs/images/gui2_screenshot_articlelist.png) | ![fig:gui2_screenshot_articletext](docs/images/gui2_screenshot_articletext.png) |
+| The list form of the article’s content, with working dialogs for `Font` and `Print Preview`. | The text form of the article’s content, with
+working dialogs for `Font` and `Print Preview`. |
 
-\[!ht\]0.45 ![The text form of the article’s content, with
-working dialogs for `Font` and `Print Preview`.<span
-data-label="fig:gui2_screenshot_articletext">](images/gui2_screenshot_articletext.png "fig:"){width="\linewidth"}
+A screen shot of the font changing dialog, the `Font` button, and a screenshot of the print preview dialog, the `Print` button, are shown below.
 
-A screenshot of the font changing dialog, the `Font`
-button, is shown in Fig. (\[fig:gui2\_screenshot\_fontdialog\]). A
-screenshot of the print preview dialog, the `Print` button,
-is shown in Fig. (\[fig:gui2\_screenshot\_printpreviewdialog\]).
-
-\[!ht\]0.53 ![The print preview dialog launched by the
-`Print` button in the article text widget.<span
+\[!ht\]0.53 ![The `Font` button dialog.<span
 data-label="fig:gui2_screenshot_printpreviewdialog">](images/gui2_screenshot_fontdialog.png "fig:"){width="\linewidth"}
 
 \[!ht\]0.45 ![The print preview dialog launched by the
