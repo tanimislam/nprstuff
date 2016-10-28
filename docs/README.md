@@ -238,30 +238,25 @@ Review](http://www.vqronline.org/). Here is a screenshot!
 | col 2 is      |
 | zebra stripes |
 
-| screenshot of the GUI reader, converting the URL for the [The New York Times](http://www.nytimes.com) into text. Note the separate icons above for the five media websites from which this GUI can read.      |
-| ----- |
+|        |
+| :----- |
 | ![fig:gui_screenshot](docs/images/gui_screenshot.png) |
+| screenshot of the GUI reader, converting the URL for the [The New York Times](http://www.nytimes.com) into text. Note the separate icons above for the five media websites from which this GUI can read. |
 
 The screenshots of the save file dialog and the print preview dialog are
 shown here.
 
-\[!ht\]0.4 ![The GUI screenshot of the print preview
-dialog.<span
-data-label="fig:gui_screenshot_printpreview">](images/gui_screenshot_save.png "fig:"){width="\linewidth"}
+|        |        |
+| :----- | :----- |
+| ![fig:gui_screenshot_printpreview](doc/images/gui_screenshot_save.png) | ![fig:gui_screenshot_printpreview](docs/images/gui_screenshot_printpreview.png) |
+| The GUI screenshot of the save dialog. | The GUI screenshot of the print preview dialog. |
 
-\[!ht\]0.5 ![The GUI screenshot of the print preview
-dialog.<span
-data-label="fig:gui_screenshot_printpreview">](images/gui_screenshot_printpreview.png "fig:"){width="\linewidth"}
-
-Note, here I do not support or maintain this tool after I found out
-about [Readability](https://www.readability.com).
+Note, here I do not support or maintain this tool after I found out about [Readability](https://www.readability.com).
 
 GUI2: Readability GUI Front-End
 -------------------------------
 
-This is the PyQt4 GUI front-end to
-[Readability](https://www.readability.com). A screenshot of the list of
-articles widget is shown in
+This is the PyQt4 GUI front-end to [Readability](https://www.readability.com). A screenshot of the list of articles widget is shown in
 Fig. (\[fig:gui2\_screenshot\_articlelist\]), and a screenshot of the
 article text widget is shown in
 Fig. (\[fig:gui2\_screenshot\_articletext\]).
