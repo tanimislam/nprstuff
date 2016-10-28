@@ -232,12 +232,6 @@ Yorker](http://www.newyorker.com/), [The New York
 Times](http://www.nytimes.com/?WT.z_jog=1), and the [Virginia Quarterly
 Review](http://www.vqronline.org/). Here is a screenshot!
 
-|         |
-| ------------- |
-| col 3 is      |
-| col 2 is      |
-| zebra stripes |
-
 |        |
 | :----- |
 | ![fig:gui_screenshot](docs/images/gui_screenshot.png) |
