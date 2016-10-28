@@ -259,12 +259,10 @@ This is the PyQt4 GUI front-end to [Readability](https://www.readability.com).
 
 A screen shot of the font changing dialog, the `Font` button, and a screenshot of the print preview dialog, the `Print` button, are shown below.
 
-\[!ht\]0.53 ![The `Font` button dialog.<span
-data-label="fig:gui2_screenshot_printpreviewdialog">](images/gui2_screenshot_fontdialog.png "fig:"){width="\linewidth"}
-
-\[!ht\]0.45 ![The print preview dialog launched by the
-`Print` button in the article text widget.<span
-data-label="fig:gui2_screenshot_printpreviewdialog">](images/gui2_screenshot_printpreviewdialog.png "fig:"){width="\linewidth"}
+|        |        |
+| :----- | :----- |
+| ![fig:gui2_screenshot_printpreviewdialog](docs/images/gui2_screenshot_fontdialog.png) | ![fig:gui2_screenshot_printpreviewdialog](docs/images/gui2_screenshot_printpreviewdialog.png) |
+| The `Font` button dialog. | The print preview dialog launched by the `Print` button in the article text widget. |
 
 In the immediate future, I plan on at least implementing the following,
 all using the Readability API.
