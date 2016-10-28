@@ -10,8 +10,8 @@ programs, I have expanded it to include a grab bag of altogether
 different types of functionalities. What remains the same? This
 distribution consists mainly of executable python scripts.
 
-I organize this document into the following sections: , , (in folders
-`gui` and `gui2`), and a small section called
+I organize this document into the following sections: [Core Functionality](#core-functionality), [New Functionality](#new-functionality), [Graphics Functionality](#graphics-functionality) (in folders
+`gui` and `gui2`), and a small section called [Oldstuff](#oldstuff)
 .
 
 This document was converted from a LaTeX source using
@@ -19,8 +19,7 @@ This document was converted from a LaTeX source using
 ```bash
     pandoc -s README.tex -o README.md
 ```
-Core Functionality
-==================
+## Core Functionality <a name="core-functionality"></a>
 
 This consists of functionality to grab episodes from [Fresh
 Air](http://www.npr.org/programs/fresh-air/), [Wait Wait..Don’t Tell
@@ -52,7 +51,7 @@ following pieces of python code:
               --dirname=DIRNAME  Name of the directory to store the file. Default is
                                  /mnt/media/freshair.
               --date=DATE        The date, in the form of "January 1, 2014." The default
-                                 is today's date, November 14, 2015.
+                                 is todays date, November 14, 2015.
               --debug            If chosen, run freshair.py in debug mode. Useful for
                                  debugging :)
         ```
@@ -123,8 +122,7 @@ following pieces of python code:
                                 American Life episode.
     ```
 
-New Functionality
-=================
+## New Functionality <a name="new-functionality"></a>
 
 This consists of newer functionality that does not download NPR
 episodes, nor can one straightforwardly modify them to download NPR
@@ -212,8 +210,7 @@ episodes. These consist of the following pieces of python code.
                            /mnt/software/sources/pythonics/nprstuff.
     ```
 
-Graphics Functionality
-======================
+## Graphics Functionality <a href="graphics-functionality"></a>
 
 This section describes the two graphical tools I have developed:
 `gui` matches a small subset of functionality that the
@@ -222,8 +219,7 @@ This section describes the two graphical tools I have developed:
 [PyQt4](https://www.riverbankcomputing.com/software/pyqt/download) GUI
 front-end to the [Readability](https://www.readability.com) API.
 
-GUI: Media Website Text Formatter
----------------------------------
+### GUI: Media Website Text Formatter <a href="gui1"></a>
 
 This GUI can read from the following media websites: [Lightspeed
 Magazine](http://www.lightspeedmagazine.com/),
@@ -247,8 +243,7 @@ shown here.
 
 Note, here I do not support or maintain this tool after I found out about [Readability](https://www.readability.com).
 
-GUI2: Readability GUI Front-End
--------------------------------
+### GUI2: Readability GUI Front-End <a href="gui2"></a>
 
 This is the PyQt4 GUI front-end to [Readability](https://www.readability.com).
 
@@ -272,8 +267,7 @@ all using the Readability API.
 
 -   Adding and deleting articles through the article list widget.
 
-Oldstuff
-========
+## Oldstuff <a href="oldstuff"></a>
 
 These are tools that I do not maintain, located in the
 `oldstuff` folder, but which others may find useful. These
