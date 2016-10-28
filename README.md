@@ -210,6 +210,23 @@ episodes. These consist of the following pieces of python code.
                            /mnt/software/sources/pythonics/nprstuff.
     ```
 
+-   `display.py`  displays an image (SVG, PNG, JPEG, GIF) using the default image viewer for your operating system ([Preview](https://en.wikipedia.org/wiki/Preview_(macOS)) for Mac OS X, [ImageMagick]() for Linux, etc.) Its command is simple,
+```bash
+display.py <imagefile>.
+```
+-   `imageFromURL.py` saves PNG images from an URL to disk. The help
+    screen for this command line tool is here,
+    ```bash
+        Usage: imageFromURL.py [options]
+
+  Options:
+  -h, --help           show this help message and exit
+  --url=URL            URL where the image is located.
+  --filename=FILENAME  The name of the PNG file to save the online image. The
+                       image name must end in .png. The default name is
+                       default.png.
+```
+
 ## Graphics Functionality <a href="graphics-functionality"></a>
 
 This section describes the two graphical tools I have developed:
@@ -270,7 +287,7 @@ all using the Readability API.
 ## Oldstuff <a href="oldstuff"></a>
 
 These are tools that I do not maintain, located in the
-`oldstuff` folder, but which others may find useful. These
+[oldstuff](https://github.com/tanimislam/nprstuff/blob/master/oldstuff) folder, but which others may find useful. These
 are pieces of code that I have started, but which are unmaintained.
-These are the following pieces of code: `freshair.sh`,
-`waitwait.sh`, and `google_pull_contacts.py`.
+These are the following pieces of code: [freshair.sh](https://github.com/tanimislam/nprstuff/blob/master/oldstuff/freshair.sh),
+[waitwait.sh](https://github.com/tanimislam/nprstuff/blob/master/oldstuff/waitwait.sh), and [google_pull_contacts.py](https://github.com/tanimislam/nprstuff/blob/master/oldstuff/google_pull_contacts.py).
