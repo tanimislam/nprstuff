@@ -255,8 +255,7 @@ This is the PyQt4 GUI front-end to [Readability](https://www.readability.com).
 |        |        |
 | :----- | :----- |
 | ![fig:gui2_screenshot_articlelist](docs/images/gui2_screenshot_articlelist.png) | ![fig:gui2_screenshot_articletext](docs/images/gui2_screenshot_articletext.png) |
-| The list form of the article’s content, with working dialogs for `Font` and `Print Preview`. | The text form of the article’s content, with
-working dialogs for `Font` and `Print Preview`. |
+| The list form of the article’s content, with working dialogs for `Font` and `Print Preview`. | The text form of the article’s content, with working dialogs for `Font` and `Print Preview`. |
 
 A screen shot of the font changing dialog, the `Font` button, and a screenshot of the print preview dialog, the `Print` button, are shown below.
 
