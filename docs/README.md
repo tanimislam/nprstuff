@@ -1,9 +1,3 @@
----
-author:
-- Tanim Islam
-title: nprstuff
-...
-
 I like NPR, so I made some scripts to download my favorite programs from
 NPR. For now, I have something that downloads [Fresh
 Air](http://www.npr.org/programs/fresh-air/), [Wait Wait..Don’t Tell
