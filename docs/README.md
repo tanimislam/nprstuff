@@ -231,18 +231,15 @@ Magazine](http://www.lightspeedmagazine.com/),
 Yorker](http://www.newyorker.com/), [The New York
 Times](http://www.nytimes.com/?WT.z_jog=1), and the [Virginia Quarterly
 Review](http://www.vqronline.org/). Here is a screenshot!
-
-\[!ht\]0.65 ![A screenshot of the GUI reader, converting
+| screenshot of the GUI reader, converting
 the URL for the [The New York Times](http://www.nytimes.com) into text.
 Note the separate icons above for the five media websites from which
-this GUI can read.<span
-data-label="fig:gui_screenshot">](images/gui_screenshot.png "fig:"){width="\linewidth"}
-
-\[!ht\]0.34
+this GUI can read.|
+|:-----|
+|![fig:gui_screenshot](docs/images/gui_screenshot.png)|
 
 The screenshots of the save file dialog and the print preview dialog are
-shown Fig. \[fig:gui\_screenshot\_save\] and
-Fig. \[fig:gui\_screenshot\_printpreview\], respectively.
+shown here.
 
 \[!ht\]0.4 ![The GUI screenshot of the print preview
 dialog.<span
