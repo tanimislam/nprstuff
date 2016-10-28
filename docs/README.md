@@ -242,7 +242,7 @@ shown here.
 
 |        |        |
 | :----- | :----- |
-| ![fig:gui_screenshot_printpreview](doc/images/gui_screenshot_save.png) | ![fig:gui_screenshot_printpreview](docs/images/gui_screenshot_printpreview.png) |
+| ![fig:gui_screenshot_printpreview](docs/images/gui_screenshot_save.png) | ![fig:gui_screenshot_printpreview](docs/images/gui_screenshot_printpreview.png) |
 | The GUI screenshot of the save dialog. | The GUI screenshot of the print preview dialog. |
 
 Note, here I do not support or maintain this tool after I found out about [Readability](https://www.readability.com).
