@@ -241,10 +241,7 @@ Review](http://www.vqronline.org/). Here is a screenshot!
 |       |
 | ----- |
 | ![fig:gui_screenshot](docs/images/gui_screenshot.png) |
-| screenshot of the GUI reader, converting
-the URL for the [The New York Times](http://www.nytimes.com) into text.
-Note the separate icons above for the five media websites from which
-this GUI can read. |
+| screenshot of the GUI reader, converting the URL for the [The New York Times](http://www.nytimes.com) into text. Note the separate icons above for the five media websites from which this GUI can read. |
 
 The screenshots of the save file dialog and the print preview dialog are
 shown here.
