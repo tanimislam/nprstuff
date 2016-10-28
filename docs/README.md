@@ -232,7 +232,10 @@ Yorker](http://www.newyorker.com/), [The New York
 Times](http://www.nytimes.com/?WT.z_jog=1), and the [Virginia Quarterly
 Review](http://www.vqronline.org/). Here is a screenshot!
 
-| Tables        |
+| screenshot of the GUI reader, converting
+the URL for the [The New York Times](http://www.nytimes.com) into text.
+Note the separate icons above for the five media websites from which
+this GUI can read.        |
 | ------------- |
 | col 3 is      |
 | col 2 is      |
