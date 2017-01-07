@@ -1,9 +1,13 @@
 #!/usr/bin/env python
 
-import os, glob, multiprocessing, datetime, time, urlparse, re
+import os, glob, multiprocessing, datetime, time, re
 import mutagen.mp4, subprocess, multiprocessing.pool, requests
 from optparse import OptionParser
 import lxml.etree, npr_utils
+try:
+    import urlparse
+except:
+    import urllib.parse as urlparse
 
 _npr_FreshAir_progid = 13
 
@@ -21,7 +25,7 @@ def _download_file(input_tuple):
                 openfile.write( chunk )
         return filename
     else:
-        print 'SOMETHING HAPPENED WITH %s' % filename
+        print('SOMETHING HAPPENED WITH %s' % filename)
         return None
 
 def get_freshair_date_from_name(candidateNPRFreshAirFile):
@@ -42,8 +46,8 @@ def get_freshair_valid_dates_remaining_tuples(yearnum, inputdir):
                            enumerate( npr_utils.get_weekday_times_in_year(yearnum) ) }
     dtime_now = datetime.datetime.now()
     nowd = datetime.date(dtime_now.year, dtime_now.month, dtime_now.day)
-    weekdays_left = filter(lambda date_s: date_s < nowd, set( all_order_weekdays . keys() ) - 
-                           set( dates_downloaded ) )
+    weekdays_left = set( filter(lambda date_s: date_s < nowd, set( all_order_weekdays . keys() ) ) ) - \
+        set( dates_downloaded )
     totnum = len( all_order_weekdays.keys() )
     order_dates_remain = sorted([ ( all_order_weekdays[date_s], totnum, date_s ) for
                                   date_s in weekdays_left ], key = lambda tup: tup[0] ) 
@@ -58,9 +62,10 @@ def _process_freshairs_by_year_tuple(input_tuple):
             fname = get_freshair(outputdir, date_s, order_totnum = ( order, totnum),
                                  file_data = fa_image )
             if verbose:
-                print 'processed %s in %0.3f seconds.' % ( os.path.basename(fname), time.time() - time0 )
+                print('processed %s in %0.3f seconds.' % ( os.path.basename(fname), time.time() - time0 ))
         except Exception:
-            print 'Could not create Fresh Air episode for date %s for some reason' % npr_utils.get_datestring( date_s )
+            print('Could not create Fresh Air episode for date %s for some reason' %
+                  npr_utils.get_datestring( date_s ) )
             
 def process_all_freshairs_by_year(yearnum, inputdir, verbose = True, justCoverage = False):
     order_dates_remain = get_freshair_valid_dates_remaining_tuples( yearnum, inputdir )
@@ -76,12 +81,13 @@ def process_all_freshairs_by_year(yearnum, inputdir, verbose = True, justCoverag
         pool = npr_utils.MyPool(processes = multiprocessing.cpu_count())
         pool.map(_process_freshairs_by_year_tuple, input_tuples)
     else:
-        print 'Missing %d episodes for %04d.' % ( len(order_dates_remain), yearnum )
+        print( 'Missing %d episodes for %04d.' % ( len(order_dates_remain), yearnum ) )
         for order, totnum, date_s in order_dates_remain:
-            print 'Missing NPR FreshAir episode for %s.' % date_s.strftime('%B %d, %Y')
+            print( 'Missing NPR FreshAir episode for %s.' %
+                   date_s.strftime('%B %d, %Y') )
     if verbose:
-            print 'processed all Fresh Air downloads for %04d in %0.3f seconds.' % \
-                ( yearnum, time.time() - time0 ) 
+        print( 'processed all Fresh Air downloads for %04d in %0.3f seconds.' %
+               ( yearnum, time.time() - time0 )  )
 
 def _process_freshair_titlemp4_tuples( tree ):
     title_mp4_urls = []
@@ -91,7 +97,8 @@ def _process_freshair_titlemp4_tuples( tree ):
         if len( mp4elems ) == 0:
             continue
         urlobj = urlparse.urlparse( max( mp4elems ).text.strip( ) )
-        mp4url = urlparse.urlunparse( urlparse.ParseResult( urlobj.scheme, urlobj.netloc, urlobj.path, '', '', '') )
+        mp4url = urlparse.urlunparse( urlparse.ParseResult( urlobj.scheme, urlobj.netloc,
+                                                            urlobj.path, '', '', '') )
         title_mp4_urls.append( ( title, mp4url ) )
     return title_mp4_urls
             
@@ -116,7 +123,7 @@ def _process_freshair_titlemp3_tuples_two(tree):
         m3uurl = elem.text.strip()
         mp3url = requests.get( m3uurl ).text.strip()
         mp3s.append( mp3url )
-    title_mp3_urls = filter(None, zip( titles, mp3s ) )
+    title_mp3_urls = list( filter(None, zip( titles, mp3s ) ) )
     return title_mp3_urls
 
 def get_freshair(outputdir, date_s, order_totnum = None,
@@ -163,16 +170,17 @@ def get_freshair(outputdir, date_s, order_totnum = None,
         return tree
     
     # check for unavailable tag
-    if len(filter(lambda elem: 'value' in elem.keys() and 
-                  elem.get('value') == 'true', tree.iter('unavailable'))) != 0:
+    if len(list(filter(lambda elem: 'value' in elem.keys() and 
+                       elem.get('value') == 'true', tree.iter('unavailable')))) != 0:
         unavailable_elem = max(filter(lambda elem: 'value' in elem.keys() and
                                       elem.get('value') == 'true',
                                       tree.iter('unavailable')))
         if unavailable_elem.text is None:
-            print 'Could not create Fresh Air episode for date %s for some reason' % npr_utils.get_datestring( date_s )
+            print( 'Could not create Fresh Air episode for date %s for some reason' %
+                   npr_utils.get_datestring( date_s ) )
         else:
-            print 'Could not create Fresh Air episode for date %s for this reason: %s' % \
-                ( npr_utils.get_datestring( date_s ), unavailable_elem.text.strip() )
+            print( 'Could not create Fresh Air episode for date %s for this reason: %s' % 
+                   ( npr_utils.get_datestring( date_s ), unavailable_elem.text.strip() ) )
         return
 
     # now get tuple of title to mp3 file
@@ -183,8 +191,8 @@ def get_freshair(outputdir, date_s, order_totnum = None,
             title_mp3_urls = _process_freshair_titlemp3_tuples_two(tree)
             
         if len(title_mp3_urls) == 0:
-            print 'Error, could not find any Fresh Air episodes for date %s.' % \
-                npr_utils.get_datestring( date_s )
+            print( 'Error, could not find any Fresh Air episodes for date %s.' %
+                   npr_utils.get_datestring( date_s ) )
             return
 
         titles, songurls = zip(*title_mp3_urls)
@@ -197,8 +205,8 @@ def get_freshair(outputdir, date_s, order_totnum = None,
     else:
         title_mp4_urls = _process_freshair_titlemp4_tuples( tree )
         if len(title_mp4_urls) == 0:
-            print 'Error, could not find any Fresh Air episodes for date %s.' % \
-                npr_utils.get_datestring( date_s )
+            print( 'Error, could not find any Fresh Air episodes for date %s.' %
+                   npr_utils.get_datestring( date_s ) )
             return
         titles, songurls = zip(*title_mp4_urls)
         outfiles = [ os.path.join(outputdir, 'freshair.%s.%d.mp4' % 
@@ -214,7 +222,7 @@ def get_freshair(outputdir, date_s, order_totnum = None,
     time0 = time.time()
     pool = multiprocessing.Pool(processes = len(songurls) )
     if not mp3_exist:
-        outfiles = filter(None, pool.map(_download_file, zip( songurls, outfiles ) ) )
+        outfiles = list( filter(None, pool.map(_download_file, zip( songurls, outfiles ) ) ) )
     if do_mp4: # replace mp4 with ac3
         newouts = []
         for outfile in outfiles:
