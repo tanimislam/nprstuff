@@ -1,8 +1,15 @@
 import calendar, numpy, time, datetime, os
-import xdg.BaseDirectory, ConfigParser
+import xdg.BaseDirectory
 import multiprocessing, multiprocessing.pool
 from distutils.spawn import find_executable
-import urlparse, urllib
+import urllib
+try:
+    import ConfigParser, urlparse
+    from urllib import urlencode
+except:
+    import configparser as ConfigParser
+    import urllib.parse as urlparse
+    from urllib.parse import urlencode
 
 def find_necessary_executables():
     ffmpeg_exec = None
@@ -94,12 +101,11 @@ def get_NPR_URL(date_s, program_id, NPR_API_key):
     """
     nprApiDate = date_s.strftime('%Y-%m-%d')
     result = urlparse.ParseResult(scheme = 'http', netloc = 'api.npr.org', path='/query', params='',
-                                  query = urllib.urlencode({
-                                      'id' : program_id,
-                                      'date' : nprApiDate,
-                                      'dateType' : 'story',
-                                      'output' : 'NPRML',
-                                      'apiKey' : NPR_API_key }), fragment = '')
+                                  query = urlencode({ 'id' : program_id,
+                                                      'date' : nprApiDate,
+                                                      'dateType' : 'story',
+                                                      'output' : 'NPRML',
+                                                      'apiKey' : NPR_API_key }), fragment = '')
     return result.geturl()
     #return 'http://api.npr.org/query?id=%d&date=%s&dateType=story&output=NPRML&apiKey=%s' % \
     #    ( program_id, nprApiDate, NPR_API_key )
@@ -124,7 +130,7 @@ def get_datestring(date_s):
     return date_s.strftime('%B %d, %Y')
 
 def is_weekday(date_s):
-    return date_s.weekday() in xrange(5)
+    return date_s.weekday() in range(5)
 
 def is_saturday(date_s):
     return date_s.weekday() == 5
@@ -150,14 +156,14 @@ def get_saturday_times_in_year(year, getAll = True):
     datenow = datetime.datetime.now()
     nowd = datetime.date( datenow.year, datenow.month, datenow.day )
     initsats = sorted([ datetime.date(year, month, day) for
-                        month in xrange(1, 13) for day in saturdays_of_month_of_year(year, month) ])
+                        month in range(1, 13) for day in saturdays_of_month_of_year(year, month) ])
     if not getAll:
         initsats = filter(lambda actd: actd < nowd, initSats) 
     return initsats
     
 def get_weekday_times_in_year(year, getAll = True):
     inittimes = sorted([ datetime.date(year, month, day) for 
-                         month in xrange(1, 13) for day in weekdays_of_month_of_year(year, month) ])
+                         month in range(1, 13) for day in weekdays_of_month_of_year(year, month) ])
     if not getAll:
         datenow = datetime.datetime.now()
         nowd = datetime.date( datenow.year, datenow.month, datenow.day )    
