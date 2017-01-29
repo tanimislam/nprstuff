@@ -100,7 +100,7 @@ def get_NPR_URL(date_s, program_id, NPR_API_key):
     get the NPR API tag for a specific NPR program 
     """
     nprApiDate = date_s.strftime('%Y-%m-%d')
-    result = urlparse.ParseResult(scheme = 'http', netloc = 'api.npr.org', path='/query', params='',
+    result = urlparse.ParseResult(scheme = 'https', netloc = 'api.npr.org', path='/query', params='',
                                   query = urlencode({ 'id' : program_id,
                                                       'date' : nprApiDate,
                                                       'dateType' : 'story',

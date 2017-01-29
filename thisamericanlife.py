@@ -5,16 +5,17 @@ import lxml.html, requests
 from mutagen.id3 import APIC, TDRC, TALB, COMM, TRCK, TPE2, TPE1, TIT2, TCON, ID3
 from optparse import OptionParser
 
-def get_americanlife_info(epno, throwException = True, extraStuff = None):
+def get_americanlife_info(epno, throwException = True, extraStuff = None, verify = True ):
     """
     Returns a tuple of title, year given the episode number for This American Life.
     """
 
     # first see if this episode of this american life exists...
     if extraStuff is None:
-        resp = requests.get( 'http://www.thisamericanlife.org/radio-archives/episode/%d' % epno )
+        resp = requests.get( 'http://www.thisamericanlife.org/radio-archives/episode/%d' % epno, verify = verify )
     else:
-        resp = requests.get( 'http://www.thisamericanlife.org/radio-archives/episode/%d/%s' % ( epno, extraStuff ) )
+        resp = requests.get( 'http://www.thisamericanlife.org/radio-archives/episode/%d/%s' % ( epno, extraStuff ),
+                             verify = verify )
     if resp.status_code != 200:
         raise ValueError("Error, could not find This American Life episode %d, because could not open webpage." % epno)
     
@@ -52,7 +53,7 @@ def get_americanlife_info(epno, throwException = True, extraStuff = None):
     title = titlecase.titlecase( ':'.join( title.split(':')[1:]).strip() )
     return title, year
 
-def get_american_life(epno, directory = '/mnt/media/thisamericanlife', extraStuff = None):
+def get_american_life(epno, directory = '/mnt/media/thisamericanlife', extraStuff = None, verify = True ):
     """
     Downloads an episode of This American Life into a given directory.
     The description of which URL the episodes are downloaded from is given in
@@ -60,9 +61,8 @@ def get_american_life(epno, directory = '/mnt/media/thisamericanlife', extraStuf
 
     The URL is http://audio.thisamericanlife.org/jomamashouse/ismymamashouse/epno.mp3
     """
-
     try:
-        title, year = get_americanlife_info(epno, extraStuff = extraStuff)
+        title, year = get_americanlife_info(epno, extraStuff = extraStuff, verify = verify)
     except ValueError as e:
         print(e)
         print('Cannot find date and title for This American Life episode #%d.' % epno)
@@ -73,10 +73,10 @@ def get_american_life(epno, directory = '/mnt/media/thisamericanlife', extraStuf
     outfile = os.path.join(directory, 'PRI.ThisAmericanLife.%03d.mp3' % epno)    
     urlopn = 'http://www.podtrac.com/pts/redirect.mp3/podcast.thisamericanlife.org/podcast/%d.mp3' % epno
 
-    resp = requests.get( urlopn, stream = True )
+    resp = requests.get( urlopn, stream = True, verify = verify )
     if not resp.ok:
         urlopn = 'http://audio.thisamericanlife.org/jomamashouse/ismymamashouse/%d.mp3' % epno
-        resp = requests.get( urlopn, stream = True )
+        resp = requests.get( urlopn, stream = True, verify = verify )
         if not resp.ok:
             print("Error, could not download This American Life episode #%d. Exiting..." % epno)
             return
@@ -104,6 +104,9 @@ if __name__=='__main__':
                       '/mnt/media/thisamericanlife')
     parser.add_option('--extra', dest='extraStuff', type=str, action='store',
                       help = 'If defined, some extra stuff in the URL to get a This American Life episode.')
+    parser.add_option('--noverify', dest = 'do_noverify', action = 'store_true', default = False,
+                      help = 'If chosen, then do not verify the SSL connection.')
     options, args = parser.parse_args()
     direct = os.path.expanduser( options.directory )
-    get_american_life(options.episode, directory=direct, extraStuff = options.extraStuff)
+    get_american_life(options.episode, directory=direct, extraStuff = options.extraStuff,
+                      verify = not options.do_noverify )

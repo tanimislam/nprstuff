@@ -1,9 +1,10 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 
 import os, sys, glob, re, multiprocessing, requests
-import subprocess, lxml.etree, datetime, time
+import subprocess, logging, datetime, time, titlecase
 import npr_utils, mutagen.mp4, waitwait_realmedia
 from optparse import OptionParser
+from bs4 import BeautifulSoup
 
 _npr_waitwait_progid = 35
 
@@ -18,13 +19,14 @@ def _get_last_saturday(datetime_s):
     date_sat = date_s - datetime.timedelta(days_go_back, 0, 0)
     return date_sat
 
-def get_waitwait_image():
-    return requests.get('https://upload.wikimedia.org/wikipedia/en/f/f4/WaitWait.png').content
+def get_waitwait_image( verify = True ):
+    return requests.get('https://upload.wikimedia.org/wikipedia/en/f/f4/WaitWait.png',
+                        verify = verify ).content
     
 def _download_file( input_tuple ):
-    mp3URL, filename = input_tuple
+    mp3URL, filename, verify = input_tuple
     with open(filename, 'wb') as openfile:
-        openfile.write( requests.get( mp3URL ).content )
+        openfile.write( requests.get( mp3URL, verify = verify ).content )
 
 def get_waitwait_date_from_name(candidateNPRWaitWaitFile):
     if not os.path.isfile(candidateNPRWaitWaitFile):
@@ -81,7 +83,8 @@ def get_all_waitwaits_year( yearnum,
         print('processed all Wait Wait downloads for %04d in %0.3f seconds.' % ( yearnum, time.time() - time0 ) )
 
 def get_title_wavfile_standard(date_s, outputdir, avconv_exec, 
-                               debugonly = False, npr_api_key = None):
+                               debugonly = False, npr_api_key = None,
+                               verify = True ):
     if npr_api_key is None:
         npr_api_key = npr_utils.get_api_key()
     
@@ -89,21 +92,26 @@ def get_title_wavfile_standard(date_s, outputdir, avconv_exec,
     nprURL = npr_utils.get_NPR_URL(date_s, 
                                    _npr_waitwait_progid, 
                                    npr_api_key )
+    logging.debug('NPRURL = %s' % nprURL )
     decdate = npr_utils.get_decdate( date_s )
-    tree = lxml.etree.fromstring( requests.get( nprURL ).content )
+    response = requests.get( nprURL, verify = verify )
+    if response.status_code != 200:
+        raise ValueError("Error, could not get wait wait episode on %s. Error code is %d." %
+                         ( date_s.strftime('%B %d, %Y'), response.status_code ) )
+    html = BeautifulSoup( response.content, 'lxml' )
     if debugonly:
         openfile = os.path.join( outputdir, 'NPR.WaitWait.tree.%s.xml' %
                                  decdate )
         with open( openfile, 'w') as outfile:
-            outfile.write( lxml.etree.tostring( tree ) )
+            outfile.write( '%s\n' % html.prettify( ) )
         return None
         
     # now get tuple of title to mp3 file
     title_mp3_urls = []
-    for elem in filter(lambda elem: len(list(elem.iter('mp3'))) != 0, tree.iter('story')):
-        title = list(elem.iter('title'))[0].text.strip()
-        m3uurl = max( filter(lambda elm: 'type' in elm.keys() and
-                             elm.get('type') == 'm3u', elem.iter('mp3') ) ).text.strip()
+    for elem in filter(lambda elem: len( elem.find_all('mp3')) != 0, html.find_all('story')):
+        title = list(elem.find_all('title'))[0].get_text( ).strip( )
+        m3uurl = max( filter(lambda elm: 'type' in elm.attrs and
+                             elm['type'] == 'm3u', elem.find_all('mp3') ) ).get_text( ).strip( )
         try:
             mp3url = requests.get( m3uurl ).content.strip( )
             order = int( mp3url.split('_')[-1].replace('.mp3', '') )
@@ -113,17 +121,17 @@ def get_title_wavfile_standard(date_s, outputdir, avconv_exec,
             
     titles, mp3urls, orders = zip(*sorted(title_mp3_urls, key = lambda tup: tup[2]))
     title = date_s.strftime('%B %d, %Y')
-    title = '%s: %s.' % ( title,
-                          '; '.join([ '%d) %s' % ( num + 1, titl ) for
+    title = '%s: %s.' % ( titlecase.titlecase( title ),
+                          '; '.join([ '%d) %s' % ( num + 1, titlecase.titlecase( titl ) ) for
                                       (num, titl) in enumerate(titles) ]) )
     outfiles = [ os.path.join(outputdir, 'waitwait.%s.%d.mp3' % 
                               ( decdate, num + 1) ) for
-                 (num, mp3url) in enumerate( mp3urls) ]
+                 (num, mp3url ) in enumerate( mp3urls) ]
     
     # download those files
     time0 = time.time()
     pool = multiprocessing.Pool(processes = len(mp3urls) )
-    pool.map(_download_file, zip( mp3urls, outfiles ) )
+    pool.map(_download_file, zip( mp3urls, outfiles, len( mp3urls ) * [ verify ] ) )
     
     # sox magic command
     #    time0 = time.time()
@@ -146,7 +154,7 @@ def get_title_wavfile_standard(date_s, outputdir, avconv_exec,
         
 def get_waitwait(outputdir, date_s, order_totnum = None,
                  file_data = None, debugonly = False,
-                 exec_dict = None):
+                 exec_dict = None, verify = True ):
     
     # check if outputdir is a directory
     if not os.path.isdir(outputdir):
@@ -167,7 +175,7 @@ def get_waitwait(outputdir, date_s, order_totnum = None,
     order_in_year, tot_in_year = order_totnum
         
     if file_data is None:
-        file_data = get_waitwait_image()
+        file_data = get_waitwait_image( verify = verify )
         
     year = date_s.year
     decdate = npr_utils.get_decdate( date_s )
@@ -175,7 +183,8 @@ def get_waitwait(outputdir, date_s, order_totnum = None,
 
     if year >= 2006:
         tup = get_title_wavfile_standard(date_s, outputdir, avconv_exec,
-                                         debugonly = debugonly )
+                                         debugonly = debugonly,
+                                         verify = verify )
         if tup is None:
             return
         title, outfiles = tup
@@ -187,6 +196,10 @@ def get_waitwait(outputdir, date_s, order_totnum = None,
         proc = subprocess.Popen(split_cmd, stdout = subprocess.PIPE,
                                 stderr = subprocess.PIPE)
         stdout_val, stderr_val = proc.communicate()
+        if 'Protocol not found' in stderr_val.strip( ):
+            for filename in outfiles:
+                os.remove( filename )
+            raise ValueError("Error, AVCONV does not have the concatenation protocol.")
         for filename in outfiles:
             os.remove( filename )
     else:
@@ -234,5 +247,10 @@ if __name__=='__main__':
                       npr_utils.get_datestring( _get_last_saturday( datetime.datetime.now() ) ) )
     parser.add_option('--debugonly', dest='debugonly', action='store_true', default = False,
                       help = 'If chosen, download the NPR XML data sheet for this Wait Wait episode.')
+    parser.add_option('--noverify', dest='do_noverify', action='store_true', default = False,
+                      help = 'If chosen, Do not verify the SSL connection.')
     opts, args = parser.parse_args()
-    fname = get_waitwait( opts.dirname, npr_utils.get_time_from_datestring( opts.date ), debugonly = opts.debugonly )
+    if opts.debugonly:
+        logging.basicConfig( level = logging.DEBUG )
+    fname = get_waitwait( opts.dirname, npr_utils.get_time_from_datestring( opts.date ), debugonly = opts.debugonly,
+                          verify = not opts.do_noverify )
