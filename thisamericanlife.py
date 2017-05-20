@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import os, sys, time, titlecase
-import lxml.html, requests
+import lxml.html, requests, codecs
 from mutagen.id3 import APIC, TDRC, TALB, COMM, TRCK, TPE2, TPE1, TIT2, TCON, ID3
 from optparse import OptionParser
 
@@ -83,14 +83,17 @@ def get_american_life(epno, directory = '/mnt/media/thisamericanlife', extraStuf
     with open( outfile, 'wb') as openfile:
         for chunk in resp.iter_content(65536):
             openfile.write( chunk )
-    
+            
     mp3tags = ID3( )
     mp3tags['TDRC'] = TDRC(encoding = 0, text = [ u'%d' % year ])
     mp3tags['TALB'] = TALB(encoding = 0, text = [ u'This American Life' ])
     mp3tags['TRCK'] = TRCK(encoding = 0, text = [ u'%d' % epno ])
     mp3tags['TPE2'] = TPE2(encoding = 0, text = [u'Chicago Public Media'])
     mp3tags['TPE1'] = TPE1(encoding = 0, text = [u'Ira Glass'])
-    mp3tags['TIT2'] = TIT2(encoding = 0, text = [u'#%03d: %s' % ( epno, title ) ])
+    try:
+        mp3tags['TIT2'] = TIT2(encoding = 0, text = [ '#%03d: %s' % ( epno, title ) ] )
+    except:
+        mp3tags['TIT2'] = TIT2(encoding = 0, text = [ codecs.encode('#%03d: %s' % ( epno, title ), 'utf8') ])
     mp3tags['TCON'] = TCON(encoding = 0, text = [u'Podcast'])
     mp3tags.save( outfile )
 
