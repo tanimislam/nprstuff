@@ -9,7 +9,36 @@ more than 90 days before the current time
 """
 
 import os, sys, glob, multiprocessing
-import mutagen.mp4, time, datetime, freshair
+import mutagen.mp4, time, datetime
+import freshair, npr_utils
+
+def _process_freshair_perproc( mydate ):
+        try:
+                fname = freshair.get_freshair( '/mnt/media/freshair', mydate )
+                if fname is None: return None
+                return mydate
+        except Exception as e:
+                print(e)
+                return None
+
+def find_missing_dates( mon, year = datetime.datetime.now( ).date( ).year ):
+        assert( mon in range(1, 13))
+        weekdays_of_month = npr_utils.weekdays_of_month_of_year( year, mon )
+        valid_filenames = set(map( lambda day: os.path.join( '/mnt/media/freshair',
+                                                             'NPR.FreshAir.%02d.%02d.%04d.m4a' % ( day, mon, year ) ),
+                                   npr_utils.weekdays_of_month_of_year( year, mon ) ) )
+        filenames_act = set(glob.glob( os.path.join( '/mnt/media/freshair/NPR.FreshAir.*.%02d.%04d.m4a' % ( mon, year ) ) ) )
+        filenames_remain = list(valid_filenames - filenames_act)
+        if len( filenames_remain ) == 0:
+                return
+        print 'NUMBER OF CANDIDATE EPS REMAIN FOR %d/%d: %d' % ( mon, year, len( filenames_remain ) )
+        days_remain = map(lambda filename: int( os.path.basename( filename ).split('.')[2] ), filenames_remain )
+        input_tuples = map(lambda day: datetime.datetime.strptime( '%02d.%02d.%04d' % ( day, mon, year ),
+                                                                   '%d.%m.%Y').date( ), days_remain )
+        # pool = multiprocessing.Pool( processes = multiprocessing.cpu_count( ) )
+        successes = filter(None, map( _process_freshair_perproc, input_tuples ) )
+        print 'successes (%d/%d): %s' % ( len(successes), len(input_tuples), successes )
+        
 
 """
 This checks to see whether to modify this file
