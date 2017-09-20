@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 
 import freshair, os, glob, sys, npr_utils
-import calendar, pylab, numpy, datetime
+import calendar, numpy, datetime, matplotlib
 from matplotlib.patches import Rectangle
 from mutagen.easymp4 import EasyMP4
 from PyQt4.QtGui import QColor
 from optparse import OptionParser
+
+matplotlib.use('Agg')
+import pylab
 
 _default_inputdir = '/mnt/media/freshair'
 _default_year = 2010
