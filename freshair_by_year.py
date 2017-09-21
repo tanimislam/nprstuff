@@ -46,7 +46,8 @@ def find_underoccupied_dates( mon, year = _default_year ):
     days = find_occupied_days( mon, year = year )
     daydict = { day : os.path.join( _default_inputdir, 'NPR.FreshAir.%02d.%02d.%d.m4a' % ( day, mon, year ) ) for day in days }
     actdict = { day : EasyMP4( daydict[day] ).info.length for day in
-                filter(lambda day: os.stat(daydict[day]).st_size <= 4e7, daydict) }
+                filter(lambda day: os.stat(daydict[day]).st_size <= 4e7 and
+                       EasyMP4( daydict[day] ).info.length <= 35*60, daydict) }
     # now get tree for each of these files
     for day in actdict:
         dt_s = datetime.datetime.strptime('%02d.%02d.%04d' % ( day, mon, year ),
