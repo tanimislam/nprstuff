@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 
-import os, sys, time, titlecase
+import os, sys, datetime, titlecase
 import lxml.html, requests, codecs
 from mutagen.id3 import APIC, TDRC, TALB, COMM, TRCK, TPE2, TPE1, TIT2, TCON, ID3
+from bs4 import BeautifulSoup
 from optparse import OptionParser
+
 
 def get_americanlife_info(epno, throwException = True, extraStuff = None, verify = True ):
     """
@@ -21,12 +23,13 @@ def get_americanlife_info(epno, throwException = True, extraStuff = None, verify
     
     enc = resp.headers['content-type'].split(';')[-1].split('=')[-1].strip().upper()
     if enc not in ( 'UTF-8', ):
-        tree = lxml.html.fromstring(unicode(resp.text, encoding=enc))
+        html = BeautifulSoup( unicode( resp.text, encoding=enc ), 'lxml' )
     else:
-        tree = lxml.html.fromstring(resp.text )
+        html = BeautifulSoup( resp.text, 'lxml' )
 
-    elem_info_list = list(filter(lambda elem: 'class' in elem.keys() and
-                                 elem.get('class') == "top-inner clearfix", tree.iter('div')))
+    elem_info_list = list(filter(lambda elem: 'class' in elem.attrs and
+                                 'top-inner' in elem.attrs['class'] and
+                                 'clearfix' in elem.attrs['class'], html.find_all('div')))
     if len(elem_info_list) != 1:
         if throwException:
             raise ValueError(" ".join([ "Error, cannot find date and title for This American Life episode #%d," % epno,
@@ -34,19 +37,19 @@ def get_americanlife_info(epno, throwException = True, extraStuff = None, verify
         else:
             return None
     elem_info = max(elem_info_list)
-    date_list = list(filter(lambda elem: 'class' in elem.keys() and elem.get('class') == 'date',
-                            elem_info.iter('div')))
+    date_list = list(filter(lambda elem: 'class' in elem.attrs and 'date' in elem.attrs['class'],
+                            elem_info.find_all('div')))
     if len(date_list) != 1:
         if throwException:
             raise ValueError("Error, cannot find date and title for This American Life episode #%d." % epno)
         else:
             return None
     date_s = max(date_list).text.strip()
-    date_act = time.strptime(date_s, '%b %d, %Y')
-    year = date_act.tm_year
+    date_act = datetime.datetime.strptime( date_s, '%b %d, %Y' ).date( )
+    year = date_act.year
 
-    title_elem_list = list(filter(lambda elem: 'class' in elem.keys() and
-                                  elem.get('class') == 'node-title', elem_info.iter('h1')))
+    title_elem_list = list(filter(lambda elem: 'class' in elem.attrs and
+                                  'node-title' in elem.attrs['class'], elem_info.find_all('h1')))
     if len(title_elem_list) != 1:
         raise ValueError("Error, cannot find date and title for This American Life episode #%d." % epno)
     title = max(title_elem_list).text.strip()
@@ -60,6 +63,8 @@ def get_american_life(epno, directory = '/mnt/media/thisamericanlife', extraStuf
     http://www.dirtygreek.org/t/download-this-american-life-episodes.
 
     The URL is http://audio.thisamericanlife.org/jomamashouse/ismymamashouse/epno.mp3
+    
+    Otherwise, the URL is http://www.podtrac.com/pts/redirect.mp3/podcast.thisamericanlife.org/podcast/epno.mp3
     """
     try:
         title, year = get_americanlife_info(epno, extraStuff = extraStuff, verify = verify)
