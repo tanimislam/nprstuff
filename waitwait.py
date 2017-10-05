@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import os, sys, glob, re, multiprocessing, requests
+import os, sys, glob, re, requests, multiprocessing
 import subprocess, logging, datetime, time, titlecase
 import npr_utils, mutagen.mp4, waitwait_realmedia
 from optparse import OptionParser
@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 _npr_waitwait_progid = 35
 
 def _get_last_saturday(datetime_s):
-    date_s = datetime.date(datetime_s.year, datetime_s.month, datetime_s.day)
+    date_s = datetime_s.date( )
 
     # first find today's date
     tm_wday = date_s.weekday()
@@ -89,27 +89,42 @@ def get_title_wavfile_standard(date_s, outputdir, avconv_exec,
         npr_api_key = npr_utils.get_api_key()
     
     # download this data into an lxml elementtree
-    nprURL = npr_utils.get_NPR_URL(date_s, 
-                                   _npr_waitwait_progid, 
-                                   npr_api_key )
-    logging.debug('NPRURL = %s' % nprURL )
     decdate = npr_utils.get_decdate( date_s )
-    response = requests.get( nprURL, verify = verify )
+    response = requests.get( 'https://api.npr.org/query', verify = verify,
+                             params = {
+                                 'date' : date_s.strftime('%Y-%m-%d'),
+                                 'output' : 'NPRML',
+                                 'apiKey' : npr_api_key,
+                                 'dataType' : 'story',
+                                 'id' : _npr_waitwait_progid })
     if response.status_code != 200:
         raise ValueError("Error, could not get wait wait episode on %s. Error code is %d." %
                          ( date_s.strftime('%B %d, %Y'), response.status_code ) )
     html = BeautifulSoup( response.content, 'lxml' )
     if debugonly:
-        openfile = os.path.join( outputdir, 'NPR.WaitWait.tree.%s.xml' %
+        openfile = os.path.join( outputdir, 'NPR.WaitWait.%s.html' %
                                  decdate )
         with open( openfile, 'w') as outfile:
             outfile.write( '%s\n' % html.prettify( ) )
         return None
+
+    def _get_title( title_URL ):
+        r2 = requests.get( title_URL )
+        if r2.status_code != 200:
+            return None
+        h2 = BeautifulSoup( r2.content, 'lxml' )
+        title = titlecase.titlecase( max( h2.find_all('title') ).text.split(':')[0].strip( ) )
+        return title
         
     # now get tuple of title to mp3 file
     title_mp3_urls = []
-    for elem in filter(lambda elem: len( elem.find_all('mp3')) != 0, html.find_all('story')):
-        title = list(elem.find_all('title'))[0].get_text( ).strip( )
+    for elem in filter(lambda elem: len( elem.find_all('mp3')) == 1, html.find_all('story')):
+        all_texts = filter(lambda line: len(line.strip()) != 0 and line.strip().startswith('http:'),
+                           elem.text.split('\n'))
+        title_URL = all_texts[0].strip( )
+        title = _get_title( title_URL )
+        if title is None:
+            continue
         m3uurl = max( filter(lambda elm: 'type' in elm.attrs and
                              elm['type'] == 'm3u', elem.find_all('mp3') ) ).get_text( ).strip( )
         try:
@@ -119,14 +134,15 @@ def get_title_wavfile_standard(date_s, outputdir, avconv_exec,
         except Exception:
             pass
             
-    titles, mp3urls, orders = zip(*sorted(title_mp3_urls, key = lambda tup: tup[2]))
+    titles, mp3urls, orders = zip(*sorted(title_mp3_urls,
+                                          key = lambda (title, mp3url, order): order))
     title = date_s.strftime('%B %d, %Y')
-    title = '%s: %s.' % ( titlecase.titlecase( title ),
-                          '; '.join([ '%d) %s' % ( num + 1, titlecase.titlecase( titl ) ) for
-                                      (num, titl) in enumerate(titles) ]) )
-    outfiles = [ os.path.join(outputdir, 'waitwait.%s.%d.mp3' % 
-                              ( decdate, num + 1) ) for
-                 (num, mp3url ) in enumerate( mp3urls) ]
+    title = '%s: %s.' % ( title,
+                          '; '.join(map(lambda (num, titl): '%d) %s' % ( num + 1, titl ),
+                                        enumerate(titles))))
+    outfiles = map(lambda (num, mp3url): os.path.join(outputdir, 'waitwait.%s.%d.mp3' % 
+                                                      ( decdate, num + 1) ),
+                   enumerate( mp3urls ) )
     
     # download those files
     time0 = time.time()
