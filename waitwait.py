@@ -290,4 +290,4 @@ if __name__=='__main__':
     if opts.debugonly:
         logging.basicConfig( level = logging.DEBUG )
     fname = get_waitwait( opts.dirname, npr_utils.get_time_from_datestring( opts.date ), debugonly = opts.debugonly,
-                          verify = not opts.do_noverify, justFix = ops.do_justfix )
+                          verify = not opts.do_noverify, justFix = opts.do_justfix )
