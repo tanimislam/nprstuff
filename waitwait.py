@@ -84,7 +84,7 @@ def get_all_waitwaits_year( yearnum,
 
 def get_title_wavfile_standard(date_s, outputdir, avconv_exec, 
                                debugonly = False, npr_api_key = None,
-                               verify = True ):
+                               verify = True, justFix = False ):
     if npr_api_key is None:
         npr_api_key = npr_utils.get_api_key()
     
@@ -136,18 +136,28 @@ def get_title_wavfile_standard(date_s, outputdir, avconv_exec,
             
     titles, mp3urls, orders = zip(*sorted(title_mp3_urls,
                                           key = lambda (title, mp3url, order): order))
+    titles = list( titles )
     title = date_s.strftime('%B %d, %Y')
+    title_elem_nmj = max(filter(lambda elem: len( elem.find_all('title')) == 1 and
+                                'type' in elem.attrs and elem.attrs['type'] == 'programEpisode',
+                                html.find_all('parent')))
+    title_text = filter(lambda line: len(line.strip()) != 0,  title_elem_nmj.text.split('\n'))[0]
+    guest = re.sub('.*Guest', '', title_text ).strip( )
+    idx_title_guest = max(filter(lambda (idx, titl): titl == 'Not My Job', enumerate(titles)))[0]
+    titles[ idx_title_guest ] = 'Not My Job: %s' % guest
     title = '%s: %s.' % ( title,
                           '; '.join(map(lambda (num, titl): '%d) %s' % ( num + 1, titl ),
                                         enumerate(titles))))
     outfiles = map(lambda (num, mp3url): os.path.join(outputdir, 'waitwait.%s.%d.mp3' % 
                                                       ( decdate, num + 1) ),
                    enumerate( mp3urls ) )
-    
-    # download those files
-    time0 = time.time()
-    pool = multiprocessing.Pool(processes = len(mp3urls) )
-    pool.map(_download_file, zip( mp3urls, outfiles, len( mp3urls ) * [ verify ] ) )
+    if not justFix:
+        # download those files
+        time0 = time.time()
+        pool = multiprocessing.Pool(processes = len(mp3urls) )
+        pool.map(_download_file, zip( mp3urls, outfiles, len( mp3urls ) * [ verify ] ) )
+        logging.debug( 'downloaded %d mp3 files in %0.3f seconds.' % ( len( mp3urls ),
+                                                                       time.time( ) - time0 ) )
     
     # sox magic command
     #    time0 = time.time()
@@ -170,7 +180,7 @@ def get_title_wavfile_standard(date_s, outputdir, avconv_exec,
         
 def get_waitwait(outputdir, date_s, order_totnum = None,
                  file_data = None, debugonly = False,
-                 exec_dict = None, verify = True ):
+                 exec_dict = None, verify = True, justFix = False ):
     
     # check if outputdir is a directory
     if not os.path.isdir(outputdir):
@@ -200,11 +210,20 @@ def get_waitwait(outputdir, date_s, order_totnum = None,
     if year >= 2006:
         tup = get_title_wavfile_standard(date_s, outputdir, avconv_exec,
                                          debugonly = debugonly,
-                                         verify = verify )
+                                         verify = verify, justFix = justFix )
         if tup is None:
             return
         title, outfiles = tup
-        fnames = [ filename.replace(' ', '\ ') for filename in outfiles ]
+        if justFix: # works only for year >= 2006
+            if not os.path.isfile( m4afile ):
+                print "Error, %s does not exist." % os.path.basename( m4afile )
+                return
+            mp4tags = mutagen.mp4.MP4(m4afile)
+            mp4tags.tags['\xa9nam'] = [ title, ]
+            mp4tags.save( )
+            logging.debug('fixed title for %s.' % m4afile )
+            return m4afile
+        fnames = map(lambda filename: filename.replace(' ', '\ '), outfiles)
         sox_string_cmd = 'concat:%s' % '|'.join( fnames )
         split_cmd = [ avconv_exec, '-y', '-i', sox_string_cmd, '-ar', '44100', '-ac', '2', '-threads', 
                       '%d' % multiprocessing.cpu_count(), '-strict', 'experimental', '-acodec', 'aac',
