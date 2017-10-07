@@ -143,8 +143,10 @@ def get_title_wavfile_standard(date_s, outputdir, avconv_exec,
                                 html.find_all('parent')))
     title_text = filter(lambda line: len(line.strip()) != 0,  title_elem_nmj.text.split('\n'))[0]
     guest = re.sub('.*Guest', '', title_text ).strip( )
-    idx_title_guest = max(filter(lambda (idx, titl): titl == 'Not My Job', enumerate(titles)))[0]
-    titles[ idx_title_guest ] = 'Not My Job: %s' % guest
+    title_guest_elems = filter(lambda (idx, titl): titl == 'Not My Job', enumerate(titles))
+    if len( title_guest_elems ) != 0:
+        idx_title_guest = max(filter(lambda (idx, titl): titl == 'Not My Job', enumerate(titles)))[0]
+        titles[ idx_title_guest ] = 'Not My Job: %s' % guest
     title = '%s: %s.' % ( title,
                           '; '.join(map(lambda (num, titl): '%d) %s' % ( num + 1, titl ),
                                         enumerate(titles))))
