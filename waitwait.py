@@ -284,8 +284,10 @@ if __name__=='__main__':
                       help = 'If chosen, download the NPR XML data sheet for this Wait Wait episode.')
     parser.add_option('--noverify', dest='do_noverify', action='store_true', default = False,
                       help = 'If chosen, Do not verify the SSL connection.')
+    parser.add_option('--justfix', dest='do_justfix', action='store_true', default = False,
+                      help = "If chosen, just fix the title of an existing NPR Wait Wait episode's file.")
     opts, args = parser.parse_args()
     if opts.debugonly:
         logging.basicConfig( level = logging.DEBUG )
     fname = get_waitwait( opts.dirname, npr_utils.get_time_from_datestring( opts.date ), debugonly = opts.debugonly,
-                          verify = not opts.do_noverify )
+                          verify = not opts.do_noverify, justFix = ops.do_justfix )
