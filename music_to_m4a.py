@@ -76,13 +76,15 @@ def get_defaultname( m4afilename, showalbum = False ):
 
 def music_to_m4a(filename, tottracks = None,
                  album_path = None, outfile = None,
-                 verbose = True):
+                 verbose = True, toUpper = True):
     if not _can_convert_file(filename):
         raise ValueError("Error, cannot convert %s to m4a." % filename)
     
     tags = tagpy.FileRef(filename).tag()
     artist = tags.artist
-    title = titlecase.titlecase( tags.title )
+    title = tags.title
+    if toUpper:
+        title = titlecase.titlecase( tags.title )
     trackno = tags.track
     #
     if outfile is None:
@@ -130,7 +132,9 @@ if __name__=='__main__':
     parser.add_option('--quiet', dest='quiet', action='store_true', default = False,
                       help = 'If chosen, then verbosely print output of processing.')
     parser.add_option('--rename', dest='do_rename', action='store_true', default = False,
-                      help = 'If chosen, simply rename the m4a file to the form <artist>.<song title>.m4a') 
+                      help = 'If chosen, simply rename the m4a file to the form <artist>.<song title>.m4a')
+    parser.add_option('--notitle', dest='do_notitle', action='store_true', default = False,
+                      help = 'If chosen, do not use titlecase functionality to fix the titles of songs.')
     opts, args = parser.parse_args()
     if opts.inputfile is None:
         raise ValueError("Error, input file must be defined.")
@@ -145,7 +149,8 @@ if __name__=='__main__':
                       tottracks = opts.tottracks,
                       album_path = opts.albumloc,
                       outfile = opts.outfile,
-                      verbose = verbose)
+                      verbose = verbose,
+                      toUpper = not opts.do_notitle )
     else:
         rename_m4a( opts.inputfile )
                   
