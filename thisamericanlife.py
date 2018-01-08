@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
-import os, sys, datetime, titlecase
-import lxml.html, requests, codecs
+import os, sys, datetime, titlecase, requests, codecs
 from mutagen.id3 import APIC, TDRC, TALB, COMM, TRCK, TPE2, TPE1, TIT2, TCON, ID3
 from bs4 import BeautifulSoup
 from optparse import OptionParser
 
+_talPICURL = 'https://hw4.thisamericanlife.org/sites/all/themes/thislife/images/logo-v5.png'
 
 def get_americanlife_info(epno, throwException = True, extraStuff = None, verify = True ):
     """
@@ -93,13 +93,12 @@ def get_american_life(epno, directory = '/mnt/media/thisamericanlife', extraStuf
     mp3tags['TDRC'] = TDRC(encoding = 0, text = [ u'%d' % year ])
     mp3tags['TALB'] = TALB(encoding = 0, text = [ u'This American Life' ])
     mp3tags['TRCK'] = TRCK(encoding = 0, text = [ u'%d' % epno ])
-    mp3tags['TPE2'] = TPE2(encoding = 0, text = [u'Chicago Public Media'])
-    mp3tags['TPE1'] = TPE1(encoding = 0, text = [u'Ira Glass'])
-    try:
-        mp3tags['TIT2'] = TIT2(encoding = 0, text = [ '#%03d: %s' % ( epno, title ) ] )
-    except:
-        mp3tags['TIT2'] = TIT2(encoding = 0, text = [ codecs.encode('#%03d: %s' % ( epno, title ), 'utf8') ])
-    mp3tags['TCON'] = TCON(encoding = 0, text = [u'Podcast'])
+    mp3tags['TPE2'] = TPE2(encoding = 0, text = [ u'Chicago Public Media'])
+    mp3tags['TPE1'] = TPE1(encoding = 0, text = [ u'Ira Glass'])
+    try: mp3tags['TIT2'] = TIT2(encoding = 0, text = [ '#%03d: %s' % ( epno, title ) ] )
+    except: mp3tags['TIT2'] = TIT2(encoding = 0, text = [ codecs.encode('#%03d: %s' % ( epno, title ), 'utf8') ])
+    mp3tags['TCON'] = TCON(encoding = 0, text = [ u'Podcast'])
+    mp3tags['APIC'] = APIC( encoding = 0, mime = 'image/png', data = requests.get( _talPICURL ).content )
     mp3tags.save( outfile )
 
 if __name__=='__main__':
