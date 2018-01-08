@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import os, glob, multiprocessing, datetime, time, re
 import mutagen.mp4, subprocess, multiprocessing.pool, requests
