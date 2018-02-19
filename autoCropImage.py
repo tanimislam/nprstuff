@@ -1,13 +1,17 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 import os, sys, webcolors, multiprocessing
 from PIL import Image, ImageChops
 from optparse import OptionParser
+from functools import reduce
 
-_all_possible_colornames = set( reduce( lambda y, x: y + x, [ webcolors.html4_names_to_hex.keys(),
-                                                              webcolors.css2_names_to_hex.keys(),
-                                                              webcolors.css21_names_to_hex.keys(),
-                                                              webcolors.css3_names_to_hex.keys() ] ) )
+_all_possible_colornames = set(
+    reduce( lambda y, x: y + x,
+            map(lambda lst: list( lst.keys( ) ),
+                [ webcolors.html4_names_to_hex,
+                  webcolors.css2_names_to_hex,
+                  webcolors.css21_names_to_hex,
+                  webcolors.css3_names_to_hex ] ) ) )
 def hex_to_rgb(value):
     value = value.lstrip('#')
     lv = len(value)
