@@ -274,6 +274,7 @@ def get_freshair(outputdir, date_s, order_totnum = None,
     mp4tags.tags['\xa9gen'] = [ 'Podcast', ]
     mp4tags.tags['aART'] = [ 'Terry Gross', ]
     mp4tags.save()
+    os.chmod( m4afile, 0o644 )
     return m4afile
 
 if __name__=='__main__':

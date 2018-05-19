@@ -114,6 +114,7 @@ def get_american_life(epno, directory = '/mnt/media/thisamericanlife', extraStuf
     mp3tags['TCON'] = TCON(encoding = 0, text = [ u'Podcast'])
     mp3tags['APIC'] = APIC( encoding = 0, mime = 'image/png', data = requests.get( _talPICURL ).content )
     mp3tags.save( outfile )
+    os.chmod( outfile, 0o644 )
 
 if __name__=='__main__':
     parser = OptionParser()
