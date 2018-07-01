@@ -5,7 +5,7 @@ from mutagen.id3 import APIC, TDRC, TALB, COMM, TRCK, TPE2, TPE1, TIT2, TCON, ID
 from bs4 import BeautifulSoup
 from optparse import OptionParser
 
-_talPICURL = 'https://hw4.thisamericanlife.org/sites/all/themes/thislife/images/logo-v5.png'
+_talPICURL = 'https://upload.wikimedia.org/wikipedia/commons/8/8a/Thisamericanlife-wbez.png'
 
 def get_americanlife_info(epno, throwException = True, extraStuff = None, verify = True ):
     """
@@ -26,48 +26,22 @@ def get_americanlife_info(epno, throwException = True, extraStuff = None, verify
         html = BeautifulSoup( unicode( resp.text, encoding=enc ), 'lxml' )
     else:
         html = BeautifulSoup( resp.text, 'lxml' )
-
-    #
-    ## first get main article elem
-    article_elems = list( filter(lambda elem: 'data-episode' in elem.attrs and
-                                 int(elem.attrs['data-episode']) == epno and
-                                 'data-type' in elem.attrs and
-                                 elem.attrs['data-type'] == 'episode', html.find_all('article')))
-    if len(article_elems) != 1:
-        if throwException:
-            raise ValueError(" ".join([ "Error, cannot find date and title for This American Life episode #%d," % epno,
-                                        "because could not get proper elem from HTML source." ]) )
-        else:
-            return None
-    article_elem = article_elems[ 0 ]
-    header_elems = list( filter( lambda elem: 'class' in elem.attrs and 'episode-header' in elem.attrs['class'],
-                                 article_elem.find_all('header') ) )
-    if len( header_elems ) != 1:
-        if throwException:
-            raise ValueError(" ".join([ "Error, cannot find date and title for This American Life episode #%d," % epno,
-                                        "because could not get proper elem from HTML source." ]) )
-        else:
-            return None
-    header_elem = header_elems[ 0 ]
-    date_list = list(filter(lambda elem: 'class' in elem.attrs and 'date-display-single' in elem.attrs['class'],
-                            header_elem.find_all('span')))
-    if len(date_list) != 1:
-        if throwException:
-            raise ValueError("Error, cannot find date and title for This American Life episode #%d." % epno)
-        else:
-            return None
-    date_s = max(date_list).text.strip()
-    date_act = datetime.datetime.strptime( date_s, '%B %d, %Y' ).date( )
+    def get_date( date_s ):
+        try:
+            return datetime.datetime.strptime( date_s, '%B %d, %Y' ).date( )
+        except:
+            return datetime.datetime.strptime( date_s, '%b %d, %Y' ).date( )
+    date_act = max(map(lambda elem: get_date( elem.text.strip( ).replace('.', '')),
+                       html.find_all('span', { 'class' : 'date-display-single' })))
     year = date_act.year
-
-    title_elem_list = list(filter(lambda elem: 'class' in elem.attrs and
-                                  'episode-title' in elem.attrs['class'], header_elem.find_all('div')))
+    #
+    title_elem_list = html.find_all('div', { 'class' : 'episode-title' } )
     if len(title_elem_list) != 1:
         if throwException:
             raise ValueError("Error, cannot find date and title for This American Life episode #%d." % epno)
-        else:
-            return None
+        else: return None
     title = max(title_elem_list).text.strip()
+    title = title.replace('Promo', '').strip( )
     return title, year
 
 def get_american_life(epno, directory = '/mnt/media/thisamericanlife', extraStuff = None, verify = True ):

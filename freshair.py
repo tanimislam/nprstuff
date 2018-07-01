@@ -13,7 +13,6 @@ _npr_FreshAir_progid = 13
 
 def get_freshair_image():
     myURL = 'http://media.npr.org/images/podcasts/2013/primary/fresh_air.png'
-    # return urllib2.urlopen(myURL).read()
     return requests.get( myURL ).content
     
 def _download_file(input_tuple):
