@@ -1,11 +1,14 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import freshair, os, glob, sys, npr_utils
-import calendar, pylab, numpy, datetime
+import calendar, numpy, datetime, matplotlib
 from matplotlib.patches import Rectangle
 from mutagen.easymp4 import EasyMP4
 from PyQt4.QtGui import QColor
 from optparse import OptionParser
+
+matplotlib.use('Agg')
+import pylab
 
 _default_inputdir = '/mnt/media/freshair'
 _default_year = 2010
@@ -43,7 +46,8 @@ def find_underoccupied_dates( mon, year = _default_year ):
     days = find_occupied_days( mon, year = year )
     daydict = { day : os.path.join( _default_inputdir, 'NPR.FreshAir.%02d.%02d.%d.m4a' % ( day, mon, year ) ) for day in days }
     actdict = { day : EasyMP4( daydict[day] ).info.length for day in
-                filter(lambda day: os.stat(daydict[day]).st_size <= 4e7, daydict) }
+                filter(lambda day: os.stat(daydict[day]).st_size <= 4e7 and
+                       EasyMP4( daydict[day] ).info.length <= 35*60, daydict) }
     # now get tree for each of these files
     for day in actdict:
         dt_s = datetime.datetime.strptime('%02d.%02d.%04d' % ( day, mon, year ),
@@ -79,7 +83,7 @@ def create_plot_year( year = _default_year ):
     nwkdays = 0
     nunder = 0
     nmiss = 0
-    for mon in xrange(1, 13):
+    for mon in range(1, 13):
         cal = suncal( mon, year )
         act_days = find_occupied_days( mon, year )
         newdict = find_underoccupied_dates( mon, year )
@@ -123,7 +127,7 @@ def create_plot_year( year = _default_year ):
     ax.set_ylim([0,1])
     ax.add_patch(Rectangle((0.1, 0.1), 0.2, 0.25, linewidth = 3, facecolor = '#FF0000',
                            edgecolor = 'black' ) )
-    for idx in xrange(100):
+    for idx in range(100):
         ax.add_patch(Rectangle((0.1 + 0.002 * idx, 0.4), 0.002, 0.25, linewidth = 0,
                                facecolor = get_color( 0.005 + 0.01 * idx ), edgecolor = 'none' ) )
     ax.add_patch(Rectangle((0.1, 0.4), 0.2, 0.25, linewidth = 3, facecolor = 'none',
@@ -137,20 +141,20 @@ def create_plot_year( year = _default_year ):
     ax.text( 0.35, 0.8, 'EXISTS', fontdict = { 'fontsize' : 32, 'fontweight' : 'bold' },
              verticalalignment = 'center', horizontalalignment = 'left' )
     
-    for mon in xrange(1, 13):
+    for mon in range(1, 13):
         cal, act_days, newdict = data[ mon ]
         nweeks = cal.shape[0]
         ax = fig.add_subplot(5, 3, mon + 3 )
         ax.set_xlim([0,1])
         ax.set_ylim([0,1])
         pylab.axis('off')
-        for jdx in xrange(7):
+        for jdx in range(7):
             ax.text( 0.01 + 0.14 * (jdx + 0.5), 0.93, days[jdx],
                      fontdict = { 'fontsize' : 14, 'fontweight' : 'bold' },
                      horizontalalignment = 'center',
                      verticalalignment = 'center' )
-        for idx in xrange(nweeks):
-            for jdx in xrange(7):
+        for idx in range(nweeks):
+            for jdx in range(7):
                 if cal[idx, jdx] == 0:
                     continue
                 if jdx == 0 or jdx == 6:

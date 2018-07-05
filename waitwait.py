@@ -1,6 +1,6 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 
-import os, sys, glob, re, multiprocessing, requests
+import os, sys, glob, re, requests, multiprocessing
 import subprocess, logging, datetime, time, titlecase
 import npr_utils, mutagen.mp4, waitwait_realmedia
 from optparse import OptionParser
@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 _npr_waitwait_progid = 35
 
 def _get_last_saturday(datetime_s):
-    date_s = datetime.date(datetime_s.year, datetime_s.month, datetime_s.day)
+    date_s = datetime_s.date( )
 
     # first find today's date
     tm_wday = date_s.weekday()
@@ -84,32 +84,47 @@ def get_all_waitwaits_year( yearnum,
 
 def get_title_wavfile_standard(date_s, outputdir, avconv_exec, 
                                debugonly = False, npr_api_key = None,
-                               verify = True ):
+                               verify = True, justFix = False ):
     if npr_api_key is None:
         npr_api_key = npr_utils.get_api_key()
     
     # download this data into an lxml elementtree
-    nprURL = npr_utils.get_NPR_URL(date_s, 
-                                   _npr_waitwait_progid, 
-                                   npr_api_key )
-    logging.debug('NPRURL = %s' % nprURL )
     decdate = npr_utils.get_decdate( date_s )
-    response = requests.get( nprURL, verify = verify )
+    response = requests.get( 'https://api.npr.org/query', verify = verify,
+                             params = {
+                                 'date' : date_s.strftime('%Y-%m-%d'),
+                                 'output' : 'NPRML',
+                                 'apiKey' : npr_api_key,
+                                 'dataType' : 'story',
+                                 'id' : _npr_waitwait_progid })
     if response.status_code != 200:
         raise ValueError("Error, could not get wait wait episode on %s. Error code is %d." %
                          ( date_s.strftime('%B %d, %Y'), response.status_code ) )
     html = BeautifulSoup( response.content, 'lxml' )
     if debugonly:
-        openfile = os.path.join( outputdir, 'NPR.WaitWait.tree.%s.xml' %
+        openfile = os.path.join( outputdir, 'NPR.WaitWait.%s.html' %
                                  decdate )
         with open( openfile, 'w') as outfile:
             outfile.write( '%s\n' % html.prettify( ) )
         return None
+
+    def _get_title( title_URL ):
+        r2 = requests.get( title_URL )
+        if r2.status_code != 200:
+            return None
+        h2 = BeautifulSoup( r2.content, 'lxml' )
+        title = titlecase.titlecase( max( h2.find_all('title') ).text.split(':')[0].strip( ) )
+        return title
         
     # now get tuple of title to mp3 file
     title_mp3_urls = []
-    for elem in filter(lambda elem: len( elem.find_all('mp3')) != 0, html.find_all('story')):
-        title = list(elem.find_all('title'))[0].get_text( ).strip( )
+    for elem in filter(lambda elem: len( elem.find_all('mp3')) == 1, html.find_all('story')):
+        all_texts = filter(lambda line: len(line.strip()) != 0 and line.strip().startswith('http:'),
+                           elem.text.split('\n'))
+        title_URL = all_texts[0].strip( )
+        title = _get_title( title_URL )
+        if title is None:
+            continue
         m3uurl = max( filter(lambda elm: 'type' in elm.attrs and
                              elm['type'] == 'm3u', elem.find_all('mp3') ) ).get_text( ).strip( )
         try:
@@ -119,19 +134,32 @@ def get_title_wavfile_standard(date_s, outputdir, avconv_exec,
         except Exception:
             pass
             
-    titles, mp3urls, orders = zip(*sorted(title_mp3_urls, key = lambda tup: tup[2]))
+    titles, mp3urls, orders = zip(*sorted(title_mp3_urls,
+                                          key = lambda (title, mp3url, order): order))
+    titles = list( titles )
     title = date_s.strftime('%B %d, %Y')
-    title = '%s: %s.' % ( titlecase.titlecase( title ),
-                          '; '.join([ '%d) %s' % ( num + 1, titlecase.titlecase( titl ) ) for
-                                      (num, titl) in enumerate(titles) ]) )
-    outfiles = [ os.path.join(outputdir, 'waitwait.%s.%d.mp3' % 
-                              ( decdate, num + 1) ) for
-                 (num, mp3url ) in enumerate( mp3urls) ]
-    
-    # download those files
-    time0 = time.time()
-    pool = multiprocessing.Pool(processes = len(mp3urls) )
-    pool.map(_download_file, zip( mp3urls, outfiles, len( mp3urls ) * [ verify ] ) )
+    title_elem_nmj = max(filter(lambda elem: len( elem.find_all('title')) == 1 and
+                                'type' in elem.attrs and elem.attrs['type'] == 'programEpisode',
+                                html.find_all('parent')))
+    title_text = filter(lambda line: len(line.strip()) != 0,  title_elem_nmj.text.split('\n'))[0]
+    guest = re.sub('.*Guest', '', title_text ).strip( )
+    title_guest_elems = filter(lambda (idx, titl): titl == 'Not My Job', enumerate(titles))
+    if len( title_guest_elems ) != 0:
+        idx_title_guest = max(title_guest_elems)[0]
+        titles[ idx_title_guest ] = 'Not My Job: %s' % guest
+    title = '%s: %s.' % ( title,
+                          '; '.join(map(lambda (num, titl): '%d) %s' % ( num + 1, titl ),
+                                        enumerate(titles))))
+    outfiles = map(lambda (num, mp3url): os.path.join(outputdir, 'waitwait.%s.%d.mp3' % 
+                                                      ( decdate, num + 1) ),
+                   enumerate( mp3urls ) )
+    if not justFix:
+        # download those files
+        time0 = time.time()
+        pool = multiprocessing.Pool(processes = len(mp3urls) )
+        pool.map(_download_file, zip( mp3urls, outfiles, len( mp3urls ) * [ verify ] ) )
+        logging.debug( 'downloaded %d mp3 files in %0.3f seconds.' % ( len( mp3urls ),
+                                                                       time.time( ) - time0 ) )
     
     # sox magic command
     #    time0 = time.time()
@@ -154,7 +182,7 @@ def get_title_wavfile_standard(date_s, outputdir, avconv_exec,
         
 def get_waitwait(outputdir, date_s, order_totnum = None,
                  file_data = None, debugonly = False,
-                 exec_dict = None, verify = True ):
+                 exec_dict = None, verify = True, justFix = False ):
     
     # check if outputdir is a directory
     if not os.path.isdir(outputdir):
@@ -184,11 +212,20 @@ def get_waitwait(outputdir, date_s, order_totnum = None,
     if year >= 2006:
         tup = get_title_wavfile_standard(date_s, outputdir, avconv_exec,
                                          debugonly = debugonly,
-                                         verify = verify )
+                                         verify = verify, justFix = justFix )
         if tup is None:
             return
         title, outfiles = tup
-        fnames = [ filename.replace(' ', '\ ') for filename in outfiles ]
+        if justFix: # works only for year >= 2006
+            if not os.path.isfile( m4afile ):
+                print "Error, %s does not exist." % os.path.basename( m4afile )
+                return
+            mp4tags = mutagen.mp4.MP4(m4afile)
+            mp4tags.tags['\xa9nam'] = [ title, ]
+            mp4tags.save( )
+            logging.debug('fixed title for %s.' % m4afile )
+            return m4afile
+        fnames = map(lambda filename: filename.replace(' ', '\ '), outfiles)
         sox_string_cmd = 'concat:%s' % '|'.join( fnames )
         split_cmd = [ avconv_exec, '-y', '-i', sox_string_cmd, '-ar', '44100', '-ac', '2', '-threads', 
                       '%d' % multiprocessing.cpu_count(), '-strict', 'experimental', '-acodec', 'aac',
@@ -249,8 +286,10 @@ if __name__=='__main__':
                       help = 'If chosen, download the NPR XML data sheet for this Wait Wait episode.')
     parser.add_option('--noverify', dest='do_noverify', action='store_true', default = False,
                       help = 'If chosen, Do not verify the SSL connection.')
+    parser.add_option('--justfix', dest='do_justfix', action='store_true', default = False,
+                      help = "If chosen, just fix the title of an existing NPR Wait Wait episode's file.")
     opts, args = parser.parse_args()
     if opts.debugonly:
         logging.basicConfig( level = logging.DEBUG )
     fname = get_waitwait( opts.dirname, npr_utils.get_time_from_datestring( opts.date ), debugonly = opts.debugonly,
-                          verify = not opts.do_noverify )
+                          verify = not opts.do_noverify, justFix = opts.do_justfix )

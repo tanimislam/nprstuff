@@ -1,10 +1,21 @@
 #!/usr/bin/env python
 
 import webbrowser, gdata.auth, requests, xdg.BaseDirectory, tempfile, json, os, copy
-import gdata.data, gdata.contacts.client, gdata.contacts.data, gdata.service
+import gdata.data, gdata.contacts.client, gdata.contacts.data, gdata.service, gdata.client
 import oauth2client.file, httplib2
 from optparse import OptionParser
 from oauth2client import client
+
+def get_authorized_info_person( credentials ):
+    assert( 'https://www.googleapis.com/auth/userinfo.email' in credentials.scopes and
+            'https://www.googleapis.com/auth/userinfo.profile' in credentials.scopes )
+    userClient = gdata.client.GDClient( )
+    oauthToken = gdata.gauth.OAuth2TokenFromCredentials( credentials )
+    response = userClient.request( 'GET',
+                                   'https://www.googleapis.com/userinfo/v2/me',
+                                   oauthToken )
+    uData = json.loads( response.read( ) )
+    return { 'email' : uData['email'], 'name' : uData['name'] }
 
 def create_authorized_gdclient():
     baseDir = xdg.BaseDirectory.save_config_path( 'nprstuff' )

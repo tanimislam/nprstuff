@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 
-import os, sys, time, titlecase
-import lxml.html, requests
+import os, sys, datetime, titlecase, requests, codecs
 from mutagen.id3 import APIC, TDRC, TALB, COMM, TRCK, TPE2, TPE1, TIT2, TCON, ID3
+from bs4 import BeautifulSoup
 from optparse import OptionParser
+
+_talPICURL = 'https://upload.wikimedia.org/wikipedia/commons/8/8a/Thisamericanlife-wbez.png'
 
 def get_americanlife_info(epno, throwException = True, extraStuff = None, verify = True ):
     """
@@ -21,36 +23,25 @@ def get_americanlife_info(epno, throwException = True, extraStuff = None, verify
     
     enc = resp.headers['content-type'].split(';')[-1].split('=')[-1].strip().upper()
     if enc not in ( 'UTF-8', ):
-        tree = lxml.html.fromstring(unicode(resp.text, encoding=enc))
+        html = BeautifulSoup( unicode( resp.text, encoding=enc ), 'lxml' )
     else:
-        tree = lxml.html.fromstring(resp.text )
-
-    elem_info_list = list(filter(lambda elem: 'class' in elem.keys() and
-                                 elem.get('class') == "top-inner clearfix", tree.iter('div')))
-    if len(elem_info_list) != 1:
-        if throwException:
-            raise ValueError(" ".join([ "Error, cannot find date and title for This American Life episode #%d," % epno,
-                                        "because could not get proper elem from HTML source." ]) )
-        else:
-            return None
-    elem_info = max(elem_info_list)
-    date_list = list(filter(lambda elem: 'class' in elem.keys() and elem.get('class') == 'date',
-                            elem_info.iter('div')))
-    if len(date_list) != 1:
+        html = BeautifulSoup( resp.text, 'lxml' )
+    def get_date( date_s ):
+        try:
+            return datetime.datetime.strptime( date_s, '%B %d, %Y' ).date( )
+        except:
+            return datetime.datetime.strptime( date_s, '%b %d, %Y' ).date( )
+    date_act = max(map(lambda elem: get_date( elem.text.strip( ).replace('.', '')),
+                       html.find_all('span', { 'class' : 'date-display-single' })))
+    year = date_act.year
+    #
+    title_elem_list = html.find_all('div', { 'class' : 'episode-title' } )
+    if len(title_elem_list) != 1:
         if throwException:
             raise ValueError("Error, cannot find date and title for This American Life episode #%d." % epno)
-        else:
-            return None
-    date_s = max(date_list).text.strip()
-    date_act = time.strptime(date_s, '%b %d, %Y')
-    year = date_act.tm_year
-
-    title_elem_list = list(filter(lambda elem: 'class' in elem.keys() and
-                                  elem.get('class') == 'node-title', elem_info.iter('h1')))
-    if len(title_elem_list) != 1:
-        raise ValueError("Error, cannot find date and title for This American Life episode #%d." % epno)
+        else: return None
     title = max(title_elem_list).text.strip()
-    title = titlecase.titlecase( ':'.join( title.split(':')[1:]).strip() )
+    title = title.replace('Promo', '').strip( )
     return title, year
 
 def get_american_life(epno, directory = '/mnt/media/thisamericanlife', extraStuff = None, verify = True ):
@@ -60,6 +51,8 @@ def get_american_life(epno, directory = '/mnt/media/thisamericanlife', extraStuf
     http://www.dirtygreek.org/t/download-this-american-life-episodes.
 
     The URL is http://audio.thisamericanlife.org/jomamashouse/ismymamashouse/epno.mp3
+    
+    Otherwise, the URL is http://www.podtrac.com/pts/redirect.mp3/podcast.thisamericanlife.org/podcast/epno.mp3
     """
     try:
         title, year = get_americanlife_info(epno, extraStuff = extraStuff, verify = verify)
@@ -83,16 +76,19 @@ def get_american_life(epno, directory = '/mnt/media/thisamericanlife', extraStuf
     with open( outfile, 'wb') as openfile:
         for chunk in resp.iter_content(65536):
             openfile.write( chunk )
-    
+            
     mp3tags = ID3( )
     mp3tags['TDRC'] = TDRC(encoding = 0, text = [ u'%d' % year ])
     mp3tags['TALB'] = TALB(encoding = 0, text = [ u'This American Life' ])
     mp3tags['TRCK'] = TRCK(encoding = 0, text = [ u'%d' % epno ])
-    mp3tags['TPE2'] = TPE2(encoding = 0, text = [u'Chicago Public Media'])
-    mp3tags['TPE1'] = TPE1(encoding = 0, text = [u'Ira Glass'])
-    mp3tags['TIT2'] = TIT2(encoding = 0, text = [u'#%03d: %s' % ( epno, title ) ])
-    mp3tags['TCON'] = TCON(encoding = 0, text = [u'Podcast'])
+    mp3tags['TPE2'] = TPE2(encoding = 0, text = [ u'Chicago Public Media'])
+    mp3tags['TPE1'] = TPE1(encoding = 0, text = [ u'Ira Glass'])
+    try: mp3tags['TIT2'] = TIT2(encoding = 0, text = [ '#%03d: %s' % ( epno, title ) ] )
+    except: mp3tags['TIT2'] = TIT2(encoding = 0, text = [ codecs.encode('#%03d: %s' % ( epno, title ), 'utf8') ])
+    mp3tags['TCON'] = TCON(encoding = 0, text = [ u'Podcast'])
+    mp3tags['APIC'] = APIC( encoding = 0, mime = 'image/png', data = requests.get( _talPICURL ).content )
     mp3tags.save( outfile )
+    os.chmod( outfile, 0o644 )
 
 if __name__=='__main__':
     parser = OptionParser()
