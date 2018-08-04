@@ -3,13 +3,9 @@ import xdg.BaseDirectory
 import multiprocessing, multiprocessing.pool
 from distutils.spawn import find_executable
 import urllib
-try:
-    import ConfigParser, urlparse
-    from urllib import urlencode
-except:
-    import configparser as ConfigParser
-    import urllib.parse as urlparse
-    from urllib.parse import urlencode
+import configparser as ConfigParser
+import urllib.parse as urlparse
+from urllib.parse import urlencode
 
 def find_necessary_executables():
     ffmpeg_exec = None

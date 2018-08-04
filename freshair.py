@@ -4,10 +4,7 @@ import os, glob, multiprocessing, datetime, time, re
 import mutagen.mp4, subprocess, multiprocessing.pool, requests
 from optparse import OptionParser
 import lxml.etree, npr_utils
-try:
-    import urlparse
-except:
-    import urllib.parse as urlparse
+import urllib.parse as urlparse
 
 _npr_FreshAir_progid = 13
 

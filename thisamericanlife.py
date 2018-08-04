@@ -81,7 +81,7 @@ def get_american_life(epno, directory = '/mnt/media/thisamericanlife', extraStuf
     mp3tags['TDRC'] = TDRC(encoding = 0, text = [ u'%d' % year ])
     mp3tags['TALB'] = TALB(encoding = 0, text = [ u'This American Life' ])
     mp3tags['TRCK'] = TRCK(encoding = 0, text = [ u'%d' % epno ])
-    mp3tags['TPE2'] = TPE2(encoding = 0, text = [ u'Chicago Public Media'])
+    mp3tags['TPE2'] = TPE2(encoding = 0, text = [ u'Ira Glass'])
     mp3tags['TPE1'] = TPE1(encoding = 0, text = [ u'Ira Glass'])
     try: mp3tags['TIT2'] = TIT2(encoding = 0, text = [ '#%03d: %s' % ( epno, title ) ] )
     except: mp3tags['TIT2'] = TIT2(encoding = 0, text = [ codecs.encode('#%03d: %s' % ( epno, title ), 'utf8') ])
