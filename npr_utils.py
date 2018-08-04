@@ -1,8 +1,6 @@
-import calendar, numpy, time, datetime, os
-import xdg.BaseDirectory
+import calendar, numpy, time, datetime, os, xdg.BaseDirectory
 import multiprocessing, multiprocessing.pool
 from distutils.spawn import find_executable
-import urllib
 import configparser as ConfigParser
 import urllib.parse as urlparse
 from urllib.parse import urlencode

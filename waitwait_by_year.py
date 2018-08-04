@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import waitwait, os, glob, sys
 from optparse import OptionParser

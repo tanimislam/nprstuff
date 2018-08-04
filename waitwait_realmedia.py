@@ -1,7 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
-import os, sys, lxml.html, urllib2
-import npr_utils, subprocess
+import os, sys, lxml.html, subprocess
+import npr_utils
+from urllib.request import urlopen
 
 def rm_get_main_url(date_s):
     if not npr_utils.is_saturday(date_s):
@@ -17,7 +18,7 @@ def rm_get_main_url(date_s):
 
 def rm_get_title_from_url( date_s ):
     full_rm_url = rm_get_main_url( date_s )
-    tree = lxml.html.fromstring( urllib2.urlopen( full_rm_url ).read() )
+    tree = lxml.html.fromstring( urlopen( full_rm_url ).read() )
     cand_elems = filter(lambda elem: len(list(elem.iter('a'))) != 0 and
                         elem.text is not None, tree.iter('b'))
     subtites = [ elem.text.split('\n')[0].strip() for elem in cand_elems ]
@@ -33,7 +34,7 @@ def rm_download_file( date_s, outdir = os.getcwd() ):
     try:
         dsub = date_s.strftime('%Y%m%d')
         rm_url = 'http://download.npr.org/real.npr.na-central/waitwait/%s_waitwait.rm' % dsub
-        req = urllib2.urlopen( rm_url )
+        req = urlopen( rm_url )
         with open( outfile, 'w' ) as openfile:
             openfile.write( req.read() )
         return outfile
