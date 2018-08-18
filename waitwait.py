@@ -90,6 +90,9 @@ def get_mp3_chapter_tuple_sorted( html, verify, npr_api_key ):
     mp3_urls = [ ]
     for idx_selem in enumerate( story_elems ):
         idx, selem = idx_selem
+        num_m3u_elems = len( selem.find_all( 'mp3', { 'type' : 'm3u' } ) )
+        if num_m3u_elems == 0: continue # error checking. If doesn't have this chapter, leave it out
+        m3u_url = max( selem.find_all( 'mp3', { 'type' : 'm3u' } ) ).text.strip( )
         story_id = selem['id']
         resp = requests.get( 'https://api.npr.org/query', verify = verify,
                              params = { 'id' : story_id, 'apiKey' : npr_api_key } )
@@ -107,7 +110,7 @@ def get_mp3_chapter_tuple_sorted( html, verify, npr_api_key ):
         chapter_names.append( chapter_name )
         #
         ## now get the mp3 URL
-        m3u_url = max( selem.find_all( 'mp3', { 'type' : 'm3u' } ) ).text.strip( )
+        # m3u_url = max( selem.find_all( 'mp3', { 'type' : 'm3u' } ) ).text.strip( )
         resp = requests.get( m3u_url )
         if resp.status_code != 200:
             logging.debug('EROR GETTING STORY ELEM %d, CANNOT FIND MP3 URL' % idx )
