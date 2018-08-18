@@ -110,7 +110,6 @@ def get_mp3_chapter_tuple_sorted( html, verify, npr_api_key ):
         chapter_names.append( chapter_name )
         #
         ## now get the mp3 URL
-        # m3u_url = max( selem.find_all( 'mp3', { 'type' : 'm3u' } ) ).text.strip( )
         resp = requests.get( m3u_url )
         if resp.status_code != 200:
             logging.debug('EROR GETTING STORY ELEM %d, CANNOT FIND MP3 URL' % idx )
