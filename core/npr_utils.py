@@ -100,7 +100,7 @@ def get_NPR_URL(date_s, program_id, NPR_API_key):
                                                       'dateType' : 'story',
                                                       'output' : 'NPRML',
                                                       'apiKey' : NPR_API_key }), fragment = '')
-    return result.geturl()
+    return result.geturl( ) 
     #return 'http://api.npr.org/query?id=%d&date=%s&dateType=story&output=NPRML&apiKey=%s' % \
     #    ( program_id, nprApiDate, NPR_API_key )
     

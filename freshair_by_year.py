@@ -3,6 +3,9 @@
 from optparse import OptionParser
 from core import freshair, freshair_by_year
 
+_default_year = 2010
+_default_inputdir = '/mnt/media/freshair'
+
 if __name__=='__main__':
     parser = OptionParser()
     parser.add_option('--year', dest='year', action='store', type=int, default = _default_year,

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import pyexiv2, glob, time, os, datetime
 from optparse import OptionParser
@@ -62,8 +62,8 @@ def change_date_on_dir_movie(dirname, minus = False, actdate = None):
     pool = Pool(processes = cpu_count())
     movfilenames_tup = [ ( movfile, minus, actdate ) for movfile in movfilenames ]
     pool.map(change_date_of_movie, movfilenames_tup)
-    print 'Processed %d files in %s in %0.3f seconds.' % (
-        len(movfilenames), dirname, time.time() - time0 )
+    print( 'Processed %d files in %s in %0.3f seconds.' % (
+        len(movfilenames), dirname, time.time() - time0 ) )
 
 def change_date_on_dir(dirname, minus = False, actdate = None):
     time0 = time.time()
@@ -78,8 +78,8 @@ def change_date_on_dir(dirname, minus = False, actdate = None):
     jpegfilenames_tup = [ (jpegfilename, minus, actdate) for jpegfilename in 
                           jpegfilenames ]
     pool.map(change_date_of_file, jpegfilenames_tup)
-    print 'Processed %d files in %s in %0.3f seconds.' % (
-        len(jpegfilenames), dirname, time.time() - time0 )
+    print( 'Processed %d files in %s in %0.3f seconds.' % (
+        len(jpegfilenames), dirname, time.time() - time0 ) )
 
 if __name__=='__main__':
     parser = OptionParser()

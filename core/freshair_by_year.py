@@ -28,7 +28,7 @@ def get_color( discrep ):
     e_color = QColor("#ff7f0e")
     hsv_start = numpy.array( s_color.getHsvF()[:-1] )
     hsv_end = numpy.array( e_color.getHsvF()[:-1] )
-    hsv_mid = hsv_start * (1.0 - discrep) + hsv_end * discrep
+    hsv_mid = hsv_start * (1.0 - discrep * 0.9) + hsv_end * discrep * 0.9
     cmid = QColor.fromHsvF( hsv_mid[0], hsv_mid[1], hsv_mid[2], 1.0 )
     return str( cmid.name( ) ).upper( )
 
@@ -49,14 +49,13 @@ def find_underoccupied_dates( mon, year = _default_year ):
     for day in actdict:
         dt_s = datetime.datetime.strptime('%02d.%02d.%04d' % ( day, mon, year ),
                                           '%d.%m.%Y' ).date( )
-        print( dt_s )
-        tree = freshair.get_freshair( os.path.expanduser('~'), dt_s, debug = True, to_file_debug = False )
+        html = freshair.get_freshair( os.path.expanduser('~'), dt_s,
+                                      debug = True, to_file_debug = False )
         expectdur = 0
-        for elem in tree.iter('story'):
-            durs = list( elem.iter('duration'))
-            if len(durs) == 0:
-                continue
-            expectdur += int( elem.iter('duration')[0].text )
+        for elem in html.find_all('story'):
+            dur_elems = elem.find_all('duration')
+            if len(dur_elems) == 0: continue
+            expectdur += int( dur_elems[0].text )
         totlength = actdict[ day ]
         if expectdur == 0:
             newdict[day] = ( totlength, 1.0, get_color( 1.0 ) )
