@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-import waitwait, os, glob, sys
 from optparse import OptionParser
+from core.waitwait import get_all_waitwaits_year
 
 _default_inputdir = '/mnt/media/waitwait'
 _default_year = 2010
@@ -20,6 +20,4 @@ if __name__=='__main__':
                       'script. By default this is false.')
     opts, args = parser.parse_args()
     verbose = not opts.is_quiet
-    waitwait.get_all_waitwaits_year( opts.year,
-                                     opts.inputdir,
-                                     verbose = verbose )
+    get_all_waitwaits_year( opts.year, opts.inputdir, verbose = verbose )                            

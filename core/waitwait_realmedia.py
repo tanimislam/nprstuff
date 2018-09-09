@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 import os, sys, lxml.html, subprocess
-import npr_utils
 from urllib.request import urlopen
+from . import npr_utils
 
 def rm_get_main_url(date_s):
     if not npr_utils.is_saturday(date_s):
