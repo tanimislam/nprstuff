@@ -24,8 +24,8 @@ def suncal( mon, year = _default_year ):
 def get_color( discrep ):
     assert( discrep <= 1.0 )
     assert( discrep >= 0.0 )
-    s_color = QColor("#1f77b4")
-    e_color = QColor("#ff7f0e")
+    e_color = QColor("#1f77b4")
+    s_color = QColor("#ff7f0e")
     hsv_start = numpy.array( s_color.getHsvF()[:-1] )
     hsv_end = numpy.array( e_color.getHsvF()[:-1] )
     hsv_mid = hsv_start * (1.0 - discrep * 0.9) + hsv_end * discrep * 0.9

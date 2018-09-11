@@ -108,6 +108,77 @@ def process_freshair_titlemp3_tuples( html ):
                              key = lambda tup: tup[1] ) 
     return title_mp3_urls
 
+def get_freshair_lowlevel( outputdir, date_s, titles ):
+     # check if outputdir is a directory
+    if not os.path.isdir(outputdir):
+        raise ValueError("Error, %s is not a directory." % outputdir)
+
+    # check if actually a weekday
+    assert( npr_utils.is_weekday(date_s) )
+
+    # check if we have found avconv
+    exec_dict = npr_utils.find_necessary_executables()
+    avconv_exec = exec_dict['avconv']
+
+    # order of FA episode in the year
+    order_in_year, tot_in_year = npr_utils.get_order_number_weekday_in_year(date_s)
+
+    file_data = get_freshair_image()
+    decdate = date_s.strftime('%d.%m.%Y')
+    m4afile = os.path.join(outputdir, 'NPR.FreshAir.%s.m4a' % decdate )
+    year = date_s.year
+
+    def create_mp3_files( date_s, titles ):
+        num_titles = len( titles )
+        year = date_s.year
+        mon = date_s.month
+        day = date_s.day
+        return list(map(lambda idx: 'https://ondemand.npr.org/anon.npr-mp3/npr/fa/%02d/%02d/%d%02d%02d_fa_%02d.mp3' % (
+            year, mon, year, mon, day, idx ), range(1, num_titles + 1 ) ) )
+
+    songurls = create_mp3_files( date_s, titles )
+    outfiles = [ os.path.join(outputdir, 'freshair.%s.%d.mp3' % 
+                              ( decdate, num + 1) ) for
+                 (num, mp3url) in enumerate( songurls ) ]
+    
+    title = '%s: %s.' % (
+        date_s.strftime('%A, %B %d, %Y'),
+        '; '.join([ '%d) %s' % ( num + 1, titl ) for
+                    (num, titl) in enumerate(titles) ]) )
+
+    # download those files
+    time0 = time.time()
+    pool = multiprocessing.Pool(processes = len(songurls) )
+    outfiles = list( filter(None, pool.map(_download_file, zip( songurls, outfiles ) ) ) )
+
+    # create m4a file
+    time0 = time.time()
+    fnames = [ filename.replace(' ', '\ ') for filename in outfiles ]
+    avconv_concat_cmd = 'concat:%s' % '|'.join(fnames)
+    split_cmd = [ avconv_exec, '-y', '-i', avconv_concat_cmd, '-ar', '44100', '-ac', '2',
+                  '-threads', '%d' % multiprocessing.cpu_count(),
+                  '-strict', 'experimental', '-acodec', 'aac', m4afile ]
+    proc = subprocess.Popen(split_cmd, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+    stdout_val, stderr_val = proc.communicate()
+    
+    # remove mp3 files
+    for filename in outfiles: os.remove(filename)
+    
+    # now put in metadata
+    mp4tags = mutagen.mp4.MP4(m4afile)
+    mp4tags.tags['\xa9nam'] = [ title, ]
+    mp4tags.tags['\xa9alb'] = [ 'Fresh Air From WHYY: %d' % year, ]
+    mp4tags.tags['\xa9ART'] = [ 'Terry Gross', ]
+    mp4tags.tags['\xa9day'] = [ '%d' % year, ]
+    mp4tags.tags['\xa9cmt'] = [ "more info at : Fresh Air from WHYY and NPR Web site", ]
+    mp4tags.tags['trkn'] = [ ( order_in_year, tot_in_year ), ]
+    mp4tags.tags['covr'] = [ mutagen.mp4.MP4Cover(file_data, mutagen.mp4.MP4Cover.FORMAT_PNG ), ]
+    mp4tags.tags['\xa9gen'] = [ 'Podcast', ]
+    mp4tags.tags['aART'] = [ 'Terry Gross', ]
+    mp4tags.save()
+    os.chmod( m4afile, 0o644 )
+    return m4afile
+
 def get_freshair(outputdir, date_s, order_totnum = None,
                  file_data = None, debug = False,
                  exec_dict = None, check_if_exist = False,
@@ -119,7 +190,8 @@ def get_freshair(outputdir, date_s, order_totnum = None,
 
     # check if actually a weekday
     assert( npr_utils.is_weekday(date_s) )
-    
+
+    # check if we have found avconv
     if exec_dict is None:
         exec_dict = npr_utils.find_necessary_executables()
     assert( exec_dict is not None )
