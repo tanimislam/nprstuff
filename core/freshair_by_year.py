@@ -1,4 +1,5 @@
 import os, glob, sys, calendar, numpy, datetime
+import uuid, requests, json, subprocess
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib.patches import Rectangle
@@ -53,9 +54,19 @@ def find_underoccupied_dates( mon, year = _default_year ):
                                       debug = True, to_file_debug = False )
         expectdur = 0
         for elem in html.find_all('story'):
-            dur_elems = elem.find_all('duration')
-            if len(dur_elems) == 0: continue
-            expectdur += int( dur_elems[0].text )
+            m3u_elems = elem.find_all('mp3')
+            if len(m3u_elems) == 0: continue
+            mp3_url = requests.get( m3u_elems[0].text ).text.strip( )
+            tmpfile = '%s.mp3' % ''.join(map(lambda idx: str(uuid.uuid4( )).split('-')[0], range(2)))
+            with open( tmpfile, 'wb' ) as openfile:
+                openfile.write( requests.get( mp3_url ).content )
+            proc = subprocess.Popen([ '/usr/bin/ffprobe', '-v', 'quiet', '-show_streams',
+                                      '-show_format', '-print_format', 'json', tmpfile ],
+                                    stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
+            stdout_val, stderr_val = proc.communicate( )
+            data = json.loads( stdout_val )
+            expectdur += float( data['format']['duration'] )
+            os.remove( tmpfile )
         totlength = actdict[ day ]
         if expectdur == 0:
             newdict[day] = ( totlength, 1.0, get_color( 1.0 ) )
@@ -80,16 +91,32 @@ def create_plot_year( year = _default_year ):
     nwkdays = 0
     nunder = 0
     nmiss = 0
-    for mon in range(1, 13):
-        cal = suncal( mon, year )
-        act_days = find_occupied_days( mon, year )
-        newdict = find_underoccupied_dates( mon, year )
-        data[mon] = (cal, act_days, newdict)
-        wkdays = set( cal[:,1:-1].flatten() ) - set([ 0, ])
-        nwkdays += len( wkdays )
-        nmiss += len( wkdays - act_days )
-        nunder += len( newdict )
-        
+    nowdate = datetime.datetime.now( ).date( )
+    if year < nowdate.year:
+        for mon in range(1, 13):
+            cal = suncal( mon, year )
+            act_days = find_occupied_days( mon, year )
+            newdict = find_underoccupied_dates( mon, year )
+            data[mon] = (cal, act_days, newdict)
+            wkdays = set( cal[:,1:-1].flatten() ) - set([ 0, ])
+            nwkdays += len( wkdays )
+            nmiss += len( wkdays - act_days )
+            nunder += len( newdict )
+    else:
+        for mon in range(1,13 ):
+            cal = suncal( mon, year )
+            act_days = find_occupied_days( mon, year )
+            newdict = find_underoccupied_dates( mon, year )
+            data[ mon ] = (cal, act_days, newdict)
+            for idx in range(cal.shape[0]):
+                for jdx in range(1,6):
+                    if cal[ idx, jdx ] == 0: continue
+                    day = cal[ idx, jdx ]
+                    caldate = datetime.date( year, mon, day )
+                    if caldate >= nowdate: continue
+                    nwkdays += 1
+                    if day not in act_days: nmiss += 1
+            nunder += len( newdict ) 
     #
     ## these are the legend plots
     ax = fig.add_subplot(5,3,3)
@@ -142,7 +169,8 @@ def create_plot_year( year = _default_year ):
              verticalalignment = 'center', horizontalalignment = 'left' )
     ax.text( 0.35, 0.8, 'EXISTS', fontdict = { 'fontsize' : 32, 'fontweight' : 'bold' },
              verticalalignment = 'center', horizontalalignment = 'left' )
-    
+
+    nowdate = datetime.datetime.now( ).date( )
     for mon in range(1, 13):
         cal, act_days, newdict = data[ mon ]
         nweeks = cal.shape[0]
@@ -169,6 +197,9 @@ def create_plot_year( year = _default_year ):
                             dur, discrep, color = newdict[ cal[idx, jdx] ]
                     else:
                         color = not_exist_color
+                actdate = datetime.date( year, mon, cal[ idx, jdx ] )
+                if year >= nowdate.year and jdx not in (0, 6 ):
+                    if actdate >= nowdate: color = 'yellow'
                 ax.add_patch( Rectangle( ( 0.01 + 0.14 * jdx,
                                            0.99 - 0.14 - 0.14 * (idx + 1) ),
                                          0.14, 0.14, linewidth = 2,
