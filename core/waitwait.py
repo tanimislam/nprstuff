@@ -105,7 +105,8 @@ def get_mp3_chapter_tuple_sorted( html, verify, npr_api_key ):
     #
     ## now sort tuple of (mp3 url, chapter name) by order of mp3 url, and return
     mp3_chapter_tuples = sorted( zip( mp3_urls, chapter_names ),
-                                 key = lambda url_chap: int( os.path.basename( url_chap[0] ).split('.')[0].split('_')[-1] ) )
+                                 key = lambda url_chap: int( re.sub('[a-zA-Z]', '', os.path.basename(
+                                     url_chap[0] ).split('.')[0].split('_')[-1] ) ) )
     return mp3_chapter_tuples
     
 def get_title_wavfile_standard(date_s, outputdir, avconv_exec, 
