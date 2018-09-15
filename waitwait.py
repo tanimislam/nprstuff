@@ -3,7 +3,7 @@
 import logging, datetime
 from optparse import OptionParser
 from core.waitwait import get_waitwait
-from core.npr_utils import get_datestring
+from core.npr_utils import get_datestring, get_time_from_datestring
 
 def _get_last_saturday(datetime_s):
     date_s = datetime_s.date( )
@@ -34,6 +34,6 @@ if __name__=='__main__':
                       help = "If chosen, just fix the title of an existing NPR Wait Wait episode's file.")
     opts, args = parser.parse_args()
     if opts.debugonly: logging.basicConfig( level = logging.DEBUG )
-    fname = get_waitwait( opts.dirname, npr_utils.get_time_from_datestring( opts.date ),
+    fname = get_waitwait( opts.dirname, get_time_from_datestring( opts.date ),
                           debugonly = opts.debugonly, verify = not opts.do_noverify,
                           justFix = opts.do_justfix )
