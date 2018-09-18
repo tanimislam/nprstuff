@@ -1,13 +1,13 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import requests, os, gzip
-from npr_utils import get_cloudconvert_api_key
 from PIL import Image
-from cStringIO import StringIO
+from io import StringIO
 from optparse import OptionParser
 from PyQt4.QtSvg import QSvgRenderer
 from PyQt4.QtCore import QByteArray
 from PyPDF2 import PdfFileReader
+from core.npr_utils import get_cloudconvert_api_key
 
 def get_png_image( input_svg_file, newWidth = None, verify = True ):
     assert( os.path.basename( input_svg_file ).endswith( '.svg' ) or

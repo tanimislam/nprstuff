@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-import freshair, datetime, time
-import npr_utils
+import datetime, time
+from core import freshair, npr_utils
 
 def freshair_crontab():
     """
@@ -18,7 +18,7 @@ def freshair_crontab():
     # now download the episode into the correct directory
     freshair.get_freshair('/mnt/media/freshair', current_date,
                           check_if_exist = True)
-
+    
 if __name__=='__main__':
     freshair_crontab()
     

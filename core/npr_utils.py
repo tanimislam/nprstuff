@@ -1,15 +1,9 @@
-import calendar, numpy, time, datetime, os
-import xdg.BaseDirectory
+import calendar, numpy, time, datetime, os, xdg.BaseDirectory
 import multiprocessing, multiprocessing.pool
 from distutils.spawn import find_executable
-import urllib
-try:
-    import ConfigParser, urlparse
-    from urllib import urlencode
-except:
-    import configparser as ConfigParser
-    import urllib.parse as urlparse
-    from urllib.parse import urlencode
+import configparser as ConfigParser
+import urllib.parse as urlparse
+from urllib.parse import urlencode
 
 def find_necessary_executables():
     ffmpeg_exec = None
@@ -106,7 +100,7 @@ def get_NPR_URL(date_s, program_id, NPR_API_key):
                                                       'dateType' : 'story',
                                                       'output' : 'NPRML',
                                                       'apiKey' : NPR_API_key }), fragment = '')
-    return result.geturl()
+    return result.geturl( ) 
     #return 'http://api.npr.org/query?id=%d&date=%s&dateType=story&output=NPRML&apiKey=%s' % \
     #    ( program_id, nprApiDate, NPR_API_key )
     
