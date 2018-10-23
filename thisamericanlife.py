@@ -16,7 +16,9 @@ if __name__=='__main__':
                       help = 'If defined, some extra stuff in the URL to get a This American Life episode.')
     parser.add_option('--noverify', dest = 'do_noverify', action = 'store_true', default = False,
                       help = 'If chosen, then do not verify the SSL connection.')
+    parser.add_option('--debug', dest='do_debug', action = 'store_true', default = False,
+                      help = 'If chosen, just download the TAL episode into a file into the specified directory.')
     options, args = parser.parse_args()
     direct = os.path.expanduser( options.directory )
     get_american_life(options.episode, directory=direct, extraStuff = options.extraStuff,
-                      verify = not options.do_noverify )
+                      verify = not options.do_noverify, debug = options.do_debug )

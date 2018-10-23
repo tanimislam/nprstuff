@@ -5,7 +5,8 @@ from bs4 import BeautifulSoup
 _talPICURL = 'https://upload.wikimedia.org/wikipedia/commons/8/8a/Thisamericanlife-wbez.png'
 _talurl = 'http://feed.thisamericanlife.org/talpodcast'
 
-def get_americanlife_info(epno, throwException = True, extraStuff = None, verify = True ):
+def get_americanlife_info(epno, throwException = True, extraStuff = None, verify = True, debug = False,
+                          directory = '.' ):
     """
     Returns a tuple of title, year given the episode number for This American Life.
     """
@@ -24,13 +25,18 @@ def get_americanlife_info(epno, throwException = True, extraStuff = None, verify
         html = BeautifulSoup( unicode( resp.text, encoding=enc ), 'lxml' )
     else:
         html = BeautifulSoup( resp.text, 'lxml' )
+    if debug:
+        assert( os.path.isdir( directory ) )
+        with open( os.path.join( directory, 'PRI.ThisAmericanLife.%03d.xml' % epno ), 'w') as openfile:
+            openfile.write('%s\n' % html.prettify( ) )
+        return
     def get_date( date_s ):
         try:
             return datetime.datetime.strptime( date_s, '%B %d, %Y' ).date( )
         except:
             return datetime.datetime.strptime( date_s, '%b %d, %Y' ).date( )
     date_act = max(map(lambda elem: get_date( elem.text.strip( ).replace('.', '')),
-                       html.find_all('span', { 'class' : 'date-display-single' })))
+                       [ html.find_all('span', { 'class' : 'date-display-single' })[0], ]))
     year = date_act.year
     #
     title_elem_list = html.find_all('div', { 'class' : 'episode-title' } )
@@ -42,7 +48,8 @@ def get_americanlife_info(epno, throwException = True, extraStuff = None, verify
     title = title.replace('Promo', '').strip( )
     return title, year
 
-def get_american_life(epno, directory = '/mnt/media/thisamericanlife', extraStuff = None, verify = True ):
+def get_american_life(epno, directory = '/mnt/media/thisamericanlife', extraStuff = None, verify = True,
+                      debug = False ):
     """
     Downloads an episode of This American Life into a given directory.
     The description of which URL the episodes are downloaded from is given in
@@ -53,7 +60,10 @@ def get_american_life(epno, directory = '/mnt/media/thisamericanlife', extraStuf
     Otherwise, the URL is http://www.podtrac.com/pts/redirect.mp3/podcast.thisamericanlife.org/podcast/epno.mp3
     """
     try:
-        title, year = get_americanlife_info(epno, extraStuff = extraStuff, verify = verify)
+        tup = get_americanlife_info(epno, extraStuff = extraStuff, verify = verify, debug = debug,
+                                    directory = directory )
+        if debug: return
+        title, year = tup
     except ValueError as e:
         print(e)
         print('Cannot find date and title for This American Life episode #%d.' % epno)
@@ -92,13 +102,13 @@ def thisamericanlife_crontab( ):
     """
     This python module downloads a This American Life episode every weekend
     """
-
+    
     def _get_track( filename ):
         assert( os.path.basename( filename ).endswith( '.mp3' ) ) 
         mp3tags = ID3( filename ) 
         if 'TRCK' not in mp3tags: return None 
         return int( mp3tags['TRCK'].text[0] )
-
+    
     def _get_epno( entry ):
         if 'title' not in entry: return -1
         title = entry['title']
@@ -109,7 +119,7 @@ def thisamericanlife_crontab( ):
     episodes_here = set(filter(None, map(
         _get_track, glob.glob('/mnt/media/thisamericanlife/PRI.ThisAmericanLife.*mp3' ) ) ) )
     #episodes_left = set( range( 1, max( episodes_here ) + 1 ) ) - episodes_here
-
+    
     #
     ## from RSS feed, find latest episode number
     d = feedparser.parse( 'http://feed.thisamericanlife.org/talpodcast' )
