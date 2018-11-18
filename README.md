@@ -213,7 +213,7 @@ episodes. These consist of the following pieces of python code.
 -   `display.py`  displays an image (SVG, PNG, JPEG, GIF) using the default image viewer for your operating system ([Preview](https://en.wikipedia.org/wiki/Preview_(macOS)) for Mac OS X, [ImageMagick]() for Linux, etc.) Its command is simple,
 ```bash
 display.py <imagefile>.
-```
+```bash
 -   `imageFromURL.py` saves PNG images from an URL to disk. The help
     screen for this command line tool is here,
     ```bash
