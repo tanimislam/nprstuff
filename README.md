@@ -47,13 +47,10 @@ following pieces of python code:
             Usage: freshair.py [options]
 
             Options:
-              -h, --help         show this help message and exit
-              --dirname=DIRNAME  Name of the directory to store the file. Default is
-                                 /mnt/media/freshair.
-              --date=DATE        The date, in the form of "January 1, 2014." The default
-                                 is todays date, November 14, 2015.
-              --debug            If chosen, run freshair.py in debug mode. Useful for
-                                 debugging :)
+              -h, --help         show this help message and exit.
+              --dirname=DIRNAME  Name of the directory to store the file. Default is /mnt/media/freshair.
+              --date=DATE        The date, in the form of "January 1, 2014." The default is todays date, November 14, 2015.
+              --debug            If chosen, run freshair.py in debug mode. Useful for debugging :)
         ```
 
     -   `freshair_crontab.py` downloads an NPR Fresh Air
@@ -75,51 +72,34 @@ following pieces of python code:
     `waitwait_crontab.py`, and
     `waitwait_by_year.py`.
 
-    -   `freshair.py` is the main executable that downloads
-        NPR Wait Wait episodes, converts them to m4a format, and then
-        applies correct metadata. `waitwait_realmedia.py`
-        is a python module that allows one to download NPR Wait Wait
-        episodes older than 2004, which are in
-        [RealMedia](https://en.wikipedia.org/wiki/RealMedia) format. The
-        help screen for this command line tool is here,
-        ```bash
+    -   `freshair.py` is the main executable that downloads NPR Wait Wait episodes, converts them to m4a format, and then applies correct metadata. `waitwait_realmedia.py` is a python module that allows one to download NPR Wait Wait episodes older than 2004, which are in [RealMedia](https://en.wikipedia.org/wiki/RealMedia) format. The help screen for this command line tool is here,
+    ```bash
             Usage: waitwait.py [options]
 
             Options:
-              -h, --help         show this help message and exit
-              --dirname=DIRNAME  Name of the directory to store the file. Default is
-                                 /mnt/media/waitwait.
-              --date=DATE        The date, in the form of "January 1, 2014." The default
-                                 is last Saturday, November 14, 2015.
-              --debugonly        If chosen, download the NPR XML data sheet for this Wait
-                                 Wait episode.
-        ```
+              -h, --help         show this help message and exit.
+              --dirname=DIRNAME  Name of the directory to store the file. Default is /mnt/media/waitwait.
+              --date=DATE        The date, in the form of "January 1, 2014." The default is last Saturday, November 14, 2015.
+              --debugonly        If chosen, download the NPR XML data sheet for this Wait Wait episode.
+    ```
 
-    -   `waitwait_crontab.py` downloads an NPR Wait Wait
-        episode on a given Saturday. It should be called by a cron job
-        that should be run every Saturday.
+    -   `waitwait_crontab.py` downloads an NPR Wait Wait episode on a given Saturday. It should be called by a cron job that should be run every Saturday.
 
-    -   `waitwait_by_year.py` downloads all the NPR Wait
-        Wait episodes in a given year.
+    -   `waitwait_by_year.py` downloads all the NPR Wait Wait episodes in a given year.
 
--   `thisamericanlife.py` *manually* downloads a given
-    episode number of This American Life. This executable uses a custom
-    online archive for older This American Life episodes that are
-    described
-    [here](http://www.dirtygreek.org/t/download-this-american-life-episodes).
-    The help screen for this command line tool is here,
-    ```bash    
-        Usage: thisamericanlife.py [options]
+    -   `thisamericanlife.py` *manually* downloads a given episode number of This American Life. This executable uses a custom online archive for older This American Life episodes that *used to be* described [here](http://www.dirtygreek.org/t/download-this-american-life-episodes) (it no longer exists). The help screen for this command line tool is here,
+    ```bash
+      Usage: thisamericanlife.py [options]
 
-        Options:
-          -h, --help            show this help message and exit
-          --episode=EPISODE     Episode number of This American Life to download.
-                                Default is 150.
-          --directory=DIRECTORY
-                                Directory into which to download This American Life
-                                episodes. Default is /mnt/media/thisamericanlife.
-          --extra=EXTRASTUFF    If defined, some extra stuff in the URL to get a This
-                                American Life episode.
+      Options:
+        -h, --help            show this help message and exit.
+
+        --episode=EPISODE     Episode number of This American Life to download.
+                        Default is 150.
+        --directory=DIRECTORY Directory into which to download This American Life episodes. Default is /mnt/media/thisamericanlife.
+        --extra=EXTRASTUFF    If defined, some extra stuff in the URL to get a This American Life episode.
+        --noverify            If chosen, then do not verify the SSL connection.
+        --debug               If chosen, just download the TAL episode into a file into the specified directory.
     ```
 
 ## New Functionality <a name="new-functionality"></a>
@@ -129,7 +109,7 @@ episodes, nor can one straightforwardly modify them to download NPR
 episodes. These consist of the following pieces of python code.
 
 -   `autoCropImage.py` automatically crops image (png,
-    jpeg, tiff, etc.) files to remove whitespace. The default whitespace
+    jpeg, tiff, pdf, etc.) files to remove whitespace. The default whitespace
     color is `white`. The help screen for this command line
     tool is here,
     ```bash
@@ -143,9 +123,7 @@ episodes. These consist of the following pieces of python code.
     ```
 
 -   `convertImage.py` uses the [CloudConvert REST
-    API](https://cloudconvert.com/apiconsole) to *smoothly and without
-    pain points* convert and resize SVG images to PNG images of the same
-    base name. The help screen for this command line tool is here,
+    API](https://cloudconvert.com/apiconsole) to *smoothly and without pain points* convert and resize SVG images to PNG images of the same base name. The help screen for this command line tool is here,
     ```bash
         Usage: convertImage.py [options]
 
@@ -211,21 +189,22 @@ episodes. These consist of the following pieces of python code.
     ```
 
 -   `display.py`  displays an image (SVG, PNG, JPEG, GIF) using the default image viewer for your operating system ([Preview](https://en.wikipedia.org/wiki/Preview_(macOS)) for Mac OS X, [ImageMagick]() for Linux, etc.) Its command is simple,
-```bash
-display.py <imagefile>.
-```bash
+    ```bash
+    display.py <imagefile>.
+    ```
+
 -   `imageFromURL.py` saves PNG images from an URL to disk. The help
     screen for this command line tool is here,
     ```bash
-        Usage: imageFromURL.py [options]
+    Usage: imageFromURL.py [options]
 
-  Options:
-  -h, --help           show this help message and exit
-  --url=URL            URL where the image is located.
-  --filename=FILENAME  The name of the PNG file to save the online image. The
+    Options:
+      -h, --help           show this help message and exit
+      --url=URL            URL where the image is located.
+      --filename=FILENAME  The name of the PNG file to save the online image. The
                        image name must end in .png. The default name is
                        default.png.
-```
+      ```
 
 ## Graphics Functionality <a href="graphics-functionality"></a>
 
