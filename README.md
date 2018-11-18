@@ -236,6 +236,8 @@ This section describes the two graphical tools I have developed:
 [PyQt4](https://www.riverbankcomputing.com/software/pyqt/download) GUI
 front-end to the [Readability](https://www.readability.com) API.
 
+UPDATE: if any of you have gone to the Readability website, you may have realized that Readability has been defunct for [over 2 years now](https://medium.com/@readability/the-readability-bookmarking-service-will-shut-down-on-september-30-2016-1641cc18e02b).
+
 ### GUI: Media Website Text Formatter <a href="gui1"></a>
 
 This GUI can read from the following media websites: [Lightspeed
