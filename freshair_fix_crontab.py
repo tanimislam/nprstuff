@@ -8,7 +8,9 @@ that are shorter than 30 minutes, and which have a modification time
 more than 90 days before the current time
 """
 
-import os, sys, glob, multiprocessing
+from core import signal_handler
+import os, sys, glob, multiprocessing, sys
+signal.signal( signal.SIGINT, signal_handler )
 import mutagen.mp4, time, datetime
 import freshair, npr_utils
 

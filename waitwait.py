@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
-import logging, datetime
+from core import signal_handler
+import logging, datetime, signal
+signal.signal( signal.SIGINT, signal_handler )
 from optparse import OptionParser
 from core.waitwait import get_waitwait
 from core.npr_utils import get_datestring, get_time_from_datestring

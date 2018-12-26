@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
-import os, datetime
+from core import signal_handler
+import os, datetime, signal
+signal.signal( signal.SIGINT, signal_handler )
 from optparse import OptionParser
 from core.freshair import get_freshair
 from core.npr_utils import get_datestring, get_time_from_datestring
