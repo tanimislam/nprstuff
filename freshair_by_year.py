@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+import signal
+from core import signal_handler
+signal.signal( signal.SIGINT, signal_handler )
 from optparse import OptionParser
 from core import freshair, freshair_by_year
 
