@@ -72,7 +72,7 @@ following pieces of python code:
     `waitwait_crontab.py`, and
     `waitwait_by_year.py`.
 
-    -   `freshair.py` is the main executable that downloads NPR Wait Wait episodes, converts them to m4a format, and then applies correct metadata. `waitwait_realmedia.py` is a python module that allows one to download NPR Wait Wait episodes older than 2004, which are in [RealMedia](https://en.wikipedia.org/wiki/RealMedia) format. The help screen for this command line tool is here,
+    -   `waitwaiy.py` is the main executable that downloads NPR Wait Wait episodes, converts them to m4a format, and then applies correct metadata. `waitwait_realmedia.py` is a python module that allows one to download NPR Wait Wait episodes older than 2004, which are in [RealMedia](https://en.wikipedia.org/wiki/RealMedia) format. The help screen for this command line tool is here,
     ```bash
             Usage: waitwait.py [options]
 
@@ -87,7 +87,7 @@ following pieces of python code:
 
     -   `waitwait_by_year.py` downloads all the NPR Wait Wait episodes in a given year.
 
-    -   `thisamericanlife.py` *manually* downloads a given episode number of This American Life. This executable uses a custom online archive for older This American Life episodes that *used to be* described [here](http://www.dirtygreek.org/t/download-this-american-life-episodes) (it no longer exists). The help screen for this command line tool is here,
+-   `thisamericanlife.py` *manually* downloads a given episode number of This American Life. This executable uses a custom online archive for older This American Life episodes that *used to be* described [here](http://www.dirtygreek.org/t/download-this-american-life-episodes) (it no longer exists). The help screen for this command line tool is here,
     ```bash
       Usage: thisamericanlife.py [options]
 
