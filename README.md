@@ -205,8 +205,8 @@ episodes. These consist of the following pieces of python code.
                        image name must end in .png. The default name is
                        default.png.
       ```
-
-## Graphics Functionality <a href="graphics-functionality"></a>
+r
+## Graphics Functionality <a name="graphics-functionality"></a>
 
 This section describes the two graphical tools I have developed:
 `gui` matches a small subset of functionality that the
@@ -217,7 +217,7 @@ front-end to the [Readability](https://www.readability.com) API.
 
 UPDATE: if any of you have gone to the Readability website, you may have realized that Readability has been defunct for [over 2 years now](https://medium.com/@readability/the-readability-bookmarking-service-will-shut-down-on-september-30-2016-1641cc18e02b).
 
-### GUI: Media Website Text Formatter <a href="gui1"></a>
+### GUI: Media Website Text Formatter <a name="gui1"></a>
 
 This GUI can read from the following media websites: [Lightspeed
 Magazine](http://www.lightspeedmagazine.com/),
@@ -241,7 +241,7 @@ shown here.
 
 Note, here I do not support or maintain this tool after I found out about [Readability](https://www.readability.com).
 
-### GUI2: Readability GUI Front-End <a href="gui2"></a>
+### GUI2: Readability GUI Front-End <a name="gui2"></a>
 
 This is the PyQt4 GUI front-end to [Readability](https://www.readability.com).
 
@@ -265,7 +265,7 @@ all using the Readability API.
 
 -   Adding and deleting articles through the article list widget.
 
-## Oldstuff <a href="oldstuff"></a>
+## Oldstuff <a name="oldstuff"></a>
 
 These are tools that I do not maintain, located in the
 [oldstuff](https://github.com/tanimislam/nprstuff/blob/master/oldstuff) folder, but which others may find useful. These
