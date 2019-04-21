@@ -41,7 +41,7 @@ def get_freshair_valid_dates_remaining_tuples(yearnum, inputdir):
                            enumerate( npr_utils.get_weekday_times_in_year(yearnum) ) }
     dtime_now = datetime.datetime.now()
     nowd = datetime.date(dtime_now.year, dtime_now.month, dtime_now.day)
-    weekdays_left = set( filter(lambda date_s: date_s < nowd, set( all_order_weekdays . keys() ) ) ) - \
+    weekdays_left = set( filter(lambda date_s: date_s <= nowd, set( all_order_weekdays . keys() ) ) ) - \
         set( dates_downloaded )
     totnum = len( all_order_weekdays.keys() )
     order_dates_remain = sorted([ ( all_order_weekdays[date_s], totnum, date_s ) for

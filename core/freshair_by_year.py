@@ -113,7 +113,7 @@ def create_plot_year( year = _default_year ):
                     if cal[ idx, jdx ] == 0: continue
                     day = cal[ idx, jdx ]
                     caldate = datetime.date( year, mon, day )
-                    if caldate >= nowdate: continue
+                    if caldate > nowdate: continue
                     nwkdays += 1
                     if day not in act_days: nmiss += 1
             nunder += len( newdict ) 
@@ -199,7 +199,7 @@ def create_plot_year( year = _default_year ):
                         color = not_exist_color
                 actdate = datetime.date( year, mon, cal[ idx, jdx ] )
                 if year >= nowdate.year and jdx not in (0, 6 ):
-                    if actdate >= nowdate: color = 'yellow'
+                    if actdate > nowdate: color = 'yellow'
                 ax.add_patch( Rectangle( ( 0.01 + 0.14 * jdx,
                                            0.99 - 0.14 - 0.14 * (idx + 1) ),
                                          0.14, 0.14, linewidth = 2,

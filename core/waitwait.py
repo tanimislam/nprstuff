@@ -3,13 +3,16 @@ import subprocess, logging, datetime, time, titlecase
 from optparse import OptionParser
 from bs4 import BeautifulSoup
 from urllib.parse import parse_qs
-from . import npr_utils, waitwait_realmedia
+from . import npr_utils, waitwait_realmedia, resourceDir
 
 _npr_waitwait_progid = 35
 
 def get_waitwait_image( verify = True ):
-    return requests.get('https://upload.wikimedia.org/wikipedia/en/f/f4/WaitWait.png',
-                        verify = verify ).content
+    #return requests.get('https://upload.wikimedia.org/wikipedia/en/f/f4/WaitWait.png',
+    #verify = verify ).content
+    fname = os.path.join( resourceDir, 'waitwaitnew.png' )
+    assert( os.path.isfile( fname ) )
+    return open( fname, 'rb' ).read( )
     
 def _download_file( input_tuple ):
     mp3URL, filename, verify = input_tuple
