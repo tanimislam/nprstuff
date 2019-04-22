@@ -6,7 +6,7 @@ that are shorter than 30 minutes, and which have a modification time
 more than 90 days before the current time
 """
 import os, sys, signal
-from core import signal_handler, freshair, npr_utils
+from nprstuff.core import signal_handler, freshair, npr_utils
 signal.signal( signal.SIGINT, signal_handler )
 import glob, multiprocessing, mutagen.mp4, time, datetime
 
@@ -45,7 +45,7 @@ def find_missing_dates( mon, year = datetime.datetime.now( ).date( ).year ):
 """
 This checks to see whether to modify this file
 """
-def find_NPR_files_to_modify_perproc(filename):
+def find_NPR_files_to_modify_perproc( filename ):
     atoms = mutagen.mp4.Atoms(open(filename, 'rb'))
     info = mutagen.mp4.MP4Info(atoms, open(filename, 'rb'))
     if info.length > 1800: return None
@@ -58,15 +58,14 @@ def find_NPR_files_to_modify_perproc(filename):
     #
     ## matches conditions, return filename and date associated with this time
     strdate = '.'.join(os.path.basename(filename).split('.')[2:5])
-    mydate = time.strptime(strdate, '%d.%m.%Y')
+    mydate = datetime.datetime.strptime(strdate, '%d.%m.%Y').date( )
     return mydate
         
-def find_NPR_dates_to_fix():
-    filenames_to_process = list(
-        filter(lambda filename: os.path.basename(filename).startswith('NPR.FreshAir'),
-               glob.glob('/mnt/media/freshair/*.m4a')))
-    pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
-    return set(filter(None, pool.map(find_NPR_files_to_modify_perproc, filenames_to_process)))
+def find_NPR_dates_to_fix( ):
+    filenames_to_process = glob.glob('/mnt/media/freshair/NPR.FreshAir.*.m4a')
+    with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
+        return set(filter(None, pool.map(
+            find_NPR_files_to_modify_perproc, filenames_to_process ) ) )
 
 def process_dates(npr_dates_to_fix, verbose = False):
     if verbose and len(npr_dates_to_fix) > 0:
@@ -82,8 +81,8 @@ def process_dates(npr_dates_to_fix, verbose = False):
         print( 'PROCESSED ALL DATES IN %0.3f SECONDS' % ( time.time() - time0) )
 
 def freshair_fix_crontab( verbose = True ):
-    npr_dates_to_fix = find_NPR_dates_to_fix()
-    process_dates(npr_dates_to_fix, verbose=verbose)
+    npr_dates_to_fix = find_NPR_dates_to_fix( )
+    process_dates( npr_dates_to_fix, verbose = verbose )
 
 if __name__=='__main__':
     freshair_fix_crontab( )

@@ -124,8 +124,8 @@ def get_datestring(date_s):
     return date_s.strftime('%B %d, %Y')
 
 def is_weekday(date_s):
-    return date_s.weekday() in range(5)
-
+    return date_s.weekday() in list(range(5))
+                                    
 def is_saturday(date_s):
     return date_s.weekday() == 5
 
