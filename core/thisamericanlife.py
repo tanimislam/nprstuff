@@ -1,4 +1,5 @@
-import os, sys, datetime, titlecase, requests, codecs, feedparser, glob
+import os, sys, datetime, titlecase, requests
+import codecs, feedparser, glob, time, logging
 from mutagen.id3 import APIC, TDRC, TALB, COMM, TRCK, TPE2, TPE1, TIT2, TCON, ID3
 from bs4 import BeautifulSoup
 
@@ -22,7 +23,7 @@ def get_americanlife_info(epno, throwException = True, extraStuff = None, verify
     
     enc = resp.headers['content-type'].split(';')[-1].split('=')[-1].strip().upper()
     if enc not in ( 'UTF-8', ):
-        html = BeautifulSoup( unicode( resp.text, encoding=enc ), 'lxml' )
+        html = BeautifulSoup( resp.text.encode(encoding=enc ), 'lxml' )
     else:
         html = BeautifulSoup( resp.text, 'lxml' )
     if debug:
