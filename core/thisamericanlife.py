@@ -92,13 +92,13 @@ def get_american_life(epno, directory = '/mnt/media/thisamericanlife', extraStuf
     mp3tags['TRCK'] = TRCK(encoding = 0, text = [ u'%d' % epno ])
     mp3tags['TPE2'] = TPE2(encoding = 0, text = [ u'Ira Glass'])
     mp3tags['TPE1'] = TPE1(encoding = 0, text = [ u'Ira Glass'])
-    try: mp3tags['TIT2'] = TIT2(encoding = 0, text = [ '#%03d: %s' % ( epno, title ) ] )
-    except: mp3tags['TIT2'] = TIT2(encoding = 0, text = [ codecs.encode('#%03d: %s' % ( epno, title ), 'utf8') ])
+    try: mp3tags['TIT2'] = TIT2(encoding = 3, text = [ '#%03d: %s' % ( epno, title ) ] )
+    except: mp3tags['TIT2'] = TIT2(encoding = 3, text = [ codecs.encode('#%03d: %s' % ( epno, title ), 'utf8') ])
     mp3tags['TCON'] = TCON(encoding = 0, text = [ u'Podcast'])
     mp3tags['APIC'] = APIC( encoding = 0, mime = 'image/png', data = requests.get( _talPICURL ).content )
-    mp3tags.save( outfile )
+    mp3tags.save( outfile, v1=0 )
     os.chmod( outfile, 0o644 )
-
+    
 def thisamericanlife_crontab( ):
     """
     This python module downloads a This American Life episode every weekend
