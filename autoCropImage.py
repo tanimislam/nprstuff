@@ -13,6 +13,10 @@ if __name__=='__main__':
     parser.add_option('--color', dest='color', action='store', type=str,
                       help = 'Name of the color over which to autocrop. Default is white.',
                       default = 'white')
+    parser.add_option('--trans', dest='do_trans', action='store_true', default = False,
+                      help = ' '.join([
+                                       'If chosen, also remove the transparency wrapping around the image.',
+                                       'Works only for non-PDF images.'  ]) )
     parser.add_option('--newwidth', dest='newwidth', action='store', type=int,
                       help = 'New width of the image.' )
     parser.add_option('--show', dest='do_show', action='store_true', default = False,
@@ -24,7 +28,7 @@ if __name__=='__main__':
         raise ValueError("Error, candidate file = %s is not a file." % os.path.expanduser(opts.input))
     if not os.path.basename( opts.input ).endswith('.pdf'):
         autocrop_image.autocrop_image( os.path.expanduser(opts.input), outputfilename = opts.output, color = opts.color,
-                                       newWidth = opts.newwidth, doShow = opts.do_show )
+                                       newWidth = opts.newwidth, doShow = opts.do_show, trans = opts.do_trans )
     else:
         if opts.output is not None: assert( os.path.basename( opts.output ).endswith('.pdf' ) )
         autocrop_image.crop_pdf_singlepage( os.path.expanduser( opts.input ), outputfile = opts.output )

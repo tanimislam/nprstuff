@@ -24,8 +24,18 @@ def autocrop_perproc(input_tuple):
     
 
 def autocrop_image(inputfilename, outputfilename = None, color = 'white', newWidth = None,
-                   doShow = False ):
+                   doShow = False, trans = False ):
     im = Image.open(inputfilename)
+
+    #
+    ## if remove transparency, do the following
+    ## follow instructions from https://twigstechtips.blogspot.com/2011/12/python-converting-transparent-areas-in.html
+    if trans:
+        im.convert( 'RGBA' )
+        canvas = Image.new('RGBA', im.size, (255,255,255,255)) # Empty canvas colour (r,g,b,a)
+        canvas.paste(im, mask = im) # Paste the image onto the canvas, using its alpha channel as mask
+        im = canvas
+    
     try:
         # get hex colors
         rgbcolor = hex_to_rgb( color )
