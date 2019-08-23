@@ -1,33 +1,31 @@
 I like NPR, so I made some scripts to download my favorite programs from
-NPR. For now, I have something that downloads [Fresh
+NPR. This package started off as a way to download [Fresh
 Air](http://www.npr.org/programs/fresh-air/), [Wait Wait..Don’t Tell
 Me](http://www.npr.org/programs/wait-wait-dont-tell-me/), and [This
-American Life](http://www.thisamericanlife.org/). This package can
-probably, straightforwardly be extended to other NPR and PRI programs.
+American Life](http://www.thisamericanlife.org/) episodes without resorting to podcasts. This package can probably, straightforwardly be extended to other NPR and PRI programs.
 
 Although this project started off as a way to download these three
 programs, I have expanded it to include a grab bag of altogether
-different types of functionalities. What remains the same? This
-distribution consists mainly of executable python scripts.
+different types of functionalities. Some of these include some [image manipulation programs](#image-manipulation), [song manipulation programs](#song-manipulation), and graphical stuff.
 
 I organize this document into the following sections: [Core Functionality](#core-functionality), [New Functionality](#new-functionality), [Graphics Functionality](#graphics-functionality) (in folders
-`gui` and `gui2`), and a small section called [Oldstuff](#oldstuff)
-.
+[`gui`](#gui1) and [`gui2`](#gui2)), and a small section called [Oldstuff](#oldstuff).
 
-This document was converted from a LaTeX source using
+This document was initially converted from a LaTeX source using
 [Pandoc](http://pandoc.org/index.html), via
 ```bash
     pandoc -s README.tex -o README.md
 ```
-## Core Functionality <a name="core-functionality"></a>
+But eventually this document took on a life of its own.
 
+## <a name="core-functionality">Core Functionality</a>
 This consists of functionality to grab episodes from [Fresh
 Air](http://www.npr.org/programs/fresh-air/), [Wait Wait..Don’t Tell
 Me](http://www.npr.org/programs/wait-wait-dont-tell-me/), and [This
 American Life](http://www.thisamericanlife.org/). These consist of the
 following pieces of python code:
 
--   `npr_utils.py` contains common utilities to get the
+-   <a href="https://github.com/tanimislam/nprstuff/blob/master/core/npr_utils.py">`npr_utils.py`</a> contains common utilities to get the
     proper metadata for NPR programs, to name these media files in the
     proper date format, and to get the full paths to the
     [LibAV/FFMPEG](https://libav.org) and
@@ -39,7 +37,7 @@ following pieces of python code:
     `freshair_fix_crontab.py`, and
     `freshair_by_year.py`.
 
-    -   `freshair.py` is the main executable that downloads
+    -   <a href="https://github.com/tanimislam/nprstuff/blob/master/freshair.py">`freshair.py`</a> is the main executable that downloads
         NPR Fresh Air episodes, converts them to m4a format, and then
         applies correct metadata. The help screen for this command line
         tool is here,
@@ -53,18 +51,18 @@ following pieces of python code:
               --debug            If chosen, run freshair.py in debug mode. Useful for debugging :)
         ```
 
-    -   `freshair_crontab.py` downloads an NPR Fresh Air
+    -   <a href="https://github.com/tanimislam/nprstuff/blob/master/freshair_crontab.py">`freshair_crontab.py`</a> downloads an NPR Fresh Air
         episode on a given weekday. It should be called by a cron job
         that should be run every weekday.
 
-    -   `freshair_fix_crontab.py` tries to re-download NPR
+    -   <a href="https://github.com/tanimislam/nprstuff/blob/master/freshair_fix_crontab.py">`freshair_fix_crontab.py`</a> tries to re-download NPR
         Fresh Air episodes that may be incomplete – defined as shorter
         than 30 minutes – and which are 90 days or older. This
         executable searches through the library of all NPR Fresh Air
         episodes, and tries to re-download older, possibly
         incomplete episodes.
 
-    -   `freshair_by_year.py` downloads all the NPR Fresh
+    -   <a href="https://github.com/tanimislam/nprstuff/blob/master/freshair_by_year.py">`freshair_by_year.py`</a> downloads all the NPR Fresh
         Air episodes in a given year.
 
 -   These four files handle NPR Wait Wait downloads:
@@ -72,7 +70,7 @@ following pieces of python code:
     `waitwait_crontab.py`, and
     `waitwait_by_year.py`.
 
-    -   `waitwaiy.py` is the main executable that downloads NPR Wait Wait episodes, converts them to m4a format, and then applies correct metadata. `waitwait_realmedia.py` is a python module that allows one to download NPR Wait Wait episodes older than 2004, which are in [RealMedia](https://en.wikipedia.org/wiki/RealMedia) format. The help screen for this command line tool is here,
+    -   <a href="https://github.com/tanimislam/nprstuff/blob/master/waitwait.py">`waitwait.py`</a> is the main executable that downloads NPR Wait Wait episodes, converts them to m4a format, and then applies correct metadata. `core/waitwait_realmedia.py` is a python module that allows one to download NPR Wait Wait episodes older than 2004, which are in [RealMedia](https://en.wikipedia.org/wiki/RealMedia) format. The help screen for this command line tool is here,
     ```bash
             Usage: waitwait.py [options]
 
@@ -83,11 +81,11 @@ following pieces of python code:
               --debugonly        If chosen, download the NPR XML data sheet for this Wait Wait episode.
     ```
 
-    -   `waitwait_crontab.py` downloads an NPR Wait Wait episode on a given Saturday. It should be called by a cron job that should be run every Saturday.
+    -   <a href="https://github.com/tanimislam/nprstuff/blob/master/waitwait_crontab.py">`waitwait_crontab.py`</a> downloads an NPR Wait Wait episode on a given Saturday. It should be called by a cron job that should be run every Saturday.
 
-    -   `waitwait_by_year.py` downloads all the NPR Wait Wait episodes in a given year.
+    -   <a href="https://github.com/tanimislam/nprstuff/blob/master/waitwait_by_year.py">`waitwait_by_year.py`</a> downloads all the NPR Wait Wait episodes in a given year.
 
--   `thisamericanlife.py` *manually* downloads a given episode number of This American Life. This executable uses a custom online archive for older This American Life episodes that *used to be* described [here](http://www.dirtygreek.org/t/download-this-american-life-episodes) (it no longer exists). The help screen for this command line tool is here,
+-   <a href="https://github.com/tanimislam/nprstuff/blob/master/thisamericanlife.py">`thisamericanlife.py`</a> *manually* downloads a given episode number of This American Life. This executable uses a custom online archive for older This American Life episodes that *used to be* described [here](http://www.dirtygreek.org/t/download-this-american-life-episodes) (it no longer exists). The help screen for this command line tool is here,
     ```bash
       Usage: thisamericanlife.py [options]
 
@@ -102,7 +100,7 @@ following pieces of python code:
         --debug               If chosen, just download the TAL episode into a file into the specified directory.
     ```
 
-## New Functionality <a name="new-functionality"></a>
+## <a name="new-functionality">New Functionality</a>
 
 This consists of newer functionality that does not download NPR
 episodes, nor can one straightforwardly modify them to download NPR
@@ -122,7 +120,7 @@ episodes. These consist of the following pieces of python code.
           --color=COLOR    Name of the color over which to autocrop. Default is white.
     ```
 
--   `convertImage.py` uses the [CloudConvert REST
+-   <a name="image-manipulation">`convertImage.py`</a> uses the [CloudConvert REST
     API](https://cloudconvert.com/apiconsole) to *smoothly and without pain points* convert and resize SVG images to PNG images of the same base name. The help screen for this command line tool is here,
     ```bash
         Usage: convertImage.py [options]
@@ -151,7 +149,7 @@ episodes. These consist of the following pieces of python code.
           --minus            If chosen, subtract a year from the files.
     ```
 
--   `music_to_m4a.py` can convert a single file from
+-   <a name="song-manipulation">`music_to_m4a.py`</a> can convert a single file from
     mp3/ogg/flac format to m4a format while preserving music file
     metadata, and can optionally set the total number of album tracks
     and the album cover if the music files is in an album. It can also
@@ -205,7 +203,7 @@ episodes. These consist of the following pieces of python code.
                        image name must end in .png. The default name is
                        default.png.
       ```
-r
+
 ## Graphics Functionality <a name="graphics-functionality"></a>
 
 This section describes the two graphical tools I have developed:
@@ -215,9 +213,9 @@ This section describes the two graphical tools I have developed:
 [PyQt4](https://www.riverbankcomputing.com/software/pyqt/download) GUI
 front-end to the [Readability](https://www.readability.com) API.
 
-UPDATE: if any of you have gone to the Readability website, you may have realized that Readability has been defunct for [over 2 years now](https://medium.com/@readability/the-readability-bookmarking-service-will-shut-down-on-september-30-2016-1641cc18e02b).
+UPDATE: if any of you have gone to the Readability website, you may have realized that Readability has been defunct for [over 3 years now](https://medium.com/@readability/the-readability-bookmarking-service-will-shut-down-on-september-30-2016-1641cc18e02b).
 
-### GUI: Media Website Text Formatter <a name="gui1"></a>
+### <a name="gui1">GUI: Media Website Text Formatter</a>
 
 This GUI can read from the following media websites: [Lightspeed
 Magazine](http://www.lightspeedmagazine.com/),
@@ -241,8 +239,8 @@ shown here.
 
 Note, here I do not support or maintain this tool after I found out about [Readability](https://www.readability.com).
 
-### GUI2: Readability GUI Front-End <a name="gui2"></a>
-
+### <a name="gui2">GUI2: Readability GUI Front-End</a>
+<a name="gui2"></a>
 This is the PyQt4 GUI front-end to [Readability](https://www.readability.com).
 
 |        |        |
@@ -265,7 +263,7 @@ all using the Readability API.
 
 -   Adding and deleting articles through the article list widget.
 
-## Oldstuff <a name="oldstuff"></a>
+## <a name="oldstuff">Oldstuff</a>
 
 These are tools that I do not maintain, located in the
 [oldstuff](https://github.com/tanimislam/nprstuff/blob/master/oldstuff) folder, but which others may find useful. These

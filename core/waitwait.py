@@ -1,15 +1,18 @@
 import os, sys, glob, re, requests, multiprocessing, mutagen.mp4
-import subprocess, logging, datetime, time, titlecase
-from optparse import OptionParser
+import subprocess, logging, datetime, time, titlecase, tempfile, shutil
+from dateutil.relativedelta import relativedelta
 from bs4 import BeautifulSoup
 from urllib.parse import parse_qs
-from . import npr_utils, waitwait_realmedia
+from . import npr_utils, waitwait_realmedia, resourceDir
 
 _npr_waitwait_progid = 35
 
 def get_waitwait_image( verify = True ):
-    return requests.get('https://upload.wikimedia.org/wikipedia/en/f/f4/WaitWait.png',
-                        verify = verify ).content
+    #return requests.get('https://upload.wikimedia.org/wikipedia/en/f/f4/WaitWait.png',
+    #verify = verify ).content
+    fname = os.path.join( resourceDir, 'waitwaitnew.png' )
+    assert( os.path.isfile( fname ) )
+    return open( fname, 'rb' ).read( )
     
 def _download_file( input_tuple ):
     mp3URL, filename, verify = input_tuple
@@ -182,28 +185,33 @@ def get_waitwait(outputdir, date_s, order_totnum = None,
     year = date_s.year
     decdate = npr_utils.get_decdate( date_s )
     m4afile = os.path.join(outputdir, 'NPR.WaitWait.%s.m4a' % decdate )
-
+    
     if year >= 2006:
-        tup = get_title_wavfile_standard(date_s, outputdir, avconv_exec,
+        tmpdir = tempfile.mkdtemp( )
+        tup = get_title_wavfile_standard(date_s, tmpdir, avconv_exec,
                                          debugonly = debugonly,
                                          verify = verify, justFix = justFix )
         if tup is None:
+            shutil.rmtree( tmpdir )
             return
         title, outfiles = tup
         if justFix: # works only for year >= 2006
             if not os.path.isfile( m4afile ):
                 print( "Error, %s does not exist." % os.path.basename( m4afile ) )
+                shutil.rmtree( tmpdir )
                 return
             mp4tags = mutagen.mp4.MP4(m4afile)
             mp4tags.tags['\xa9nam'] = [ title, ]
             mp4tags.save( )
             logging.debug('fixed title for %s.' % m4afile )
+            shutil.rmtree( tmpdir )
             return m4afile
+        m4afile_temp = os.path.join(tmpdir, 'NPR.WaitWait.%s.m4a' % decdate )
         fnames = map(lambda filename: filename.replace(' ', '\ '), outfiles)
         sox_string_cmd = 'concat:%s' % '|'.join( fnames )
         split_cmd = [ avconv_exec, '-y', '-i', sox_string_cmd, '-ar', '44100', '-ac', '2', '-threads', 
                       '%d' % multiprocessing.cpu_count(), '-strict', 'experimental', '-acodec', 'aac',
-                      m4afile ]
+                      m4afile_temp ]
         proc = subprocess.Popen(split_cmd, stdout = subprocess.PIPE,
                                 stderr = subprocess.PIPE)
         stdout_val, stderr_val = proc.communicate()
@@ -213,18 +221,19 @@ def get_waitwait(outputdir, date_s, order_totnum = None,
         #    raise ValueError("Error, AVCONV does not have the concatenation protocol.")
         for filename in outfiles: os.remove( filename )
     else:
+        tmpdir = tempfile.mkdtemp( )
         title = waitwait_realmedia.rm_get_title_from_url( date_s )
         rmfile = waitwait_realmedia.rm_download_file( date_s, 
-                                                      outdir = outputdir )
+                                                      outdir = tmpdir )
         wavfile = waitwait_realmedia.rm_create_wav_file( date_s, rmfile,
-                                                         outdir = outputdir )
+                                                         outdir = tmpdir )
         os.remove( rmfile )
 
         # now convert to m4a file
-        m4afile = os.path.join(outputdir, 'NPR.WaitWait.%s.m4a' % decdate )
+        m4afile_temp = os.path.join(outputdir, 'NPR.WaitWait.%s.m4a' % decdate )
         split_cmd = [ avconv_exec, '-y', '-i', wavfile, '-ar', '44100',
                       '-ac', '2', '-threads', '%d' % multiprocessing.cpu_count(),
-                      '-strict', 'experimental', '-acodec', 'aac', m4afile ]
+                      '-strict', 'experimental', '-acodec', 'aac', m4afile_temp ]
         proc = subprocess.Popen(split_cmd, stdout = subprocess.PIPE,
                                 stderr = subprocess.PIPE)
         stdout_val, stderr_val = proc.communicate()
@@ -233,7 +242,7 @@ def get_waitwait(outputdir, date_s, order_totnum = None,
         os.remove( wavfile )
 
     # now put in metadata
-    mp4tags = mutagen.mp4.MP4(m4afile)
+    mp4tags = mutagen.mp4.MP4(m4afile_temp)
     mp4tags.tags['\xa9nam'] = [ title, ]
     mp4tags.tags['\xa9alb'] = [ "Wait Wait...Don't Tell Me: %d" % year, ]
     mp4tags.tags['\xa9ART'] = [ 'Peter Sagal', ]
@@ -243,21 +252,31 @@ def get_waitwait(outputdir, date_s, order_totnum = None,
     mp4tags.tags['covr'] = [ mutagen.mp4.MP4Cover(file_data, mutagen.mp4.MP4Cover.FORMAT_PNG ), ]
     mp4tags.tags['\xa9gen'] = [ 'Podcast', ]
     mp4tags.save()
-    os.chmod( m4afile, 0o644 )
+    os.chmod( m4afile_temp, 0o644 )
+
+    # now copy to actual location and remove temp directory
+    shutil.copy( m4afile_temp, m4afile )
+    shutil.rmtree( tmpdir )
     return m4afile
 
-
-def waitwait_crontab():
+def waitwait_crontab( ):
     """
     This python module downloads a Wait Wait... episode on a particular Saturday
     """
 
-    # get current time
-    current_date = datetime.date.fromtimestamp( time.time())
+    # get current date
+    current_date = datetime.date.fromtimestamp( time.time() )
+    current_year = current_date.year
+    
+    #
+    ## if not on a saturday, go first saturday back
     if not npr_utils.is_saturday( current_date ):
-        print( "Error, today is not a Saturday. Instead, today is %s." % 
-               current_date.strftime('%A') )
-        return
+        day_of_week = current_date.weekday( )
+        if day_of_week >= 5: days_back = day_of_week - 5
+        else: days_back = days_back = day_of_week + 2
+        days_back = relativedelta( days = days_back )
+        current_date = current_date - days_back
+        if current_date.year != current_year: return
     
     # now download the episode into the correct directory
     get_waitwait('/mnt/media/waitwait', current_date)

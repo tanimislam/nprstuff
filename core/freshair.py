@@ -1,5 +1,5 @@
-import os, glob, multiprocessing, datetime, time, re, titlecase
-import mutagen.mp4, subprocess, multiprocessing.pool, requests
+import os, glob, multiprocessing, datetime, time, re, titlecase, tempfile
+import mutagen.mp4, subprocess, multiprocessing.pool, requests, shutil
 from optparse import OptionParser
 from bs4 import BeautifulSoup
 import urllib.parse as urlparse
@@ -41,7 +41,7 @@ def get_freshair_valid_dates_remaining_tuples(yearnum, inputdir):
                            enumerate( npr_utils.get_weekday_times_in_year(yearnum) ) }
     dtime_now = datetime.datetime.now()
     nowd = datetime.date(dtime_now.year, dtime_now.month, dtime_now.day)
-    weekdays_left = set( filter(lambda date_s: date_s < nowd, set( all_order_weekdays . keys() ) ) ) - \
+    weekdays_left = set( filter(lambda date_s: date_s <= nowd, set( all_order_weekdays . keys() ) ) ) - \
         set( dates_downloaded )
     totnum = len( all_order_weekdays.keys() )
     order_dates_remain = sorted([ ( all_order_weekdays[date_s], totnum, date_s ) for
@@ -73,8 +73,8 @@ def process_all_freshairs_by_year(yearnum, inputdir, verbose = True, justCoverag
                      procno in range(nprocs) ]
     time0 = time.time()
     if not justCoverage:
-        pool = npr_utils.MyPool(processes = multiprocessing.cpu_count())
-        pool.map(_process_freshairs_by_year_tuple, input_tuples)
+        with npr_utils.MyPool(processes = multiprocessing.cpu_count()) as pool:
+            pool.map(_process_freshairs_by_year_tuple, input_tuples)
     else:
         print( 'Missing %d episodes for %04d.' % ( len(order_dates_remain), yearnum ) )
         for order, totnum, date_s in order_dates_remain:
@@ -86,11 +86,11 @@ def process_all_freshairs_by_year(yearnum, inputdir, verbose = True, justCoverag
 
 def process_freshair_titlemp3_tuples( html ):
     titles = []
-    mp3s = []
     for story_elem in html.find_all('story'):
         all_http_lines = list(map(lambda line: line.strip(),
                                   filter(lambda line: len(line.strip()) > 0 and
-                                         line.strip().startswith('https'), story_elem.text.split('\n') ) ) )
+                                         line.strip().startswith('https'),
+                                         story_elem.text.split('\n') ) ) )
         story_line_url = all_http_lines[ 0 ]
         h2 = BeautifulSoup( requests.get( story_line_url ).content, 'lxml' )
         title_elems = h2.find_all('title')
@@ -100,10 +100,9 @@ def process_freshair_titlemp3_tuples( html ):
                 ': '.join(map(lambda tok: tok.strip( ),
                               title_elems[0].text.split(':')[:-1] ) ) )
         titles.append(title)
-    for elem in html.find_all('mp3', {'type' : 'm3u' }):
-        m3uurl = elem.text.strip()
-        mp3url = requests.get( m3uurl ).text.strip()
-        mp3s.append( mp3url )
+    mp3s = list(
+        map(lambda elem: requests.get( elem.text.strip( ) ).text.strip( ),
+            html.find_all( 'mp3', { 'type' : 'm3u' } ) ) )
     title_mp3_urls = sorted( filter(None, zip( titles, mp3s ) ),
                              key = lambda tup: tup[1] ) 
     return title_mp3_urls
@@ -123,9 +122,12 @@ def get_freshair_lowlevel( outputdir, date_s, titles ):
     # order of FA episode in the year
     order_in_year, tot_in_year = npr_utils.get_order_number_weekday_in_year(date_s)
 
+    # temporary output directory
+    tmpdir = tempfile.mkdtemp( )
+    
     file_data = get_freshair_image()
     decdate = date_s.strftime('%d.%m.%Y')
-    m4afile = os.path.join(outputdir, 'NPR.FreshAir.%s.m4a' % decdate )
+    m4afile = os.path.join(tmpdir, 'NPR.FreshAir.%s.m4a' % decdate )
     year = date_s.year
 
     def create_mp3_files( date_s, titles ):
@@ -137,7 +139,7 @@ def get_freshair_lowlevel( outputdir, date_s, titles ):
             year, mon, year, mon, day, idx ), range(1, num_titles + 1 ) ) )
 
     songurls = create_mp3_files( date_s, titles )
-    outfiles = [ os.path.join(outputdir, 'freshair.%s.%d.mp3' % 
+    outfiles = [ os.path.join(tmpdir, 'freshair.%s.%d.mp3' % 
                               ( decdate, num + 1) ) for
                  (num, mp3url) in enumerate( songurls ) ]
     
@@ -148,8 +150,9 @@ def get_freshair_lowlevel( outputdir, date_s, titles ):
 
     # download those files
     time0 = time.time()
-    pool = multiprocessing.Pool(processes = len(songurls) )
-    outfiles = list( filter(None, pool.map(_download_file, zip( songurls, outfiles ) ) ) )
+    with multiprocessing.Pool(
+            processes = min( multiprocessing.cpu_count( ), len( songurls ) ) ) as pool:
+        outfiles = list( filter(None, pool.map(_download_file, zip( songurls, outfiles ) ) ) )
 
     # create m4a file
     time0 = time.time()
@@ -177,7 +180,13 @@ def get_freshair_lowlevel( outputdir, date_s, titles ):
     mp4tags.tags['aART'] = [ 'Terry Gross', ]
     mp4tags.save()
     os.chmod( m4afile, 0o644 )
-    return m4afile
+
+    # now copy m4afile to actual directory and remove old directory
+    m4afile_act = os.path.join( outputdir, os.path.basename( m4afile ) )
+    shutil.copy( m4afile, m4afile_act )
+    shutil.rmtree( tmpdir )
+    
+    return m4afile_act
 
 def get_freshair(outputdir, date_s, order_totnum = None,
                  file_data = None, debug = False,
@@ -201,12 +210,11 @@ def get_freshair(outputdir, date_s, order_totnum = None,
         order_totnum = npr_utils.get_order_number_weekday_in_year(date_s)
     order_in_year, tot_in_year = order_totnum
 
-    if file_data is None:
-        file_data = get_freshair_image()
+    if file_data is None: file_data = get_freshair_image()
 
     decdate = date_s.strftime('%d.%m.%Y')
-    m4afile = os.path.join(outputdir, 'NPR.FreshAir.%s.m4a' % decdate )
-    if check_if_exist and os.path.isfile(m4afile):
+    m4afile_init = os.path.join(outputdir, 'NPR.FreshAir.%s.m4a' % decdate )
+    if check_if_exist and os.path.isfile(m4afile_init):
         return
     
     nprURL = npr_utils.get_NPR_URL(date_s, _npr_FreshAir_progid, 
@@ -228,10 +236,10 @@ def get_freshair(outputdir, date_s, order_totnum = None,
     if len( html.find_all('unavailable', { 'value' : 'true' } ) ) != 0:
         unavailable_elem = html.find_all('unavailable', { 'value' : 'true' } )[ 0 ]
         if unavailable_elem.text is None:
-            print( 'Could not create Fresh Air episode for date %s for some reason' %
+            print( 'Could not create Fresh Air episode for date %s because unavailable without a specific reason' %
                    npr_utils.get_datestring( date_s ) )
         else:
-            print( 'Could not create Fresh Air episode for date %s for this reason: %s' % 
+            print( 'Could not create Fresh Air episode for date %s because unavailable for this reason: %s' % 
                    ( npr_utils.get_datestring( date_s ), unavailable_elem.text.strip() ) )
         return
 
@@ -241,9 +249,14 @@ def get_freshair(outputdir, date_s, order_totnum = None,
         print( 'Error, could not find any Fresh Air episodes for date %s.' %
                npr_utils.get_datestring( date_s ) )
         return
+
+    # temporary directory
+    tmpdir = tempfile.mkdtemp( )
+    m4afile_temp = os.path.join(tmpdir, 'NPR.FreshAir.%s.m4a' % decdate )
+    m4afile = os.path.join(outputdir, 'NPR.FreshAir.%s.m4a' % decdate )
     
     titles, songurls = zip(*title_mp3_urls)
-    outfiles = [ os.path.join(outputdir, 'freshair.%s.%d.mp3' % 
+    outfiles = [ os.path.join(tmpdir, 'freshair.%s.%d.mp3' % 
                               ( decdate, num + 1) ) for
                  (num, mp3url) in enumerate( songurls ) ]
     if mp3_exist:
@@ -256,9 +269,9 @@ def get_freshair(outputdir, date_s, order_totnum = None,
     
     # download those files
     time0 = time.time()
-    pool = multiprocessing.Pool(processes = len(songurls) )
     if not mp3_exist:
-        outfiles = list( filter(None, pool.map(_download_file, zip( songurls, outfiles ) ) ) )
+        with multiprocessing.Pool(processes = len(songurls) ) as pool:
+            outfiles = list( filter(None, pool.map(_download_file, zip( songurls, outfiles ) ) ) )
    
     # sox magic command
     #wgdate = date_s.strftime('%d-%b-%Y')
@@ -281,16 +294,15 @@ def get_freshair(outputdir, date_s, order_totnum = None,
     avconv_concat_cmd = 'concat:%s' % '|'.join(fnames)
     split_cmd = [ avconv_exec, '-y', '-i', avconv_concat_cmd, '-ar', '44100', '-ac', '2',
                   '-threads', '%d' % multiprocessing.cpu_count(),
-                  '-strict', 'experimental', '-acodec', 'aac', m4afile ]
+                  '-strict', 'experimental', '-acodec', 'aac', m4afile_temp ]
     proc = subprocess.Popen(split_cmd, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
     stdout_val, stderr_val = proc.communicate()
     
     # remove mp3 files
-    for filename in outfiles:
-        os.remove(filename)
+    for filename in outfiles: os.remove(filename)
     
     # now put in metadata
-    mp4tags = mutagen.mp4.MP4(m4afile)
+    mp4tags = mutagen.mp4.MP4(m4afile_temp)
     mp4tags.tags['\xa9nam'] = [ title, ]
     mp4tags.tags['\xa9alb'] = [ 'Fresh Air From WHYY: %d' % year, ]
     mp4tags.tags['\xa9ART'] = [ 'Terry Gross', ]
@@ -301,6 +313,13 @@ def get_freshair(outputdir, date_s, order_totnum = None,
     mp4tags.tags['\xa9gen'] = [ 'Podcast', ]
     mp4tags.tags['aART'] = [ 'Terry Gross', ]
     mp4tags.save()
-    os.chmod( m4afile, 0o644 )
+    os.chmod( m4afile_temp, 0o644 )
+
+    # copy file to outputdir, and remove directories
+    shutil.copy( m4afile_temp, m4afile )
+    shutil.rmtree( tmpdir )
+    
     return m4afile
+
+
     

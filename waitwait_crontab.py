@@ -3,5 +3,5 @@
 from core.waitwait import waitwait_crontab
 
 if __name__=='__main__':
-    waitwait_crontab()
+    waitwait_crontab( )
     
