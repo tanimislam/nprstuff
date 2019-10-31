@@ -165,7 +165,6 @@ def get_weekday_times_in_year(year, getAll = True):
         
     return inittimes
 
-
 class NoDaemonProcess(multiprocessing.Process):
     """
     magic to get multiprocessing to get processes to be able to start daemons
