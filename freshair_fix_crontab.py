@@ -6,7 +6,7 @@ that are shorter than 30 minutes, and which have a modification time
 more than 90 days before the current time
 """
 import os, sys, signal
-from nprstuff.core import signal_handler, freshair, npr_utils
+from core import signal_handler, freshair, npr_utils
 signal.signal( signal.SIGINT, signal_handler )
 import glob, multiprocessing, mutagen.mp4, time, datetime
 
