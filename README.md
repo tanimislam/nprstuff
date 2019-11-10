@@ -1,3 +1,5 @@
+[![Gitter](https://badges.gitter.im/nprstuff-tanimislam/Lobby.svg)](https://gitter.im/nprstuff-tanimislam/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=body_badge)
+
 I like NPR, so I made some scripts to download my favorite programs from
 NPR. This package started off as a way to download [Fresh
 Air](http://www.npr.org/programs/fresh-air/), [Wait Wait..Don’t Tell
