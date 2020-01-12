@@ -1,10 +1,14 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
-import os, magic, tagpy, subprocess, filecmp
-import mutagen.mp4, urlparse, urllib2, titlecase
-from cStringIO import StringIO
+import os, magic, subprocess, filecmp
+import mutagen.mp4, titlecase, requests
+from urllib.parse import urlparse
+from io import StringIO
 from PIL import Image
 from optparse import OptionParser
+from mutagen.mp3 import MP3
+from mutagen.oggvorbis import OggVorbis
+
 _files_to_convert_from = ( 'application/x-flac',
                            'audio/x-flac',
                            'application/ogg',
@@ -22,8 +26,8 @@ def _can_convert_file(filename):
     return False
 
 def _get_file_data(album_path):
-    if bool( urlparse.urlparse(album_path).netloc):
-        return urllib2.urlopen( album_path).read()
+    if bool( urlparse(album_path).netloc):
+        return requests.get( album_path).content
     else:
         return open( album_path, 'rb' )
 
@@ -79,25 +83,36 @@ def music_to_m4a(filename, tottracks = None,
                  verbose = True, toUpper = True):
     if not _can_convert_file(filename):
         raise ValueError("Error, cannot convert %s to m4a." % filename)
-    
-    tags = tagpy.FileRef(filename).tag()
-    artist = tags.artist
-    title = tags.title
-    if toUpper:
-        title = titlecase.titlecase( tags.title )
-    trackno = tags.track
+    #
+    if os.path.basename( filename ).lower( ).endswith( '.mp3' ):
+        tags = MP3( filename ).tags
+        artist = tags[ 'TPE1' ].text[ 0 ]
+        title = tags[ 'TIT2' ].text[ 0 ]
+        trackno = int( tags[ 'TRCK' ].text[ 0 ] )
+    elif os.path.basename( filename ).lower( ).endswith( '.ogg' ):
+        tags = OggVorbis( filename ).tags
+        artist = max( tags[ 'artist' ] )
+        title = max( tags[ 'title' ] )
+        trackno = int( max( tags[ 'tracknumber' ] ) )
+    elif os.path.basename( filename ).lower( ).endswith( '.flac' ):
+        tags = FLAC( filename ).tags
+        artist = max( tags[ 'artist' ] )
+        title = max( tags[ 'title' ] )
+        trackno = int( max( tags[ 'TRACKNUMBER' ] ) )
+    #
+    if toUpper: title = titlecase.titlecase( title )
+
     #
     if outfile is None:
         outfile = '%s.%s.m4a' % ( artist, title )
     
-    exec_path = [ '/usr/bin/avconv', '-y', '-i', filename, '-map', '0:0', 
+    exec_path = [ '/usr/bin/ffmpeg', '-y', '-i', filename, '-map', '0:0', 
                   '-strict', 'experimental', '-aq', '400', outfile ]
-    proc = subprocess.Popen( exec_path, stdout = subprocess.PIPE,
-                             stderr = subprocess.PIPE)
+    proc = subprocess.Popen(
+        exec_path, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
     stdout_val, stderr_val = proc.communicate()
-    if verbose:
-        print stdout_val
-
+    if verbose: print( stdout_val )
+    #
     mp4tags = mutagen.mp4.MP4(outfile)
     mp4tags['\xa9nam'] = [ title, ]
     if tottracks is not None:
@@ -115,7 +130,8 @@ def music_to_m4a(filename, tottracks = None,
         file_data = _get_file_data( album_path )
         fmttype = _get_file_type( file_data)
         if fmttype is not None:
-            mp4tags.tags['covr'] = [ mutagen.mp4.MP4Cover( file_data, fmttype ), ]
+            mp4tags.tags['covr'] = [
+                mutagen.mp4.MP4Cover( file_data, fmttype ), ]
                                                            
     mp4tags.save()
 
