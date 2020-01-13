@@ -2,11 +2,12 @@ import os, sys, datetime, titlecase, requests
 import codecs, feedparser, glob, time, logging
 from mutagen.id3 import APIC, TDRC, TALB, COMM, TRCK, TPE2, TPE1, TIT2, TCON, ID3
 from bs4 import BeautifulSoup
+from urllib.parse import urljoin
 
 _talPICURL = 'https://upload.wikimedia.org/wikipedia/commons/8/8a/Thisamericanlife-wbez.png'
 _talurl = 'http://feed.thisamericanlife.org/talpodcast'
 
-def get_americanlife_info(epno, throwException = True, extraStuff = None, verify = True, debug = False,
+def get_americanlife_info(epno, throwException = True, extraStuff = None, verify = True, dump = False,
                           directory = '.' ):
     """
     Returns a tuple of title, year given the episode number for This American Life.
@@ -14,9 +15,9 @@ def get_americanlife_info(epno, throwException = True, extraStuff = None, verify
 
     # first see if this episode of this american life exists...
     if extraStuff is None:
-        resp = requests.get( 'http://www.thisamericanlife.org/radio-archives/episode/%d' % epno, verify = verify )
+        resp = requests.get( 'https://www.thisamericanlife.org/radio-archives/episode/%d' % epno, verify = verify )
     else:
-        resp = requests.get( 'http://www.thisamericanlife.org/radio-archives/episode/%d/%s' % ( epno, extraStuff ),
+        resp = requests.get( 'https://www.thisamericanlife.org/radio-archives/episode/%d/%s' % ( epno, extraStuff ),
                              verify = verify )
     if resp.status_code != 200:
         raise ValueError("Error, could not find This American Life episode %d, because could not open webpage." % epno)
@@ -26,7 +27,7 @@ def get_americanlife_info(epno, throwException = True, extraStuff = None, verify
         html = BeautifulSoup( resp.text.encode(encoding=enc ), 'lxml' )
     else:
         html = BeautifulSoup( resp.text, 'lxml' )
-    if debug:
+    if dump:
         assert( os.path.isdir( directory ) )
         with open( os.path.join( directory, 'PRI.ThisAmericanLife.%03d.xml' % epno ), 'w') as openfile:
             openfile.write('%s\n' % html.prettify( ) )
@@ -42,6 +43,7 @@ def get_americanlife_info(epno, throwException = True, extraStuff = None, verify
     #
     title_elem_list = html.find_all('div', { 'class' : 'episode-title' } )
     if len(title_elem_list) != 1:
+        logging.info("Error, cannot find date and title for This American Life episode #%d." % epno)
         if throwException:
             raise ValueError("Error, cannot find date and title for This American Life episode #%d." % epno)
         else: return None
@@ -49,8 +51,38 @@ def get_americanlife_info(epno, throwException = True, extraStuff = None, verify
     title = title.replace('Promo', '').strip( )
     return title, year
 
+#
+## see if I can find the URL for TAL by searching through the ALL page
+def get_TAL_URL( epno, verify = True ):
+    url_epelem = 'https://www.thisamericanlife.org/radio-archives/episode/%d' % epno
+    response = requests.get( url_epelem, verify = verify )
+    if not response.ok:
+        logging.info( 'ERROR, %s not accessible' % url_epelem )
+        return None
+    html = BeautifulSoup( response.content, 'lxml' )
+    #
+    ## now find podcast URL from the enclosing A element whose class has text Download
+    def is_download_href( href_elem ):
+        if 'href' not in href_elem.attrs: return False
+        valid_label_elems = list(
+            filter(lambda elem: 'class' in elem.attrs and elem['class'] == [ 'label' ], href_elem.find_all('span' ) ) )
+        if len( valid_label_elems ) != 1: return False
+        #
+        valid_label_elem = valid_label_elems[ 0 ]
+        return valid_label_elem.text.strip( ) == 'Download'
+
+    podcast_URL_elems = list(filter(is_download_href, html.find_all('a')))
+    if len( podcast_URL_elems ) != 1:
+        logging.info( 'ERROR, could not find MP3 podcast URL for episode %d, with page %s.' % (
+            epno, url_epelem ) )
+        return None
+    podcast_URL_elem = podcast_URL_elems[ 0 ]
+    podcast_URL = podcast_URL_elem['href']
+    return podcast_URL
+                                        
+
 def get_american_life(epno, directory = '/mnt/media/thisamericanlife', extraStuff = None, verify = True,
-                      debug = False ):
+                      dump = False ):
     """
     Downloads an episode of This American Life into a given directory.
     The description of which URL the episodes are downloaded from is given in
@@ -61,29 +93,47 @@ def get_american_life(epno, directory = '/mnt/media/thisamericanlife', extraStuf
     Otherwise, the URL is http://www.podtrac.com/pts/redirect.mp3/podcast.thisamericanlife.org/podcast/epno.mp3
     """
     try:
-        tup = get_americanlife_info(epno, extraStuff = extraStuff, verify = verify, debug = debug,
+        tup = get_americanlife_info(epno, extraStuff = extraStuff, verify = verify, dump = dump,
                                     directory = directory )
-        if debug: return
+        if dump: return
         title, year = tup
     except ValueError as e:
         print(e)
         print('Cannot find date and title for This American Life episode #%d.' % epno)
         return
 
+    def get_resp( epno ):
+        urlopn = 'http://www.podtrac.com/pts/redirect.mp3/podcast.thisamericanlife.org/podcast/%d.mp3' % epno
+        resp = requests.get( urlopn, stream = True, verify = verify )
+        if resp.ok: return resp
+        #
+        logging.info( 'PLAN B: choose second choice URL for TAL episode %d.' % epno )
+        podcast_URL = get_TAL_URL( epno, verify = verify )
+        if podcast_URL is None:
+            logging.info( 'PLAN B: second choice URL for TAL episode %d not work.' % epno )
+            return None
+        resp = requests.get( podcast_URL, stream = True, verify = verify )
+        if resp.ok: return resp
+        logging.info( 'PLAN B: TAL episode %d URL = %s not work.' % (
+            epno, podcast_URL ) )
+        return None
+
     if not os.path.isdir(directory):
+        logging.info( "Error, %s is not a directory." % directory )
         raise ValueError("Error, %s is not a directory." % directory)
     outfile = os.path.join(directory, 'PRI.ThisAmericanLife.%03d.mp3' % epno)    
     urlopn = 'http://www.podtrac.com/pts/redirect.mp3/podcast.thisamericanlife.org/podcast/%d.mp3' % epno
-
-    resp = requests.get( urlopn, stream = True, verify = verify )
-    if not resp.ok:
+    
+    resp = get_resp( epno )
+    if resp is None:
+        logging.info( 'Error, 1st and 2nd choice URL for TAL podcasts for episode %d not working.' % epno )
         urlopn = 'http://audio.thisamericanlife.org/jomamashouse/ismymamashouse/%d.mp3' % epno
         resp = requests.get( urlopn, stream = True, verify = verify )
         if not resp.ok:
             print("Error, could not download This American Life episode #%d. Exiting..." % epno)
             return
     with open( outfile, 'wb') as openfile:
-        for chunk in resp.iter_content(65536):
+        for chunk in resp.iter_content( 1 << 16 ):
             openfile.write( chunk )
             
     mp3tags = ID3( )
