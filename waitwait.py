@@ -3,7 +3,7 @@
 from core import signal_handler
 import logging, datetime, signal
 signal.signal( signal.SIGINT, signal_handler )
-from optparse import OptionParser
+from argparse import ArgumentParser
 from core.waitwait import get_waitwait
 from core.npr_utils import get_datestring, get_time_from_datestring
 
@@ -19,23 +19,24 @@ def _get_last_saturday(datetime_s):
     return date_sat
 
 if __name__=='__main__':
-    parser = OptionParser()
-    parser.add_option('--dirname', dest='dirname', type=str,
-                      action = 'store', default = '/mnt/media/waitwait',
-                      help = 'Name of the directory to store the file. Default is %s.' %
-                      '/mnt/media/waitwait')
-    parser.add_option('--date', dest='date', type=str,
-                      action = 'store', default = get_datestring(_get_last_saturday( datetime.datetime.now())),
-                      help = 'The date, in the form of "January 1, 2014." The default is last Saturday, %s.' %
-                      get_datestring( _get_last_saturday( datetime.datetime.now() ) ) )
-    parser.add_option('--debugonly', dest='debugonly', action='store_true', default = False,
-                      help = 'If chosen, download the NPR XML data sheet for this Wait Wait episode.')
-    parser.add_option('--noverify', dest='do_noverify', action='store_true', default = False,
-                      help = 'If chosen, Do not verify the SSL connection.')
-    parser.add_option('--justfix', dest='do_justfix', action='store_true', default = False,
-                      help = "If chosen, just fix the title of an existing NPR Wait Wait episode's file.")
-    opts, args = parser.parse_args()
-    if opts.debugonly: logging.basicConfig( level = logging.DEBUG )
-    fname = get_waitwait( opts.dirname, get_time_from_datestring( opts.date ),
-                          debugonly = opts.debugonly, verify = not opts.do_noverify,
-                          justFix = opts.do_justfix )
+    parser = ArgumentParser( )
+    parser.add_argument('--dirname', dest='dirname', type=str,
+                        action = 'store', default = '/mnt/media/waitwait',
+                        help = 'Name of the directory to store the file. Default is %s.' %
+                        '/mnt/media/waitwait')
+    parser.add_argument('--date', dest='date', type=str,
+                        action = 'store', default = get_datestring(_get_last_saturday( datetime.datetime.now())),
+                        help = 'The date, in the form of "January 1, 2014." The default is last Saturday, %s.' %
+                        get_datestring( _get_last_saturday( datetime.datetime.now() ) ) )
+    parser.add_argument('--debugonly', dest='debugonly', action='store_true', default = False,
+                        help = 'If chosen, download the NPR XML data sheet for this Wait Wait episode.')
+    parser.add_argument('--noverify', dest='do_verify', action='store_false', default = True,
+                        help = 'If chosen, Do not verify the SSL connection.')
+    parser.add_argument('--justfix', dest='do_justfix', action='store_true', default = False,
+                        help = "If chosen, just fix the title of an existing NPR Wait Wait episode's file.")
+    args = parser.parse_args( )
+    logger = logging.getLogger( )
+    if args.debugonly: logger.basicConfig( level = logging.DEBUG )
+    fname = get_waitwait( args.dirname, get_time_from_datestring( args.date ),
+                          debugonly = args.debugonly, verify = args.do_verify,
+                          justFix = args.do_justfix )

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import pyexiv2, glob, time, os, datetime
-from optparse import OptionParser
+from argparse import ArgumentParser
 from dateutil.relativedelta import relativedelta
 from multiprocessing import Pool, cpu_count
 
@@ -82,21 +82,22 @@ def change_date_on_dir(dirname, minus = False, actdate = None):
         len(jpegfilenames), dirname, time.time() - time0 ) )
 
 if __name__=='__main__':
-    parser = OptionParser()
-    parser.add_option('--dirname', dest='dirname', action='store', type=str,
-                      help = 'Name of the directory to look for jpeg files.')
-    parser.add_option('--movs', dest='do_movs', action='store_true',
-                      default = False,
-                      help = 'If chosen, process MOV files instead.')
-    parser.add_option('--minus', dest="do_minus", action='store_true',
-                      default = False,
-                      help = 'If chosen, subtract a year from the files.') 
-    opts, args = parser.parse_args()
-    if opts.dirname is None:
+    parser = ArgumentParser( )
+    parser.add_argument('--dirname', dest='dirname', action='store', type=str,
+                        help = 'Name of the directory to look for jpeg files.',
+                        required = True )
+    parser.add_argument('--movs', dest='do_movs', action='store_true',
+                        default = False,
+                        help = 'If chosen, process MOV files instead.')
+    parser.add_argument('--minus', dest="do_minus", action='store_true',
+                        default = False,
+                        help = 'If chosen, subtract a year from the files.') 
+    args = parser.parse_args( )
+    if args.dirname is None:
         raise ValueError("Error, must give a directory name.")
-    if not opts.do_movs:
-        change_date_on_dir( os.path.expanduser( opts.dirname ),
-                            minus = opts.do_minus )
+    if not args.do_movs:
+        change_date_on_dir( os.path.expanduser( args.dirname ),
+                            minus = args.do_minus )
     else:
-        change_date_on_dir_movie( os.path.expanduser( opts.dirname),
-                                  minus = opts.do_minus )
+        change_date_on_dir_movie( os.path.expanduser( args.dirname),
+                                  minus = args.do_minus )

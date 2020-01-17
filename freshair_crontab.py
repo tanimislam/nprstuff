@@ -20,5 +20,5 @@ def freshair_crontab():
                           check_if_exist = True)
     
 if __name__=='__main__':
-    freshair_crontab()
+    freshair_crontab( )
     
