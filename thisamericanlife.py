@@ -1,24 +1,28 @@
 #!/usr/bin/env python3
 
-import os
-from optparse import OptionParser
+import os, logging
+from argparse import ArgumentParser
 from core.thisamericanlife import get_american_life
 
 if __name__=='__main__':
-    parser = OptionParser()
-    parser.add_option('--episode', dest='episode', type=int, action='store', default = 150,
-                      help = 'Episode number of This American Life to download. Default is 150.')
-    parser.add_option('--directory', dest='directory', type=str, action='store',
-                      default = '/mnt/media/thisamericanlife',
-                      help = 'Directory into which to download This American Life episodes. Default is %s.' %
-                      '/mnt/media/thisamericanlife')
-    parser.add_option('--extra', dest='extraStuff', type=str, action='store',
-                      help = 'If defined, some extra stuff in the URL to get a This American Life episode.')
-    parser.add_option('--noverify', dest = 'do_verify', action = 'store_false', default = True,
-                      help = 'If chosen, then do not verify the SSL connection.')
-    parser.add_option('--debug', dest='do_debug', action = 'store_true', default = False,
-                      help = 'If chosen, just download the TAL episode into a file into the specified directory.')
-    options, args = parser.parse_args()
-    direct = os.path.expanduser( options.directory )
-    get_american_life(options.episode, directory=direct, extraStuff = options.extraStuff,
-                      verify = options.do_verify, debug = options.do_debug )
+    parser = ArgumentParser( )
+    parser.add_argument( '--episode', dest='episode', type=int, action='store', default = 150,
+                         help = 'Episode number of This American Life to download. Default is 150.' )
+    parser.add_argument( '--directory', dest='directory', type=str, action='store',
+                         default = '/mnt/media/thisamericanlife',
+                         help = 'Directory into which to download This American Life episodes. Default is %s.' %
+                         '/mnt/media/thisamericanlife' )
+    parser.add_argument('--extra', dest='extraStuff', type=str, action='store',
+                        help = 'If defined, some extra stuff in the URL to get a This American Life episode.')
+    parser.add_argument('--noverify', dest = 'do_verify', action = 'store_false', default = True,
+                        help = 'If chosen, then do not verify the SSL connection.')
+    parser.add_argument('--dump', dest='do_dump', action = 'store_true', default = False,
+                        help = 'If chosen, just download the TAL episode XML into a file into the specified directory.')
+    parser.add_argument('--info', dest='do_info', action = 'store_true', default = False,
+                        help = 'If chosen, then do INFO logging.' )
+    args = parser.parse_args( )
+    logger = logging.getLogger( )
+    if args.do_info: logger.setLevel( logging.INFO )
+    direct = os.path.expanduser( args.directory )
+    get_american_life(args.episode, directory=direct, extraStuff = args.extraStuff,
+                      verify = args.do_verify, dump = args.do_dump )

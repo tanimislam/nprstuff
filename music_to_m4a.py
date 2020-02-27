@@ -1,10 +1,14 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
-import os, magic, tagpy, subprocess, filecmp
-import mutagen.mp4, urlparse, urllib2, titlecase
-from cStringIO import StringIO
+import os, magic, subprocess, filecmp
+import mutagen.mp4, titlecase, requests
+from urllib.parse import urlparse
+from io import StringIO
 from PIL import Image
-from optparse import OptionParser
+from argparse import ArgumentParser
+from mutagen.mp3 import MP3
+from mutagen.oggvorbis import OggVorbis
+
 _files_to_convert_from = ( 'application/x-flac',
                            'audio/x-flac',
                            'application/ogg',
@@ -22,8 +26,8 @@ def _can_convert_file(filename):
     return False
 
 def _get_file_data(album_path):
-    if bool( urlparse.urlparse(album_path).netloc):
-        return urllib2.urlopen( album_path).read()
+    if bool( urlparse(album_path).netloc):
+        return requests.get( album_path).content
     else:
         return open( album_path, 'rb' )
 
@@ -79,25 +83,36 @@ def music_to_m4a(filename, tottracks = None,
                  verbose = True, toUpper = True):
     if not _can_convert_file(filename):
         raise ValueError("Error, cannot convert %s to m4a." % filename)
-    
-    tags = tagpy.FileRef(filename).tag()
-    artist = tags.artist
-    title = tags.title
-    if toUpper:
-        title = titlecase.titlecase( tags.title )
-    trackno = tags.track
+    #
+    if os.path.basename( filename ).lower( ).endswith( '.mp3' ):
+        tags = MP3( filename ).tags
+        artist = tags[ 'TPE1' ].text[ 0 ]
+        title = tags[ 'TIT2' ].text[ 0 ]
+        trackno = int( tags[ 'TRCK' ].text[ 0 ] )
+    elif os.path.basename( filename ).lower( ).endswith( '.ogg' ):
+        tags = OggVorbis( filename ).tags
+        artist = max( tags[ 'artist' ] )
+        title = max( tags[ 'title' ] )
+        trackno = int( max( tags[ 'tracknumber' ] ) )
+    elif os.path.basename( filename ).lower( ).endswith( '.flac' ):
+        tags = FLAC( filename ).tags
+        artist = max( tags[ 'artist' ] )
+        title = max( tags[ 'title' ] )
+        trackno = int( max( tags[ 'TRACKNUMBER' ] ) )
+    #
+    if toUpper: title = titlecase.titlecase( title )
+
     #
     if outfile is None:
         outfile = '%s.%s.m4a' % ( artist, title )
     
-    exec_path = [ '/usr/bin/avconv', '-y', '-i', filename, '-map', '0:0', 
+    exec_path = [ '/usr/bin/ffmpeg', '-y', '-i', filename, '-map', '0:0', 
                   '-strict', 'experimental', '-aq', '400', outfile ]
-    proc = subprocess.Popen( exec_path, stdout = subprocess.PIPE,
-                             stderr = subprocess.PIPE)
+    proc = subprocess.Popen(
+        exec_path, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
     stdout_val, stderr_val = proc.communicate()
-    if verbose:
-        print stdout_val
-
+    if verbose: print( stdout_val )
+    #
     mp4tags = mutagen.mp4.MP4(outfile)
     mp4tags['\xa9nam'] = [ title, ]
     if tottracks is not None:
@@ -115,42 +130,43 @@ def music_to_m4a(filename, tottracks = None,
         file_data = _get_file_data( album_path )
         fmttype = _get_file_type( file_data)
         if fmttype is not None:
-            mp4tags.tags['covr'] = [ mutagen.mp4.MP4Cover( file_data, fmttype ), ]
+            mp4tags.tags['covr'] = [
+                mutagen.mp4.MP4Cover( file_data, fmttype ), ]
                                                            
     mp4tags.save()
 
 if __name__=='__main__':
-    parser = OptionParser()
-    parser.add_option('--inputfile', dest='inputfile', type=str, action='store',
-                      help = 'Name of the input audio file to convert.')
-    parser.add_option('--outfile', dest='outfile', type=str, action='store',
-                      help = 'Optional name of the output file.')
-    parser.add_option('--tottracks', dest='tottracks', type=int, action='store',
-                      help = 'Optional total number of tracks in album of which song is a part.')
-    parser.add_option('--albumloc', dest='albumloc', type=str, action='store',
-                      help = 'Optional path to location of the album cover image file. Must be in JPEG or PNG.')
-    parser.add_option('--quiet', dest='quiet', action='store_true', default = False,
-                      help = 'If chosen, then verbosely print output of processing.')
-    parser.add_option('--rename', dest='do_rename', action='store_true', default = False,
-                      help = 'If chosen, simply rename the m4a file to the form <artist>.<song title>.m4a')
-    parser.add_option('--notitle', dest='do_notitle', action='store_true', default = False,
-                      help = 'If chosen, do not use titlecase functionality to fix the titles of songs.')
-    opts, args = parser.parse_args()
-    if opts.inputfile is None:
+    parser = ArgumentParser( )
+    parser.add_argument('--inputfile', dest='inputfile', type=str, action='store',
+                        help = 'Name of the input audio file to convert.', required = True )
+    parser.add_argument('--outfile', dest='outfile', type=str, action='store',
+                        help = 'Optional name of the output file.')
+    parser.add_argument('--tottracks', dest='tottracks', type=int, action='store',
+                        help = 'Optional total number of tracks in album of which song is a part.')
+    parser.add_argument('--albumloc', dest='albumloc', type=str, action='store',
+                        help = 'Optional path to location of the album cover image file. Must be in JPEG or PNG.')
+    parser.add_argument('--quiet', dest='quiet', action='store_true', default = False,
+                        help = 'If chosen, then verbosely print output of processing.')
+    parser.add_argument('--rename', dest='do_rename', action='store_true', default = False,
+                        help = 'If chosen, simply rename the m4a file to the form <artist>.<song title>.m4a')
+    parser.add_argument('--notitle', dest='do_notitle', action='store_true', default = False,
+                        help = 'If chosen, do not use titlecase functionality to fix the titles of songs.')
+    args = parser.parse_args()
+    if args.inputfile is None:
         raise ValueError("Error, input file must be defined.")
-    if opts.outfile is not None and opts.outfile.endswith('.m4a'):
-        raise ValueError("Error, given output file = %s does not end in .m4a." % opts.outfile)
-    if opts.tottracks is not None and opts.tottracks <= 0:
-        raise ValueError("Error, given total number of tracks = %d <= 0." % opts.tottracks)
-    verbose = not opts.quiet
+    if args.outfile is not None and args.outfile.endswith('.m4a'):
+        raise ValueError("Error, given output file = %s does not end in .m4a." % args.outfile)
+    if args.tottracks is not None and args.tottracks <= 0:
+        raise ValueError("Error, given total number of tracks = %d <= 0." % args.tottracks)
+    verbose = not args.quiet
     
-    if not opts.do_rename:
-        music_to_m4a( opts.inputfile,
-                      tottracks = opts.tottracks,
-                      album_path = opts.albumloc,
-                      outfile = opts.outfile,
+    if not args.do_rename:
+        music_to_m4a( args.inputfile,
+                      tottracks = args.tottracks,
+                      album_path = args.albumloc,
+                      outfile = args.outfile,
                       verbose = verbose,
-                      toUpper = not opts.do_notitle )
+                      toUpper = not args.do_notitle )
     else:
-        rename_m4a( opts.inputfile )
+        rename_m4a( args.inputfile )
                   

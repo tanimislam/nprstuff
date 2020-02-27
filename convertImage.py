@@ -3,7 +3,7 @@
 import requests, os, gzip
 from PIL import Image
 from io import StringIO
-from optparse import OptionParser
+from argparse import ArgumentParser
 from PyQt4.QtSvg import QSvgRenderer
 from PyQt4.QtCore import QByteArray
 from PyPDF2 import PdfFileReader
@@ -99,30 +99,30 @@ def get_png_image_frompdf( input_pdf_file, newWidth = None, verify = True ):
     return img
     
 if __name__=='__main__':
-    parser = OptionParser()
-    parser.add_option('--filename', dest='filename', type=str, action='store',
-                      help = 'Name of the input SVG file.')
-    parser.add_option('--width', dest='width', type=int, action='store',
-                      help = 'If defined, new width of the file. Optional')
-    parser.add_option('--pdf', dest='do_pdf', action='store_true', default = False,
-                      help = 'If chosen, convert a PDF, instead of SVG(Z), file into PNG.')
-    parser.add_option('--png', dest='do_png', action='store_true', default = False,
-                      help = 'If chosen, convert a PNG, instead of SVG(Z), file into a new PNG.')
-    parser.add_option('--noverify', dest='do_noverify', action='store_true', default = False,
-                      help = 'If chosen, do not verify the SSL connection.')
-    opts, args = parser.parse_args()
-    assert( opts.filename is not None )
-    assert(len(filter(lambda tok: tok is True, ( opts.do_png, opts.do_pdf ) ) ) <= 1 )
+    parser = ArgumentParser( )
+    parser.add_argument('--filename', dest='filename', type=str, action='store',
+                        help = 'Name of the input SVG file.', required = True )
+    parser.add_argument('--width', dest='width', type=int, action='store',
+                        help = 'If defined, new width of the file. Optional')
+    parser.add_argument('--pdf', dest='do_pdf', action='store_true', default = False,
+                        help = 'If chosen, convert a PDF, instead of SVG(Z), file into PNG.')
+    parser.add_argument('--png', dest='do_png', action='store_true', default = False,
+                        help = 'If chosen, convert a PNG, instead of SVG(Z), file into a new PNG.')
+    parser.add_argument('--noverify', dest='do_noverify', action='store_true', default = False,
+                        help = 'If chosen, do not verify the SSL connection.')
+    args = parser.parse_args( )
+    assert( args.filename is not None )
+    assert(len(filter(lambda tok: tok is True, ( args.do_png, args.do_pdf ) ) ) <= 1 )
     #
     ##
-    if opts.do_pdf:
-        img = get_png_image_frompdf( opts.filename, newWidth = opts.width, verify = not opts.do_noverify )
-        imgFile = os.path.basename( opts.filename ).replace('.pdf', '.png' )
-    elif opts.do_png:
-        img = get_png_image_frompng( opts.filename, newWidth = opts.width, verify = not opts.do_noverify )
-        imgFile = os.path.basename( opts.filename ).replace( '.png', '_new.png' )
+    if args.do_pdf:
+        img = get_png_image_frompdf( args.filename, newWidth = args.width, verify = not args.do_noverify )
+        imgFile = os.path.basename( args.filename ).replace('.pdf', '.png' )
+    elif args.do_png:
+        img = get_png_image_frompng( args.filename, newWidth = args.width, verify = not args.do_noverify )
+        imgFile = os.path.basename( args.filename ).replace( '.png', '_new.png' )
     else:
-        img = get_png_image( opts.filename, newWidth = opts.width, verify = not opts.do_noverify )        
-        imgFile = os.path.basename( opts.filename ).replace('.svgz', '.png' ).replace('.svg', '.png')
-    dirName = os.path.dirname( os.path.abspath( opts.filename ) )  
+        img = get_png_image( args.filename, newWidth = args.width, verify = not args.do_noverify )        
+        imgFile = os.path.basename( args.filename ).replace('.svgz', '.png' ).replace('.svg', '.png')
+    dirName = os.path.dirname( os.path.abspath( args.filename ) )  
     img.save( os.path.join( dirName, imgFile ) )
