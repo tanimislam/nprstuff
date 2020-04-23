@@ -7,10 +7,10 @@ from distutils.spawn import find_executable
 _all_possible_colornames = set(
     reduce( lambda y, x: y + x,
             map(lambda lst: list( lst.keys( ) ),
-                [ webcolors.html4_names_to_hex,
-                  webcolors.css2_names_to_hex,
-                  webcolors.css21_names_to_hex,
-                  webcolors.css3_names_to_hex ] ) ) )
+                [ webcolors.HTML4_NAMES_TO_HEX,
+                  webcolors.CSS2_NAMES_TO_HEX,
+                  webcolors.CSS21_NAMES_TO_HEX,
+                  webcolors.CSS3_NAMES_TO_HEX ] ) ) )
 def hex_to_rgb(value):
     value = value.lstrip('#')
     lv = len(value)
