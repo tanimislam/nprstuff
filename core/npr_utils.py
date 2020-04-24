@@ -1,9 +1,9 @@
-import calendar, numpy, time, datetime, os, xdg.BaseDirectory
+import calendar, numpy, time, datetime, os
 import multiprocessing, multiprocessing.pool
 from distutils.spawn import find_executable
-import configparser as ConfigParser
 import urllib.parse as urlparse
 from urllib.parse import urlencode
+from configparser import ConfigParser
 
 def find_necessary_executables():
     ffmpeg_exec = None
@@ -14,34 +14,36 @@ def find_necessary_executables():
     #
     return { 'avconv' : ffmpeg_exec }
 
-def store_cloudconvert_api_key( cloudconvert_API_key ):
+def store_api_key( npr_API_key ):
     resource = 'nprstuff'
     filename = '%s.conf' % resource
-    baseConfDir = xdg.BaseDirectory.save_config_path( resource )
+    baseConfDir = os.path.abspath(
+      os.path.expanduser( '~/.config/%s' % resource ) )
     absPath = os.path.join( baseConfDir, filename )
     if os.path.isdir( absPath ):
         shutil.rmtree( absPath )
     if not os.path.isfile( absPath ):
-        cparser = ConfigParser.RawConfigParser( )
+        cparser = RawConfigParser( )
     else:
-        cparser = ConfigParser.ConfigParser( )
+        cparser = ConfigParser( )
         cparser.read( absPath )
-
-    cparser.remove_section( 'CLOUDCONVERT_DATA' )
-    cparser.add_section( 'CLOUDCONVERT_DATA' )
-    cparser.set( 'CLOUDCONVERT_DATA', 'apikey', cloudconvert_API_key )
+    #
+    cparser.remove_section( 'NPR_DATA' )
+    cparser.add_section('NPR_DATA')
+    cparser.set('NPR_DATA', 'apikey', npr_API_key)
     with open( absPath, 'wb') as openfile:
         cparser.write( openfile )
     os.chmod( absPath, 0o600 )
-
+  
 def get_api_key():
     resource = 'nprstuff'
     filename = '%s.conf' % resource
-    baseConfDir = xdg.BaseDirectory.save_config_path( resource )
+    baseConfDir = os.path.abspath(
+      os.path.expanduser( '~/.config/%s' % resource ) )
     absPath = os.path.join( baseConfDir, filename )
     if not os.path.isfile( absPath ):
         raise ValueError("Error, default configuration file = %s does not exist." % absPath )
-    cparser = ConfigParser.ConfigParser()
+    cparser = ConfigParser()
     cparser.read( absPath )
     if not cparser.has_section('NPR_DATA'):
         raise ValueError("Error, configuration file has not defined NPR_DATA section.")
@@ -49,7 +51,7 @@ def get_api_key():
         raise ValueError("Error, configuration files has not defined an apikey.")
     npr_api_key = cparser.get('NPR_DATA', 'apikey')
     return npr_api_key
-
+  
 def get_decdate(date_s):
     return date_s.strftime('%d.%m.%Y')
 

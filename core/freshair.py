@@ -202,12 +202,12 @@ def get_freshair(outputdir, date_s, order_totnum = None,
 
     # check if we have found avconv
     if exec_dict is None:
-        exec_dict = npr_utils.find_necessary_executables()
+      exec_dict = npr_utils.find_necessary_executables()
     assert( exec_dict is not None )
     avconv_exec = exec_dict['avconv']
     
     if order_totnum is None:
-        order_totnum = npr_utils.get_order_number_weekday_in_year(date_s)
+      order_totnum = npr_utils.get_order_number_weekday_in_year(date_s)
     order_in_year, tot_in_year = order_totnum
 
     if file_data is None: file_data = get_freshair_image()
@@ -217,12 +217,23 @@ def get_freshair(outputdir, date_s, order_totnum = None,
     if check_if_exist and os.path.isfile(m4afile_init):
         return
     
-    nprURL = npr_utils.get_NPR_URL(date_s, _npr_FreshAir_progid, 
-                                   npr_utils.get_api_key() )
+    #nprURL = npr_utils.get_NPR_URL(date_s, _npr_FreshAir_progid, 
+    #                               npr_utils.get_api_key() )
     year = date_s.year
     
     # download this data into a BeautifulSoup object
-    resp = requests.get( nprURL )
+    resp = requests.get( 'https://api.npr.org/query',
+                         params = {
+                           'id'  : _npr_FreshAir_progid,
+                           'date': date_s.strftime('%Y-%m-%d' ),
+                           'dateType' : 'story',
+                           'output' : 'NPRML',
+                           'apiKey' : npr_utils.get_api_key( ) } )
+    # resp = requests.get( nprURL )
+    if resp.status_code != 200:
+      logging.debug('ERROR GETTING FRESH AIR STORY FOR %s' %
+                    date_s.strftime('%d %B %Y' ) )
+      return None
     html = BeautifulSoup( resp.content, 'lxml' )
     
     if debug:

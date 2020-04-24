@@ -1,48 +1,27 @@
 import requests, os, gzip, magic
 from PIL import Image
 from io import BytesIO
-from PyQt4.QtSvg import QSvgRenderer
-from PyQt4.QtCore import QByteArray
+from PyQt5.QtSvg import QSvgRenderer
+from PyQt5.QtCore import QByteArray
 from PyPDF2 import PdfFileReader
 from configparser import ConfigParser, RawConfigParser
 
 def get_cloudconvert_api_key():
-    resource = 'nprstuff'
-    filename = '%s.conf' % resource
-    baseConfDir = os.path.abspath(
-      os.path.expanduser( '~/.config/%s' % resource ) )
-    absPath = os.path.join( baseConfDir, filename )
-    if not os.path.isfile( absPath ):
-        raise ValueError("Error, default configuration file = %s does not exist." % absPath )
-    cparser = ConfigParser( )
-    cparser.read( absPath )
-    if not cparser.has_section( 'CLOUDCONVERT_DATA' ):
-        raise ValueError("Error, configuration file has not defined CLOUDCONVERT_DATA section.")
-    if not cparser.has_option( 'CLOUDCONVERT_DATA', 'apikey' ):
-        raise ValueError("Error, configuration file has not defined an apikey.")
-    cloudconvert_api_key = cparser.get( "CLOUDCONVERT_DATA", "apikey" )
-    return cloudconvert_api_key
-        
-def store_api_key(npr_API_key):
-    resource = 'nprstuff'
-    filename = '%s.conf' % resource
-    baseConfDir = os.path.abspath(
-      os.path.expanduser( '~/.config/%s' % resource ) )
-    absPath = os.path.join( baseConfDir, filename )
-    if os.path.isdir( absPath ):
-        shutil.rmtree( absPath )
-    if not os.path.isfile( absPath ):
-        cparser = RawConfigParser( )
-    else:
-        cparser = ConfigParser( )
-        cparser.read( absPath )
-    #
-    cparser.remove_section( 'NPR_DATA' )
-    cparser.add_section('NPR_DATA')
-    cparser.set('NPR_DATA', 'apikey', npr_API_key)
-    with open( absPath, 'wb') as openfile:
-        cparser.write( openfile )
-    os.chmod( absPath, 0o600 )
+  resource = 'nprstuff'
+  filename = '%s.conf' % resource
+  baseConfDir = os.path.abspath(
+    os.path.expanduser( '~/.config/%s' % resource ) )
+  absPath = os.path.join( baseConfDir, filename )
+  if not os.path.isfile( absPath ):
+    raise ValueError("Error, default configuration file = %s does not exist." % absPath )
+  cparser = ConfigParser( )
+  cparser.read( absPath )
+  if not cparser.has_section( 'CLOUDCONVERT_DATA' ):
+    raise ValueError("Error, configuration file has not defined CLOUDCONVERT_DATA section.")
+  if not cparser.has_option( 'CLOUDCONVERT_DATA', 'apikey' ):
+    raise ValueError("Error, configuration file has not defined an apikey.")
+  cloudconvert_api_key = cparser.get( "CLOUDCONVERT_DATA", "apikey" )
+  return cloudconvert_api_key
 
 def get_gif_video( input_mp4_file, verify = True ):
   assert( os.path.basename( input_mp4_file ).endswith( '.mp4' ) )

@@ -4,9 +4,9 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib.patches import Rectangle
 from mutagen.easymp4 import EasyMP4
-from PyQt4.QtGui import QColor
+from PyQt5.QtGui import QColor
 from optparse import OptionParser
-from . import freshair, npr_utils
+from core import freshair, npr_utils
 
 _default_inputdir = '/mnt/media/freshair'
 _default_year = 2010
