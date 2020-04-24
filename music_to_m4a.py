@@ -88,7 +88,7 @@ def music_to_m4a(filename, tottracks = None,
         tags = MP3( filename ).tags
         artist = tags[ 'TPE1' ].text[ 0 ]
         title = tags[ 'TIT2' ].text[ 0 ]
-        trackno = int( tags[ 'TRCK' ].text[ 0 ] )
+        trackno = int( tags[ 'TRCK' ].text[0].split('/')[0] )
     elif os.path.basename( filename ).lower( ).endswith( '.ogg' ):
         tags = OggVorbis( filename ).tags
         artist = max( tags[ 'artist' ] )
@@ -119,9 +119,8 @@ def music_to_m4a(filename, tottracks = None,
         if 'trkn' not in mp4tags.tags.keys():
             mp4tags.tags['trkn'] = [ ( trackno, tottracks), ]
         else:
-            trkno, tottrks = max( mp4tags.tags['trkn'] )
-            if tottrks == 0:
-                mp4tags.tags['trkn'] = [ ( trackno, tottracks), ]
+            _, tottrks = max( mp4tags.tags['trkn'] )
+            mp4tags.tags['trkn'] = [ ( trackno, tottracks), ]
     else:
         if 'trkn' not in mp4tags.tags.keys():
             mp4tags.tags['trkn'] = [ ( trackno, 0), ]
