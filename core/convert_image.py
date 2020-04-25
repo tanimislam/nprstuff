@@ -1,4 +1,4 @@
-import requests, os, gzip, magic
+import requests, os, gzip, magic, uuid
 from PIL import Image
 from io import BytesIO
 from PyQt5.QtSvg import QSvgRenderer
@@ -23,25 +23,73 @@ def get_cloudconvert_api_key():
   cloudconvert_api_key = cparser.get( "CLOUDCONVERT_DATA", "apikey" )
   return cloudconvert_api_key
 
-def get_gif_video( input_mp4_file, verify = True ):
+def get_gif_video( input_mp4_file ):
+  """
+  This consists of voodoo FFmpeg_ magic that converts MP4 to animated GIF_ reasonably well. Don't ask me how most of it works, just be on-your-knees-kissing-the-dirt grateful that MILLIONS of people hack onto and into FFmpeg_ so that this information is available, and the workflow works.
+
+  This requires a working ``ffmpeg`` and ``ffplay`` executable to work. If the input file is named ``<input>.mp4``, the output animated GIF file is named ``<input>.gif``.
+
+  Here are resources that I used to get this working.
+
+  * `Tutorial on high quality movie to animated GIF conversion <movie_2_gif_>`_. I hope this doesn't go away!
+
+  * `Using FFPROBE to output JSON format <ffprobe_json_>`_
+  
+  :param str input_mp4_file: the name of the valid MP4 file.
+  
+  .. _FFmpeg: https://ffmpeg.org
+  .. _GIF: https://en.wikipedia.org/wiki/GIF
+  .. _movie_2_gif: http://blog.pkh.me/p/21-high-quality-gif-with-ffmpeg.html
+  .. _ffprobe_json: https://tanimislamblog.wordpress.com/2018/09/12/ffprobe-to-get-output-in-json-format/
+  """
+  from distutils.spawn import find_executable
+  ffmpeg_exec = find_executable( 'ffmpeg' )
+  ffprobe_exec = find_executable( 'ffprobe' )
+  assert(all(map(lambda tok: tok is not None, ( ffmpeg_exec, ffprobe_exec ))))
   assert( os.path.basename( input_mp4_file ).endswith( '.mp4' ) )
   assert( os.path.isfile( input_mp4_file ) )
   #
   ## assert this is an MP4 file
-  assert( 'ISO Media, MPEG v4 system' in magic.from_file( input_mp4_file ) )
+  assert( 'ISO Media,' in magic.from_file( input_mp4_file ) )
   #
-  ## now convert MP4 into GIF, put into file
-  apiKey = get_cloudconvert_api_key( )
-  params = { 'apikey' : apiKey,
-             'inputformat' : 'mp4',
-             'outputformat': 'gif' }
-  files = { 'file' : open( input_mp4_file, 'rb' ) }
+  ## GIF output and PALETTE file
+  giffile = args.mp4file.replace('.mp4', '.gif' )
+  palettefile = '%s.png' % str( uuid.uuid4( ) )
   #
-  response = requests.post( "https://api.cloudconvert.com/convert", params = params,
-                            files = files, verify = verify )
-  if response.status_code != 200:
-    raise ValueError("Error, could not upload and convert MP4 file %s into animated GIF." % input_mp4_file )
-  return Image.open( BytesIO( response.content ) )
+  ## get info JSON to get width, fps
+  proc = subprocess.Popen(
+    [ ffprobe_exec, '-v', 'quiet', '-show_streams',
+      '-show_format', '-print_format', 'json', args.mp4file ],
+    stdout = subprocess.PIPE, stderr = subprocess.STDOUT )
+  stdout_val, stderr_val = proc.communicate( )
+  mp4file_info = json.loads( stdout_val )
+  # from dictionary, get width
+  width_of_mp4 = int( mp4file_info[ 'streams' ][ 0 ][ 'width' ] )
+  fps_string = mp4file_info[ 'streams' ][ 0 ][ 'avg_frame_rate' ]
+  fps = int( float( fps_string.split('/')[0] ) * 1.0 /
+             float( fps_string.split('/')[1] ) )
+  #
+## now do the voodoo magic from resource #1
+## step #1: create palette, run at fps
+cmd = [
+  ffmpeg_exec, '-y', '-v', 'warning', '-i', args.mp4file,
+  '-vf', 'fps=%d,scale=%d:-1:flags=lanczos,palettegen' % ( fps, width_of_mp4 ),
+  palettefile ]
+proc = subprocess.Popen(cmd, stdout = subprocess.PIPE, stderr = subprocess.STDOUT )
+stdout_val, stderr_val = proc.communicate( )
+assert( os.path.isfile( palettefile ) )
+#
+## step #2: take palette file, MP4 file, create animated GIF
+cmd = [
+  ffmpeg_exec, '-y', '-v', 'warning', '-i', args.mp4file,
+  '-i', palettefile, '-lavfi', 'fps=%d,scale=%d:-1:flags=lanczos[x];[x][1:v]paletteuse' % (
+    fps, width_of_mp4 ), giffile ]
+proc = subprocess.Popen(cmd, stdout = subprocess.PIPE, stderr = subprocess.STDOUT )
+stdout_val, stderr_val = proc.communicate( )
+#
+## now batting cleanup
+try: os.remove( palettefile )
+except: pass
 
 def get_png_image( input_svg_file, newWidth = None, verify = True ):
     assert( os.path.basename( input_svg_file ).endswith( '.svg' ) or
