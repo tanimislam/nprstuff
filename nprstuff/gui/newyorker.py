@@ -1,8 +1,8 @@
-#!/usr/bin/env python
-
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
-import json, gui_common, sys, datetime
+import json, datetime
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+from nprstuff.gui import gui_common
 
 class NewYorkerFrame(gui_common.MainFrame):
     def __init__(self, showFrame = True, iconPath = None):
@@ -11,9 +11,10 @@ class NewYorkerFrame(gui_common.MainFrame):
 
 class NewYorkerURLInfoBox(gui_common.URLInfoBox):
     def getMetaDataDict(self, tree):
-        meta_elems = filter(lambda elem: 'name' in elem.keys() and
-                            elem.get('name') == 'parsely-page' and
-                            'content' in elem.keys() , tree.iter('meta'))
+        meta_elems = list(
+            filter(lambda elem: 'name' in elem.keys() and
+                   elem.get('name') == 'parsely-page' and
+                   'content' in elem.keys() , tree.iter('meta')))
         if len(meta_elems) != 1: return {}
         meta_elem = max(meta_elems)
         meta_dict = json.loads( meta_elem.get('content') )
@@ -43,13 +44,8 @@ class NewYorkerURLInfoBox(gui_common.URLInfoBox):
         return textData
 
     def getDate( self, dateString ):
-        return datetime.datetime.strptime( dateString,
-                                           '%Y-%m-%dT%H:%M:%SZ' )
+        return datetime.datetime.strptime(
+            dateString, '%Y-%m-%dT%H:%M:%SZ' )
 
     def __init__(self):
         super(NewYorkerURLInfoBox, self).__init__('New Yorker URL')
-
-if __name__=='__main__':
-    qApp = QApplication(sys.argv)
-    nyf = NewYorkerFrame()
-    sys.exit( qApp.exec_() )

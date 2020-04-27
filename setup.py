@@ -60,6 +60,23 @@ setup(
             "waitwait = nprstuff.cli.waitwait:_waitwait",
             "waitwait_crontab = nprstuff.core.waitwait:waitwait_crontab",
             "waitwait_by_year = nprstuff.cli.waitwait:_waitwait_by_year",
+            #
+            ## now gui stuff
+            "nprstuff_gui_maingui = nprstuff.cli.gui:_maingui",
+            "nprstuff_gui_lightspeed = nprstuff.cli.gui:_lightspeed",
+            "nprstuff_gui_medium = nprstuff.cli.gui:_medium",
+            "nprstuff_gui_newyorker = nprstuff.cli.gui:_newyorker",
+            "nprstuff_gui_nytimes = nprstuff.cli.gui:_nytimes",
+            "nprstuff_gui_vqronline = nprstuff.cli.gui:_vqronline",
         ]
-    }
+    },
+    #
+    ## big fatass WTF because setuptools is unclear about whether I can give a directory that can then be resolved by
+    ## other resources
+    ## here is the link to the terrible undocumented documentation: https://setuptools.readthedocs.io/en/latest/setuptools.html#including-data-files
+    package_data = {
+        "nprstuff" : [
+            "resources/*.png", "resources/fonts/*.ttf",
+            "resources/fonts/*.otf", "resources/icons/*.png" ]
+        }
 )

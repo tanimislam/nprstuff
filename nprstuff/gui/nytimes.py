@@ -1,8 +1,8 @@
-#!/usr/bin/env python
-
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
-import gui_common, sys, datetime
+import datetime
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
+from nprstuff.gui import gui_common
 
 class NYTimesFrame(gui_common.MainFrame):
     def __init__(self, showFrame = True, iconPath = None):
@@ -12,12 +12,14 @@ class NYTimesFrame(gui_common.MainFrame):
 class NYTimesURLInfoBox(gui_common.URLInfoBox):
     def getMetaDataDict(self, tree):
         remap = { 'hdl' : 'title', 'author' : 'author', 'ptime' : 'date_string' }
-        elems_one = filter(lambda elem: 'name' in elem.keys() and
-                           'content' in elem.keys() and
-                           elem.get('name') in ( 'hdl', 'author', 'ptime'), tree.iter('meta'))
+        elems_one = list(
+            filter(lambda elem: 'name' in elem.keys() and
+                   'content' in elem.keys() and
+                   elem.get('name') in ( 'hdl', 'author', 'ptime'), tree.iter('meta')))
         meta_dict = { remap[elem.get('name')] : elem.get('content') for elem in elems_one }
-        elems_two = filter(lambda elem: 'property' in elem.keys() and
-                           elem.get('property') == 'og:image', tree.iter('meta'))
+        elems_two = list(
+            filter(lambda elem: 'property' in elem.keys() and
+                   elem.get('property') == 'og:image', tree.iter('meta')))
         for elem in elems_two:
             meta_dict['pic_url'] = elem.get('content')
         return meta_dict

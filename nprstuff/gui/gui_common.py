@@ -1,13 +1,13 @@
-#!/usr/bin/env python
-
+import os, sys, numpy, requests, json
+import lxml.html, datetime, pytz, textwrap
+import titlecase, codecs
+#
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
-import os, sys, numpy, requests, json
-import lxml.html, datetime, pytz, textwrap
-import titlecase, codecs, urllib2
+from nprstuff import resourceDir
 
-class CustomScrollArea(QScrollArea):
+class CustomScrollArea( QScrollArea ):
     def __init__(self):
         super(CustomScrollArea, self).__init__()
         #
@@ -51,8 +51,9 @@ class PictureLabel(QLabel):
     def mousePressEvent(self, evt):
         if evt.button() == Qt.RightButton:
             while( True ):
-                fname = str(QFileDialog.getSaveFileName(self, 'Save Picture',
-                                                        os.path.expanduser('~'), filter = '*.png') )
+                fname = str(QFileDialog.getSaveFileName(
+                    self, 'Save Picture',
+                    os.path.expanduser('~'), filter = '*.png') )
                 if fname.lower().endswith('.png') or len(os.path.basename(fname)) == 0:
                     break
         if fname.lower().endswith('.png'):
@@ -102,9 +103,9 @@ class URLInfoBox(QLineEdit):
         except Exception:
             self.setStyleSheet( 'background-color: white' )
             self.setText( self.currentURL )
-            print 'ERROR, COULD NOT LOAD IN URL = %s.' % candURL
+            print( 'ERROR, COULD NOT LOAD IN URL = %s.' % candURL )
             return
-
+        
         tree = lxml.html.fromstring( req.text )
         
         #
@@ -113,8 +114,9 @@ class URLInfoBox(QLineEdit):
         if len(set([ 'author', 'title', 'date_string', 'pic_url' ]) - set(meta_dict.keys())) != 0:
             self.setStyleSheet( 'background-color: white' )
             self.setText( self.currentURL )
-            print 'ERROR, THESE ENTRIES = %s COULD NOT BE FOUND.' % \
-                ( set([ 'author', 'title', 'date_string', 'pic_url' ]) - set(meta_dict.keys()) )
+            print(
+                'ERROR, THESE ENTRIES = %s COULD NOT BE FOUND.' %
+                ( set([ 'author', 'title', 'date_string', 'pic_url' ]) - set(meta_dict.keys()) ) )
             return
 
         try:
@@ -122,12 +124,13 @@ class URLInfoBox(QLineEdit):
         except Exception:
             self.setStyleSheet( 'background-color: white' )
             self.setText( self.currentURL )
-            print 'ERROR, COULD NOT PARSE DATE STRING = %s.' % meta_dict['date_string']
+            print( 'ERROR, COULD NOT PARSE DATE STRING = %s.' % meta_dict['date_string'] )
             return
 
         try:
             qpm = QPixmap()
-            stat = qpm.loadFromData( urllib2.urlopen( meta_dict['pic_url'] ).read() )
+            stat = qpm.loadFromData(
+                requests.get( meta_dict['pic_url'] ).content )
         except Exception:
             self.cannotLoadImageUtilityMethod( meta_dict['pic_url'] )
             return
@@ -136,7 +139,7 @@ class URLInfoBox(QLineEdit):
         if textData is None:
             self.setStyleSheet( 'background-color: white' )
             self.setText( self.currentURL )
-            print 'ERROR, COULD NOT FIND TEXT IN %s.' % candURL
+            print( 'ERROR, COULD NOT FIND TEXT IN %s.' % candURL )
             return
 
         self.currentData = textData
@@ -154,10 +157,10 @@ class MainFrame(QGroupBox):
     def __init__(self, windowTitle, urlInfoBox, showFrame = True, iconPath = None):
         super(MainFrame, self).__init__()
         qfd = QFontDatabase()
-        qfd.addApplicationFont(os.path.abspath('fonts/OxygenMono-Regular.otf'))
-        qfd.addApplicationFont(os.path.abspath('fonts/monof55.ttf'))
-        qfd.addApplicationFont(os.path.abspath('fonts/Anonymous Pro.ttf'))
-        fams = filter(lambda fam: qfd.isFixedPitch(fam), qfd.families())
+        qfd.addApplicationFont(os.path.join(resourceDir, 'fonts', 'OxygenMono-Regular.otf' ) )
+        qfd.addApplicationFont(os.path.join(resourceDir, 'fonts', 'monof55.ttf' ) )
+        qfd.addApplicationFont(os.path.join(resourceDir, 'fonts', 'Anonymous Pro.ttf' ) )
+        fams = list( filter(qfd.isFixedPitch, qfd.families()))
         #self.defaultFont = u'Oxygen Mono'
         #self.defaultFont = u'monofur'
         #self.defaultFont = u'Anonymous Pro'

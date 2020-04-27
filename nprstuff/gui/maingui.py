@@ -1,8 +1,8 @@
-#!/usr/bin/env python
-
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
-import newyorker, nytimes, vqronline, medium, lightspeed, sys
+import os, sys
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+from nprstuff.gui import newyorker, nytimes, vqronline, medium, lightspeed
 
 class MainGui(QTabWidget):
     def __init__(self):
@@ -105,8 +105,3 @@ class MainGui(QTabWidget):
         if cIndx == 0: nIndx = self.count() - 1
         else: nIndx = cIndx - 1
         self.setCurrentIndex( nIndx )
-
-if __name__=='__main__':
-    qApp = QApplication(sys.argv)    
-    mg = MainGui()
-    sys.exit(qApp.exec_() )

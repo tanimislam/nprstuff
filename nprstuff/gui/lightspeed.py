@@ -1,13 +1,14 @@
-#!/usr/bin/env python
-
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
-import json, gui_common, sys, datetime, re
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+from nprstuff.gui import gui_common
+import json, sys, datetime, re
 
 class LightSpeedFrame(gui_common.MainFrame):
     def __init__(self, showFrame = True, iconPath = None):
-        super(LightSpeedFrame, self).__init__('Light Speed Magazine', LightSpeedURLInfoBox(),
-                                              showFrame = showFrame, iconPath = iconPath)
+        super(LightSpeedFrame, self).__init__(
+            'Light Speed Magazine', LightSpeedURLInfoBox(),
+            showFrame = showFrame, iconPath = iconPath)
 
 class LightSpeedURLInfoBox(gui_common.URLInfoBox):
     def getMetaDataDict(self, tree):
@@ -89,8 +90,3 @@ class LightSpeedURLInfoBox(gui_common.URLInfoBox):
 
     def __init__(self):
         super(LightSpeedURLInfoBox, self).__init__('Lightspeed Magazine URL')
-
-if __name__=='__main__':
-    qApp = QApplication(sys.argv)
-    lsf = LightSpeedFrame()
-    sys.exit( qApp.exec_() )

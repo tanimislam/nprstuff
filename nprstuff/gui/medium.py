@@ -1,8 +1,8 @@
-#!/usr/bin/env python
-
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
-import gui_common, sys, datetime, titlecase, re
+import os, sys, datetime, titlecase, re
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
+from nprstuff.gui import gui_common
 
 class MediumFrame(gui_common.MainFrame):
     def __init__(self, showFrame = True, iconPath = None):
@@ -20,9 +20,10 @@ class MediumURLInfoBox(gui_common.URLInfoBox):
         meta_dict['pic_url'] = 'https://medium.com/apple-touch-icon-precomposed-152.png'
         #
         # title
-        title_elems = filter(lambda elem: 'content' in elem.keys() and
-                             'name' in elem.keys() and
-                             elem.get('name') == 'title', tree.iter('meta'))
+        title_elems = list(
+            filter(lambda elem: 'content' in elem.keys() and
+                   'name' in elem.keys() and
+                   elem.get('name') == 'title', tree.iter('meta')))
         if len(title_elems) != 1: return meta_dict
         title_elem = max(title_elems)
         meta_dict['title'] = titlecase.titlecase( title_elem.get('content') )
@@ -56,7 +57,3 @@ class MediumURLInfoBox(gui_common.URLInfoBox):
     def __init__(self):
         super(MediumURLInfoBox, self).__init__('Medium.com')
 
-if __name__=='__main__':
-    qApp = QApplication(sys.argv)
-    nyf = MediumFrame(iconPath = 'icons/medium.png')
-    sys.exit( qApp.exec_() )
