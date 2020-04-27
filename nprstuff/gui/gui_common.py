@@ -2,6 +2,7 @@
 
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 import os, sys, numpy, requests, json
 import lxml.html, datetime, pytz, textwrap
 import titlecase, codecs, urllib2
