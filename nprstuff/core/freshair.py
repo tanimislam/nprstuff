@@ -232,140 +232,140 @@ def get_freshair(
     exec_dict = None, check_if_exist = False,
     mp3_exist = False, to_file_debug = True ):
     
-  # check if outputdir is a directory
-  if not os.path.isdir(outputdir):
-    raise ValueError("Error, %s is not a directory." % outputdir)
+    # check if outputdir is a directory
+    if not os.path.isdir(outputdir):
+        raise ValueError("Error, %s is not a directory." % outputdir)
   
-  # check if actually a weekday
-  assert( npr_utils.is_weekday(date_s) )
-  
-  # check if we have found avconv
-  if exec_dict is None:
-    exec_dict = npr_utils.find_necessary_executables()
-  assert( exec_dict is not None )
-  avconv_exec = exec_dict['avconv']
+    # check if actually a weekday
+    assert( npr_utils.is_weekday(date_s) )
     
-  if order_totnum is None:
-    order_totnum = npr_utils.get_order_number_weekday_in_year(date_s)
-  order_in_year, tot_in_year = order_totnum
-  
-  if file_data is None: file_data = get_freshair_image()
-  
-  decdate = date_s.strftime('%d.%m.%Y')
-  m4afile_init = os.path.join(outputdir, 'NPR.FreshAir.%s.m4a' % decdate )
-  if check_if_exist and os.path.isfile(m4afile_init):
-    return
+    # check if we have found avconv
+    if exec_dict is None:
+        exec_dict = npr_utils.find_necessary_executables()
+    assert( exec_dict is not None )
+    avconv_exec = exec_dict['avconv']
     
-  #nprURL = npr_utils.get_NPR_URL(date_s, _npr_FreshAir_progid, 
-  #                               npr_utils.get_api_key() )
-  year = date_s.year
-    
-  # download this data into a BeautifulSoup object
-  resp = requests.get( 'https://api.npr.org/query',
-                       params = {
-                         'id'  : _npr_FreshAir_progid,
-                         'date': date_s.strftime('%Y-%m-%d' ),
-                         'dateType' : 'story',
-                         'output' : 'NPRML',
-                         'apiKey' : npr_utils.get_api_key( ) } )
-  # resp = requests.get( nprURL )
-  if resp.status_code != 200:
-    logging.debug('ERROR GETTING FRESH AIR STORY FOR %s' %
-                  date_s.strftime('%d %B %Y' ) )
-    return None
-  html = BeautifulSoup( resp.content, 'lxml' )
+    if order_totnum is None:
+        order_totnum = npr_utils.get_order_number_weekday_in_year(date_s)
+    order_in_year, tot_in_year = order_totnum
   
-  if debug:
-    # print 'URL = %s' % nprURL
-    if to_file_debug:
-      with open(os.path.join(outputdir, 'NPR.FreshAir.tree.%s.xml' % decdate), 'w') as openfile:
-        openfile.write( '%s\n' % html.prettify( ) )
-    return html
+    if file_data is None: file_data = get_freshair_image()
     
-  # check for unavailable tag
-  if len( html.find_all('unavailable', { 'value' : 'true' } ) ) != 0:
-    unavailable_elem = html.find_all('unavailable', { 'value' : 'true' } )[ 0 ]
-    if unavailable_elem.text is None:
-      print( 'Could not create Fresh Air episode for date %s because unavailable without a specific reason' %
-             npr_utils.get_datestring( date_s ) )
-    else:
-      print( 'Could not create Fresh Air episode for date %s because unavailable for this reason: %s' % 
-             ( npr_utils.get_datestring( date_s ), unavailable_elem.text.strip() ) )
-    return
+    decdate = date_s.strftime('%d.%m.%Y')
+    m4afile_init = os.path.join(outputdir, 'NPR.FreshAir.%s.m4a' % decdate )
+    if check_if_exist and os.path.isfile(m4afile_init): return
+    
+    #nprURL = npr_utils.get_NPR_URL(date_s, _npr_FreshAir_progid, 
+    #                               npr_utils.get_api_key() )
+    year = date_s.year
+    
+    # download this data into a BeautifulSoup object
+    resp = requests.get( 'https://api.npr.org/query',
+                        params = {
+                            'id'  : _npr_FreshAir_progid,
+                            'date': date_s.strftime('%Y-%m-%d' ),
+                            'dateType' : 'story',
+                            'output' : 'NPRML',
+                            'apiKey' : npr_utils.get_api_key( ) } )
+    # resp = requests.get( nprURL )
+    if resp.status_code != 200:
+        logging.debug('ERROR GETTING FRESH AIR STORY FOR %s' %
+                      date_s.strftime('%d %B %Y' ) )
+        return None
+    html = BeautifulSoup( resp.content, 'lxml' )
+    
+    if debug:
+        # print 'URL = %s' % nprURL
+        if to_file_debug:
+            with open(os.path.join(outputdir, 'NPR.FreshAir.tree.%s.xml' % decdate), 'w') as openfile:
+                openfile.write( '%s\n' % html.prettify( ) )
+        return html
+    
+    # check for unavailable tag
+    if len( html.find_all('unavailable', { 'value' : 'true' } ) ) != 0:
+        unavailable_elem = html.find_all('unavailable', { 'value' : 'true' } )[ 0 ]
+        if unavailable_elem.text is None:
+            print( 'Could not create Fresh Air episode for date %s because unavailable without a specific reason' %
+                npr_utils.get_datestring( date_s ) )
+        else:
+            print( 'Could not create Fresh Air episode for date %s because unavailable for this reason: %s' % 
+                ( npr_utils.get_datestring( date_s ), unavailable_elem.text.strip() ) )
+        return
 
-  # now get tuple of title to mp3 file
-  title_mp3_urls = process_freshair_titlemp3_tuples( html )
-  if len(title_mp3_urls) == 0:
-    print( 'Error, could not find any Fresh Air episodes for date %s.' %
-           npr_utils.get_datestring( date_s ) )
-    return
+    # now get tuple of title to mp3 file
+    title_mp3_urls = process_freshair_titlemp3_tuples( html )
+    if len(title_mp3_urls) == 0:
+        print( 'Error, could not find any Fresh Air episodes for date %s.' %
+              npr_utils.get_datestring( date_s ) )
+        return
 
-  # temporary directory
-  tmpdir = tempfile.mkdtemp( )
-  m4afile_temp = os.path.join(tmpdir, 'NPR.FreshAir.%s.m4a' % decdate )
-  m4afile = os.path.join(outputdir, 'NPR.FreshAir.%s.m4a' % decdate )
-  
-  titles, songurls = zip(*title_mp3_urls)
-  outfiles = [ os.path.join(tmpdir, 'freshair.%s.%d.mp3' % 
-                            ( decdate, num + 1) ) for
-               (num, mp3url) in enumerate( songurls ) ]
-  if mp3_exist:
-    assert(all(map(lambda outfile: os.path.isfile( outfile ), outfiles) ) )
+    # temporary directory
+    tmpdir = tempfile.mkdtemp( )
+    m4afile_temp = os.path.join(tmpdir, 'NPR.FreshAir.%s.m4a' % decdate )
+    m4afile = os.path.join(outputdir, 'NPR.FreshAir.%s.m4a' % decdate )
     
-  title = date_s.strftime('%A, %B %d, %Y')
-  title = '%s: %s.' % ( title,
-                        '; '.join([ '%d) %s' % ( num + 1, titl ) for
+    titles, songurls = zip(*title_mp3_urls)
+    outfiles = [ os.path.join(tmpdir, 'freshair.%s.%d.mp3' % 
+                              ( decdate, num + 1) ) for
+                (num, mp3url) in enumerate( songurls ) ]
+    if mp3_exist:
+        assert(all(map(lambda outfile: os.path.isfile( outfile ), outfiles) ) )
+    
+    title = date_s.strftime('%A, %B %d, %Y')
+    title = '%s: %s.' % ( title,
+                         '; '.join([ '%d) %s' % ( num + 1, titl ) for
                                     (num, titl) in enumerate(titles) ]) )    
     
-  # download those files
-  time0 = time.time()
-  if not mp3_exist:
-    with multiprocessing.Pool(processes = len(songurls) ) as pool:
-      outfiles = list( filter(None, pool.map(_download_file, zip( songurls, outfiles ) ) ) )
+    # download those files
+    time0 = time.time()
+    if not mp3_exist:
+        with multiprocessing.Pool(processes = len(songurls) ) as pool:
+            outfiles = list( filter(None, pool.map(_download_file, zip( songurls, outfiles ) ) ) )
    
-  # sox magic command
-  #wgdate = date_s.strftime('%d-%b-%Y')
-  #wavfile = os.path.join(outputdir, 'freshair%s.wav' % wgdate ).replace(' ', '\ ')
-  #split_cmd = [ '(for', 'file', 'in', ] + fnames + [ 
-  #    ';', sox_exec, '$file', '-t', 'cdr', '-', ';', 'done)' ] + [ 
-  #        '|', sox_exec, 't-', 'cdr', '-', wavfile ]
-  #split_cmd = [ sox_exec, ] + fnames + [ wavfile, ]
-  #print split_cmd
-  #return
-  #proc = subprocess.Popen(split_cmd, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-  #stdout_val, stderr_val = proc.communicate()
-  #for filename in outfiles:
-  #    os.remove(filename)
-  
-  # now convert to m4a file
-  # /usr/bin/avconv -y -i freshair$wgdate.wav -ar 44100 -ac 2 -aq 400 -acodec libfaac NPR.FreshAir."$decdate".m4a ;
-  time0 = time.time()
-  fnames = [ filename.replace(' ', '\ ') for filename in outfiles ]
-  avconv_concat_cmd = 'concat:%s' % '|'.join(fnames)
-  split_cmd = [ avconv_exec, '-y', '-i', avconv_concat_cmd, '-ar', '44100', '-ac', '2',
-                '-threads', '%d' % multiprocessing.cpu_count(),
-                '-strict', 'experimental', '-acodec', 'aac', m4afile_temp ]
-  proc = subprocess.Popen(split_cmd, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-  stdout_val, stderr_val = proc.communicate()
-  #
-  ## remove mp3 files
-  for filename in outfiles: os.remove(filename)
-  #
-  ## now put in metadata
-  mp4tags = mutagen.mp4.MP4(m4afile_temp)
-  mp4tags.tags['\xa9nam'] = [ title, ]
-  mp4tags.tags['\xa9alb'] = [ 'Fresh Air From WHYY: %d' % year, ]
-  mp4tags.tags['\xa9ART'] = [ 'Terry Gross', ]
-  mp4tags.tags['\xa9day'] = [ '%d' % year, ]
-  mp4tags.tags['\xa9cmt'] = [ "more info at : Fresh Air from WHYY and NPR Web site", ]
-  mp4tags.tags['trkn'] = [ ( order_in_year, tot_in_year ), ]
-  mp4tags.tags['covr'] = [ mutagen.mp4.MP4Cover(file_data, mutagen.mp4.MP4Cover.FORMAT_PNG ), ]
-  mp4tags.tags['\xa9gen'] = [ 'Podcast', ]
-  mp4tags.tags['aART'] = [ 'Terry Gross', ]
-  mp4tags.save()
-  os.chmod( m4afile_temp, 0o644 )
-  #
-  ## copy file to outputdir, and remove directories
-  shutil.copy( m4afile_temp, m4afile )
-  shutil.rmtree( tmpdir )
-  return m4afile
+    # sox magic command
+    #wgdate = date_s.strftime('%d-%b-%Y')
+    #wavfile = os.path.join(outputdir, 'freshair%s.wav' % wgdate ).replace(' ', '\ ')
+    #split_cmd = [ '(for', 'file', 'in', ] + fnames + [ 
+    #    ';', sox_exec, '$file', '-t', 'cdr', '-', ';', 'done)' ] + [ 
+    #        '|', sox_exec, 't-', 'cdr', '-', wavfile ]
+    #split_cmd = [ sox_exec, ] + fnames + [ wavfile, ]
+    #print split_cmd
+    #return
+    #proc = subprocess.Popen(split_cmd, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+    #stdout_val, stderr_val = proc.communicate()
+    #for filename in outfiles:
+    #    os.remove(filename)
+
+    # now convert to m4a file
+    # /usr/bin/avconv -y -i freshair$wgdate.wav -ar 44100 -ac 2 -aq 400 -acodec libfaac NPR.FreshAir."$decdate".m4a ;
+    time0 = time.time()
+    fnames = [ filename.replace(' ', '\ ') for filename in outfiles ]
+    avconv_concat_cmd = 'concat:%s' % '|'.join(fnames)
+    split_cmd = [
+        avconv_exec, '-y', '-i', avconv_concat_cmd, '-ar', '44100', '-ac', '2',
+        '-threads', '%d' % multiprocessing.cpu_count(),
+        '-strict', 'experimental', '-acodec', 'aac', m4afile_temp ]
+    proc = subprocess.Popen(split_cmd, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+    stdout_val, stderr_val = proc.communicate()
+    #
+    ## remove mp3 files
+    for filename in outfiles: os.remove(filename)
+    #
+    ## now put in metadata
+    mp4tags = mutagen.mp4.MP4(m4afile_temp)
+    mp4tags.tags['\xa9nam'] = [ title, ]
+    mp4tags.tags['\xa9alb'] = [ 'Fresh Air From WHYY: %d' % year, ]
+    mp4tags.tags['\xa9ART'] = [ 'Terry Gross', ]
+    mp4tags.tags['\xa9day'] = [ '%d' % year, ]
+    mp4tags.tags['\xa9cmt'] = [ "more info at : Fresh Air from WHYY and NPR Web site", ]
+    mp4tags.tags['trkn'] = [ ( order_in_year, tot_in_year ), ]
+    mp4tags.tags['covr'] = [ mutagen.mp4.MP4Cover(file_data, mutagen.mp4.MP4Cover.FORMAT_PNG ), ]
+    mp4tags.tags['\xa9gen'] = [ 'Podcast', ]
+    mp4tags.tags['aART'] = [ 'Terry Gross', ]
+    mp4tags.save()
+    os.chmod( m4afile_temp, 0o644 )
+    #
+    ## copy file to outputdir, and remove directories
+    shutil.copy( m4afile_temp, m4afile )
+    shutil.rmtree( tmpdir )
+    return m4afile
