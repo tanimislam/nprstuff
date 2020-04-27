@@ -90,7 +90,7 @@ class URLInfoBox(QLineEdit):
     def cannotLoadImageUtilityMethod(self, picURL):
         self.setStyleSheet( 'background-color: white' )
         self.setText( self.currentURL )
-        print 'ERROR, COULD NOT LOAD IMAGE URL = %s.' % picURL
+        print( 'ERROR, COULD NOT LOAD IMAGE URL = %s.' % picURL )
 
     def _validateAndGetData(self, candURL, updateText = False):
         if candURL == self.currentURL and not updateText:

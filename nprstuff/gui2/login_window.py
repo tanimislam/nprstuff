@@ -226,7 +226,7 @@ class LoginWindow(QWidget):
 
 if __name__=='__main__':
     statusdict = get_database_data( )
-    print 'message = %s' % statusdict['message']
+    print( 'message = %s' % statusdict['message'] )
     qApp = QApplication( sys.argv )
     lw = LoginWindow( )
     lw.setFromStatus( statusdict )

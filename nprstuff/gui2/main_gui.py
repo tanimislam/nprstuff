@@ -111,7 +111,7 @@ class ArticleWidget(QGroupBox):
         #self._enableMainDialog()
 
     def makeEbook(self):
-        print 'MAKING EBOOK'
+        print( 'MAKING EBOOK' )
         
 
 class ArticlesListWidget(QWidget):
