@@ -3,7 +3,6 @@ from nprstuff import signal_handler
 signal.signal( signal.SIGINT, signal_handler )
 from nprstuff.core import autocrop_image
 from argparse import ArgumentParser
-from core import autocrop_image
 
 def _main( ):
   parser = ArgumentParser( )
