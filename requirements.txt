@@ -1,4 +1,6 @@
-PIL
+feedparser
+pyexiv2
+Pillow
 PyQt5
 PyPDF2
 webcolors

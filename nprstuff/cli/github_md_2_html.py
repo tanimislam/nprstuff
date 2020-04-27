@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import os, sys, numpy, requests, warnings
 from argparse import ArgumentParser
 from bs4 import BeautifulSoup
@@ -10,7 +8,7 @@ warnings.simplefilter("ignore")
 This is a front-end to https://developer.github.com/v3/markdown/, which describes how to create HTML from Markdown using Github's Markdown converter.
 """
 
-def md_2_html( markdown_file, html_file, verify = True ):
+def _md_2_html( markdown_file, html_file, verify = True ):
   assert( os.path.isfile( markdown_file ) )
   assert( os.path.basename( markdown_file ).endswith( '.md' ) )
   assert( not os.path.isdir( html_file ) )
@@ -29,7 +27,7 @@ def md_2_html( markdown_file, html_file, verify = True ):
   with open( html_file, 'w' ) as openfile:
     openfile.write( '%s\n' % html.prettify( ) )
 
-if __name__=='__main__':
+def _main( ):
   parser = ArgumentParser( )
   parser.add_argument( '-m', '--markdown', type=str, dest='markdown_file', action='store', required = True,
                        help = "Name of the markdown file to convert using GitHub's Markdown API." )
@@ -45,5 +43,5 @@ if __name__=='__main__':
                               os.path.basename( args.markdown_file ).replace('.md', '.html' ) )
   else: html_file = args.html_file
   #
-  md_2_html( args.markdown_file, html_file, verify = args.do_verify )
+  _md_2_html( args.markdown_file, html_file, verify = args.do_verify )
                     

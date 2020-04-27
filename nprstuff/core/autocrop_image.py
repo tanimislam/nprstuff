@@ -1,16 +1,17 @@
-import os, sys, webcolors, multiprocessing, logging, subprocess, shlex, uuid
+import os, sys, webcolors, multiprocessing
+import logging, subprocess, shlex, uuid
 from PIL import Image, ImageChops
 from PyPDF2 import PdfFileReader, PdfFileWriter
-from functools import reduce
+from itertools import chain
 from distutils.spawn import find_executable
 
 _all_possible_colornames = set(
-    reduce( lambda y, x: y + x,
-            map(lambda lst: list( lst.keys( ) ),
-                [ webcolors.HTML4_NAMES_TO_HEX,
-                  webcolors.CSS2_NAMES_TO_HEX,
-                  webcolors.CSS21_NAMES_TO_HEX,
-                  webcolors.CSS3_NAMES_TO_HEX ] ) ) )
+    chain.from_iterable(
+      map(lambda lst: list( lst.keys( ) ),
+          [ webcolors.HTML4_NAMES_TO_HEX,
+            webcolors.CSS2_NAMES_TO_HEX,
+            webcolors.CSS21_NAMES_TO_HEX,
+            webcolors.CSS3_NAMES_TO_HEX ] ) ) )
 def hex_to_rgb(value):
     value = value.lstrip('#')
     lv = len(value)
@@ -91,7 +92,6 @@ _root_logger = logging.getLogger()
 _handler = logging.StreamHandler()
 _handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
 _root_logger.addHandler(_handler)
-
 _devnull = open(os.devnull, 'w')
 
 def _bbox(value):
