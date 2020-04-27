@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
 import os, sys, numpy, requests, json
 import lxml.html, datetime, pytz, textwrap
 import titlecase, codecs, urllib2
