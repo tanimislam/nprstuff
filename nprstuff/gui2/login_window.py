@@ -1,10 +1,9 @@
-#!/usr/bin/env python
-
 import os, sys, requests
-from urlparse import urljoin
-from gui_common import push_database_data, get_database_data, QLineEditCustom, QPushButtonCustom
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
+from urllib.parse import urljoin
+from nprstuff.gui2.gui_common import push_database_data, get_database_data, QLineEditCustom, QPushButtonCustom
+from PyQt5.QtGui import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 
 class LoginWindow(QWidget):
     def __init__(self, parent = None):
@@ -223,11 +222,3 @@ class LoginWindow(QWidget):
         if enabled:
             self.rdEmailLineEdit.setEnabled( False )
             self.rdPasswdLineEdit.setEnabled( False )
-
-if __name__=='__main__':
-    statusdict = get_database_data( )
-    print( 'message = %s' % statusdict['message'] )
-    qApp = QApplication( sys.argv )
-    lw = LoginWindow( )
-    lw.setFromStatus( statusdict )
-    sys.exit( qApp.exec_() )

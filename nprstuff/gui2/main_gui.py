@@ -1,10 +1,12 @@
 import os, sys, datetime, requests, copy, titlecase, datetime
 import pickle, gzip, binascii, json, numpy, random
-from urlparse import urljoin
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from gui_common import get_database_data, colorwheel
-from gui_common import QPushButtonCustom
+from urllib.parse import urljoin
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+#
+from nprstuff.gui2.gui_common import get_database_data, colorwheel
+from nprstuff.gui2.gui_common import QPushButtonCustom
 
 _badDate = datetime.datetime.strptime("January 1, 1000", "%B %d, %Y")
 
@@ -204,9 +206,9 @@ class ArticlesListWidget(QWidget):
         self.table.setShowGrid( True )
         
         # set fixed vertical headers
-        self.table.verticalHeader().setResizeMode( QHeaderView.Fixed )
+        self.table.verticalHeader().setSectionResizeMode( QHeaderView.Fixed )
         hheader = self.table.horizontalHeader()
-        hheader.setResizeMode( QHeaderView.Fixed )
+        hheader.setSectionResizeMode( QHeaderView.Fixed )
         qf = hheader.font()
         qf.setBold( True )
         qf.setPointSize( 12)

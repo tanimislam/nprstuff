@@ -1,13 +1,12 @@
-#!/usr/bin/env python
-
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
 import os, sys, numpy, requests, json, binascii
-import xdg.BaseDirectory, ConfigParser
-from urlparse import urljoin
+from urllib.parse import urljoin
+from configparser import ConfigParser, RawConfigParser
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 
-colorwheel = [ QColor( QString( name ) ) for name in
-               [ '#E5EDE9', '#EDE6CE', '#EDDFEB', '#F1EDFE', '#CCD9FD', '#F9EBFD' ] ]
+colorwheel = list(map(lambda name: QColor( name ),
+                [ '#E5EDE9', '#EDE6CE', '#EDDFEB', '#F1EDFE', '#CCD9FD', '#F9EBFD' ] ) )
 
 class QPushButtonCustom( QPushButton ):    
     def __init__(self, text, parent = None):
@@ -47,26 +46,29 @@ class QLineEditCustom( QLineEdit ):
             """)
 
 def nuke_database_data( ):
-    esource = 'nprstuff'
+    resource = 'nprstuff'
     filename = '%s.conf' % resource
-    baseConfDir = xdg.BaseDirectory.save_config_path( resource )
+    baseConfDir = os.path.expanduser(
+        '~/.local/config/%s' % resource )
     absPath = os.path.join( baseConfDir, filename )
-    if os.path.isfile( absPath ):
-        cparser = ConfigParser.ConfigParser()
-        cparser.read( absPath )
-        if cparser.has_section( 'DATABASE_DATA' ):
-            cparser.remove_section( 'DATABASE_DATA' )
-            with open( absPath, 'wb' ) as openfile:
-                cparser.write( openfile )
-            os.chmod( absPath, 0600 )
+    if not os.path.isfile( absPath ): return
+    #
+    cparser = ConfigParser( )
+    cparser.read( absPath )
+    if cparser.has_section( 'DATABASE_DATA' ):
+        cparser.remove_section( 'DATABASE_DATA' )
+    with open( absPath, 'wb' ) as openfile:
+        cparser.write( openfile )
+    os.chmod( absPath, 0o600 )
 
 def push_database_data( email, password ):
     resource = 'nprstuff'
     filename = '%s.conf' % resource
-    baseConfDir = xdg.BaseDirectory.save_config_path( resource )
+    baseConfDir = os.path.expanduser(
+        '~/.local/config/%s' % resource )
     absPath = os.path.join( baseConfDir, filename )
     if not os.path.isfile( absPath ):
-        cparser = ConfigParser.RawConfigParser()
+        cparser = RawConfigParser( )
         cparser.set('DATABASE_DATA', 'email', dbEmail )
         cparser.set('DATABASE_DATA', 'password', dbPasswd )
     else:
@@ -79,18 +81,19 @@ def push_database_data( email, password ):
         cparser.set( 'DATABASE_DATA', 'password', password )
     with open( absPath, 'wb' ) as openfile:
         cparser.write( openfile )
-    os.chmod( absPath, 0600 )
+    os.chmod( absPath, 0o600 )
 
 def get_database_data( ):
     resource = 'nprstuff'
     filename = '%s.conf' % resource
-    baseConfDir = xdg.BaseDirectory.save_config_path( resource )
+    baseConfDir = os.path.expanduser(
+        '~/.local/config/%s' % resource )
     absPath = os.path.join( baseConfDir, filename )
     if not os.path.isfile( absPath ):
         return { 'email' : '', 'password' : '',
                  'message' : "Error, config file does not exist." }
 
-    cparser = ConfigParser.ConfigParser()
+    cparser = ConfigParser( )
     cparser.read( absPath )
     if not cparser.has_section( 'DATABASE_DATA' ):
         return { 'email' : '', 'password' : '',
@@ -113,7 +116,7 @@ def get_database_data( ):
         cparser.remove_section( 'DATABASE_DATA' )
         with open( absPath, 'wb' ) as openfile:
             cparser.write( openfile )
-        os.chmod( absPath, 0600 )
+        os.chmod( absPath, 0o600 )
         return { 'email' : '', 'password' : '',
                  'message' : "Error, invalid username or password" }
     #

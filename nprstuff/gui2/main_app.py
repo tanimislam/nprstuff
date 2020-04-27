@@ -1,22 +1,22 @@
-#!/usr/bin/env python
-
-from PyQt4.QtGui import *
 import copy, os, sys, titlecase, datetime, time, requests, glob
-from gui_common import get_database_data, get_article_data
-from login_window import LoginWindow
-from main_gui import ArticleWidget, ArticlesListWidget
-from main_gui import _demo_get_articles
 from bs4 import BeautifulSoup
-from urlparse import urljoin
+from urllib.parse import urljoin
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
+#
+from nprstuff import resourceDir
+from nprstuff.gui2.gui_common import get_database_data, get_article_data
+from nprstuff.gui2.login_window import LoginWindow
+from nprstuff.gui2.main_gui import ArticleWidget, ArticlesListWidget, _demo_get_articles
 
 class MainApp(QApplication):
     def __init__(self, args):
         super(MainApp, self).__init__(args)
         self.cookies = None
-        mainPath = os.path.join( os.path.dirname(
-            os.path.abspath(__file__) ), 'fonts' )
-        for fontFile in glob.glob( os.path.join( mainPath ,
-                                                 '*.ttf' ) ):
+        mainPath = os.path.join( resourceDir, 'fonts' )
+        for fontFile in glob.glob(
+            os.path.join( mainPath, '*.ttf' ) ):
             QFontDatabase.addApplicationFont( fontFile )
         #
         ##
@@ -30,10 +30,10 @@ class MainApp(QApplication):
 
     def doLogon(self):
         time0 = time.time()
-        print 'STARTING TO LOGIN'
+        print( 'STARTING TO LOGIN' )
         statusdict = get_database_data( )
-        print 'FINISHED LOGIN STUFF IN %0.3f SECONDS: %s' % (
-            time.time() - time0, statusdict['message'] )
+        print( 'FINISHED LOGIN STUFF IN %0.3f SECONDS: %s' % (
+            time.time() - time0, statusdict['message'] ) )
         if statusdict['message'] != 'SUCCESS':
             self.lw.setFromStatus( statusdict )
             self.lw.show()
@@ -81,11 +81,3 @@ class MainApp(QApplication):
         self.aw.dateLabel.setText( date_string )
         self.aw.timeLabel.setText( time_string )
         self.aw.wcLabel.setText( '%d words' % wc )
-        
-
-if __name__=='__main__':
-    #data = _demo_get_articles('', '')
-    ma = MainApp(sys.argv)
-    ma.doLogon( )
-    # ma.pushData( data['articles'], data['ids_ordered'] )
-    sys.exit( ma.exec_() )
