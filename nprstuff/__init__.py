@@ -5,7 +5,7 @@ import sys, os
 from functools import reduce
 
 resourceDir = 'resources'
-assert( os.path.isdir( resourceDir ) )
+#assert( os.path.isdir( resourceDir ) )
 
 # code to handle Ctrl+C, convenience method for command line tools
 def signal_handler( signal, frame ):
