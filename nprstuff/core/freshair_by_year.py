@@ -4,6 +4,7 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib.patches import Rectangle
 from mutagen.easymp4 import EasyMP4
+from distutils.spawn import find_executable
 from PyQt5.QtGui import QColor
 from optparse import OptionParser
 from nprstuff.core import freshair, npr_utils
