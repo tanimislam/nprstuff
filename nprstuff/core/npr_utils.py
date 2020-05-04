@@ -10,7 +10,7 @@ def find_necessary_executables():
     for ffmpeg_exc in ('avconv', 'ffmpeg'):
         ffmpeg_exec = find_executable(ffmpeg_exc)
         if ffmpeg_exec is not None: break
-        if ffmpeg_exec is None: return None
+    if ffmpeg_exec is None: return None
     #
     return { 'avconv' : ffmpeg_exec }
 

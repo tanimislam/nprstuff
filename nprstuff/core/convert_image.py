@@ -80,20 +80,15 @@ def make_square_mp4video( input_mp4_file, output_mp4_file ):
     ## case #2: height_of_mp4 < width_of_mp4, pad height
     filter_string = 'pad=w=0:h=%d:x=0:y=%d:color=white' % (
         width_of_mp4, ( width_of_mp4 - height_of_mp4 ) // 2 )
-
-    print( input_mp4_file, output_mp4_file, filter_string )
     #
     ## now voodoo magic do do
     exec_cmd = [
         ffmpeg_exec, '-y', '-v', 'warning', '-i', input_mp4_file,
         '-vf', filter_string, output_mp4_file ]
-    print( exec_cmd )
     proc = subprocess.Popen(
         exec_cmd, stdout = subprocess.PIPE,
         stderr = subprocess.STDOUT )
     stdout_val, stderr = proc.communicate( )
-    print( 'stdout = %s.' % stdout_val )
-    print( 'stderr = %s.' % stderr_val )
 
 def get_gif_video( input_mp4_file ):
   """

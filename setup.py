@@ -69,6 +69,7 @@ setup(
             "nprstuff_gui_nytimes = nprstuff.cli.gui:_nytimes",
             "nprstuff_gui_vqronline = nprstuff.cli.gui:_vqronline",
             #
+            ## gui2 stuff, superseded by what's in plexstuff project
             "nprstuff_gui2_loginwindow = nprstuff.cli.gui2:_loginwindow",
             "nprstuff_gui2_mainapp = nprstuff.cli.gui2:_mainapp",
         ]
