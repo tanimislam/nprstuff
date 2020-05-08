@@ -1,5 +1,13 @@
 [![Gitter](https://badges.gitter.im/nprstuff-tanimislam/Lobby.svg)](https://gitter.im/nprstuff-tanimislam/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=body_badge)
 
+# UPDATE
+
+NPR may have changed their API that does not allow for the old functionality to work. The [older NPR API](https://www.npr.org/api/index), that powers the functionality that lives in this repository, has been discontinued. I quote,
+> This API is no longer publicly available for client integrations; for documentation of current API services, please visit the NPR Developer Center.
+Furthermore, the newer [NPR One API](https://dev.npr.org/api/) does not appear to have the necessary functionality to make my magic happen.
+
+Please stand by for further updates!
+
 I like NPR, so I made some scripts to download my favorite programs from
 NPR. This package started off as a way to download [Fresh
 Air](http://www.npr.org/programs/fresh-air/), [Wait Wait..Don’t Tell
