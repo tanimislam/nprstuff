@@ -17,15 +17,13 @@ def hex_to_rgb(value):
     lv = len(value)
     return tuple(int(value[i:i + lv // 3], 16) for i in range(0, lv, lv // 3))
 
-
 def autocrop_perproc(input_tuple):
     inputfilename, outputfilename, color = input_tuple
     val = autocrop_image(inputfilename, outputfilename = outputfilename, color = color)
     return inputfilename, val
-    
 
 def autocrop_image(inputfilename, outputfilename = None, color = 'white', newWidth = None,
-                   doShow = False, trans = False ):
+                   doShow = False, trans = False, fixEven = False ):
     im = Image.open(inputfilename)
 
     #
@@ -53,6 +51,18 @@ def autocrop_image(inputfilename, outputfilename = None, color = 'white', newWid
         if newWidth is not None:
             height = int( newWidth * 1.0 / cropped.size[0] * cropped.size[1] )
             cropped = cropped.resize(( newWidth, height ))
+
+        if fixEven:
+            sizeChanged = False
+            newWidth, newHeight = cropped.size
+            if newWidth % 2 != 0:
+                newWidth += 1
+                sizeChanged = True
+            if newHeight % 2 != 0:
+                newHeight += 1
+                sizeChanged = True
+            if sizeChanged: cropped = cropped.resize(( newWidth, newHeight ))
+        
         if outputfilename is None:
             cropped.save(inputfilename)
         else:

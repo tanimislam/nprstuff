@@ -8,3 +8,4 @@ python-magic
 requests
 mutagen
 matplotlib
+youtube-dl

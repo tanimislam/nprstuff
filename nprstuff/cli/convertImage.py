@@ -1,66 +1,83 @@
-import os, signal
+import os, signal, logging
 from nprstuff import signal_handler
 signal.signal( signal.SIGINT, signal_handler )
 from nprstuff.core import convert_image
 from argparse import ArgumentParser
     
 def _main( ):
+    logger = logging.getLogger( )
     parser = ArgumentParser( description = 'Uses CloudConvert to convert image or video files.' )
     #
     ## top level arguments
-    parser.add_argument('-f', '--filename', dest='filename', type=str, action='store',
-                        help = 'Name of the input image or video (MP4) file.', required = True )
     parser.add_argument('--noverify', dest='do_verify', action='store_false', default = True,
                         help = 'If chosen, do not verify the SSL connection.')
     #
     ## check whether to convert movie or video
     subparsers = parser.add_subparsers( help = 'Choose whether to convert a video or an image', dest = 'choose_option' )
-    parser_image = subparsers.add_parser( 'image', help = 'If chosen, convert an SVG(Z), PDF, or PNG into PNG.' )
-    parser_movie = subparsers.add_parser( 'movie', help = 'If chosen, convert an MP4 into an animated GIF.' )
-    parser_square= subparsers.add_parser('square', help = 'If chosen, create a square MP4 file from an input MP4 file.' )
+    parser_image  = subparsers.add_parser( 'image',   help = 'If chosen, convert an SVG(Z), PDF, or PNG into PNG.' )
+    parser_movie  = subparsers.add_parser( 'movie',   help = 'If chosen, convert an MP4 into an animated GIF.' )
+    parser_youtube= subparsers.add_parser( 'youtube', help = 'If chosen, convert a YOUTUBE video with URL into an animated GIF.' )
+    parser_square = subparsers.add_parser('square', help = 'If chosen, create a square MP4 file from an input MP4 file.' )
     #
     ## convert image
+    parser_image.add_argument(
+        '-f', '--filename', dest='parser_image_filename', type=str, action='store', metavar = 'filename',
+        help = 'Name of the input image file.', required = True )
     parser_image.add_argument('--width', dest='width', type=int, action='store',
                               help = 'If defined, new width of the file. Optional')
-    parser_image.add_argument('--pdf', dest='do_pdf', action='store_true', default = False,
-                              help = 'If chosen, convert a PDF, instead of SVG(Z), file into PNG.')
-    parser_image.add_argument('--png', dest='do_png', action='store_true', default = False,
-                              help = 'If chosen, convert a PNG, instead of SVG(Z), file into a new PNG.')
+    parser_image.add_argument(
+        '-F', '--format', dest='input_format', type=str, action='store',
+        choices = ( 'svg', 'pdf', 'png' ), help = 'Format of input file. Must be one of SVG/SVGZ, PDF, or PNG.' )
     #
-    ## square image
+    ## square video
+    parser_square.add_argument(
+        '-f', '--filename', dest='parser_square_filename', type=str, action='store', metavar = 'filename',
+        help = 'Name of the input video (MP4) file.', required = True )
     parser_square.add_argument( '-o', '--output', dest='outputfilename', type=str, action='store',
                                required = True, help = 'Name of the output MP4 video that will be square.' )
     #
+    ## animated gif
+    parser_movie.add_argument(
+        '-f', '--filename', dest='parser_movie_filename', type=str, action='store', metavar = 'filename',
+        help = 'Name of the input video (MP4) file.', required = True )
+    #
+    ## animated gif from youtube video
+    parser_youtube.add_argument(
+        '-u', '--url', dest='parser_movie_url', type=str, action='store', metavar = 'url',
+        help = 'YouTube URL of the input video.', required = True )
+    parser_youtube.add_argument(
+        '-o', '--output', dest='parser_movie_output', type=str, action='store', metavar = 'output',
+        help = 'Name of the output animated GIF file that will be created.', required = True )
+    #
     ## parsing arguments
     args = parser.parse_args( )
-    assert( args.filename is not None )
     #
     ## image
     if args.choose_option == 'image':
-        assert( len( filter(lambda tok: tok is True, ( args.do_png, args.do_pdf ) ) ) <= 1 )
-        if args.do_pdf:
-            img = convert_image.get_png_image_frompdf( args.filename, newWidth = args.width, verify = args.do_verify )
-            imgFile = os.path.basename( args.filename ).replace( '.pdf', '.png' )
-        elif args.do_png:
-            img = convert_image.get_png_image_frompng( args.filename, newWidth = args.width, verify = args.do_verify )
-            imgFile = os.path.basename( args.filename ).replace( '.png', '_new.png' )
-        else: # SVG or SVGZ
-            img = convert_image.get_png_image( args.filename, newWidth = args.width, verify = args.do_verify )        
+        if args.input_format == 'svg': # SVG or SVGZ
+            img = convert_image.svg2png( args.filename, newWidth = args.width, verify = args.do_verify )        
             imgFile = os.path.basename( args.filename ).replace('.svgz', '.png' ).replace('.svg', '.png')
+        if args.input_format == 'pdf':
+            img = convert_image.pdf2png( args.filename, newWidth = args.width, verify = args.do_verify )
+            imgFile = os.path.basename( args.filename ).replace( '.pdf', '.png' )
+        if args.input_format == 'png':
+            img = convert_image.png2png( args.filename, newWidth = args.width, verify = args.do_verify )
+            imgFile = os.path.basename( args.filename ).replace( '.png', '_new.png' )
         #
         ## now put into file
-        dirName = os.path.dirname( os.path.abspath( args.filename ) )  
+        dirName = os.path.dirname( os.path.abspath( args.parser_image_filename ) )  
         img.save( os.path.join( dirName, imgFile ) )
         return
     #
     ## movie
     if args.choose_option == 'movie':
-        img = convert_image.get_gif_video( args.filename )
+        img = convert_image.get_gif_video( args.parser_movie_filename )
         return
     #
     ## make square movie
     if args.choose_option == 'square':
         assert( os.path.basename( args.outputfilename ).endswith( '.mp4' ) )
         convert_image.make_square_mp4video(
-            args.filename, args.outputfilename )
+            args.parser_square_filename, args.outputfilename )
         return
+    
