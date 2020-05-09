@@ -119,7 +119,7 @@ def get_youtube_file( youtube_URL, output_mp4_file ):
         youtube_URL, output_mp4_file ) )
     try:
         ydl_opts = {
-            'format' : 22, # try highest quality MP4??
+            'format' : '22', # try highest quality MP4??
             'outtmpl' : output_mp4_file }
         with youtube_dl.YoutubeDL( ydl_opts ) as ydl:
             ydl.download([ youtube_URL ])
@@ -140,6 +140,8 @@ def youtube2gif( input_youtube_URL, gif_file ):
     #
     ## now to gif
     mp4togif( intermediate_mp4_file, gif_file )
+    try: os.remove( intermediate_mp4_file )
+    except: pass
     
 def mp4togif( input_mp4_file, gif_file = None ):
     """
