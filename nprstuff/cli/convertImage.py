@@ -19,7 +19,7 @@ def _main( ):
     parser_image  = subparsers.add_parser( 'image',   help = 'If chosen, convert an SVG(Z), PDF, or PNG into PNG.' )
     parser_movie  = subparsers.add_parser( 'movie',   help = 'If chosen, convert an MP4 into an animated GIF.' )
     parser_youtube= subparsers.add_parser( 'youtube', help = 'If chosen, convert a YOUTUBE video with URL into an animated GIF.' )
-    parser_square = subparsers.add_parser('square', help = 'If chosen, create a square MP4 file from an input MP4 file.' )
+    parser_square = subparsers.add_parser( 'square',  help = 'If chosen, create a square MP4 file from an input MP4 file.' )
     #
     ## convert image
     parser_image.add_argument(
@@ -45,11 +45,21 @@ def _main( ):
     #
     ## animated gif from youtube video
     parser_youtube.add_argument(
-        '-u', '--url', dest='parser_movie_url', type=str, action='store', metavar = 'url',
+        '-u', '--url', dest='parser_youtube_url', type=str, action='store', metavar = 'url',
         help = 'YouTube URL of the input video.', required = True )
     parser_youtube.add_argument(
-        '-o', '--output', dest='parser_movie_output', type=str, action='store', metavar = 'output',
+        '-o', '--output', dest='parser_youtube_output', type=str, action='store', metavar = 'output',
         help = 'Name of the output animated GIF file that will be created.', required = True )
+    parser_youtube.add_argument(
+        '-q', '--quality', dest='parser_youtube_quality', type=str, action='store', metavar = 'quality', default = 'highest',
+        choices = ( 'highest', 'high', 'medium', 'low' ),
+        help = 'The quality of the YouTube clip to download. Only video portion is downloaded. May be one of highest, high, medium, low. Default is highest.' )
+    parser_youtube.add_argument(
+        '-d', '--duration', dest='parser_youtube_duration', type=float, action='store', metavar = 'duration',
+        help = 'Optional argument. If chosen, the duration (in seconds, from beginning) of the video to be converted into an animated GIF.' )
+    parser_youtube.add_argument(
+        '-s', '--scale', dest='parser_youtube_scale', type=float, action='store', metavar = 'scale', default = 1.0,
+        help = 'Optional scaling of the input video. Default is 1.0.' )
     #
     ## parsing arguments
     args = parser.parse_args( )
@@ -86,8 +96,10 @@ def _main( ):
     #
     ## animated gif from youtube video
     if args.choose_option == 'youtube':
-        assert( os.path.basename( args.parser_movie_output ).endswith( '.gif' ) )
-        convert_image.youtube2gif( args.parser_movie_url, args.parser_movie_output )
-        
+        assert( os.path.basename( args.parser_youtube_output ).endswith( '.gif' ) )
+        convert_image.youtube2gif(
+            args.parser_youtube_url, args.parser_youtube_output,
+            quality = args.parser_youtube_quality,
+            duration = args.parser_youtube_duration,
+            scale = args.parser_youtube_scale )
 
-    

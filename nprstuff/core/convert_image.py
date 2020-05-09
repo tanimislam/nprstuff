@@ -101,12 +101,13 @@ def make_square_mp4video( input_mp4_file, output_mp4_file ):
         stderr = subprocess.STDOUT )
     stdout_val, stderr = proc.communicate( )
 
-def get_youtube_file( youtube_URL, output_mp4_file ):
+def get_youtube_file( youtube_URL, output_mp4_file, quality = 'highest' ):
     """
     Uses youtube-dl_ programmatically to download into an MP4_ file.
 
     :param str youtube_URL: a valid YouTube_ URL for the song clip.
     :param str output_mp4_file: the MP4_ video file name.
+    :param str quality: the quality level of the MP4 video to download. Default is "highest." Can be one of "highest", "high", "medium", "low".
 
     :returns: ``True`` if successful, otherwise ``False``.
     :rtype: str
@@ -115,11 +116,13 @@ def get_youtube_file( youtube_URL, output_mp4_file ):
     .. _YouTube: https://www.youtube.com
     """
     assert( os.path.basename( output_mp4_file ).endswith( '.mp4' ) )
+    assert( quality in ( 'highest', 'high', 'medium', 'low' ) )
+    qualmap = { 'highest' : '22', 'high' : '133', 'medium' : '134', 'low' : '160' }
     logging.info( 'URL: %s, output_mp4_file: %s.' % (
         youtube_URL, output_mp4_file ) )
     try:
         ydl_opts = {
-            'format' : '22', # try highest quality MP4??
+            'format' : qualmap[ quality ], # try highest quality MP4?? DOES IT WORK??
             'outtmpl' : output_mp4_file }
         with youtube_dl.YoutubeDL( ydl_opts ) as ydl:
             ydl.download([ youtube_URL ])
@@ -129,9 +132,10 @@ def get_youtube_file( youtube_URL, output_mp4_file ):
                      youtube_URL )
         return False
 
-def youtube2gif( input_youtube_URL, gif_file ):
+def youtube2gif( input_youtube_URL, gif_file, quality = 'highest', duration = None, scale = 1.0 ):
     intermediate_mp4_file = '%s.mp4' % str( uuid.uuid4( ) )
-    status = get_youtube_file( input_youtube_URL, intermediate_mp4_file )
+    status = get_youtube_file(
+        input_youtube_URL, intermediate_mp4_file, quality = quality )
     if not status:
         logging.error( "ERROR, COULD NOT DOWNLOAD YOUTUBE URL: %s." % input_youtube_URL )
         try: os.remove( intermediate_mp4_file )
@@ -139,11 +143,11 @@ def youtube2gif( input_youtube_URL, gif_file ):
         return
     #
     ## now to gif
-    mp4togif( intermediate_mp4_file, gif_file )
+    mp4togif( intermediate_mp4_file, gif_file, duration = duration, scale = scale )
     try: os.remove( intermediate_mp4_file )
     except: pass
     
-def mp4togif( input_mp4_file, gif_file = None ):
+def mp4togif( input_mp4_file, gif_file = None, duration = None, scale = 1.0 ):
     """
     This consists of voodoo FFmpeg_ magic that converts MP4_ to animated GIF_ reasonably well. Don't ask me how most of it works, just be on-your-knees-kissing-the-dirt grateful that MILLIONS of people hack onto and into FFmpeg_ so that this information is available, and the workflow works.
     
@@ -157,6 +161,8 @@ def mp4togif( input_mp4_file, gif_file = None ):
     
     :param str input_mp4_file: the name of the valid MP4_ file.
     :param str gif_file: the (optional) name of the animated GIF_ file. If not provided, then creates a GIF file of some default name.
+    :param float duration: duration, in seconds, of MP4_ file to use to make the animated GIF_. If ``None`` is provided, use the full movie. If provided, then must be :math:`\ge 1` seconds.
+    :param float scale: scaling of input width and height of MP4_ file. Default is 1.0. Must be :math:`\ge 0`.
   
     .. seealso:: :py:meth:`make_square_mp4video <nprstuff.core.convert_image.make_square_mp4video>`.
     
@@ -171,6 +177,8 @@ def mp4togif( input_mp4_file, gif_file = None ):
     assert(all(map(lambda tok: tok is not None, ( ffmpeg_exec, ffprobe_exec ))))
     assert( os.path.basename( input_mp4_file ).endswith( '.mp4' ) )
     assert( os.path.isfile( input_mp4_file ) )
+    if duration is not None: assert( duration >= 1.0 )
+    assert( scale > 0.0 )
     #
     ## assert this is an MP4 file
     assert( 'ISO Media,' in magic.from_file( input_mp4_file ) )
@@ -179,6 +187,19 @@ def mp4togif( input_mp4_file, gif_file = None ):
     if gif_file is None: gif_file = input_mp4_file.replace('.mp4', '.gif' )
     else: assert( os.path.basename( gif_file ).endswith( '.gif' ) )
     palettefile = '%s.png' % str( uuid.uuid4( ) )
+
+    #
+    ## step #0: first scale the image if not X1
+    if scale != 1.0:
+        newmp4file = '%s.mp4' % str( uuid.uuid4( ) )
+        cmd = [
+            ffmpeg_exec, '-y', '-v', 'warning', '-i', input_mp4_file,
+            '-vf', 'scale=iw*%0.1f:ih*%0.1f' % ( scale, scale ),
+            newmp4file ]
+        proc = subprocess.Popen(cmd, stdout = subprocess.PIPE, stderr = subprocess.STDOUT )
+        stdout_val, stderr_val = proc.communicate( )
+        os.rename( newmp4file, input_mp4_file )
+    
     #
     ## get info JSON to get width, fps
     proc = subprocess.Popen(
@@ -192,22 +213,27 @@ def mp4togif( input_mp4_file, gif_file = None ):
     fps_string = mp4file_info[ 'streams' ][ 0 ][ 'avg_frame_rate' ]
     fps = int( float( fps_string.split('/')[0] ) * 1.0 /
               float( fps_string.split('/')[1] ) )
+    
     #
     ## now do the voodoo magic from resource #1
     ## step #1: create palette, run at fps
+    args_mov_before = [ ]
+    if duration is not None: args_mov_before = [ '-t', '%0.3f' % duration ]
     cmd = [
-        ffmpeg_exec, '-y', '-v', 'warning', '-i', input_mp4_file,
-        '-vf', 'fps=%d,scale=%d:-1:flags=lanczos,palettegen' % ( fps, width_of_mp4 ),
-        palettefile ]
+        ffmpeg_exec, '-y', '-v', 'warning', ] + args_mov_before + [
+            '-i', input_mp4_file,
+            '-vf', 'fps=%d,scale=%d:-1:flags=lanczos,palettegen' % ( fps, width_of_mp4 ),
+            palettefile ]
     proc = subprocess.Popen(cmd, stdout = subprocess.PIPE, stderr = subprocess.STDOUT )
     stdout_val, stderr_val = proc.communicate( )
     assert( os.path.isfile( palettefile ) )
     #
     ## step #2: take palette file, MP4 file, create animated GIF
     cmd = [
-        ffmpeg_exec, '-y', '-v', 'warning', '-i', input_mp4_file,
-        '-i', palettefile, '-lavfi', 'fps=%d,scale=%d:-1:flags=lanczos[x];[x][1:v]paletteuse' % (
-        fps, width_of_mp4 ), gif_file ]
+        ffmpeg_exec, '-y', '-v', 'warning' ] + args_mov_before + [
+            '-i', input_mp4_file,
+            '-i', palettefile, '-lavfi', 'fps=%d,scale=%d:-1:flags=lanczos[x];[x][1:v]paletteuse' % (
+            fps, width_of_mp4 ), gif_file ]
     proc = subprocess.Popen(cmd, stdout = subprocess.PIPE, stderr = subprocess.STDOUT )
     stdout_val, stderr_val = proc.communicate( )
     #
@@ -323,3 +349,4 @@ def pdf2png( input_pdf_file, newWidth = None, verify = True ):
     return _return_image_cc(
         width, height, input_pdf_file, 'pdf', files,
         newWidth = newWidth, verify = verify )
+
