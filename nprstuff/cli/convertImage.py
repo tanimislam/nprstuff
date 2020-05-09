@@ -11,6 +11,8 @@ def _main( ):
     ## top level arguments
     parser.add_argument('--noverify', dest='do_verify', action='store_false', default = True,
                         help = 'If chosen, do not verify the SSL connection.')
+    parser.add_argument('--info', dest='do_info', action = 'store_true',  default = False,
+                        help = 'If chosen, then print out INFO level logging.' )
     #
     ## check whether to convert movie or video
     subparsers = parser.add_subparsers( help = 'Choose whether to convert a video or an image', dest = 'choose_option' )
@@ -51,6 +53,7 @@ def _main( ):
     #
     ## parsing arguments
     args = parser.parse_args( )
+    if args.do_info: logger.setLevel( logging.INFO )
     #
     ## image
     if args.choose_option == 'image':
@@ -71,7 +74,7 @@ def _main( ):
     #
     ## movie
     if args.choose_option == 'movie':
-        img = convert_image.get_gif_video( args.parser_movie_filename )
+        img = convert_image.mp4togif( args.parser_movie_filename )
         return
     #
     ## make square movie
@@ -80,4 +83,11 @@ def _main( ):
         convert_image.make_square_mp4video(
             args.parser_square_filename, args.outputfilename )
         return
+    #
+    ## animated gif from youtube video
+    if args.choose_option == 'youtube':
+        assert( os.path.basename( args.parser_movie_output ).endswith( '.gif' ) )
+        convert_image.youtube2gif( args.parser_movie_url, args.parser_movie_output )
+        
+
     

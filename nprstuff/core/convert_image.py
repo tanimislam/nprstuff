@@ -1,5 +1,5 @@
 import requests, os, gzip, magic, uuid
-import subprocess, json, youtube_dl
+import subprocess, json, youtube_dl, logging
 from PIL import Image
 from io import BytesIO
 from PyPDF2 import PdfFileReader
@@ -128,9 +128,20 @@ def get_youtube_file( youtube_URL, output_mp4_file ):
         logging.info( "ERROR, CANNOT DOWNLOAD %s INTO MP4 FILE. MY BAD (FOR NOW)." %
                      youtube_URL )
         return False
-    
 
-def get_gif_video( input_mp4_file, gif_file = None ):
+def youtube2gif( input_youtube_URL, gif_file ):
+    intermediate_mp4_file = '%s.mp4' % str( uuid.uuid4( ) )
+    status = get_youtube_file( input_youtube_URL, intermediate_mp4_file )
+    if not status:
+        logging.error( "ERROR, COULD NOT DOWNLOAD YOUTUBE URL: %s." % input_youtube_URL )
+        try: os.remove( intermediate_mp4_file )
+        except: pass
+        return
+    #
+    ## now to gif
+    mp4togif( intermediate_mp4_file, gif_file )
+    
+def mp4togif( input_mp4_file, gif_file = None ):
     """
     This consists of voodoo FFmpeg_ magic that converts MP4_ to animated GIF_ reasonably well. Don't ask me how most of it works, just be on-your-knees-kissing-the-dirt grateful that MILLIONS of people hack onto and into FFmpeg_ so that this information is available, and the workflow works.
     
