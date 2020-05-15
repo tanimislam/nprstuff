@@ -349,4 +349,3 @@ def pdf2png( input_pdf_file, newWidth = None, verify = True ):
     return _return_image_cc(
         width, height, input_pdf_file, 'pdf', files,
         newWidth = newWidth, verify = verify )
-

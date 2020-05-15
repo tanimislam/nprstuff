@@ -10,7 +10,7 @@ This is a front-end to https://developer.github.com/v3/markdown/, which describe
 
 def _md_2_html( markdown_file, html_file, verify = True ):
   assert( os.path.isfile( markdown_file ) )
-  assert( os.path.basename( markdown_file ).endswith( '.md' ) )
+  assert( any(map(lambda tok: os.path.basename( markdown_file ).endswith( '.%s' % tok ), ( 'md', 'rst' ) ) ) )
   assert( not os.path.isdir( html_file ) )
   assert( os.path.basename( html_file ).endswith( '.html' ) )
   headers = { 'Content-Type' : 'text/markdown' }
