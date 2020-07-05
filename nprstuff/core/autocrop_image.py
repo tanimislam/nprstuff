@@ -25,6 +25,7 @@ def autocrop_perproc(input_tuple):
 def autocrop_image(inputfilename, outputfilename = None, color = 'white', newWidth = None,
                    doShow = False, trans = False, fixEven = False ):
     im = Image.open(inputfilename)
+    im_noalpha = im.convert('RGB') # to deal with issue of alpha < 255
 
     #
     ## if remove transparency, do the following
@@ -42,8 +43,8 @@ def autocrop_image(inputfilename, outputfilename = None, color = 'white', newWid
         if color not in _all_possible_colornames:
             raise ValueError("Error, color name = %s not in valid set of color names.")
         rgbcolor = webcolors.name_to_rgb(color)
-    bg = Image.new(im.mode, im.size, rgbcolor)
-    diff = ImageChops.difference(im, bg)
+    bg = Image.new(im_noalpha.mode, im_noalpha.size, rgbcolor)
+    diff = ImageChops.difference(im_noalpha, bg)
     diff = ImageChops.add(diff, diff, 2.0, -100)
     bbox = diff.getbbox()
     if bbox:
