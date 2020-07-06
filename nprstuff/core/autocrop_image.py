@@ -1,5 +1,5 @@
-import os, sys, webcolors, multiprocessing
-import logging, subprocess, shlex, uuid
+import os, sys, webcolors, multiprocessing, numpy
+import logging, subprocess, shlex, uuid, matplotlib.image
 from PIL import Image, ImageChops
 from PyPDF2 import PdfFileReader, PdfFileWriter
 from itertools import chain
@@ -25,7 +25,6 @@ def autocrop_perproc(input_tuple):
 def autocrop_image(inputfilename, outputfilename = None, color = 'white', newWidth = None,
                    doShow = False, trans = False, fixEven = False ):
     im = Image.open(inputfilename)
-    im_noalpha = im.convert('RGB') # to deal with issue of alpha < 255
 
     #
     ## if remove transparency, do the following
@@ -38,41 +37,62 @@ def autocrop_image(inputfilename, outputfilename = None, color = 'white', newWid
     
     try:
         # get hex colors
-        rgbcolor = hex_to_rgb( color )
+        rgbcolor = numpy.array( hex_to_rgb( color ), dtype=float ) / 255.0
     except Exception:
         if color not in _all_possible_colornames:
             raise ValueError("Error, color name = %s not in valid set of color names.")
-        rgbcolor = webcolors.name_to_rgb(color)
-    bg = Image.new(im_noalpha.mode, im_noalpha.size, rgbcolor)
-    diff = ImageChops.difference(im_noalpha, bg)
-    diff = ImageChops.add(diff, diff, 2.0, -100)
-    bbox = diff.getbbox()
-    if bbox:
-        cropped = im.crop(bbox)
-        if newWidth is not None:
-            height = int( newWidth * 1.0 / cropped.size[0] * cropped.size[1] )
-            cropped = cropped.resize(( newWidth, height ))
+        rgbcolor = numpy.array( webcolors.name_to_rgb(color), dtype=float ) / 255.0
 
-        if fixEven:
-            sizeChanged = False
-            newWidth, newHeight = cropped.size
-            if newWidth % 2 != 0:
-                newWidth += 1
-                sizeChanged = True
-            if newHeight % 2 != 0:
-                newHeight += 1
-                sizeChanged = True
-            if sizeChanged: cropped = cropped.resize(( newWidth, newHeight ))
+    #
+    ## code looks for FIRST color, in X and Y, that is NOT background color
+    #
+    ## step #1, get the numpy array representation, values are RGB(A), but only look at RGB
+    ## RGB(A) values are from 0 to 1.0 inclusive
+    img_data = matplotlib.image.imread( inputfilename )
+    #
+    ## now get the array of point coordinates (XVALS, YVALS) that are NOT background color
+    try:
+        #
+        ## wtfism, imread transposes
+        yvals, xvals = numpy.where(
+            (img_data[:,:,0] != rgbcolor[0]) &
+            (img_data[:,:,1] != rgbcolor[1]) &
+            (img_data[:,:,2] != rgbcolor[2]) )
+        left = xvals.min( )
+        right = xvals.max( )
+        upper = yvals.max( )
+        lower = yvals.min( )
+        bbox = ( left, lower, right, upper )
+        print( bbox )
+    except:
+        bbox = ( 0, 0, im.size[0], im.size[1] )
+    #
+    ## crop image
+    cropped = im.crop(bbox)
+    if newWidth is not None:
+        height = int( newWidth * 1.0 / cropped.size[0] * cropped.size[1] )
+        cropped = cropped.resize(( newWidth, height ))
+
+    if fixEven:
+        sizeChanged = False
+        newWidth, newHeight = cropped.size
+        if newWidth % 2 != 0:
+            newWidth += 1
+            sizeChanged = True
+        if newHeight % 2 != 0:
+            newHeight += 1
+            sizeChanged = True
+        if sizeChanged: cropped = cropped.resize(( newWidth, newHeight ))
         
-        if outputfilename is None:
-            cropped.save(inputfilename)
-        else:
-            cropped.save(os.path.expanduser(outputfilename))
-        if doShow:
-            cropped.show( )
-        return True
+    if outputfilename is None:
+        cropped.save(inputfilename)
     else:
-        return False
+        cropped.save(os.path.expanduser(outputfilename))
+    if doShow:
+        cropped.show( )
+    return True
+    #else:
+    #    return False
 
 #
 ## borrowed this code from https://gist.github.com/jpscaletti/7321281
