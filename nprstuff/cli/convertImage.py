@@ -67,21 +67,23 @@ def _main( ):
     #
     ## image
     if args.choose_option == 'image':
-        filename = args.parser_image_filename
-        if args.input_format == 'svg': # SVG or SVGZ
-            img = convert_image.svg2png( filename, newWidth = args.width, verify = args.do_verify )        
-            imgFile = os.path.basename( args.filename ).replace('.svgz', '.png' ).replace('.svg', '.png')
-        if args.input_format == 'pdf':
-            img = convert_image.pdf2png( filename, newWidth = args.width, verify = args.do_verify )
-            imgFile = os.path.basename( args.filename ).replace( '.pdf', '.png' )
-        if args.input_format == 'png':
-            img = convert_image.png2png( filename, newWidth = args.width, verify = args.do_verify )
-            imgFile = os.path.basename( filename ).replace( '.png', '_new.png' )
-        #
-        ## now put into file
-        dirName = os.path.dirname( os.path.abspath( filename ) )  
-        img.save( os.path.join( dirName, imgFile ) )
+        print( 'ERROR, CloudConvert sort of pooped the bed. This conversion functionality no longer works. Exiting...' )
         return
+        # filename = args.parser_image_filename
+        # if args.input_format == 'svg': # SVG or SVGZ
+        #     img = convert_image.svg2png( filename, newWidth = args.width, verify = args.do_verify )        
+        #     imgFile = os.path.basename( args.filename ).replace('.svgz', '.png' ).replace('.svg', '.png')
+        # if args.input_format == 'pdf':
+        #     img = convert_image.pdf2png( filename, newWidth = args.width, verify = args.do_verify )
+        #     imgFile = os.path.basename( args.filename ).replace( '.pdf', '.png' )
+        # if args.input_format == 'png':
+        #     img = convert_image.png2png( filename, newWidth = args.width, verify = args.do_verify )
+        #     imgFile = os.path.basename( filename ).replace( '.png', '_new.png' )
+        # #
+        # ## now put into file
+        # dirName = os.path.dirname( os.path.abspath( filename ) )  
+        # img.save( os.path.join( dirName, imgFile ) )
+        # return
     #
     ## movie
     if args.choose_option == 'movie':
