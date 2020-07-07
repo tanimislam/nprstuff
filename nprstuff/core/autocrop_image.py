@@ -63,7 +63,6 @@ def autocrop_image(inputfilename, outputfilename = None, color = 'white', newWid
         upper = yvals.max( )
         lower = yvals.min( )
         bbox = ( left, lower, right, upper )
-        print( bbox )
     except:
         bbox = ( 0, 0, im.size[0], im.size[1] )
     #
