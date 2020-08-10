@@ -1,2 +1,2 @@
-default: NOTES.rst
-	rst2html NOTES.rst > NOTES.html
+default: README.rst
+	rst2html README.rst > README.html
