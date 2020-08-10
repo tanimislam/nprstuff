@@ -22,6 +22,8 @@ def get_americanlife_info(
     :param str directory: the directory into which to download a `This American Life`_ episode. Default is the current working directory.
     :returns: a :py:class:`tuple` of ``title``, ``year``, and ``html`` in which this episode was aired. Otherwise, if ``throwException`` is ``False`` and title is not found, returns ``None``. ``html`` is the :py:class:`BeautifulSoup <bs4.BeautifulSoup>` tree of the XML data for this `This American Life`_ episode.
     :rtype: tuple
+
+    .. seealso:: :py:meth:`get_american_life <nprstuff.core.thisamericanlife.get_american_life>`.
     
     .. _`This American Life`: https://https://www.thisamericanlife.org
     """
@@ -74,7 +76,7 @@ def get_TAL_URL( epno, verify = True ):
     :param int epno: the episode number of `This American Life`_.
     :param bool verify: optional argument, whether to verify SSL connections. Default is ``True``.
     :returns: the URL for `This American Life`_ episode. If URL could not be found, returns ``None``.
-    :rtype: str`
+    :rtype: str
     """
     url_epelem = 'https://www.thisamericanlife.org/radio-archives/episode/%d' % epno
     response = requests.get( url_epelem, verify = verify )
@@ -105,12 +107,18 @@ def get_american_life(
     epno, directory = '/mnt/media/thisamericanlife', extraStuff = None, verify = True,
     dump = False ):
     """
-    Downloads an episode of This American Life into a given directory. The description of which URL the episodes are downloaded from is given in http://www.dirtygreek.org/t/download-this-american-life-episodes.
+    Downloads an episode of `This American Life`_ into a given directory.
+
+    :param int epno: the episode number of `This American Life`_.
+    :param str directory: the directory into which to download a `This American Life`_ episode. Default is ``/mnt/media/thisamericanlife``.
+    :param str extraStuff: additional stuff to put into the candidate URL for `This American Life`_ episodes. Default is ``None``.
+    :param bool verify: optional argument, whether to verify SSL connections. Default is ``True``.
+    :param bool dump: optional argument, if ``True`` then instead of downloading first `This American Life`_, downloads the XML info as a file, named ``PRI.ThisAmericanLife.<NUM>.xml``. Default is ``False``.
+
     
-    The URL is http://audio.thisamericanlife.org/jomamashouse/ismymamashouse/epno.mp3.
-    
-    Otherwise, the URL is http://www.podtrac.com/pts/redirect.mp3/podcast.thisamericanlife.org/podcast/epno.mp3.
+    .. seealso:: :py:meth:`get_americanlife_info <nprstuff.core.thisamericanlife.get_americanlife_info>`.
     """
+    
     try:
         tup = get_americanlife_info(epno, extraStuff = extraStuff, verify = verify, dump = dump,
                                     directory = directory )
@@ -169,7 +177,7 @@ def get_american_life(
     
 def thisamericanlife_crontab( ):
     """
-    This python module downloads a This American Life episode every weekend
+    This python module downloads a `This American Life`_ episode every weekend.
     """
     def _get_track( filename ):
         assert( os.path.basename( filename ).endswith( '.mp3' ) ) 

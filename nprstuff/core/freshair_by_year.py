@@ -6,87 +6,121 @@ from matplotlib.patches import Rectangle
 from mutagen.easymp4 import EasyMP4
 from distutils.spawn import find_executable
 from PyQt5.QtGui import QColor
-from optparse import OptionParser
 from nprstuff.core import freshair, npr_utils
 
 _default_inputdir = '/mnt/media/freshair'
 _default_year = 2010
 
 def suncal( mon, year = _default_year ):
-  cal0 = numpy.array( calendar.monthcalendar( year, mon ), dtype=int )
-  cal = numpy.zeros( cal0.shape, dtype=int )
-  cal[:,[1,2,3,4,5,6]] = cal0[:,[0,1,2,3,4,5]]
-  cal[1:,0] = cal0[:,-1][:-1]
-  if max( cal[0,:] ) == 0:
-    cal = cal[1:,:]
-  if max( cal[-1,:] ) == 0:
-    cal = cal[:-1,:]
-  return cal
+    """
+    returns the calendar of day numbers for a given month and year, as numpy integer array of 7 columns (Sunday is the column 0, and Saturday is column 6). For example, for December 2019, here is the output.
+
+    .. code-block:: python
+
+       >> suncal( 12, 2019 )
+       >> array([[ 1,  2,  3,  4,  5,  6,  7],
+       [ 8,  9, 10, 11, 12, 13, 14],
+       [15, 16, 17, 18, 19, 20, 21],
+       [22, 23, 24, 25, 26, 27, 28],
+       [29, 30, 31,  0,  0,  0,  0]])
+
+    Here, December 1, 2019, is a Sunday, and December 7, 2019, is a Saturday. Zero array values are *not* in December 2019 (December 31, 2019, is a Tuesday).
+
+    :param int mon: the calendar month. ``January`` is 1, ``December`` is 12.
+    :param int year: the calendar year.
+    :returns: an integer :py:class:`numpy array <numpy.ndarray>` of calendar days for that month and year.
+    :rtype: :py:class:`numpy array <numpy.ndarray>`
+    """
+    cal0 = numpy.array( calendar.monthcalendar( year, mon ), dtype=int )
+    cal = numpy.zeros( cal0.shape, dtype=int )
+    cal[:,[1,2,3,4,5,6]] = cal0[:,[0,1,2,3,4,5]]
+    cal[1:,0] = cal0[:,-1][:-1]
+    if max( cal[0,:] ) == 0:
+        cal = cal[1:,:]
+    if max( cal[-1,:] ) == 0:
+        cal = cal[:-1,:]
+    return cal
 
 def get_color( discrep ):
-  assert( discrep <= 1.0 )
-  assert( discrep >= 0.0 )
-  e_color = QColor("#1f77b4")
-  s_color = QColor("#ff7f0e")
-  hsv_start = numpy.array( s_color.getHsvF()[:-1] )
-  hsv_end = numpy.array( e_color.getHsvF()[:-1] )
-  hsv_mid = hsv_start * (1.0 - discrep * 0.9) + hsv_end * discrep * 0.9
-  cmid = QColor.fromHsvF( hsv_mid[0], hsv_mid[1], hsv_mid[2], 1.0 )
-  return str( cmid.name( ) ).upper( )
+    """
+    returns a hex color linearly interpolated between "#1f77b4" (value of 0.0) and "#ff7f0e" (value of 1.0) for a value :math:`0 \le v \le 1`.
+
+    :param float discrep: the value over which to interpolate to return a hex color.
+    :returns: a hex color linearly interpolated between "#1f77b4" (value of 0.0) and "#ff7f0e" (value of 1.0).
+    :rtype: str
+    """
+    assert( discrep <= 1.0 )
+    assert( discrep >= 0.0 )
+    e_color = QColor("#1f77b4")
+    s_color = QColor("#ff7f0e")
+    hsv_start = numpy.array( s_color.getHsvF()[:-1] )
+    hsv_end = numpy.array( e_color.getHsvF()[:-1] )
+    hsv_mid = hsv_start * (1.0 - discrep * 0.9) + hsv_end * discrep * 0.9
+    cmid = QColor.fromHsvF( hsv_mid[0], hsv_mid[1], hsv_mid[2], 1.0 )
+    return str( cmid.name( ) ).upper( )
 
 def find_occupied_days( mon, year = _default_year ):
-  days = set([ int( os.path.basename( fname ).split('.')[2] ) for fname in
-               glob.glob( os.path.join( _default_inputdir,
-                                        'NPR.FreshAir.*.%02d.%d.m4a' % ( mon, year ) ) ) ])
-  return days
+    """
+    :param int mon: the calendar month. ``January`` is 1, ``December`` is 12.
+    :param int year: the calendar year.
+    :returns: a :py:class:`set` of calendar weekdays of `NPR Fresh Air`_ episodes for that calendar month and year.
+    :rtype: set
+
+    .. _`NPR Fresh Air`: 
+    """
+    days = set(map(lambda fname: int( os.path.basename( fname ).split('.')[2] ),
+                   glob.glob( os.path.join(
+                    _default_inputdir,
+                    'NPR.FreshAir.*.%02d.%d.m4a' % ( mon, year ) ) ) ) )
+    return days
 
 def find_underoccupied_dates( mon, year = _default_year ):
-  newdict = {}
-  ffprobe_exec = find_executable( 'ffprobe' )
-  if ffprobe_exec is None:
-    raise ValueError("Error, cannot do work without visible FFPROBE" )
-  days = find_occupied_days( mon, year = year )
-  daydict = dict(map(lambda day: (
-    day, os.path.join( _default_inputdir,
-                       'NPR.FreshAir.%02d.%02d.%d.m4a' % ( day, mon, year ) ) ),
-                     find_occupied_days( mon, year = year ) ) )
-  actdict = dict(map(lambda day: ( day, EasyMP4( daydict[day] ).info.length ),
-                     filter(lambda day: os.stat(daydict[day]).st_size <= 4e7 and
-                            EasyMP4( daydict[day] ).info.length <= 35*60, daydict ) ) )
-  def _get_story_dur( story_elem ):
-    m3u_elems = story_elem.find_all('mp3')
-    if len(m3u_elems) == 0: return 0.0
-    mp3_url = requests.get( m3u_elems[0].text ).text.strip( )
-    tmpfile = '%s.mp3' % ''.join(map(lambda idx: str(uuid.uuid4( )).split('-')[0], range(2)))
-    duration = 0.0
-    with open( tmpfile, 'wb' ) as openfile:
-      openfile.write( requests.get( mp3_url ).content )
-      proc = subprocess.Popen([ ffprobe_exec, '-v', 'quiet', '-show_streams',
-                                '-show_format', '-print_format', 'json', tmpfile ],
-                              stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
-      stdout_val, stderr_val = proc.communicate( )
-      data = json.loads( stdout_val )
-      duration = float( data['format']['duration'] )
-    os.remove( tmpfile )
-    return duration
-  #
-  def _process_discrepancy( day, mon, year, actdict ):
-    dt_s = datetime.datetime.strptime('%02d.%02d.%04d' % ( day, mon, year ),
-                                      '%d.%m.%Y' ).date( )
-    html = freshair.get_freshair(
-      os.path.expanduser('~'), dt_s,
-      debug = True, to_file_debug = False )
-    expectdur = sum(map(_get_story_dur, html.find_all( 'story' ) ) )
-    totlength = actdict[ day ]
-    if expectdur == 0:
-      return ( day, ( totlength, 1.0, get_color( 1.0 ) ) )
-    discrep = max( 0.0, expectdur * 0.985 - totlength ) / ( 0.985 * expectdur )
-    if discrep <= 1e-6: return None
-    return ( day, ( totlength, discrep, get_color( discrep ) ) )
-  #
-  newdict = dict(filter(None, map(lambda day: _process_discrepancy(
-    day, mon, year, actdict ), actdict ) ) )
-  return newdict
+    newdict = {}
+    ffprobe_exec = find_executable( 'ffprobe' )
+    if ffprobe_exec is None:
+        raise ValueError("Error, cannot do work without visible FFPROBE" )
+    days = find_occupied_days( mon, year = year )
+    daydict = dict(map(lambda day: (
+        day, os.path.join( _default_inputdir,
+                        'NPR.FreshAir.%02d.%02d.%d.m4a' % ( day, mon, year ) ) ),
+                       find_occupied_days( mon, year = year ) ) )
+    actdict = dict(map(lambda day: ( day, EasyMP4( daydict[day] ).info.length ),
+                       filter(lambda day: os.stat(daydict[day]).st_size <= 4e7 and
+                              EasyMP4( daydict[day] ).info.length <= 35*60, daydict ) ) )
+    def _get_story_dur( story_elem ):
+        m3u_elems = story_elem.find_all('mp3')
+        if len(m3u_elems) == 0: return 0.0
+        mp3_url = requests.get( m3u_elems[0].text ).text.strip( )
+        tmpfile = '%s.mp3' % ''.join(map(lambda idx: str(uuid.uuid4( )).split('-')[0], range(2)))
+        duration = 0.0
+        with open( tmpfile, 'wb' ) as openfile:
+            openfile.write( requests.get( mp3_url ).content )
+            proc = subprocess.Popen([ ffprobe_exec, '-v', 'quiet', '-show_streams',
+                                     '-show_format', '-print_format', 'json', tmpfile ],
+                                    stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
+            stdout_val, stderr_val = proc.communicate( )
+            data = json.loads( stdout_val )
+            duration = float( data['format']['duration'] )
+        os.remove( tmpfile )
+        return duration
+    #
+    def _process_discrepancy( day, mon, year, actdict ):
+        dt_s = datetime.datetime.strptime('%02d.%02d.%04d' % ( day, mon, year ),
+                                          '%d.%m.%Y' ).date( )
+        html = freshair.get_freshair(
+            os.path.expanduser('~'), dt_s,
+            debug = True, to_file_debug = False )
+        expectdur = sum(map(_get_story_dur, html.find_all( 'story' ) ) )
+        totlength = actdict[ day ]
+        if expectdur == 0:
+            return ( day, ( totlength, 1.0, get_color( 1.0 ) ) )
+        discrep = max( 0.0, expectdur * 0.985 - totlength ) / ( 0.985 * expectdur )
+        if discrep <= 1e-6: return None
+        return ( day, ( totlength, discrep, get_color( discrep ) ) )
+    #
+    newdict = dict(filter(None, map(lambda day: _process_discrepancy(
+        day, mon, year, actdict ), actdict ) ) )
+    return newdict
 
 def create_plot_year( year = _default_year ):
   # calendar.setfirstweekday( 6 )
