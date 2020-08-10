@@ -6,6 +6,17 @@ import urllib.parse as urlparse
 from urllib.parse import urlencode
 from configparser import ConfigParser, RawConfigParser
 
+def get_firefox_driver( ):
+    from selenium import webdriver
+    from selenium.webdriver.firefox.options import Options
+    geckodriver = find_executable( 'geckodriver' )
+    if geckodriver is None:
+        raise ValueError("Error, could not find geckodriver to launch Selenium Firefox headless browser." )
+    options = Options( )
+    options.headless = True
+    driver = webdriver.Firefox( options = options )
+    return driver
+
 def find_necessary_executables( ):
     """
     :returns: this method searches first for the avconv_, then the FFmpeg_, executable for audiovisual conversion. If it finds either executable, returns a :py:class:`dict` that looks like ``{ 'avconv' : <EXEC_PATH> }``, where ``<EXEC_PATH>`` is the executable's path. If it does NOT find it, returns ``None``.

@@ -226,6 +226,103 @@ def get_freshair_lowlevel( outputdir, date_s, titles ):
   shutil.rmtree( tmpdir ) 
   return m4afile_act
 
+def _get_title_mp3_urls_attic( date_s, debug = False, to_file_debug = True ):
+    #
+    ## download this data into a BeautifulSoup object
+    resp = requests.get( 'https://api.npr.org/query',
+                        params = {
+                            'id'  : _npr_FreshAir_progid,
+                            'date': date_s.strftime('%Y-%m-%d' ),
+                            'dateType' : 'story',
+                            'output' : 'NPRML',
+                            'apiKey' : npr_utils.get_api_key( ) } )
+    # resp = requests.get( nprURL )
+    if resp.status_code != 200:
+        logging.debug('ERROR GETTING FRESH AIR STORY FOR %s' %
+                      date_s.strftime('%d %B %Y' ) )
+        return None
+    html = BeautifulSoup( resp.content, 'lxml' )
+    #
+    if debug:
+        # print 'URL = %s' % nprURL
+        if to_file_debug:
+            with open(os.path.join(outputdir, 'NPR.FreshAir.tree.%s.xml' % decdate), 'w') as openfile:
+                openfile.write( '%s\n' % html.prettify( ) )
+        return html
+    #
+    ## check for unavailable tag
+    if len( html.find_all('unavailable', { 'value' : 'true' } ) ) != 0:
+        unavailable_elem = html.find_all('unavailable', { 'value' : 'true' } )[ 0 ]
+        if unavailable_elem.text is None:
+            print( 'Could not create Fresh Air episode for date %s because unavailable without a specific reason' %
+                npr_utils.get_datestring( date_s ) )
+        else:
+            print( 'Could not create Fresh Air episode for date %s because unavailable for this reason: %s' % 
+                ( npr_utils.get_datestring( date_s ), unavailable_elem.text.strip() ) )
+        return None
+    #
+    ## now get tuple of title to mp3 file
+    title_mp3_urls = process_freshair_titlemp3_tuples( html )
+    if len(title_mp3_urls) == 0:
+        print( 'Error, could not find any Fresh Air episodes for date %s.' %
+              npr_utils.get_datestring( date_s ) )
+        return None
+    return title_mp3_urls
+
+def get_title_mp3_urls_working( date_s ):
+    #
+    ## must be the end datetime
+    time0 = time.time( )
+    dt_end = datetime.datetime( date_s.year, date_s.month, date_s.day )
+    t_end = int( datetime.datetime.timestamp( dt_end ) )
+    t_start = t_end - 86400
+    #
+    ## now get the firefox driver, go to the URL defined there
+    driver = npr_utils.get_firefox_driver( )
+    print( driver )
+    mainURL =  'https://www.npr.org/search?query=*&page=1&refinementList[shows]=Fresh Air&range[lastModifiedDate][min]=%d&range[lastModifiedDate][max]=%d&sortType=byDateAsc' % ( t_start, t_end )
+    driver.get( mainURL )
+    print( 'mainURL = %s.' % mainURL )
+    html = BeautifulSoup( driver.page_source, 'lxml' )
+    with open( 'foo.xml', 'w' ) as openfile:
+        openfile.write( '%s\n' % html.prettify( ) )
+    episode_elems = html.find_all('h2', { 'class' : 'title' } )
+    print( 'episode elems = %s.' % episode_elems )
+    episode_urls = list(map(lambda elem: urljoin( 'https://www.npr.org', elem.find_all('a')[0]['href'] ), episode_elems ) )
+    print( 'episode_URLs = %s.' % episode_urls )
+    #
+    def get_npr_freshair_story( episode_URL, candidate_date ):
+        response = requests.get( episode_URL )
+        assert( response.ok )
+        html_ep = BeautifulSoup( response.content, 'lxml' )
+        date_f = candidate_date.strftime( '%Y-%m-%d' )
+        date_elems = list(html_ep.find_all('meta', { 'name' : 'date', 'content' : date_f } ) )
+        if len( date_elems ) != 1: return None
+        #
+        ## keep going, get the title    
+        title_elems = list(html_ep.find_all('title'))
+        if len( title_elems ) != 0: return None
+        title = ' '.join(map(lambda tok: tok.strip(), title_elems[0].text.split(':')[:-1]))
+        #
+        ## now get the MP3 URL
+        mp3_elems = list(filter(lambda elem: 'href' in elem.attrs and 'mp3' in elem['href'], html_ep1.find_all('a')))
+        if len( mp3_elems ) == 0: return None
+        mp3_elem = mp3_elems[0]
+        mp3_url_split = urlsplit( mp3_elem['href'] )
+        mp3_url = urljoin( 'https://%s' % mp3_url_split.netloc, mp3_url_split.path )
+        #
+        ## now get order
+        order = int( os.path.basename( mp3_url ).split('.')[0].split('_')[-1] )
+        #
+        ## return tuple of order, title, URL
+        return order, title, mp3_url
+    #
+    ## get the tuples in order
+    ordered_npr_freshair = sorted(filter(None, map(lambda episode_URL: get_npr_freshair_story( episode_URL, date_s ), episode_urls ) ),
+                                  key = lambda tup: tup[0] )
+    assert( len( ordered_npr_freshair ) == len( episode_urls ) )
+    return list(map(lambda tup: ( tup[1], tup[2] ), ordered_npr_freshair ) )
+
 def get_freshair(
     outputdir, date_s, order_totnum = None,
     file_data = None, debug = False,
@@ -259,52 +356,15 @@ def get_freshair(
     #                               npr_utils.get_api_key() )
     year = date_s.year
     
-    # download this data into a BeautifulSoup object
-    resp = requests.get( 'https://api.npr.org/query',
-                        params = {
-                            'id'  : _npr_FreshAir_progid,
-                            'date': date_s.strftime('%Y-%m-%d' ),
-                            'dateType' : 'story',
-                            'output' : 'NPRML',
-                            'apiKey' : npr_utils.get_api_key( ) } )
-    # resp = requests.get( nprURL )
-    if resp.status_code != 200:
-        logging.debug('ERROR GETTING FRESH AIR STORY FOR %s' %
-                      date_s.strftime('%d %B %Y' ) )
-        return None
-    html = BeautifulSoup( resp.content, 'lxml' )
-    
-    if debug:
-        # print 'URL = %s' % nprURL
-        if to_file_debug:
-            with open(os.path.join(outputdir, 'NPR.FreshAir.tree.%s.xml' % decdate), 'w') as openfile:
-                openfile.write( '%s\n' % html.prettify( ) )
-        return html
-    
-    # check for unavailable tag
-    if len( html.find_all('unavailable', { 'value' : 'true' } ) ) != 0:
-        unavailable_elem = html.find_all('unavailable', { 'value' : 'true' } )[ 0 ]
-        if unavailable_elem.text is None:
-            print( 'Could not create Fresh Air episode for date %s because unavailable without a specific reason' %
-                npr_utils.get_datestring( date_s ) )
-        else:
-            print( 'Could not create Fresh Air episode for date %s because unavailable for this reason: %s' % 
-                ( npr_utils.get_datestring( date_s ), unavailable_elem.text.strip() ) )
-        return
-
-    # now get tuple of title to mp3 file
-    title_mp3_urls = process_freshair_titlemp3_tuples( html )
-    if len(title_mp3_urls) == 0:
-        print( 'Error, could not find any Fresh Air episodes for date %s.' %
-              npr_utils.get_datestring( date_s ) )
-        return
+    title_mp3_urls = _get_title_mp3_urls_attic( date_s, debug, to_file_debug )
+    if title_mp3_urls is None: return None
 
     # temporary directory
     tmpdir = tempfile.mkdtemp( )
     m4afile_temp = os.path.join(tmpdir, 'NPR.FreshAir.%s.m4a' % decdate )
     m4afile = os.path.join(outputdir, 'NPR.FreshAir.%s.m4a' % decdate )
     
-    titles, songurls = zip(*title_mp3_urls)
+    titles, songurls = list(zip(*title_mp3_urls))
     outfiles = [ os.path.join(tmpdir, 'freshair.%s.%d.mp3' % 
                               ( decdate, num + 1) ) for
                 (num, mp3url) in enumerate( songurls ) ]
