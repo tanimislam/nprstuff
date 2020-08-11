@@ -1,93 +1,72 @@
 .. image:: https://badges.gitter.im/nprstuff-tanimislam/Lobby.svg
    :target: https://gitter.im/nprstuff-tanimislam/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=body_badge
 
-README
-======
+###################################################################
+Nprstuff - Utility Functionality for NPR Programs and Other Things
+###################################################################
 I like NPR, so I made some scripts to download my favorite programs from NPR. For now, I have something that downloads `NPR Fresh Air`_, `Wait Wait...Don't Tell
-Me`_, and `This American Life`_. This package can probably, straightforwardly be extended to other NPR and PRI programs (although I haven't yet done so).
+Me <waitwait_>`_, and `This American Life`_. This package can probably, straightforwardly be extended to other NPR and PRI programs (although I haven't yet done so).
 
-Although this project started off as a way to download these three programs, I have expanded it to include a grab bag of altogether different types of functionalities. What remains the same? This distribution consists mainly of executable python scripts. Detailed documentation lives in the Sphinx repository
+Although this project started off as a way to download these three programs, I have expanded it to include a grab bag of altogether different types of functionalities. What remains the same? This distribution consists mainly of executable Python scripts. Detailed documentation lives in the Sphinx repository
 
-.. note::
+NPR changed their API, which means that old functionality does not work. NPR has discontinued the `older NPR API`_, that powers much of this repository's functionality. I quote,
 
-   NPR changed their API, which means that old functionality does not work. The `older NPR API`_, that powers the functionality that lives in this repository, has been discontinued. I quote,
+  This API is no longer publicly available for client integrations; for documentation of current API services, please visit the NPR Developer Center.
 
-     This API is no longer publicly available for client integrations; for documentation of current API services, please visit the NPR Developer Center.
+Furthermore, the newer `NPR One API`_ does not appear to have the necessary functionality to make my magic happen. The rest of the functionality lives in the
 
-   Furthermore, the newer `NPR One API`_ does not appear to have the necessary functionality to make my magic happen.
+The comprehensive documentation lives in HTML created with `Sphinx <https://www.sphinx-doc.org/en/master/>`_, and now in the `Read the Docs <nprstuff_>`_ page for this project. To generate the documentation, go to the ``docs`` subdirectory. In that directory, run ``make html``. Load ``docs/build/html/index.html`` into a browser to see the documentation.
 
 Core Functionality
 ^^^^^^^^^^^^^^^^^^^
 
-This consists of functionality to grab episodes from `Fresh Air`_, `Wait Wait..Don't Tell Me`_, and `This American Life`_. These consist of
+This consists of functionality to grab episodes from `Fresh Air`_, `Wait Wait..Don't Tell Me <waitwait_>`_, and `This American Life`_. These consist of
 the following pieces of python code:
 
 * ``npr_utils.py`` contains common utilities to get the proper metadata for NPR programs, to name these media files in the proper date format, and to get the full paths to the LibAV_ or FFMPEG_ and HandBrakeCLI_ tools used to create the NPR programs in M4A_ and MP3_ formats (among other functionalities).
 
--  These four executables handle `NPR Fresh Air`_ downloads: ``freshair``,
-   ``freshair_crontab``, ``freshair_fix_crontab``, and
-   ``freshair_by_year``.
+* These four executables handle `NPR Fresh Air`_ downloads: ``freshair``, ``freshair_crontab``, ``freshair_fix_crontab``, and ``freshair_by_year``.
 
-   -  ``freshair.py`` is the main executable that downloads NPR Fresh
-      Air episodes, converts them to m4a format, and then applies
-      correct metadata. The help screen for this command line tool is
-      here,
+   * ``freshair`` is the main executable that downloads `NPR Fresh Air`_ episodes, converts them to M4A_ format, and then applies correct metadata. The help screen for this command line tool is here,
 
-      ::
+     .. code-block::  console
 
-          Usage: freshair.py [options]
+	usage: freshair [-h] [--dirname DIRNAME] [--date DATE] [--mp3exist] [--debug]
 
-          Options:
-            -h, --help         show this help message and exit
-            --dirname=DIRNAME  Name of the directory to store the file. Default is
-                               /mnt/media/freshair.
-            --date=DATE        The date, in the form of "January 1, 2014." The default
-                               is today's date, November 14, 2015.
-            --debug            If chosen, run freshair.py in debug mode. Useful for
-                               debugging :)
+	optional arguments:
+	  -h, --help         show this help message and exit
+	  --dirname DIRNAME  Name of the directory to store the file. Default is /mnt/media/freshair.
+	  --date DATE        The date, in the form of "January 1, 2014." The default is today's date, August 11, 2020.
+	  --mp3exist         If chosen, then do not download the transitional mp3 files. Use the ones that already exist.
+	  --debug            If chosen, run freshair.py in debug mode. Useful for debugging :)
 
-   -  ``freshair_crontab.py`` downloads an NPR Fresh Air episode on a given weekday. It should be called by a cron job run every weekday.
+   * ``freshair_crontab`` downloads an `NPR Fresh Air`_ episode on a given weekday. It should be called by a cron job or a systemd service that runs every weekday.
 
-   -  ``freshair_fix_crontab.py`` tries to re-download NPR Fresh Air
-      episodes that may be incomplete – defined as shorter than 30
-      minutes – and which are 90 days or older. This executable searches
-      through the library of all NPR Fresh Air episodes, and tries to
-      re-download older, possibly incomplete episodes.
+   * ``freshair_fix_crontab`` tries to re-download `NPR Fresh Air`_ episodes that may be incomplete – defined as shorter than 30 minutes – and which are 90 days or older. This executable searches through the library of all NPR Fresh Air episodes, and tries to re-download older, possibly incomplete episodes.
 
-   -  ``freshair_by_year`` downloads all the NPR Fresh Air episodes
-      in a given year.
+   * ``freshair_by_year`` downloads all the NPR Fresh Air episodes in a given year.
 
--  These four files handle NPR Wait Wait downloads: ``waitwait.py``,
-   ``waitwait_realmedia.py``, ``waitwait_crontab.py``, and
-   ``waitwait_by_year.py``.
+* These four files handle NPR Wait Wait downloads: ``waitwait``, ``waitwait_realmedia``, ``waitwait_crontab``, and ``waitwait_by_year``.
 
-   -  ``freshair.py`` is the main executable that downloads NPR Wait
-      Wait episodes, converts them to m4a format, and then applies
-      correct metadata. ``waitwait_realmedia.py`` is a python module
-      that allows one to download NPR Wait Wait episodes older than
-      2004, which are in
-      `RealMedia <https://en.wikipedia.org/wiki/RealMedia>`__ format.
-      The help screen for this command line tool is here,
+   * ``waitwait`` is the main executable that downloads NPR Wait Wait episodes, converts them to M4A_ format, and then applies
+      correct metadata. ``waitwait_realmedia.py`` is a Python module that allows one to download `NPR Wait Wait <waitwait_>`_ episodes older than 2004, which are in
+      RealMedia_ format. The help screen for this command line tool is here,
 
-      ::
+      .. code-block:: console
 
-          Usage: waitwait.py [options]
+	 usage: waitwait [-h] [--dirname DIRNAME] [--date DATE] [--debugonly] [--noverify] [--justfix]
 
-          Options:
-            -h, --help         show this help message and exit
-            --dirname=DIRNAME  Name of the directory to store the file. Default is
-                               /mnt/media/waitwait.
-            --date=DATE        The date, in the form of "January 1, 2014." The default
-                               is last Saturday, November 14, 2015.
-            --debugonly        If chosen, download the NPR XML data sheet for this Wait
-                               Wait episode.
+	 optional arguments:
+	   -h, --help         show this help message and exit
+	   --dirname DIRNAME  Name of the directory to store the file. Default is /mnt/media/waitwait.
+	   --date DATE        The date, in the form of "January 1, 2014." The default is last Saturday, August 08, 2020.
+	   --debugonly        If chosen, download the NPR XML data sheet for this Wait Wait episode.
+	   --noverify         If chosen, Do not verify the SSL connection.
+	   --justfix          If chosen, just fix the title of an existing NPR Wait Wait episode's file.
 
-   -  ``waitwait_crontab.py`` downloads an NPR Wait Wait episode on a
-      given Saturday. It should be called by a cron job that should be
-      run every Saturday.
+  * ``waitwait_crontab`` downloads an NPR Wait Wait episode on a given Saturday. It should be called by a cron job or systemd service that is run every Saturday.
 
-   -  ``waitwait_by_year.py`` downloads all the NPR Wait Wait episodes
-      in a given year.
+  * ``waitwait_by_year`` downloads all the NPR Wait Wait episodes in a given year.
 
 -  ``thisamericanlife.py`` *manually* downloads a given episode number
    of This American Life. This executable uses a custom online archive
@@ -292,10 +271,14 @@ pieces of code: ``freshair.sh``, ``waitwait.sh``, and
 .. |The print preview dialog launched by the ``Print`` button in the article text widget.| image:: images/gui2_screenshot_printpreviewdialog.png
 
 .. _`NPR Fresh Air`: https://freshair.npr.org
-.. _`Wait Wait...Don't Tell Me`: https://waitwait.npr.org
+.. _waitwait: https://waitwait.npr.org
 .. _`This American Life`: https://www.thisamericanlife.org
 .. _LibAV: https://libav.org
 .. _FFMPEG: https://ffmpeg.org
 .. _HandBrakeCLI: https://handbrake.fr
 .. _`older NPR API`: https://www.npr.org/api/index
 .. _`NPR One API`: https://dev.npr.org/api
+.. _nprstuff: https://nprstuff.readthedocs.io
+.. _M4A: https://en.wikipedia.org/wiki/MPEG-4_Part_14
+.. _MP3: https://en.wikipedia.org/wiki/MP3
+.. _RealMedia: https://en.wikipedia.org/wiki/RealMedia
