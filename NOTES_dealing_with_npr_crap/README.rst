@@ -57,7 +57,7 @@ I stumbled upon the following method to get an `NPR Fresh Air`_ episode for a gi
       driver.get( 'https://www.npr.org/search?query=*&page=1&refinementList[shows]=Fresh Air&range[lastModifiedDate][min]=1588489200&range[lastModifiedDate][max]=1588575600&sortType=byDateAsc' )
       html = BeautifulSoup( driver.page_source, 'lxml' )
 
-   If all goes well, only a *single* `NPR Fresh Air`_ episode is found, "Don't Worry, Even Fashion Guru Tim Gunn Is Living In His Comfy Clothes".
+   If all goes well, only a *single* `NPR Fresh Air`_ episode is found, `"Don't Worry, Even Fashion Guru Tim Gunn Is Living In His Comfy Clothes"`_.
 
 5. Extract the URL of that episode and use ``requests`` to get the web page for that URL
 
@@ -113,3 +113,4 @@ I stumbled upon the following method to get an `NPR Fresh Air`_ episode for a gi
 .. _`NPR Fresh Air`: https://freshair.npr.org
 .. _`NPR's "effort" to improve their API`: https://www.reddit.com/r/NPR/comments/gfvzvg/can_we_get_story_info_and_download_stories_with/
 .. _geckodriver: https://github.com/mozilla/geckodriver
+.. _`"Don't Worry, Even Fashion Guru Tim Gunn Is Living In His Comfy Clothes"`: https://www.npr.org/2020/05/04/849145929/dont-worry-even-fashion-guru-tim-gunn-is-living-in-his-comfy-clothes
