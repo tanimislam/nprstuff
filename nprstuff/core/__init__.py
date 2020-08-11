@@ -1,1 +1,1 @@
-from nprstuff import resourceDir
+

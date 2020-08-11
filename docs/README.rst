@@ -1,50 +1,35 @@
-========
-nprstuff
-========
+.. image:: https://badges.gitter.im/nprstuff-tanimislam/Lobby.svg
+   :target: https://gitter.im/nprstuff-tanimislam/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=body_badge
+
+README
+======
 
 :Author: Tanim Islam
 
-I like NPR, so I made some scripts to download my favorite programs from
-NPR. For now, I have something that downloads `Fresh
-Air <http://www.npr.org/programs/fresh-air/>`__, `Wait Wait..Don’t Tell
-Me <http://www.npr.org/programs/wait-wait-dont-tell-me/>`__, and `This
-American Life <http://www.thisamericanlife.org/>`__. This package can
-probably, straightforwardly be extended to other NPR and PRI programs.
+I like NPR, so I made some scripts to download my favorite programs from NPR. For now, I have something that downloads `NPR Fresh Air`_, `Wait Wait..Don't Tell
+Me`_, and `This American Life`_. This package can probably, straightforwardly be extended to other NPR and PRI programs (although I haven't yet done so).
 
-Although this project started off as a way to download these three
-programs, I have expanded it to include a grab bag of altogether
-different types of functionalities. What remains the same? This
-distribution consists mainly of executable python scripts.
+Although this project started off as a way to download these three programs, I have expanded it to include a grab bag of altogether different types of functionalities. What remains the same? This distribution consists mainly of executable python scripts. Detailed documentation lives in the Sphinx repository
 
-I organize this document into the following sections: , , (in folders
-``gui`` and ``gui2``), and a small section called .
+.. note::
 
-This document was converted from a LaTeXsource using
-`Pandoc <http://pandoc.org/index.html>`__, via
+   NPR changed their API, which means that old functionality does not work. The `older NPR API`_, that powers the functionality that lives in this repository, has been discontinued. I quote,
 
-::
+     This API is no longer publicly available for client integrations; for documentation of current API services, please visit the NPR Developer Center.
 
-    pandoc -s README.tex -o README.md
+   Furthermore, the newer `NPR One API`_does not appear to have the necessary functionality to make my magic happen.
 
 Core Functionality
-==================
+^^^^^^^^^^^^^^^^^^^
 
-This consists of functionality to grab episodes from `Fresh
-Air <http://www.npr.org/programs/fresh-air/>`__, `Wait Wait..Don’t Tell
-Me <http://www.npr.org/programs/wait-wait-dont-tell-me/>`__, and `This
-American Life <http://www.thisamericanlife.org/>`__. These consist of
+This consists of functionality to grab episodes from `Fresh Air`_, `Wait Wait..Don't Tell Me`_, and `This American Life`_. These consist of
 the following pieces of python code:
 
--  ``npr_utils.py`` contains common utilities to get the proper metadata
-   for NPR programs, to name these media files in the proper date
-   format, and to get the full paths to the
-   `LibAV/FFMPEG <https://libav.org>`__ and
-   `HandBrakeCLI <https://handbrake.fr/>`__ tools to create the NPR
-   programs in m4a and mp3 formats (among other functionalities).
+* ``npr_utils.py`` contains common utilities to get the proper metadata for NPR programs, to name these media files in the proper date format, and to get the full paths to the LibAV_ or FFMPEG_ and HandBrakeCLI_ tools used to create the NPR programs in M4A_ and MP3_ formats (among other functionalities).
 
--  These four files handle NPR Fresh Air downloads: ``freshair.py``,
-   ``freshair_crontab.py``, ``freshair_fix_crontab.py``, and
-   ``freshair_by_year.py``.
+-  These four executables handle `NPR Fresh Air`_ downloads: ``freshair``,
+   ``freshair_crontab``, ``freshair_fix_crontab``, and
+   ``freshair_by_year``.
 
    -  ``freshair.py`` is the main executable that downloads NPR Fresh
       Air episodes, converts them to m4a format, and then applies
@@ -64,9 +49,7 @@ the following pieces of python code:
             --debug            If chosen, run freshair.py in debug mode. Useful for
                                debugging :)
 
-   -  ``freshair_crontab.py`` downloads an NPR Fresh Air episode on a
-      given weekday. It should be called by a cron job that should be
-      run every weekday.
+   -  ``freshair_crontab.py`` downloads an NPR Fresh Air episode on a given weekday. It should be called by a cron job run every weekday.
 
    -  ``freshair_fix_crontab.py`` tries to re-download NPR Fresh Air
       episodes that may be incomplete – defined as shorter than 30
@@ -74,7 +57,7 @@ the following pieces of python code:
       through the library of all NPR Fresh Air episodes, and tries to
       re-download older, possibly incomplete episodes.
 
-   -  ``freshair_by_year.py`` downloads all the NPR Fresh Air episodes
+   -  ``freshair_by_year`` downloads all the NPR Fresh Air episodes
       in a given year.
 
 -  These four files handle NPR Wait Wait downloads: ``waitwait.py``,
@@ -310,3 +293,12 @@ pieces of code: ``freshair.sh``, ``waitwait.sh``, and
 .. |The text form of the article’s content, with working dialogs for ``Font`` and ``Print Preview``.| image:: images/gui2_screenshot_articletext.png
 .. |The print preview dialog launched by the ``Print`` button in the article text widget.| image:: images/gui2_screenshot_fontdialog.png
 .. |The print preview dialog launched by the ``Print`` button in the article text widget.| image:: images/gui2_screenshot_printpreviewdialog.png
+
+.. _`NPR Fresh Air`: https://freshair.npr.org
+.. _`Wait Wait...Don't Tell Me`: https://waitwait.npr.org
+.. _`This American Life`: https://www.thisamericanlife.org
+.. _LibAV: https://libav.org
+.. _FFMPEG: https://ffmpeg.org
+.. _HandBrakeCLI: https://handbrake.fr
+.. _`older NPR API`: https://www.npr.org/api/index
+.. _`NPR One API`: https://dev.npr.org/api

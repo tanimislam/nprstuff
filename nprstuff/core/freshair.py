@@ -10,6 +10,12 @@ from nprstuff import resourceDir
 _npr_FreshAir_progid = 13
 
 def get_freshair_image( ):
+    """
+    Get the `NPR Fresh Air`_ logo as binary data.
+    :returns: the `NPR Fresh AIR`_ logo as binary data.
+    
+    .. _`NPR Fresh Air`: https://freshair.npr.org
+    """
     fa_image_file = os.path.join( resourceDir, 'fresh_air.png' )
     if os.path.isfile( fa_image_file ):
         return open( fa_image_file, 'rb' ).read( )
@@ -32,7 +38,12 @@ def _download_file(input_tuple):
             openfile.write( chunk )
     return filename
 
-def get_freshair_date_from_name(candidateNPRFreshAirFile):
+def get_freshair_date_from_name( candidateNPRFreshAirFile ):
+    """
+    :param str candidateNPRFreshAirFile: the name of the `NPR Fresh Air`_ episode file name.
+    :returns: the :py:class:`date <datetime.date>` object from the name of the file name.
+    :rtype: :py:class:`date <datetime.date>`
+    """
     if not os.path.isfile(candidateNPRFreshAirFile):
         raise ValueError("Error, %s is not a file," % candidateNPRFreshAirFile )
     if not os.path.basename(candidateNPRFreshAirFile).endswith('.m4a'):
@@ -45,6 +56,12 @@ def get_freshair_date_from_name(candidateNPRFreshAirFile):
     return datetime.date(year, mon, day)
     
 def get_freshair_valid_dates_remaining_tuples(yearnum, inputdir):
+    """
+    :param int yearnum: the year for which to search for missing `NPR Fresh Air`_ episodes.
+    :param str inputfdir: the directory in which the `NPR Fresh Air`_ episodes live.
+    :returns: a sorted :py:class:`list` of :py:class:`tuple`, ordered by candidate track number of the `NPR Fresh Air`_ episode. The :py:class:`tuple` has three elements: the track number of `NPR Fresh Air`_ episodes that year, the total number of `NPR Fresh Air`_ episodes that year, and the :py:class:`date <datetime.date>` for that episode.
+    :rtype: list
+    """
     freshair_files_downloaded = glob.glob( os.path.join(inputdir, 'NPR.FreshAir.*.%04d.m4a' % yearnum ) )
     dates_downloaded = set( [ get_freshair_date_from_name(filename) for filename in 
                              freshair_files_downloaded ] )
@@ -62,13 +79,11 @@ def get_freshair_valid_dates_remaining_tuples(yearnum, inputdir):
 
 def _process_freshairs_by_year_tuple( input_tuple ):
     outputdir, totnum, verbose, datetimes_order_tuples = input_tuple
-    fa_image = get_freshair_image( )
     driver = npr_utils.get_chrome_driver( )
     for date_s, order in datetimes_order_tuples:
         time0 = time.time()
         try:
-            fname = get_freshair(outputdir, date_s, order_totnum = ( order, totnum ),
-                                 file_data = fa_image, driver = driver )
+            fname = get_freshair(outputdir, date_s, order_totnum = ( order, totnum ), driver = driver )
             if verbose:
                 print( 'processed %s in %0.3f seconds.' % ( os.path.basename(fname), time.time() - time0 ) )
         except Exception:
@@ -76,6 +91,16 @@ def _process_freshairs_by_year_tuple( input_tuple ):
                 npr_utils.get_datestring( date_s ) )
             
 def process_all_freshairs_by_year(yearnum, inputdir, verbose = True, justCoverage = False):
+    """
+    Either downloads all missing `NPR Fresh Air`_ episodes for a given year, or prints out a report of those missing episodes.
+    
+    :param int yearnum: the year for which to search for missing `NPR Fresh Air`_ episodes.
+    :param str inputdir:  the directory in which the `NPR Fresh Air`_ episodes live.
+    :param bool versbose: if ``True``, the print out more debugging output.
+    :param bool justCoverage: if ``True``, then only report on missing `NPR Fresh Air`_ episodes.
+
+    .. seealso:: :py:meth:`get_freshair <nprstuff.core.freshair.get_freshair>`.
+    """
     order_dates_remain = get_freshair_valid_dates_remaining_tuples( yearnum, inputdir )
     if len(order_dates_remain) == 0: return
     totnum = order_dates_remain[0][1]
@@ -87,7 +112,7 @@ def process_all_freshairs_by_year(yearnum, inputdir, verbose = True, justCoverag
     time0 = time.time()
     if not justCoverage:
         with multiprocessing.Pool(processes = multiprocessing.cpu_count()) as pool:
-            pool.map(_process_freshairs_by_year_tuple, input_tuples)
+            list( pool.map(_process_freshairs_by_year_tuple, input_tuples) )
     else:
         print( 'Missing %d episodes for %04d.' % ( len(order_dates_remain), yearnum ) )
         for order, totnum, date_s in order_dates_remain:
@@ -101,10 +126,10 @@ def process_all_freshairs_by_year(yearnum, inputdir, verbose = True, justCoverag
 def process_freshair_titlemp3_tuples( html ):
     def _get_title( story_elem ):
         all_http_lines = list(
-        map(lambda line: line.strip(),
-            filter(lambda line: len(line.strip()) > 0 and
-                   line.strip().startswith('https'),
-                   story_elem.text.split('\n') ) ) )
+            map(lambda line: line.strip(),
+                filter(lambda line: len(line.strip()) > 0 and
+                       line.strip().startswith('https'),
+                       story_elem.text.split('\n') ) ) )
         story_line_url = all_http_lines[ 0 ]
         h2 = BeautifulSoup( requests.get( story_line_url ).content, 'lxml' )
         title_elems = h2.find_all('title')
@@ -237,7 +262,7 @@ def get_freshair_lowlevel( outputdir, date_s, titles ):
   shutil.rmtree( tmpdir ) 
   return m4afile_act
 
-def _get_title_mp3_urls_attic( date_s, debug = False, to_file_debug = True ):
+def get_title_mp3_urls_attic( date_s, debug = False, to_file_debug = True ):
     #
     ## download this data into a BeautifulSoup object
     resp = requests.get( 'https://api.npr.org/query',
@@ -341,9 +366,23 @@ def get_title_mp3_urls_working( date_s, driver ):
 
 def get_freshair(
     outputdir, date_s, order_totnum = None,
-    file_data = None, debug = False,
-    exec_dict = None, check_if_exist = False,
+    debug = False, check_if_exist = False,
     mp3_exist = False, to_file_debug = True, driver = None ):
+    """
+    The main driver method that downloads `NPR Fresh Air`_ episodes for a given date into a specified output directory.
+    
+    :param str outputdir: the directory into which one downloads the `NPR Fresh Air`_ episodes.
+    :param date_s: the :py:class:`date <datetime.date>` for this episode, which must be a weekday.
+    :param tuple order_totnum: optional argument, the :py:class:`tuple` of track number and total number of tracks of `NPR Fresh Air`_ episodes for that year. If ``None``, then this information is gathered from :py:meth:`get_order_num_weekday_in_year <nprstuff.core.npr_utils.get_order_num_weekday_in_year>`.
+    :param bool mp3_exist: optional argument, if ``True`` then check whether the transitional MP3_ files for the stories in the `NPR Fresh Air`_ episode has been downloaded and use the fully downloaded stories to compose an episode. Otherwise, ignore existing downloaded MP3_ stories for download.
+    :param bool to_file_debug: optional argument, if ``True`` then just download the XML file of date for that `NPR Fresh Air`_ episode, instead of the episode itself.
+    :param driver: optional argument, the :py:class:`Webdriver <selenium.webdriver.remote.webdriver.WebDriver>` used for webscraping and querying (instead of using a functional API) for `NPR Fresh Air`_ episodes. If ``None``, then a new :py:class:`Webdriver <selenium.webdriver.remote.webdriver.WebDriver>` will be used defined and used within this method's scope.
+
+    :returns: the name of the `NPR Fresh Air`_ episode file.
+    :rtype: str
+
+    .. _MP3: https://en.wikipedia.org/wiki/MP3
+    """
 
     #
     # if cannot find the driver
@@ -357,8 +396,7 @@ def get_freshair(
     assert( npr_utils.is_weekday(date_s) )
     
     # check if we have found avconv
-    if exec_dict is None:
-        exec_dict = npr_utils.find_necessary_executables()
+    exec_dict = npr_utils.find_necessary_executables()
     assert( exec_dict is not None )
     avconv_exec = exec_dict['avconv']
     
@@ -366,7 +404,7 @@ def get_freshair(
         order_totnum = npr_utils.get_order_number_weekday_in_year(date_s)
     order_in_year, tot_in_year = order_totnum
   
-    if file_data is None: file_data = get_freshair_image()
+    file_data = get_freshair_image()
     
     decdate = date_s.strftime('%d.%m.%Y')
     m4afile_init = os.path.join(outputdir, 'NPR.FreshAir.%s.m4a' % decdate )
