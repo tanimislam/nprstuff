@@ -89,7 +89,7 @@ the following pieces of python code:
 	 --inputdir INPUTDIR  Directory into which to store the NPR Fresh Air episodes. Default is /mnt/media/waitwait.
 	 --quiet              If chosen, do not print verbose output from the action of this script. By default this is false.
 
-* ``thisamericanlife.py`` *manually* downloads a given episode number of `This American Life`_. The help screen for this command line tool is here,
+* ``thisamericanlife`` *manually* downloads a given episode number of `This American Life`_. The help screen for this command line tool is here,
 
   .. code-block:: console
 
