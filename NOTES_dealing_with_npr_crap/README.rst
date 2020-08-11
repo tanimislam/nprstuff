@@ -40,21 +40,23 @@ I stumbled upon the following method to get an `NPR Fresh Air`_ episode for a gi
 
       https://www.npr.org/search?query=*&page=1&refinementList[shows]=Fresh Air&range[lastModifiedDate][min]=1588489200&range[lastModifiedDate][max]=1588575600&sortType=byDateAsc
 
-4. Now *of course* ``requests`` does not work, but the very slow Selenium Firefox webdriver functionality works. Make sure to install selenium with ``python3 -m pip install --user selenium``. Make sure to install geckodriver_ with ``sudo apt install firefox-geckodriver``. Here's how to get a headless Firefox Selenium driver running, go to tbhat website, and then create a ``BeautifulSoup`` XML tree of that page.
+4. Now *of course* ``requests`` does not work, but the very slow Selenium Chrome webdriver functionality works. Make sure to install selenium with ``python3 -m pip install --user selenium``. Make sure to install chromedriver_ with ``sudo apt install chromium-chromedriver``. Here's how to get a headless Chrome driver running, go to that website, and then create a ``BeautifulSoup`` XML tree of that page.
 
    .. code-block:: python
 
+      import time
       from selenium import webdriver
-      from selenium.webdriver.firefox.options import Options
+      from selenium.webdriver.chrome.options import Options
       from bs4 import BeautifulSoup
       #
-      ## create a headless Firefox
+      ## create a headless Chrome
       options = Options( )
       options.headless = True
-      driver = webdriver.Firefox( options = options )
+      driver = webdriver.Chrome( options = options )
       #
       ## now go to the NPR Fresh Air episode, and get the XML tree
       driver.get( 'https://www.npr.org/search?query=*&page=1&refinementList[shows]=Fresh Air&range[lastModifiedDate][min]=1588489200&range[lastModifiedDate][max]=1588575600&sortType=byDateAsc' )
+      time.sleep( 1.5 ) # getting stuff from https://stackoverflow.com/a/49823819/3362358 as workaround until I understand selenium webdriver conditions and details of the NPR podcast search page.
       html = BeautifulSoup( driver.page_source, 'lxml' )
 
    If all goes well, only a *single* `NPR Fresh Air`_ episode is found, `"Don't Worry, Even Fashion Guru Tim Gunn Is Living In His Comfy Clothes"`_.
@@ -108,9 +110,9 @@ I stumbled upon the following method to get an `NPR Fresh Air`_ episode for a gi
 	## return tuple of order, title, URL
 	return order, title, mp3_url
 
-   This should be sufficient in getting a ``tuple`` of ( ``order``, ``title``, ``mp3_url`` ) for a given story. All this information can be compiled in order to get the 
+   This should be sufficient in getting a ``tuple`` of ( ``order``, ``title``, ``mp3_url`` ) for a given story. All this information can be compiled in order to get the ordered list of story titles, and MP3 URLs for each story, by order.
 	
 .. _`NPR Fresh Air`: https://freshair.npr.org
 .. _`NPR's "effort" to improve their API`: https://www.reddit.com/r/NPR/comments/gfvzvg/can_we_get_story_info_and_download_stories_with/
-.. _geckodriver: https://github.com/mozilla/geckodriver
+.. _chromedriver: https://chromedriver.chromium.org
 .. _`"Don't Worry, Even Fashion Guru Tim Gunn Is Living In His Comfy Clothes"`: https://www.npr.org/2020/05/04/849145929/dont-worry-even-fashion-guru-tim-gunn-is-living-in-his-comfy-clothes

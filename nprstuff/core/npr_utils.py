@@ -5,9 +5,9 @@ from distutils.spawn import find_executable
 import urllib.parse as urlparse
 from urllib.parse import urlencode
 from configparser import ConfigParser, RawConfigParser
+from selenium import webdriver
 
 def get_firefox_driver( ):
-    from selenium import webdriver
     from selenium.webdriver.firefox.options import Options
     geckodriver = find_executable( 'geckodriver' )
     if geckodriver is None:
@@ -15,6 +15,16 @@ def get_firefox_driver( ):
     options = Options( )
     options.headless = True
     driver = webdriver.Firefox( options = options )
+    return driver
+
+def get_chrome_driver( ):
+    from selenium.webdriver.chrome.options import Options
+    chromedriver = find_executable( 'chromedriver' )
+    if chromedriver is None:
+        raise ValueError("Error, could not find chromedriver to launch Selenium Chromium headless browser.")
+    options = Options( )
+    options.headless = True
+    driver = webdriver.Chrome( options = options )
     return driver
 
 def find_necessary_executables( ):

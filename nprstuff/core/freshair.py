@@ -1,7 +1,8 @@
-import os, glob, multiprocessing, datetime
-import time, re, titlecase, tempfile
+import os, glob, datetime
+import time, re, titlecase, tempfile, logging
 import mutagen.mp4, subprocess, requests, shutil
-import urllib.parse as urlparse
+import pathos.multiprocessing as multiprocessing
+from urllib.parse import urljoin, urlsplit
 from bs4 import BeautifulSoup
 from nprstuff.core import npr_utils
 
@@ -43,7 +44,7 @@ def get_freshair_valid_dates_remaining_tuples(yearnum, inputdir):
                           enumerate( npr_utils.get_weekday_times_in_year(yearnum) ) }
     dtime_now = datetime.datetime.now()
     nowd = datetime.date(dtime_now.year, dtime_now.month, dtime_now.day)
-    weekdays_left = set( filter(lambda date_s: date_s <= nowd, set( all_order_weekdays . keys() ) ) ) - \
+    weekdays_left = set( filter(lambda date_s: date_s <= nowd, set( all_order_weekdays.keys() ) ) ) - \
       set( dates_downloaded )
     totnum = len( all_order_weekdays.keys() )
     order_dates_remain = sorted(
@@ -51,41 +52,43 @@ def get_freshair_valid_dates_remaining_tuples(yearnum, inputdir):
         key = lambda tup: tup[0] )
     return order_dates_remain
 
-def _process_freshairs_by_year_tuple(input_tuple):
-  outputdir, totnum, verbose, datetimes_order_tuples = input_tuple
-  fa_image = get_freshair_image()
-  for date_s, order in datetimes_order_tuples:
-    time0 = time.time()
-    try:
-      fname = get_freshair(outputdir, date_s, order_totnum = ( order, totnum),
-                           file_data = fa_image )
-      if verbose:
-        print('processed %s in %0.3f seconds.' % ( os.path.basename(fname), time.time() - time0 ))
-    except Exception:
-      print('Could not create Fresh Air episode for date %s for some reason' %
-            npr_utils.get_datestring( date_s ) )
+def _process_freshairs_by_year_tuple( input_tuple ):
+    outputdir, totnum, verbose, datetimes_order_tuples = input_tuple
+    fa_image = get_freshair_image( )
+    driver = npr_utils.get_chrome_driver( )
+    for date_s, order in datetimes_order_tuples:
+        time0 = time.time()
+        try:
+            fname = get_freshair(outputdir, date_s, order_totnum = ( order, totnum ),
+                                 file_data = fa_image, driver = driver )
+            if verbose:
+                print( 'processed %s in %0.3f seconds.' % ( os.path.basename(fname), time.time() - time0 ) )
+        except Exception:
+            print('Could not create Fresh Air episode for date %s for some reason' %
+                npr_utils.get_datestring( date_s ) )
             
 def process_all_freshairs_by_year(yearnum, inputdir, verbose = True, justCoverage = False):
-  order_dates_remain = get_freshair_valid_dates_remaining_tuples( yearnum, inputdir )
-  if len(order_dates_remain) == 0: return
-  totnum = order_dates_remain[0][1]
-  nprocs = multiprocessing.cpu_count() 
-  input_tuples = [ ( inputdir, totnum, verbose, 
-                     [ ( date_s, order ) for ( order, totnum, date_s) in 
+    order_dates_remain = get_freshair_valid_dates_remaining_tuples( yearnum, inputdir )
+    if len(order_dates_remain) == 0: return
+    totnum = order_dates_remain[0][1]
+    nprocs = multiprocessing.cpu_count() 
+    input_tuples = [ ( inputdir, totnum, verbose, 
+                      [ ( date_s, order ) for ( order, totnum, date_s) in 
                        order_dates_remain if (order - 1) % nprocs == procno ] ) for
-                   procno in range(nprocs) ]
-  time0 = time.time()
-  if not justCoverage:
-    with npr_utils.MyPool(processes = multiprocessing.cpu_count()) as pool:
-      pool.map(_process_freshairs_by_year_tuple, input_tuples)
-  else:
-    print( 'Missing %d episodes for %04d.' % ( len(order_dates_remain), yearnum ) )
-    for order, totnum, date_s in order_dates_remain:
-      print( 'Missing NPR FreshAir episode for %s.' %
-             date_s.strftime('%B %d, %Y') )
+                    procno in range(nprocs) ]
+    time0 = time.time()
+    if not justCoverage:
+        with multiprocessing.Pool(processes = multiprocessing.cpu_count()) as pool:
+            pool.map(_process_freshairs_by_year_tuple, input_tuples)
+    else:
+        print( 'Missing %d episodes for %04d.' % ( len(order_dates_remain), yearnum ) )
+        for order, totnum, date_s in order_dates_remain:
+            print( 'Missing NPR FreshAir episode for %s.' %
+                  date_s.strftime('%B %d, %Y') )
+    #
     if verbose:
-      print( 'processed all Fresh Air downloads for %04d in %0.3f seconds.' %
-             ( yearnum, time.time() - time0 )  )
+        print( 'processed all Fresh Air downloads for %04d in %0.3f seconds.' %
+              ( yearnum, time.time() - time0 )  )
 
 def process_freshair_titlemp3_tuples( html ):
     def _get_title( story_elem ):
@@ -269,27 +272,28 @@ def _get_title_mp3_urls_attic( date_s, debug = False, to_file_debug = True ):
         return None
     return title_mp3_urls
 
-def get_title_mp3_urls_working( date_s ):
+def get_title_mp3_urls_working( date_s, driver ):
+    #
+    ## follow cargo cult code, https://stackoverflow.com/a/49823819/3362358
+    from selenium.webdriver.common.by import By
+    from selenium.webdriver.support.ui import WebDriverWait
+    from selenium.webdriver.support import expected_conditions as EC
+    condition = EC.presence_of_element_located((By.ID, "some_element_id_present_after_JS_load"))
+    condition = EC.title_contains( 'NPR' )
     #
     ## must be the end datetime
     time0 = time.time( )
     dt_end = datetime.datetime( date_s.year, date_s.month, date_s.day )
     t_end = int( datetime.datetime.timestamp( dt_end ) )
-    t_start = t_end - 86400
     #
     ## now get the firefox driver, go to the URL defined there
-    driver = npr_utils.get_firefox_driver( )
-    print( driver )
-    mainURL =  'https://www.npr.org/search?query=*&page=1&refinementList[shows]=Fresh Air&range[lastModifiedDate][min]=%d&range[lastModifiedDate][max]=%d&sortType=byDateAsc' % ( t_start, t_end )
+    mainURL =  'https://www.npr.org/search?query=*&page=1&refinementList[shows]=Fresh Air&range[lastModifiedDate][min]=%d&range[lastModifiedDate][max]=%d&sortType=byDateAsc' % ( t_end - 86400, t_end )
     driver.get( mainURL )
-    print( 'mainURL = %s.' % mainURL )
+    time.sleep( 1.5 ) # is 1.5 seconds enough?
+    #WebDriverWait(driver, 10).until( condition )
     html = BeautifulSoup( driver.page_source, 'lxml' )
-    with open( 'foo.xml', 'w' ) as openfile:
-        openfile.write( '%s\n' % html.prettify( ) )
     episode_elems = html.find_all('h2', { 'class' : 'title' } )
-    print( 'episode elems = %s.' % episode_elems )
     episode_urls = list(map(lambda elem: urljoin( 'https://www.npr.org', elem.find_all('a')[0]['href'] ), episode_elems ) )
-    print( 'episode_URLs = %s.' % episode_urls )
     #
     def get_npr_freshair_story( episode_URL, candidate_date ):
         response = requests.get( episode_URL )
@@ -297,15 +301,19 @@ def get_title_mp3_urls_working( date_s ):
         html_ep = BeautifulSoup( response.content, 'lxml' )
         date_f = candidate_date.strftime( '%Y-%m-%d' )
         date_elems = list(html_ep.find_all('meta', { 'name' : 'date', 'content' : date_f } ) )
-        if len( date_elems ) != 1: return None
+        if len( date_elems ) != 1:
+            logging.error( 'could not find date elem for %s.' % episode_URL )
+            return None
         #
         ## keep going, get the title    
         title_elems = list(html_ep.find_all('title'))
-        if len( title_elems ) != 0: return None
-        title = ' '.join(map(lambda tok: tok.strip(), title_elems[0].text.split(':')[:-1]))
+        if len( title_elems ) == 0:
+            logging.error( 'could not find title elem for %s.' % episode_URL )
+            return None
+        title = titlecase.titlecase( ' '.join(map(lambda tok: tok.strip(), title_elems[0].text.split(':')[:-1])) )
         #
         ## now get the MP3 URL
-        mp3_elems = list(filter(lambda elem: 'href' in elem.attrs and 'mp3' in elem['href'], html_ep1.find_all('a')))
+        mp3_elems = list(filter(lambda elem: 'href' in elem.attrs and 'mp3' in elem['href'], html_ep.find_all('a')))
         if len( mp3_elems ) == 0: return None
         mp3_elem = mp3_elems[0]
         mp3_url_split = urlsplit( mp3_elem['href'] )
@@ -327,7 +335,11 @@ def get_freshair(
     outputdir, date_s, order_totnum = None,
     file_data = None, debug = False,
     exec_dict = None, check_if_exist = False,
-    mp3_exist = False, to_file_debug = True ):
+    mp3_exist = False, to_file_debug = True, driver = None ):
+
+    #
+    # if cannot find the driver
+    if driver is None: driver = npr_utils.get_chrome_driver( )
     
     # check if outputdir is a directory
     if not os.path.isdir(outputdir):
@@ -356,7 +368,8 @@ def get_freshair(
     #                               npr_utils.get_api_key() )
     year = date_s.year
     
-    title_mp3_urls = _get_title_mp3_urls_attic( date_s, debug, to_file_debug )
+    title_mp3_urls = get_title_mp3_urls_working( date_s, driver )
+    if len( title_mp3_urls ) == 0: return None
     if title_mp3_urls is None: return None
 
     # temporary directory

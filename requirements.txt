@@ -7,5 +7,6 @@ webcolors
 python-magic
 requests
 mutagen
+selenium
 matplotlib
 youtube-dl
