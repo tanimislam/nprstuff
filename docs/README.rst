@@ -110,7 +110,7 @@ the following pieces of python code:
                                American Life episode.
 
 New Functionality
-=================
+^^^^^^^^^^^^^^^^^^^
 
 This consists of newer functionality that does not download NPR
 episodes, nor can one straightforwardly modify them to download NPR
@@ -202,7 +202,7 @@ episodes. These consist of the following pieces of python code.
                           /mnt/software/sources/pythonics/nprstuff.
 
 Graphics Functionality
-======================
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 This section describes the two graphical tools I have developed: ``gui``
 matches a small subset of functionality that the
