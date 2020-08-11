@@ -5,23 +5,31 @@ import pathos.multiprocessing as multiprocessing
 from urllib.parse import urljoin, urlsplit
 from bs4 import BeautifulSoup
 from nprstuff.core import npr_utils
+from nprstuff import resourceDir
 
 _npr_FreshAir_progid = 13
 
-def get_freshair_image():
-  myURL = 'http://media.npr.org/images/podcasts/2013/primary/fresh_air.png'
-  return requests.get( myURL ).content
+def get_freshair_image( ):
+    fa_image_file = os.path.join( resourceDir, 'fresh_air.png' )
+    if os.path.isfile( fa_image_file ):
+        return open( fa_image_file, 'rb' ).read( )
+    #
+    myURL = 'https://media.npr.org/images/podcasts/2013/primary/fresh_air.png'
+    response = requests.get( myURL )
+    with open( fa_image_file, 'wb' ) as openfile:
+        openfile.write( response.content )
+    return response.content
 
 def _download_file(input_tuple):
-  mp3URL, filename = input_tuple
-  resp = requests.get( mp3URL, stream = True )
-  if not resp.ok:
-    print('SOMETHING HAPPENED WITH %s' % filename)
-    return None
-  
-  with open(filename, 'wb') as openfile:
-    for chunk in resp.iter_content(65536):
-      openfile.write( chunk )
+    mp3URL, filename = input_tuple
+    resp = requests.get( mp3URL, stream = True )
+    if not resp.ok:
+        print('SOMETHING HAPPENED WITH %s' % filename)
+        return None
+    #
+    with open(filename, 'wb') as openfile:
+        for chunk in resp.iter_content(65536):
+            openfile.write( chunk )
     return filename
 
 def get_freshair_date_from_name(candidateNPRFreshAirFile):
