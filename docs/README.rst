@@ -45,7 +45,19 @@ the following pieces of python code:
     
   * ``freshair_fix_crontab`` tries to re-download `NPR Fresh Air`_ episodes that may be incomplete – defined as shorter than 30 minutes – and which are 90 days or older. This executable searches through the library of all NPR Fresh Air episodes, and tries to re-download older, possibly incomplete episodes.
   
-  * ``freshair_by_year`` downloads all the NPR Fresh Air episodes in a given year.
+  * ``freshair_by_year`` downloads all the NPR Fresh Air episodes in a given year. The help screen for this command line tool is here,
+
+    .. code-block:: console
+
+       usage: freshair_by_year [-h] [--year YEAR] [--inputdir INPUTDIR] [--quiet] [--coverage] [--audit]
+
+       optional arguments:
+	 -h, --help           show this help message and exit
+	 --year YEAR          Year in which to write out all Fresh Air episodes. Default is 2020.
+	 --inputdir INPUTDIR  Directory into which to store the NPR Fresh Air episodes. Default is /mnt/media/freshair.
+	 --quiet              If chosen, do not print verbose output from the action of this script. By default this is false.
+	 --coverage           If chosen, just give the list of missing Fresh Air episodes and nothing else.
+	 --audit              If chosen, do the audit picture here.
     
 * These four executables handle `NPR Wait Wait <waitwait_>`_ downloads: ``waitwait``, ``waitwait_realmedia``, ``waitwait_crontab``, and ``waitwait_by_year``.
 
@@ -65,8 +77,18 @@ the following pieces of python code:
 
   * ``waitwait_crontab`` downloads an NPR Wait Wait episode on a given Saturday. It should be called by a cron job or systemd service that is run every Saturday.
 
-  * ``waitwait_by_year`` downloads all the NPR Wait Wait episodes in a given year.
-    
+  * ``waitwait_by_year`` downloads all the NPR Wait Wait episodes in a given year. The help screen for this command line tool is here,
+
+    .. code-block:: console
+
+       usage: waitwait_by_year [-h] [--year YEAR] [--inputdir INPUTDIR] [--quiet]
+
+       optional arguments:
+	 -h, --help           show this help message and exit
+	 --year YEAR          Year in which to write out all Fresh Air episodes. Default is 2010.
+	 --inputdir INPUTDIR  Directory into which to store the NPR Fresh Air episodes. Default is /mnt/media/waitwait.
+	 --quiet              If chosen, do not print verbose output from the action of this script. By default this is false.
+
 * ``thisamericanlife.py`` *manually* downloads a given episode number of `This American Life`_. The help screen for this command line tool is here,
 
   .. code-block:: console
@@ -87,28 +109,24 @@ the following pieces of python code:
 New Functionality
 ^^^^^^^^^^^^^^^^^^^
 
-This consists of newer functionality that does not download NPR
-episodes, nor can one straightforwardly modify them to download NPR
-episodes. These consist of the following pieces of python code.
+This consists of newer functionality that does not download NPR episodes, nor can one straightforwardly modify them to download NPR episodes. These consist of the following pieces of python code.
 
--  ``autoCropImage.py`` automatically crops image (png, jpeg, tiff,
-   etc.) files to remove whitespace. The default whitespace color is
-   ``white``. The help screen for this command line tool is here,
+*  ``autoCropImage`` automatically crops image (PNG_, JPEG_, TIFF_, etc.) and PDF_ files to remove whitespace. The default whitespace color is ``white``. The help screen for this command line tool is here,
 
-   ::
+   .. code-block:: console
 
-       Usage: autoCropImage.py [options]
+      usage: autoCropImage [-h] --input INPUT [--output OUTPUT] [--color COLOR] [--trans] [--newwidth NEWWIDTH] [--show]
 
-       Options:
-         -h, --help       show this help message and exit
-         --input=INPUT    Name of the input file.
-         --output=OUTPUT  Name of the output file. Optional.
-         --color=COLOR    Name of the color over which to autocrop. Default is white.
+      optional arguments:
+	-h, --help           show this help message and exit
+	--input INPUT        Name of the input file.
+	--output OUTPUT      Name of the output file. Optional.
+	--color COLOR        Name of the color over which to autocrop. Default is white.
+	--trans              If chosen, also remove the transparency wrapping around the image. Works only for non-PDF images.
+	--newwidth NEWWIDTH  New width of the image.
+	--show               If chosen, then show the final image after cropped.
 
--  ``convertImage.py`` uses the `CloudConvert REST
-   API <https://cloudconvert.com/apiconsole>`__ to *smoothly and without
-   pain points* convert and resize SVG images to PNG images of the same
-   base name. The help screen for this command line tool is here,
+* ``convertImage`` uses the `CloudConvert REST API`_ to *smoothly and without pain points* convert and resize SVG_ images to PNG_ images of the same base name. The help screen for this command line tool is here,
 
    ::
 
@@ -119,62 +137,46 @@ episodes. These consist of the following pieces of python code.
          --filename=FILENAME  Name of the input SVG file.
          --width=WIDTH        If defined, new width of the file. Optional
 
--  ``changedates.py`` changes the creation date of JPG and MOV files,
-   that my Canon digital camera creates, by up and down one year. I
-   created this tool because my Canon digital camera does not set the
-   right year on the creation date for image files it creates. This
-   caused problems when I uploaded those images to `Google
-   Picasa <https://picasaweb.google.com/home>`__ or
-   `Google+ <https://plus.google.com/>`__. The help screen for this
-   command line tool is here,
+* ``changedates`` changes the creation date of JPEG_ and MOV_ files, that my Canon digital camera creates, by up and down one year. I created this tool because my Canon digital camera does not set the right year on the creation date for image files it creates. This caused problems when I uploaded those images to `Google Picasa <https://picasaweb.google.com/home>`__ or `Google+ <https://plus.google.com/>`__. The help screen for this command line tool is here,
 
-   ::
+  .. code-block:: console
 
-       Usage: changedates.py [options]
+     usage: changedates [-h] --dirname DIRNAME [--movs] [--minus]
 
-       Options:
-         -h, --help         show this help message and exit
-         --dirname=DIRNAME  Name of the directory to look for jpeg files.
-         --movs             If chosen, process MOV files instead.
-         --minus            If chosen, subtract a year from the files.
+     optional arguments:
+       -h, --help         show this help message and exit
+       --dirname DIRNAME  Name of the directory to look for jpeg files.
+       --movs             If chosen, process MOV files instead.
+       --minus            If chosen, subtract a year from the files.
 
--  ``music_to_m4a.py`` can convert a single file from mp3/ogg/flac
-   format to m4a format while preserving music file metadata, and can
-   optionally set the total number of album tracks and the album cover
-   if the music files is in an album. It can also rename an m4a music
-   file into the format “*artist name* - *song name*.m4a.” The help
-   screen for this command line tool is here,
+* ``music_to_m4a`` can convert a single file from MP3_, OGG_, or FLAC_ format to M4A_ format while preserving music file metadata, and can optionally set the total number of album tracks and the album cover if the music files is in an album. It can also rename an m4a music file into the format “*artist name* - *song name*.m4a.” The help screen for this command line tool is here,
 
-   ::
+.. code-block:: console
 
-       Usage: music_to_m4a.py [options]
+   usage: music_to_m4a [-h] --inputfile INPUTFILE [--outfile OUTFILE] [--tottracks TOTTRACKS] [--albumloc ALBUMLOC] [--quiet] [--rename] [--notitle]
 
-       Options:
-         -h, --help            show this help message and exit
-         --inputfile=INPUTFILE
-                               Name of the input audio file to convert.
-         --outfile=OUTFILE     Optional name of the output file.
-         --tottracks=TOTTRACKS
-                               Optional total number of tracks in album of which song
-                               is a part.
-         --albumloc=ALBUMLOC   Optional path to location of the album cover image
-                               file. Must be in JPEG or PNG.
-         --quiet               If chosen, then verbosely print output of processing.
-         --rename              If chosen, simply rename the m4a file to the form
-                               <artist>.<song title>.m4a
+   optional arguments:
+     -h, --help            show this help message and exit
+     --inputfile INPUTFILE
+			   Name of the input audio file to convert.
+     --outfile OUTFILE     Optional name of the output file.
+     --tottracks TOTTRACKS
+			   Optional total number of tracks in album of which song is a part.
+     --albumloc ALBUMLOC   Optional path to location of the album cover image file. Must be in JPEG or PNG.
+     --quiet               If chosen, then verbosely print output of processing.
+     --rename              If chosen, simply rename the m4a file to the form <artist>.<song title>.m4a
+     --notitle             If chosen, do not use titlecase functionality to fix the titles of songs.
 
--  ``download_surahs.py`` downloads recorded surahs (`Abdur-Rashid
-   Sufi <http://quranicaudio.com/quran/109>`__) to a directory of your
-   choice. The help screen for this command line tool is here,
+* ``download_surahs`` downloads recorded surahs (`Abdur-Rashid Sufi`_) to a directory of your choice. The help screen for this command line tool is here,
 
-   ::
+  .. code-block:: console
 
-       Usage: download_surahs.py [options]
+     usage: download_surahs [-h] [--outdir OUTDIR]
 
-       Options:
-         -h, --help       show this help message and exit
-         --outdir=OUTDIR  Directory to put this data into. Default is
-                          /mnt/software/sources/pythonics/nprstuff.
+     optional arguments:
+       -h, --help       show this help message and exit
+       --outdir OUTDIR  Directory to put this data into. Default is /mnt/software/sources/pythonics/nprstuff.
+
 
 Graphics Functionality
 ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -278,3 +280,13 @@ pieces of code: ``freshair.sh``, ``waitwait.sh``, and
 .. _M4A: https://en.wikipedia.org/wiki/MPEG-4_Part_14
 .. _MP3: https://en.wikipedia.org/wiki/MP3
 .. _RealMedia: https://en.wikipedia.org/wiki/RealMedia
+.. _`CloudConvert REST API`: https://cloudconvert.com/apiconsole
+.. _PNG: https://en.wikipedia.org/wiki/Portable_Network_Graphics
+.. _JPEG: https://en.wikipedia.org/wiki/JPEG
+.. _TIFF: https://en.wikipedia.org/wiki/TIFF
+.. _PDF: https://en.wikipedia.org/wiki/PDF
+.. _MOV: https://en.wikipedia.org/wiki/QuickTime_File_Format
+.. _OGG: https://en.wikipedia.org/wiki/Vorbis
+.. _FLAC: https://en.wikipedia.org/wiki/FLAC
+.. _SVG: https://en.wikipedia.org/wiki/Scalable_Vector_Graphics
+.. _`Abdur-Rashid Sufi`: http://quranicaudio.com/quran/109
