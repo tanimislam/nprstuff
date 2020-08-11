@@ -3,9 +3,6 @@
 
 README
 ======
-
-:Author: Tanim Islam
-
 I like NPR, so I made some scripts to download my favorite programs from NPR. For now, I have something that downloads `NPR Fresh Air`_, `Wait Wait..Don't Tell
 Me`_, and `This American Life`_. This package can probably, straightforwardly be extended to other NPR and PRI programs (although I haven't yet done so).
 
