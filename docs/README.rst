@@ -128,14 +128,14 @@ This consists of newer functionality that does not download NPR episodes, nor ca
 
 * ``convertImage`` uses the `CloudConvert REST API`_ to *smoothly and without pain points* convert and resize SVG_ images to PNG_ images of the same base name. The help screen for this command line tool is here,
 
-   ::
+  .. code-block:: console
 
-       Usage: convertImage.py [options]
+     Usage: convertImage [options]
 
-       Options:
-         -h, --help           show this help message and exit
-         --filename=FILENAME  Name of the input SVG file.
-         --width=WIDTH        If defined, new width of the file. Optional
+     Options:
+       -h, --help           show this help message and exit
+       --filename=FILENAME  Name of the input SVG file.
+       --width=WIDTH        If defined, new width of the file. Optional
 
 * ``changedates`` changes the creation date of JPEG_ and MOV_ files, that my Canon digital camera creates, by up and down one year. I created this tool because my Canon digital camera does not set the right year on the creation date for image files it creates. This caused problems when I uploaded those images to `Google Picasa <https://picasaweb.google.com/home>`__ or `Google+ <https://plus.google.com/>`__. The help screen for this command line tool is here,
 
@@ -151,21 +151,21 @@ This consists of newer functionality that does not download NPR episodes, nor ca
 
 * ``music_to_m4a`` can convert a single file from MP3_, OGG_, or FLAC_ format to M4A_ format while preserving music file metadata, and can optionally set the total number of album tracks and the album cover if the music files is in an album. It can also rename an m4a music file into the format “*artist name* - *song name*.m4a.” The help screen for this command line tool is here,
 
-.. code-block:: console
+  .. code-block:: console
 
-   usage: music_to_m4a [-h] --inputfile INPUTFILE [--outfile OUTFILE] [--tottracks TOTTRACKS] [--albumloc ALBUMLOC] [--quiet] [--rename] [--notitle]
+     usage: music_to_m4a [-h] --inputfile INPUTFILE [--outfile OUTFILE] [--tottracks TOTTRACKS] [--albumloc ALBUMLOC] [--quiet] [--rename] [--notitle]
 
-   optional arguments:
-     -h, --help            show this help message and exit
-     --inputfile INPUTFILE
-			   Name of the input audio file to convert.
-     --outfile OUTFILE     Optional name of the output file.
-     --tottracks TOTTRACKS
-			   Optional total number of tracks in album of which song is a part.
-     --albumloc ALBUMLOC   Optional path to location of the album cover image file. Must be in JPEG or PNG.
-     --quiet               If chosen, then verbosely print output of processing.
-     --rename              If chosen, simply rename the m4a file to the form <artist>.<song title>.m4a
-     --notitle             If chosen, do not use titlecase functionality to fix the titles of songs.
+     optional arguments:
+       -h, --help            show this help message and exit
+       --inputfile INPUTFILE
+			     Name of the input audio file to convert.
+       --outfile OUTFILE     Optional name of the output file.
+       --tottracks TOTTRACKS
+			     Optional total number of tracks in album of which song is a part.
+       --albumloc ALBUMLOC   Optional path to location of the album cover image file. Must be in JPEG or PNG.
+       --quiet               If chosen, then verbosely print output of processing.
+       --rename              If chosen, simply rename the m4a file to the form <artist>.<song title>.m4a
+       --notitle             If chosen, do not use titlecase functionality to fix the titles of songs.
 
 * ``download_surahs`` downloads recorded surahs (`Abdur-Rashid Sufi`_) to a directory of your choice. The help screen for this command line tool is here,
 
