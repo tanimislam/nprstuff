@@ -3,7 +3,7 @@
 
 README
 ======
-I like NPR, so I made some scripts to download my favorite programs from NPR. For now, I have something that downloads `NPR Fresh Air`_, `Wait Wait..Don't Tell
+I like NPR, so I made some scripts to download my favorite programs from NPR. For now, I have something that downloads `NPR Fresh Air`_, `Wait Wait...Don't Tell
 Me`_, and `This American Life`_. This package can probably, straightforwardly be extended to other NPR and PRI programs (although I haven't yet done so).
 
 Although this project started off as a way to download these three programs, I have expanded it to include a grab bag of altogether different types of functionalities. What remains the same? This distribution consists mainly of executable python scripts. Detailed documentation lives in the Sphinx repository
@@ -14,7 +14,7 @@ Although this project started off as a way to download these three programs, I h
 
      This API is no longer publicly available for client integrations; for documentation of current API services, please visit the NPR Developer Center.
 
-   Furthermore, the newer `NPR One API`_does not appear to have the necessary functionality to make my magic happen.
+   Furthermore, the newer `NPR One API`_ does not appear to have the necessary functionality to make my magic happen.
 
 Core Functionality
 ^^^^^^^^^^^^^^^^^^^
