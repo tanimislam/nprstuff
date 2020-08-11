@@ -26,67 +26,63 @@ the following pieces of python code:
 * ``npr_utils.py`` contains common utilities to get the proper metadata for NPR programs, to name these media files in the proper date format, and to get the full paths to the LibAV_ or FFMPEG_ and HandBrakeCLI_ tools used to create the NPR programs in M4A_ and MP3_ formats (among other functionalities).
 
 * These four executables handle `NPR Fresh Air`_ downloads: ``freshair``, ``freshair_crontab``, ``freshair_fix_crontab``, and ``freshair_by_year``.
+  
+  * ``freshair`` is the main executable that downloads `NPR Fresh Air`_ episodes, converts them to M4A_ format, and then applies correct metadata. The help screen for this command line tool is here,
+    
+    .. code-block::  console
 
-   * ``freshair`` is the main executable that downloads `NPR Fresh Air`_ episodes, converts them to M4A_ format, and then applies correct metadata. The help screen for this command line tool is here,
+       usage: freshair [-h] [--dirname DIRNAME] [--date DATE] [--mp3exist] [--debug]
 
-     .. code-block::  console
+       optional arguments:
+	 -h, --help         show this help message and exit
+	 --dirname DIRNAME  Name of the directory to store the file. Default is /mnt/media/freshair.
+	 --date DATE        The date, in the form of "January 1, 2014." The default is today's date, August 11, 2020.
+	 --mp3exist         If chosen, then do not download the transitional mp3 files. Use the ones that already exist.
+	 --debug            If chosen, run freshair.py in debug mode. Useful for debugging :)
 
-	usage: freshair [-h] [--dirname DIRNAME] [--date DATE] [--mp3exist] [--debug]
 
-	optional arguments:
-	  -h, --help         show this help message and exit
-	  --dirname DIRNAME  Name of the directory to store the file. Default is /mnt/media/freshair.
-	  --date DATE        The date, in the form of "January 1, 2014." The default is today's date, August 11, 2020.
-	  --mp3exist         If chosen, then do not download the transitional mp3 files. Use the ones that already exist.
-	  --debug            If chosen, run freshair.py in debug mode. Useful for debugging :)
+  * ``freshair_crontab`` downloads an `NPR Fresh Air`_ episode on a given weekday. It should be called by a cron job or a systemd service that runs every weekday.
+    
+  * ``freshair_fix_crontab`` tries to re-download `NPR Fresh Air`_ episodes that may be incomplete – defined as shorter than 30 minutes – and which are 90 days or older. This executable searches through the library of all NPR Fresh Air episodes, and tries to re-download older, possibly incomplete episodes.
+  
+  * ``freshair_by_year`` downloads all the NPR Fresh Air episodes in a given year.
+    
+* These four files handle `NPR Wait Wait <waitwait_>`_ downloads: ``waitwait``, ``waitwait_realmedia``, ``waitwait_crontab``, and ``waitwait_by_year``.
 
-   * ``freshair_crontab`` downloads an `NPR Fresh Air`_ episode on a given weekday. It should be called by a cron job or a systemd service that runs every weekday.
+  * ``waitwait`` is the main executable that downloads NPR Wait Wait episodes, converts them to M4A_ format, and then applies correct metadata. ``waitwait_realmedia.py`` is a Python module that allows one to download `NPR Wait Wait <waitwait_>`_ episodes older than 2004, which are in RealMedia_ format. The help screen for this command line tool is here,
 
-   * ``freshair_fix_crontab`` tries to re-download `NPR Fresh Air`_ episodes that may be incomplete – defined as shorter than 30 minutes – and which are 90 days or older. This executable searches through the library of all NPR Fresh Air episodes, and tries to re-download older, possibly incomplete episodes.
+    .. code-block:: console
 
-   * ``freshair_by_year`` downloads all the NPR Fresh Air episodes in a given year.
+       usage: waitwait [-h] [--dirname DIRNAME] [--date DATE] [--debugonly] [--noverify] [--justfix]
 
-* These four files handle NPR Wait Wait downloads: ``waitwait``, ``waitwait_realmedia``, ``waitwait_crontab``, and ``waitwait_by_year``.
-
-   * ``waitwait`` is the main executable that downloads NPR Wait Wait episodes, converts them to M4A_ format, and then applies
-      correct metadata. ``waitwait_realmedia.py`` is a Python module that allows one to download `NPR Wait Wait <waitwait_>`_ episodes older than 2004, which are in
-      RealMedia_ format. The help screen for this command line tool is here,
-
-      .. code-block:: console
-
-	 usage: waitwait [-h] [--dirname DIRNAME] [--date DATE] [--debugonly] [--noverify] [--justfix]
-
-	 optional arguments:
-	   -h, --help         show this help message and exit
-	   --dirname DIRNAME  Name of the directory to store the file. Default is /mnt/media/waitwait.
-	   --date DATE        The date, in the form of "January 1, 2014." The default is last Saturday, August 08, 2020.
-	   --debugonly        If chosen, download the NPR XML data sheet for this Wait Wait episode.
-	   --noverify         If chosen, Do not verify the SSL connection.
-	   --justfix          If chosen, just fix the title of an existing NPR Wait Wait episode's file.
+       optional arguments:
+	 -h, --help         show this help message and exit
+	 --dirname DIRNAME  Name of the directory to store the file. Default is /mnt/media/waitwait.
+	 --date DATE        The date, in the form of "January 1, 2014." The default is last Saturday, August 08, 2020.
+	 --debugonly        If chosen, download the NPR XML data sheet for this Wait Wait episode.
+	 --noverify         If chosen, Do not verify the SSL connection.
+	 --justfix          If chosen, just fix the title of an existing NPR Wait Wait episode's file.
 
   * ``waitwait_crontab`` downloads an NPR Wait Wait episode on a given Saturday. It should be called by a cron job or systemd service that is run every Saturday.
 
   * ``waitwait_by_year`` downloads all the NPR Wait Wait episodes in a given year.
+    
+* ``thisamericanlife.py`` *manually* downloads a given episode number of `This American Life`_. The help screen for this command line tool is here,
 
--  ``thisamericanlife.py`` *manually* downloads a given episode number
-   of This American Life. This executable uses a custom online archive
-   for older This American Life episodes that are described
-   `here <http://www.dirtygreek.org/t/download-this-american-life-episodes>`__.
-   The help screen for this command line tool is here,
+  .. code-block:: console
 
-   ::
+     usage: thisamericanlife [-h] [--episode EPISODE] [--directory DIRECTORY] [--extra EXTRASTUFF] [--noverify] [--dump] [--info]
 
-       Usage: thisamericanlife.py [options]
+     optional arguments:
+       -h, --help            show this help message and exit
+       --episode EPISODE     Episode number of This American Life to download. Default is 150.
+       --directory DIRECTORY
+			     Directory into which to download This American Life episodes. Default is /mnt/media/thisamericanlife.
+       --extra EXTRASTUFF    If defined, some extra stuff in the URL to get a This American Life episode.
+       --noverify            If chosen, then do not verify the SSL connection.
+       --dump                If chosen, just download the TAL episode XML into a file into the specified directory.
+       --info                If chosen, then do INFO logging.
 
-       Options:
-         -h, --help            show this help message and exit
-         --episode=EPISODE     Episode number of This American Life to download.
-                               Default is 150.
-         --directory=DIRECTORY
-                               Directory into which to download This American Life
-                               episodes. Default is /mnt/media/thisamericanlife.
-         --extra=EXTRASTUFF    If defined, some extra stuff in the URL to get a This
-                               American Life episode.
 
 New Functionality
 ^^^^^^^^^^^^^^^^^^^
