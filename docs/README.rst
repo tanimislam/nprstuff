@@ -17,6 +17,28 @@ Furthermore, the newer `NPR One API`_ does not appear to have the necessary func
 
 The comprehensive documentation lives in HTML created with `Sphinx <https://www.sphinx-doc.org/en/master/>`_, and now in the `Read the Docs <nprstuff_>`_ page for this project. To generate the documentation, go to the ``docs`` subdirectory. In that directory, run ``make html``. Load ``docs/build/html/index.html`` into a browser to see the documentation.
 
+Installation Instructions
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Installing this Python module is easy.
+
+* If you want to get it from Github_, then run this command,
+
+  .. code-block:: console
+
+     python3 -m pip install --user git+https://github.com/tanimislam/nprstuff#egginfo=nprstuff
+
+* If you want to have more control, follow these several steps.
+
+  .. code-block:: console
+
+     git clone https://github.com/tanimislam/nprstuff
+     cd nprstuff
+     python3 -m pip install --user -e .
+
+Both installation workflows install ``nprstuff`` into your user Python folder (``~/.local`` by default on Linux and Mac OS X systems). Its executables are installed into ``~/.local/bin`` by default on Linux or Mac OS X systems.
+  
+
 Core Functionality
 ^^^^^^^^^^^^^^^^^^^
 
@@ -254,9 +276,9 @@ In the immediate future, I plan on at least implementing the following, all usin
 * Adding and deleting articles through the article list widget.
 
 Oldstuff
-========
+---------------------------------
 
-These are tools that I do not maintain, located in the ``oldstuff`` folder, but which others may find useful. These are pieces of code that I have started, but which are unmaintained. These are the following pieces of code: ``freshair.sh``, ``waitwait.sh``, and ``google_pull_contacts.py``.
+These are tools that I do not maintain, located in the ``oldstuff`` folder, but which others may find useful. These are pieces of code that I have started, but which are unmaintained: ``freshair.sh``, ``waitwait.sh``, and ``google_pull_contacts.py``. Use at your own risk.
 
 .. _`NPR Fresh Air`: https://freshair.npr.org
 .. _waitwait: https://waitwait.npr.org
@@ -283,6 +305,7 @@ These are tools that I do not maintain, located in the ``oldstuff`` folder, but 
 .. _Readability: https://www.readability.com
 .. _PyQt4: https://www.riverbankcomputing.com/software/pyqt/download
 .. _EPUB: https://en.wikipedia.org/wiki/EPUB
+.. _Github: https://github.com
 ..
 .. these are magazine URLS
 ..
