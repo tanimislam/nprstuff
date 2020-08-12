@@ -19,9 +19,11 @@ def _freshair_crontab( ):
         return
   
     # now download the episode into the correct directory
-    freshair.get_freshair(
-        _default_inputdir, current_date,
-        check_if_exist = True)
+    try:
+        freshair.get_freshair(
+            _default_inputdir, current_date,
+            check_if_exist = True)
+    except: pass
 
 def _freshair( ):
     parser = ArgumentParser( )

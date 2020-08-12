@@ -1,22 +1,18 @@
 .. nprstuff documentation master file, created by
-   sphinx-quickstart on Tue Aug 11 11:17:48 2020.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+.. include:: ../../README.rst
 
-Welcome to nprstuff's documentation!
-====================================
+Table of Contents
+^^^^^^^^^^^^^^^^^^
 
 .. toctree::
    :maxdepth: 2
    :numbered:
-   :caption: Contents:
 
-   
+TODO
+^^^^^
 
+Here are some things I would like to finish.
 
-Indices and tables
-==================
+* Get the non-NPR-API functionality working as robustly as the old, working, discontinued NPR API stuff.
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+.. |cbox| unicode:: U+2611 .. BALLOT BOX WITH CHECK

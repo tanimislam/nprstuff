@@ -37,7 +37,6 @@ Installing this Python module is easy.
      python3 -m pip install --user -e .
 
 Both installation workflows install ``nprstuff`` into your user Python folder (``~/.local`` by default on Linux and Mac OS X systems). Its executables are installed into ``~/.local/bin`` by default on Linux or Mac OS X systems.
-  
 
 Core Functionality
 ^^^^^^^^^^^^^^^^^^^
