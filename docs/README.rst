@@ -234,36 +234,29 @@ The list form of the article’s content, with working dialogs for ``Font`` and 
 
 A screenshot of the font changing dialog, the ``Font`` button, and a screenshot of the print preview dialog, the ``Print`` button, are shown below.
 
-[!ht]0.53 |The print preview dialog launched by the ``Print`` button in
-the article text widget.|
+.. |gui2_screenshot_fontdialog| image:: images/gui2_screenshot_fontdialog.png
+   :width: 100%
+   :align: middle
 
-[!ht]0.45 |The print preview dialog launched by the ``Print`` button in
-the article text widget.|
+.. |gui2_screenshot_printpreviewdialog| image:: images/gui2_screenshot_printpreviewdialog.png
+   :width: 100%
+   :align: middle
 
-In the immediate future, I plan on at least implementing the following,
-all using the Readability API.
+============================= =====================================================================================
+|gui2_screenshot_fontdialog|  |gui2_screenshot_printpreviewdialog|
+The ``Font`` button dialog.   The print preview dialog launched by the ``Print`` button in the article text widget.
+============================= =====================================================================================
 
--  ``EPUB`` button, to create the article in
-   `EPUB <https://en.wikipedia.org/wiki/EPUB>`__ format.
+In the immediate future, I plan on at least implementing the following, all using the Readability_ API.
 
--  Adding and deleting articles through the article list widget.
+* ``EPUB`` button, to create the article in EPUB_ format.
+
+* Adding and deleting articles through the article list widget.
 
 Oldstuff
 ========
 
-These are tools that I do not maintain, located in the ``oldstuff``
-folder, but which others may find useful. These are pieces of code that
-I have started, but which are unmaintained. These are the following
-pieces of code: ``freshair.sh``, ``waitwait.sh``, and
-``google_pull_contacts.py``.
-
-.. |A screenshot of the GUI reader, converting the URL for the `The New York Times <http://www.nytimes.com>`__ into text. Note the separate icons above for the five media websites from which this GUI can read.| image:: images/gui_screenshot.png
-.. |The GUI screenshot of the print preview dialog.| image:: images/gui_screenshot_save.png
-.. |The GUI screenshot of the print preview dialog.| image:: images/gui_screenshot_printpreview.png
-.. |The text form of the article’s content, with working dialogs for ``Font`` and ``Print Preview``.| image:: images/gui2_screenshot_articlelist.png
-.. |The text form of the article’s content, with working dialogs for ``Font`` and ``Print Preview``.| image:: images/gui2_screenshot_articletext.png
-.. |The print preview dialog launched by the ``Print`` button in the article text widget.| image:: images/gui2_screenshot_fontdialog.png
-.. |The print preview dialog launched by the ``Print`` button in the article text widget.| image:: images/gui2_screenshot_printpreviewdialog.png
+These are tools that I do not maintain, located in the ``oldstuff`` folder, but which others may find useful. These are pieces of code that I have started, but which are unmaintained. These are the following pieces of code: ``freshair.sh``, ``waitwait.sh``, and ``google_pull_contacts.py``.
 
 .. _`NPR Fresh Air`: https://freshair.npr.org
 .. _waitwait: https://waitwait.npr.org
@@ -289,7 +282,7 @@ pieces of code: ``freshair.sh``, ``waitwait.sh``, and
 .. _`Abdur-Rashid Sufi`: http://quranicaudio.com/quran/109
 .. _Readability: https://www.readability.com
 .. _PyQt4: https://www.riverbankcomputing.com/software/pyqt/download
-
+.. _EPUB: https://en.wikipedia.org/wiki/EPUB
 ..
 .. these are magazine URLS
 ..
