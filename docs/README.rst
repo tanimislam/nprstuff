@@ -217,9 +217,7 @@ Note, I do not support or maintain this tool after I found out about Readability
 GUI2: Readability GUI Front-End
 ----------------------------------
 
-This is the PyQt4 GUI front-end to Readability_. A screenshot of the list
-of articles widget is shown in Fig. ([fig:gui2\_screenshot\_articlelist]), and a screenshot of the
-article text widget is shown in Fig. ([fig:gui2\_screenshot\_articletext]).
+This is the PyQt4 GUI front-end to Readability_.
 
 .. |gui2_screenshot_articlelist| image:: images/gui2_screenshot_articlelist.png
    :width: 100%
