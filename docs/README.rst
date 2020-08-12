@@ -181,22 +181,19 @@ This consists of newer functionality that does not download NPR episodes, nor ca
 Graphics Functionality
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-This section describes the two graphical tools I have developed: ``gui``
-matches a small subset of functionality that the
-`Readability <https://www.readability.com>`__ tool handles excellently;
-``gui2`` is a
-`PyQt4 <https://www.riverbankcomputing.com/software/pyqt/download>`__
-GUI front-end to the `Readability <https://www.readability.com>`__ API.
+This section describes the two graphical tools I have developed: ``gui`` matches a small subset of functionality that the Readability_ tool handles excellently; ``gui2`` is a PyQt4_ GUI front-end to the Readability_ API.
 
 GUI: Media Website Text Formatter
----------------------------------
+------------------------------------
 
-This GUI can read from the following media websites: `Lightspeed
-Magazine <http://www.lightspeedmagazine.com/>`__,
-`Medium <https://medium.com/>`__, `The New
-Yorker <http://www.newyorker.com/>`__, `The New York
-Times <http://www.nytimes.com/?WT.z_jog=1>`__, and the `Virginia
-Quarterly Review <http://www.vqronline.org/>`__. Here is a screenshot!
+This GUI can read from the following media websites: `Lightspeed Magazine`_, Medium_, `The New Yorker`_, `The New York Time`_, and the `Virginia Quarterly Review`_. Here is a screenshot!
+
+.. figure:: images/gui_screenshot.png
+   :width: 100%
+   :align: center
+   :alt: gui_screenshot
+   
+   A screenshot of the GUI reader, converting the URL for the `The New York Times`_ into text. Note the separate icons above for the five media websites from which this GUI can read.
 
 [!ht]0.65 |A screenshot of the GUI reader, converting the URL for the
 `The New York Times <http://www.nytimes.com>`__ into text. Note the
@@ -205,9 +202,7 @@ read.|
 
 [!ht]0.34
 
-The screenshots of the save file dialog and the print preview dialog are
-shown Fig. [fig:gui\_screenshot\_save] and
-Fig. [fig:gui\_screenshot\_printpreview], respectively.
+The screenshots of the save file dialog and the print preview dialog are shown Fig. [fig:gui\_screenshot\_save] and Fig. [fig:gui\_screenshot\_printpreview], respectively.
 
 [!ht]0.4 |The GUI screenshot of the print preview dialog.|
 
@@ -290,3 +285,15 @@ pieces of code: ``freshair.sh``, ``waitwait.sh``, and
 .. _FLAC: https://en.wikipedia.org/wiki/FLAC
 .. _SVG: https://en.wikipedia.org/wiki/Scalable_Vector_Graphics
 .. _`Abdur-Rashid Sufi`: http://quranicaudio.com/quran/109
+.. _Readability: https://www.readability.com
+.. _PyQt4: https://www.riverbankcomputing.com/software/pyqt/download
+
+..
+.. these are magazine URLS
+..
+
+.. _`Lightspeed Magazine`: http://www.lightspeedmagazine.com
+.. _Medium: https://medium.com/>
+.. _`The New Yorker`: https://www.newyorker.com
+.. _`The New York Times`: https://www.nytimes.com
+.. _`Virginia Quarterly Review`: https://www.vqronline.org
