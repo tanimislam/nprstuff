@@ -6,12 +6,6 @@ from PyPDF2 import PdfFileReader
 from configparser import ConfigParser, RawConfigParser
 from PyQt5.QtCore import QByteArray
 
-try:
-    from PyQt5.QtSvg import QSvgRenderer
-except:
-    logging.error( "ERROR, MUST INSTALL PyQt5.QtSvg MODULE. IT DOES NOT EXIST ON PYPI RIGHT NOW. YOU CAN RUN THE COMMAND, 'sudo apt install python3-pyqt5.qtsvg', TO INSTALL MODULE." )
-    sys.exit( 0 )
-
 def get_cloudconvert_api_key( ):
     """
     :returns: the CloudConvert_ API key, stored in ``~/.config/nprstuff/nprstuff.conf``, under the ``CLOUDCONVERT_DATA`` section and ``apikey`` key.
@@ -133,6 +127,20 @@ def get_youtube_file( youtube_URL, output_mp4_file, quality = 'highest' ):
         return False
 
 def youtube2gif( input_youtube_URL, gif_file, quality = 'highest', duration = None, scale = 1.0 ):
+    """
+    Converts a YouTube clip into an animated GIF_ file. First, downloads the YouTube clip into an intermediate MP4_ file; then converts the intermediate MP4_ file into the animated GIF_, and deletes the intermediate file.
+
+    :param str input_youtube_URL: the input valid YouTube clip's URL.
+    :param str gif_file: the output GIF_ file.
+    :param str quality: optional argument for the quality of the YouTube clip. Default is "highest".
+    :param float duration: duration, in seconds, of input clip to use to make the animated GIF_. If ``None`` is provided, use the full movie. If provided, then must be :math:`\ge 1` seconds.
+    :param float scale: scaling of input width and height of MP4_ file. Default is 1.0. Must be :math:`\ge 0`.
+
+    .. seealso::
+
+       * :py:meth:`mp4togif <nprstuff.core.convert_image.mp4togif>`.
+       * :py:meth:`get_youtube_file <nprstuff.core.convert_image.get_youtube_file>`.
+    """
     intermediate_mp4_file = '%s.mp4' % str( uuid.uuid4( ) )
     status = get_youtube_file(
         input_youtube_URL, intermediate_mp4_file, quality = quality )
@@ -169,7 +177,6 @@ def mp4togif( input_mp4_file, gif_file = None, duration = None, scale = 1.0 ):
     .. _FFmpeg: https://ffmpeg.org
     .. _GIF: https://en.wikipedia.org/wiki/GIF
     .. _movie_2_gif: http://blog.pkh.me/p/21-high-quality-gif-with-ffmpeg.html
-    .. _ffprobe_json: https://tanimislamblog.wordpress.com/2018/09/12/ffprobe-to-get-output-in-json-format/
     """
     from distutils.spawn import find_executable
     ffmpeg_exec = find_executable( 'ffmpeg' )
@@ -282,6 +289,13 @@ def svg2png( input_svg_file, newWidth = None, verify = True ):
         * :py:meth:`png2png <nprstuff.core.convert_image.png2png>`.
         * :py:meth:`pdf2png <nprstuff.core.convert_image.pdf2png>`.
     """
+    
+    try:
+        from PyQt5.QtSvg import QSvgRenderer
+    except:
+        logging.error( "ERROR, MUST INSTALL PyQt5.QtSvg MODULE. IT DOES NOT EXIST ON PYPI RIGHT NOW. YOU CAN RUN THE COMMAND, 'sudo apt install python3-pyqt5.qtsvg', TO INSTALL MODULE." )
+        sys.exit( 0 )
+    
     assert(any(map(lambda suffix: os.path.basename( input_svg_file ).endswith( '.%s' % suffix ),
                    ( 'svg', 'svgz' ) ) ) )
     assert( os.path.isfile( input_svg_file ) )

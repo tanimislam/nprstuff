@@ -1,4 +1,3 @@
-.. nprstuff documentation master file, created by
 .. include:: ../../README.rst
 
 Table of Contents
@@ -7,6 +6,12 @@ Table of Contents
 .. toctree::
    :maxdepth: 2
    :numbered:
+
+   core_functionality
+   new_functionality
+   graphics_functionality
+   oldstuff
+   core_api
 
 TODO
 ^^^^^

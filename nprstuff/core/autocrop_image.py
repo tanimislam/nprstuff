@@ -47,7 +47,7 @@ def autocrop_image(inputfilename, outputfilename = None, color = 'white', newWid
     .. _TIFF: https://en.wikipedia.org/wiki/TIFF
     .. _Preview: https://en.wikipedia.org/wiki/Preview_(macOS)
     
-    .. seealso:: :py:meth:`autocrop_image_perproc <nprstuff.core.autocrop_image.autocrop_image_perproc>`
+    .. seealso:: :py:meth:`autocrop_perproc <nprstuff.core.autocrop_image.autocrop_perproc>`
     """
     im = Image.open(inputfilename)
 
@@ -206,14 +206,14 @@ def _make_pdf(i, fname, page):
 
 def crop_pdf(inputfile, outputfile = None):
     """
-    Given a possible multi-page PDF_ file that consists of :math:`N \ge 1` pages, creates :math:`N` separate single-page autocropped PDF_ files for each page in the input PDF_ file. Given a file with name ``inputfile``, the collection of output files are named ``outputfile<idx>``, where ``<idx>`` is the page number. This uses :py:class:`PdfFileReader <PyPDF2.PdfFileReader>` to read in, and :py:class:`PdfFileWriter <PyPDF2.PdfFilerWriter>` to write out, PDF_ files.
+    Given a possible multi-page PDF_ file that consists of :math:`N \ge 1` pages, creates :math:`N` separate single-page autocropped PDF_ files for each page in the input PDF_ file. Given a file with name ``inputfile``, the collection of output files are named ``outputfile<idx>``, where ``<idx>`` is the page number. This uses :py:class:`PdfFileReader <PyPDF2.PdfFileReader>` to read in, and :py:class:`PdfFileWriter <PyPDF2.PdfFileWriter>` to write out, PDF_ files.
 
     The Python functionality is a port of the `pdfcrop.pl`_ PERL script.
     
     :param str inputfile: the name of the input PDF_ file.
     :param str outputfile: optional argument, the prefix of the output PDF_ files. If ``None``, then the prefix is the part of ``inputfile`` with the ``.pdf`` suffix removed.
 
-    .. seealso:: :py:meth:`crop_pdf_singlepage <nprstuff.core.crop_pdf_singlepage>`
+    .. seealso:: :py:meth:`crop_pdf_singlepage <nprstuff.core.autocrop_image.crop_pdf_singlepage>`
 
     .. _`pdfcrop.pl`: ftp://ftp.tex.ac.uk/tex-archive/support/pdfcrop/pdfcrop.pl
     """
@@ -236,14 +236,14 @@ def crop_pdf(inputfile, outputfile = None):
 
 def crop_pdf_singlepage(inputfile, outputfile = None ):
     """
-    Given a *single-paged* PDF_ file, creates an autocropped output PDF_ file. This uses :py:class:`PdfFileReader <PyPDF2.PdfFileReader>` to read in, and :py:class:`PdfFileWriter <PyPDF2.PdfFilerWriter>` to write out, PDF_ files.
+    Given a *single-paged* PDF_ file, creates an autocropped output PDF_ file. This uses :py:class:`PdfFileReader <PyPDF2.PdfFileReader>` to read in, and :py:class:`PdfFileWriter <PyPDF2.PdfFileWriter>` to write out, PDF_ files.
     
     The Python functionality is a port of the `pdfcrop.pl`_ PERL script.
     
     :param str inputfile: the name of the input PDF_ file.
     :param str outputfile: optional argument, the name of the output PDF_ file. If ``None``, then the autocropped output PDF_ file replaces the input PDF_ file.
 
-    .. _seealso:: :py:meth:`crop_pdf <nprstuff.core.crop_pdf_singlepage>`
+    .. _seealso:: :py:meth:`crop_pdf <nprstuff.core.autocrop_image.crop_pdf>`
     """
     logger = _root_logger
     bboxes = get_boundingbox(inputfile)
