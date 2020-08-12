@@ -192,10 +192,10 @@ This GUI can read from the following media websites: `Lightspeed Magazine`_, Med
    :width: 100%
    :align: middle
 
-=================================================================================================================================================================================== =
+===================================================================================================================================================================================
 |gui_screenshot|
 A screenshot of the GUI reader, converting the URL for the `The New York Times`_ into text. Note the separate icons above for the five media websites from which this GUI can read.
-=================================================================================================================================================================================== =
+===================================================================================================================================================================================
 
 The screenshots of the save file dialog and the print preview dialog are shown Fig. [fig:gui\_screenshot\_save] and Fig. [fig:gui\_screenshot\_printpreview], respectively.
 
