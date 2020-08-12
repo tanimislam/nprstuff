@@ -203,7 +203,7 @@ The screenshots of the save file dialog and the print preview dialog are shown b
    :width: 100%
    :align: middle
 
-.. |gui_screenshot_preview| image:: images/gui_screenshot_preview.png
+.. |gui_screenshot_preview| image:: images/gui_screenshot_printpreview.png
    :width: 100%
    :align: middle
 
