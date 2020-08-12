@@ -188,17 +188,16 @@ GUI: Media Website Text Formatter
 
 This GUI can read from the following media websites: `Lightspeed Magazine`_, Medium_, `The New Yorker`_, `The New York Time`_, and the `Virginia Quarterly Review`_. Here is a screenshot!
 
-.. |gui_screenshot| figure:: images/gui_screenshot.png
+.. |gui_screenshot| image:: images/gui_screenshot.png
    :width: 100%
    :align: center
-   :alt: gui_screenshot
    
    A screenshot of the GUI reader, converting the URL for the `The New York Times`_ into text. Note the separate icons above for the five media websites from which this GUI can read.
 
-=========================================== =
+=================================================================================================================================================================================== =
 |gui_screenshot|
-=========================================== =
-
+A screenshot of the GUI reader, converting the URL for the `The New York Times`_ into text. Note the separate icons above for the five media websites from which this GUI can read.
+=================================================================================================================================================================================== =
 
 [!ht]0.65 |A screenshot of the GUI reader, converting the URL for the
 `The New York Times <http://www.nytimes.com>`__ into text. Note the
