@@ -191,20 +191,11 @@ This GUI can read from the following media websites: `Lightspeed Magazine`_, Med
 .. |gui_screenshot| image:: https://github.com/tanimislam/nprstuff/blob/dealing_with_npr_crap/docs/images/gui_screenshot.png
    :width: 100%
    :align: middle
-   
-   A screenshot of the GUI reader, converting the URL for the `The New York Times`_ into text. Note the separate icons above for the five media websites from which this GUI can read.
 
 =================================================================================================================================================================================== =
 |gui_screenshot|
 A screenshot of the GUI reader, converting the URL for the `The New York Times`_ into text. Note the separate icons above for the five media websites from which this GUI can read.
 =================================================================================================================================================================================== =
-
-[!ht]0.65 |A screenshot of the GUI reader, converting the URL for the
-`The New York Times <http://www.nytimes.com>`__ into text. Note the
-separate icons above for the five media websites from which this GUI can
-read.|
-
-[!ht]0.34
 
 The screenshots of the save file dialog and the print preview dialog are shown Fig. [fig:gui\_screenshot\_save] and Fig. [fig:gui\_screenshot\_printpreview], respectively.
 
