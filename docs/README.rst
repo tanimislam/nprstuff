@@ -190,7 +190,7 @@ This GUI can read from the following media websites: `Lightspeed Magazine`_, Med
 
 .. |gui_screenshot| image:: images/gui_screenshot.png
    :width: 100%
-   :align: center
+   :align: middle
    
    A screenshot of the GUI reader, converting the URL for the `The New York Times`_ into text. Note the separate icons above for the five media websites from which this GUI can read.
 
