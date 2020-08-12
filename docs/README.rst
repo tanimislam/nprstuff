@@ -197,19 +197,25 @@ This GUI can read from the following media websites: `Lightspeed Magazine`_, Med
 A screenshot of the GUI reader, converting the URL for the `The New York Times`_ into text. Note the separate icons above for the five media websites from which this GUI can read.
 ==================================================================================================================================================================================== =
 
-The screenshots of the save file dialog and the print preview dialog are shown Fig. [fig:gui\_screenshot\_save] and Fig. [fig:gui\_screenshot\_printpreview], respectively.
+The screenshots of the save file dialog and the print preview dialog are shown below.
 
-.. 
+.. |gui_screenshot_save| image:: images/gui_screenshot_save.png
+   :width: 100%
+   :align: middle
 
-[!ht]0.4 |The GUI screenshot of the print preview dialog.|
+.. |gui_screenshot_preview| image:: images/gui_screenshot_preview.png
+   :width: 100%
+   :align: middle
 
-[!ht]0.5 |The GUI screenshot of the print preview dialog.|
+====================================== ===============================================
+|gui_screenshot_save|                  |gui_screenshot_preview|
+The GUI screenshot of the save dialog. The GUI screenshot of the print preview dialog.
+====================================== ===============================================
 
-Note, here I do not support or maintain this tool after I found out
-about `Readability <https://www.readability.com>`__.
+Note, I do not support or maintain this tool after I found out about Readability_.
 
 GUI2: Readability GUI Front-End
--------------------------------
+----------------------------------
 
 This is the PyQt4 GUI front-end to
 `Readability <https://www.readability.com>`__. A screenshot of the list
