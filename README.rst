@@ -209,7 +209,7 @@ GUI: Media Website Text Formatter
 
 This GUI can read from the following media websites: `Lightspeed Magazine`_, Medium_, `The New Yorker`_, `The New York Time`_, and the `Virginia Quarterly Review`_. Here is a screenshot!
 
-.. |gui_screenshot| image:: images/gui_screenshot.png
+.. |gui_screenshot| image:: docs/images/gui_screenshot.png
    :width: 100%
    :align: middle
 
@@ -220,11 +220,11 @@ A screenshot of the GUI reader, converting the URL for the `The New York Times`_
 
 The screenshots of the save file dialog and the print preview dialog are shown below.
 
-.. |gui_screenshot_save| image:: images/gui_screenshot_save.png
+.. |gui_screenshot_save| image:: docs/images/gui_screenshot_save.png
    :width: 100%
    :align: middle
 
-.. |gui_screenshot_preview| image:: images/gui_screenshot_printpreview.png
+.. |gui_screenshot_preview| image:: docs/images/gui_screenshot_printpreview.png
    :width: 100%
    :align: middle
 
@@ -240,11 +240,11 @@ GUI2: Readability GUI Front-End
 
 This is the PyQt4 GUI front-end to Readability_.
 
-.. |gui2_screenshot_articlelist| image:: images/gui2_screenshot_articlelist.png
+.. |gui2_screenshot_articlelist| image:: docs/images/gui2_screenshot_articlelist.png
    :width: 100%
    :align: middle
 
-.. |gui2_screenshot_articletext| image:: images/gui2_screenshot_articletext.png
+.. |gui2_screenshot_articletext| image:: docs/images/gui2_screenshot_articletext.png
    :width: 100%
    :align: middle
 
@@ -255,11 +255,11 @@ The list form of the article’s content, with working dialogs for ``Font`` and 
 
 A screenshot of the font changing dialog, the ``Font`` button, and a screenshot of the print preview dialog, the ``Print`` button, are shown below.
 
-.. |gui2_screenshot_fontdialog| image:: images/gui2_screenshot_fontdialog.png
+.. |gui2_screenshot_fontdialog| image:: docs/images/gui2_screenshot_fontdialog.png
    :width: 100%
    :align: middle
 
-.. |gui2_screenshot_printpreviewdialog| image:: images/gui2_screenshot_printpreviewdialog.png
+.. |gui2_screenshot_printpreviewdialog| image:: docs/images/gui2_screenshot_printpreviewdialog.png
    :width: 100%
    :align: middle
 
