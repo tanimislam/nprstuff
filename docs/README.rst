@@ -188,7 +188,7 @@ GUI: Media Website Text Formatter
 
 This GUI can read from the following media websites: `Lightspeed Magazine`_, Medium_, `The New Yorker`_, `The New York Time`_, and the `Virginia Quarterly Review`_. Here is a screenshot!
 
-.. |gui_screenshot| image:: https://github.com/tanimislam/nprstuff/blob/dealing_with_npr_crap/docs/images/gui_screenshot.png
+.. |gui_screenshot| image:: images/gui_screenshot.png
    :width: 100%
    :align: middle
 
