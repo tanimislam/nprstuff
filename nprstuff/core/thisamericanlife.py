@@ -24,8 +24,6 @@ def get_americanlife_info(
     :rtype: tuple
 
     .. seealso:: :py:meth:`get_american_life <nprstuff.core.thisamericanlife.get_american_life>`.
-    
-    .. _`This American Life`: https://https://www.thisamericanlife.org
     """
     
     # the see if this episode of this american life exists...
@@ -177,7 +175,9 @@ def get_american_life(
     
 def thisamericanlife_crontab( ):
     """
-    This python module downloads a `This American Life`_ episode every weekend.
+    This python module downloads a `This American Life`_ episode every weekend. It uses the Feedparser_'s functionality using its RSS feed.
+
+    .. _Feedparser: https://feedparser.readthedocs.io
     """
     def _get_track( filename ):
         assert( os.path.basename( filename ).endswith( '.mp3' ) ) 

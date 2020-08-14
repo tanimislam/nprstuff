@@ -3,7 +3,7 @@
 Core Functionality
 ^^^^^^^^^^^^^^^^^^^
 
-This consists of functionality to grab episodes from `Fresh Air`_, `Wait Wait..Don't Tell Me <waitwait_>`_, and `This American Life`_. ``npr_utils.py`` contains common utilities to get the proper metadata for NPR programs, to name these media files in the proper date format, and to get the full paths to the LibAV_ or FFMPEG_ and HandBrakeCLI_ tools used to create the NPR programs in M4A_ and MP3_ formats (among other functionalities).
+This consists of functionality to grab episodes from `Fresh Air`_, `Wait Wait..Don't Tell Me <waitwait_>`_, and `This American Life`_.
 
 NPR Fresh Air
 ==============

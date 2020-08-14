@@ -128,7 +128,7 @@ def get_youtube_file( youtube_URL, output_mp4_file, quality = 'highest' ):
 
 def youtube2gif( input_youtube_URL, gif_file, quality = 'highest', duration = None, scale = 1.0 ):
     """
-    Converts a YouTube clip into an animated GIF_ file. First, downloads the YouTube clip into an intermediate MP4_ file; then converts the intermediate MP4_ file into the animated GIF_, and deletes the intermediate file.
+    Converts a YouTube_ clip into an animated GIF_ file. First, downloads the YouTube_ clip into an intermediate MP4_ file; then converts the intermediate MP4_ file into the animated GIF_, and deletes the intermediate file.
 
     :param str input_youtube_URL: the input valid YouTube clip's URL.
     :param str gif_file: the output GIF_ file.

@@ -242,8 +242,8 @@ def crop_pdf_singlepage(inputfile, outputfile = None ):
     
     :param str inputfile: the name of the input PDF_ file.
     :param str outputfile: optional argument, the name of the output PDF_ file. If ``None``, then the autocropped output PDF_ file replaces the input PDF_ file.
-
-    .. _seealso:: :py:meth:`crop_pdf <nprstuff.core.autocrop_image.crop_pdf>`
+    
+    .. _seealso:: :py:meth:`crop_pdf <nprstuff.core.autocrop_image.crop_pdf>`.
     """
     logger = _root_logger
     bboxes = get_boundingbox(inputfile)

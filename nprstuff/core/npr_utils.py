@@ -5,9 +5,17 @@ from distutils.spawn import find_executable
 import urllib.parse as urlparse
 from urllib.parse import urlencode
 from configparser import ConfigParser, RawConfigParser
-from selenium import webdriver
 
 def get_firefox_driver( ):
+    """
+    :returns: a Firefox_ Selenium_ headless :py:class:`Webdriver <selenium.webdriver.remote.webdriver.WebDriver>`.
+    
+    .. seealso:: :py:meth:`get_chrome_driver <nprstuff.core.npr_utils.get_chrome_driver>`.
+
+    .. _Firefox: https://www.mozilla.org/en-US/firefox/new
+    .. _Selenium: https://www.selenium.dev/documentation/en
+    """
+    from selenium import webdriver
     from selenium.webdriver.firefox.options import Options
     geckodriver = find_executable( 'geckodriver' )
     if geckodriver is None:
@@ -18,6 +26,14 @@ def get_firefox_driver( ):
     return driver
 
 def get_chrome_driver( ):
+    """
+    :returns: a Chromium_ Selenium_ headless :py:class:`Webdriver <selenium.webdriver.remote.webdriver.WebDriver>`.
+    
+    .. seealso:: :py:meth:`get_firefox_driver <nprstuff.core.npr_utils.get_firefox_driver>`.
+
+    .. _Chromium: https://www.chromium.org/Home
+    """
+    from selenium import webdriver
     from selenium.webdriver.chrome.options import Options
     chromedriver = find_executable( 'chromedriver' )
     if chromedriver is None:
@@ -32,7 +48,6 @@ def find_necessary_executables( ):
     :returns: this method searches first for the avconv_, then the FFmpeg_, executable for audiovisual conversion. If it finds either executable, returns a :py:class:`dict` that looks like ``{ 'avconv' : <EXEC_PATH> }``, where ``<EXEC_PATH>`` is the executable's path. If it does NOT find it, returns ``None``.
 
     .. _avconv: https://en.wikipedia.org/wiki/Libav
-    .. _FFmpeg: https://en.wikipedia.org/wiki/FFmpeg
     """
     ffmpeg_exec = None
     for ffmpeg_exc in ('avconv', 'ffmpeg'):
@@ -110,7 +125,9 @@ def get_NPR_URL(date_s, program_id, NPR_API_key):
     :returns: a :py:class:`str` of the exploded URL for REST API calls to the NPR API server.
     :rtype: str
     
-    .. deprecated:: no methods call this function any more, instead using the :py:module:`requests` module's cleaner, higher-level functionality of REST API commands.
+    .. note::
+
+       no methods call this function any more, instead using the :py:mod:`requests` module's cleaner, higher-level functionality of REST API commands.
     """
     nprApiDate = date_s.strftime('%Y-%m-%d')
     result = urlparse.ParseResult(scheme = 'https', netloc = 'api.npr.org', path='/query', params='',
@@ -146,7 +163,7 @@ def saturdays_of_month_of_year( year, month ):
     """
     days = sorted(
         filter(lambda day: day != 0,
-            numpy.array( calendar.monthcalendar(year, month), dtype=int)[:,5].flatten() ) )
+               numpy.array( calendar.monthcalendar(year, month), dtype=int)[:,5].flatten() ) )
     return days
 
 def get_time_from_datestring(datestring):
@@ -250,7 +267,7 @@ def get_saturday_times_in_year(year, getAll = True):
     """
     nowd = datetime.datetime.now( ).date( )
     initsats = sorted(chain.from_iterable(
-        map(lambda year: map(lambda day: datetime.date( year, month, day ), saturdays_of_month_of_year(year, month) ),
+        map(lambda month: map(lambda day: datetime.date( year, month, day ), saturdays_of_month_of_year(year, month) ),
             range(1, 13 ) ) ) )
     if getAll: return initsats
     return list(filter(lambda day: dat < nowd, initsats ) )
@@ -277,29 +294,27 @@ def get_weekday_times_in_year(year, getAll = True):
     nowd = datetime.datetime.now( ).date( )
     return list( filter(lambda actd: actd < nowd, inittimes ) )
 
-class NoDaemonProcess(multiprocessing.Process):
-  """
-  Magic to get multiprocessing to get processes to be able to start daemons.
-  
-  I copied the code from http://stackoverflow.com/a/8963618/3362358, without
-  any real understanding EXCEPT that I am extending a :py:class:`Pool <multiprocessing.Pool>` using an object that always returns ``False``.
-  
-  This allows one to create a pool of workers that can spawn other processes (by default, :py:module:`multiprocessing` does not
-  allow this)
-  
-  .. seealso:: :py:class:`MyPool <nprstuff.core.npr_utils.MyPool>`.
-  """
-  # make 'daemon' attribute always return False
-  def _get_daemon(self):
-    return False
-  def _set_daemon(self, value):
-    pass
-  daemon = property(_get_daemon, _set_daemon)
-
 class MyPool(multiprocessing.pool.Pool):
     """
-    A type of :py:class:`Pool <multiprocessing.pool.Pool>` whose processes can spawn other processes, since they use :py:class:`NoDaemonProcess <nprstuff.core.npr_utils.NoDaemonProcess>` inside them.
+    A magic type of :py:class:`Pool <multiprocessing.pool.Pool>` whose processes can spawn other processes. This allows one to create a pool of workers that can spawn other processes (by default, :py:mod:`multiprocessing` does not allow this).
+    
+    I copied the code from `this website`_ and `a new website`_, without any real understanding EXCEPT that I am extending a :py:class:`Pool <multiprocessing.Pool>`.
 
-    .. seealso:: :py:class:`NoDaemonProcess <nprstuff.core.npr_utils.NoDaemonProcess>`.
+    .. _`this website`: https://stackoverflow.com/a/8963618/3362358
+    .. _`a new website`: https://stackoverflow.com/questions/52948447/error-group-argument-must-be-none-for-now-in-multiprocessing-pool 
     """
-    Process = NoDaemonProcess
+    def Process(self, *args, **kwds):
+        proc = super(MyPool, self).Process(*args, **kwds)
+
+        class NonDaemonProcess(proc.__class__):
+            """Monkey-patch process to ensure it is never daemonized"""
+            @property
+            def daemon(self):
+                return False
+
+            @daemon.setter
+            def daemon(self, val):
+                pass
+        #
+        proc.__class__ = NonDaemonProcess
+        return proc

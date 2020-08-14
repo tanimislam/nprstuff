@@ -1,6 +1,7 @@
 import os, sys, glob, re, requests, multiprocessing, mutagen.mp4
 import subprocess, logging, datetime, time, titlecase, tempfile, shutil
 from dateutil.relativedelta import relativedelta
+from urllib.parse import urljoin, urlsplit
 from bs4 import BeautifulSoup
 from urllib.parse import parse_qs
 from nprstuff.core import npr_utils, waitwait_realmedia
@@ -10,55 +11,78 @@ _npr_waitwait_progid = 35
 _default_inputdir = '/mnt/media/waitwait'
 
 def get_waitwait_image( verify = True ):
-    #return requests.get('https://upload.wikimedia.org/wikipedia/en/f/f4/WaitWait.png',
-    #verify = verify ).content
+    """
+    Get the `NPR Wait Wait <waitwait_>`_ logo as binary data.
+    
+    :returns: the `NPR Wait Wait logo`_ as binary data, see below.
+    
+    .. image:: /_static/waitwaitnew.png
+       :width: 100%
+       :align: center
+
+    .. _`NPR Wait Wait logo`: https://upload.wikimedia.org/wikipedia/en/f/f4/WaitWait.png
+    """
     fname = os.path.join( resourceDir, 'waitwaitnew.png' )
     assert( os.path.isfile( fname ) )
     return open( fname, 'rb' ).read( )
     
 def _download_file( input_tuple ):
-    mp3URL, filename, verify = input_tuple
+    mp3URL, filename = input_tuple
+    resp = requests.get( mp3URL, stream = True )
     with open(filename, 'wb') as openfile:
-        openfile.write( requests.get( mp3URL, verify = verify ).content )
+        for chunk in resp.iter_content( 65536 ):
+            openfile.write( chunk )
+    return filename
 
 def get_waitwait_date_from_name(candidateNPRWaitWaitFile):
-  if not os.path.isfile(candidateNPRWaitWaitFile):
-    raise ValueError("Error, %s is not a file," % candidateNPRWaitWaitFile )
-  if not os.path.basename(candidateNPRWaitWaitFile).endswith('.m4a'):
-    raise ValueError("Error, %s does not end in .m4a" % candidateNPRWaitWaitFile )
-  if not os.path.basename(candidateNPRWaitWaitFile).startswith('NPR.WaitWait.'):
-    raise ValueError("Error, %s is not a valid file" % candidateNPRWaitWaitFile )
-  day, mon, year = [ int(tok) for tok in os.path.basename(candidateNPRWaitWaitFile).split('.')[2:5] ]
-  return datetime.date(year, mon, day)
+    """
+    :param str candidateNPRWaitWaitFile: the name of the `NPR Wait Wait <waitwait_>`_ episode file name.
+    :returns: the :py:class:`date <datetime.date>` object from the `NPR Wait Wait <waitwait_>`_ episode file name.
+    :rtype: :py:class:`date <datetime.date>`
+    """
+    if not os.path.isfile(candidateNPRWaitWaitFile):
+        raise ValueError("Error, %s is not a file," % candidateNPRWaitWaitFile )
+    if not os.path.basename(candidateNPRWaitWaitFile).endswith('.m4a'):
+        raise ValueError("Error, %s does not end in .m4a" % candidateNPRWaitWaitFile )
+    if not os.path.basename(candidateNPRWaitWaitFile).startswith('NPR.WaitWait.'):
+        raise ValueError("Error, %s is not a valid file" % candidateNPRWaitWaitFile )
+    day, mon, year = [ int(tok) for tok in os.path.basename(candidateNPRWaitWaitFile).split('.')[2:5] ]
+    return datetime.date(year, mon, day)
 
 def get_waitwait_valid_dates_remaining_tuples(yearnum, inputdir):
-  waitwait_files_downloaded = glob.glob( os.path.join(inputdir, 'NPR.WaitWait.*.%04d.m4a' % yearnum ) )
-  dates_downloaded = set([ get_waitwait_date_from_name(filename) for filename in
-                           waitwait_files_downloaded ])
-  all_order_saturdays = { date_s : (num+1) for (num, date_s) in
-                          enumerate( npr_utils.get_saturday_times_in_year( yearnum ) ) }
-  dtime_now = datetime.datetime.now()
-  nowd = datetime.date(dtime_now.year, dtime_now.month, dtime_now.day)
-  saturdays_left = filter(lambda date_s: date_s < nowd, set( all_order_saturdays.keys() ) - 
-                          set( dates_downloaded ) )
-  totnum = len( all_order_saturdays.keys() )
-  order_dates_remain = sorted([ ( all_order_saturdays[date_s], totnum, date_s ) for
-                                date_s in saturdays_left ], key = lambda tup: tup[0] )
-  return order_dates_remain
+    """
+    :param int yearnum: the year for which to search for missing `NPR Wait Wait <waitwait_>`_ episodes.
+    :param str inputfdir: the directory in which the `NPR Wait Wait <waitwait_>`_ episodes live.
+    :returns: a sorted :py:class:`list` of :py:class:`tuple`, ordered by candidate track number of the `NPR Wait Wait <waitwait_>`_ episode. The :py:class:`tuple` has three elements: the track number of `NPR Wait Wait <waitwait_>`_ episodes that year, the total number of `NPR Wait Wait <waitwait_>`_ episodes that year, and the :py:class:`date <datetime.date>` for that episode.
+    :rtype: list
+    """
+    waitwait_files_downloaded = glob.glob( os.path.join(inputdir, 'NPR.WaitWait.*.%04d.m4a' % yearnum ) )
+    dates_downloaded = set([ get_waitwait_date_from_name(filename) for filename in
+                            waitwait_files_downloaded ])
+    all_order_saturdays = { date_s : (num+1) for (num, date_s) in
+                           enumerate( npr_utils.get_saturday_times_in_year( yearnum ) ) }
+    dtime_now = datetime.datetime.now()
+    nowd = datetime.date(dtime_now.year, dtime_now.month, dtime_now.day)
+    saturdays_left = filter(lambda date_s: date_s < nowd, set( all_order_saturdays.keys() ) - 
+                            set( dates_downloaded ) )
+    totnum = len( all_order_saturdays.keys() )
+    order_dates_remain = sorted([ ( all_order_saturdays[date_s], totnum, date_s ) for
+                                 date_s in saturdays_left ], key = lambda tup: tup[0] )
+    return order_dates_remain
 
 def _process_waitwaits_by_year_tuple(input_tuple):
-  outputdir, totnum, verbose, datetimes_order_tuples = input_tuple
-  ww_image = get_waitwait_image()
-  for date_s, order in datetimes_order_tuples:
-    time0 = time.time()
-    try:
-      fname = get_waitwait(outputdir, date_s, order_totnum = ( order, totnum),
-                           file_data = ww_image)
-      if verbose:
-        print('Processed %s in %0.3f seconds.' % ( fname, time.time() - time0 ))
-    except Exception as e:
-      print('Could not create Wait Wait episode for date %s for some reason.' % (
-        npr_utils.get_datestring( date_s ) ) )
+    outputdir, totnum, verbose, datetimes_order_tuples = input_tuple
+    ww_image = get_waitwait_image()
+    for date_s, order in datetimes_order_tuples:
+        time0 = time.time()
+        try:
+            fname = get_waitwait(outputdir, date_s, order_totnum = ( order, totnum),
+                                 file_data = ww_image)
+            if verbose:
+                print('Processed %s in %0.3f seconds.' % ( fname, time.time() - time0 ))
+        except Exception as e:
+            print('Could not create Wait Wait episode for date %s for some reason.' % (
+                npr_utils.get_datestring( date_s ) ) )
 
 def get_all_waitwaits_year( yearnum, inputdir, verbose = True):
   order_dates_remain = get_waitwait_valid_dates_remaining_tuples( yearnum, inputdir )
@@ -116,174 +140,207 @@ def get_mp3_chapter_tuple_sorted( html, verify, npr_api_key ):
       url_chap[0] ).split('.')[0].split('_')[-1] ) ) )
   return mp3_chapter_tuples
     
-def get_title_wavfile_standard(
-    date_s, outputdir, avconv_exec, 
-    debugonly = False, npr_api_key = None,
-    verify = True, justFix = False ):
-  if npr_api_key is None:
-    npr_api_key = npr_utils.get_api_key()
-    
-  # download this data into an lxml elementtree
-  decdate = npr_utils.get_decdate( date_s )
-  response = requests.get( 'https://api.npr.org/query', verify = verify,
-                           params = {
-                             'date' : date_s.strftime('%Y-%m-%d'),
-                             'output' : 'NPRML',
-                             'apiKey' : npr_api_key,
-                             'dataType' : 'story',
-                             'id' : _npr_waitwait_progid })
-  if response.status_code != 200:
-    raise ValueError("Error, could not get wait wait episode on %s. Error code is %d." %
-                     ( date_s.strftime('%B %d, %Y'), response.status_code ) )
-  html = BeautifulSoup( response.content, 'lxml' )
-  if debugonly:
-    openfile = os.path.join( outputdir, 'NPR.WaitWait.%s.html' %
-                             decdate )
-    with open( openfile, 'w') as outfile:
-      outfile.write( '%s\n' % html.prettify( ) )
-    return None
+def get_title_mp3_urls_working( outputdir, date_s, driver, debug = False ):
+    """
+    Using the new, non-API NPR functionality, get a :py:class:`list` of :py:class:`tuple` of stories for an `NPR Wait Wait <waitwait_>`_ episode. This uses a :py:class:`Webdriver <selenium.webdriver.remote.webdriver.WebDriver>` to get an episode. Here is an example operation,
+    """
+    #
+    ## follow cargo cult code, https://stackoverflow.com/a/49823819/3362358
+    from selenium.webdriver.common.by import By
+    from selenium.webdriver.support.ui import WebDriverWait
+    from selenium.webdriver.support import expected_conditions as EC
+    condition = EC.presence_of_element_located((By.ID, "some_element_id_present_after_JS_load"))
+    condition = EC.title_contains( 'NPR' )
+    #
+    ## must be the end datetime
+    time0 = time.time( )
+    dt_end = datetime.datetime( date_s.year, date_s.month, date_s.day )
+    t_end = int( datetime.datetime.timestamp( dt_end ) )
+    #
+    ## now get using the driver, go to the URL defined there
+    mainURL =  "https://www.npr.org/search?query=*&page=1&refinementList[shows]=Wait Wait...Don't Tell Me!&range[lastModifiedDate][min]=%d&range[lastModifiedDate][max]=%d&sortType=byDateAsc" % ( t_end - 86400, t_end )
+    driver.get( mainURL )
+    time.sleep( 1.5 ) # is 1.5 seconds enough?
+    html = BeautifulSoup( driver.page_source, 'lxml' )
+    #
+    if debug:
+        decdate = npr_utils.get_decdate( date_s )
+        openfile = os.path.join(
+            outputdir, 'NPR.WaitWait.%s.html' % decdate )
+        with open( openfile, 'w') as outfile:
+            outfile.write( '%s\n' % html.prettify( ) )
+        return html
 
-  #
-  ## now get SORTED mp3 chapter tuples
-  mp3_chapter_tuples = get_mp3_chapter_tuple_sorted( html, verify, npr_api_key )
-  if mp3_chapter_tuples is None:
-    raise ValueError("Error, could not get wait wait episode on %s." %
-                     date_s.strftime('%B %d, %Y') )
-  mp3urls, chapters = zip(*mp3_chapter_tuples)
-  title = '%s: %s.' % ( date_s.strftime('%B %d, %Y'),
-                        '; '.join(map(lambda num_titl: '%d) %s' % ( num_titl[0] + 1, num_titl[1] ),
-                                      enumerate(chapters))))
-  outfiles = list( map(lambda num_mp3url:
-                       os.path.join(outputdir, 'waitwait.%s.%d.mp3' % ( decdate, num_mp3url[0] + 1) ),
-                       enumerate( mp3urls ) ) )
-  if not justFix:
-    # download those files
-    time0 = time.time()
-    pool = multiprocessing.Pool(processes = len(mp3urls) )
-    list( pool.map(_download_file, zip( mp3urls, outfiles, len( mp3urls ) * [ verify ] ) ) )
-    logging.debug( 'downloaded %d mp3 files in %0.3f seconds.' % (
-      len( mp3urls ), time.time( ) - time0 ) )
-  return title, outfiles
-        
+    episode_elems = html.find_all( 'h2', { 'class' : 'title' } )
+    episode_urls = list(map(lambda elem: urljoin( 'https://www.npr.org', elem.find_all('a')[0]['href'] ),
+                            episode_elems ) )
+    def get_npr_waitwait_story( episode_URL, date_s ):
+        response = requests.get( episode_URL )
+        assert( response.ok )
+        html_ep = BeautifulSoup( response.content, 'lxml' )
+        date_f = date_s.strftime( '%Y-%m-%d' )
+        date_elems = list(html_ep.find_all('meta', { 'name' : 'date', 'content' : date_f } ) )
+        if len( date_elems ) != 1:
+            logging.error( 'could not find date elem for %s.' % episode_URL )
+            return None
+        #
+        ## keep going, get the title    
+        title_elems = list(html_ep.find_all('title'))
+        if len( title_elems ) == 0:
+            logging.error( 'could not find title elem for %s.' % episode_URL )
+            return None
+        title = titlecase.titlecase( ' '.join(map(lambda tok: tok.strip(), title_elems[0].text.split(':')[:-1])) )
+        #
+        ## now get the MP3 URL
+        mp3_elems = list(filter(lambda elem: 'href' in elem.attrs and 'mp3' in elem['href'], html_ep.find_all('a')))
+        if len( mp3_elems ) == 0: return None
+        mp3_elem = mp3_elems[0]
+        mp3_url_split = urlsplit( mp3_elem['href'] )
+        mp3_url = urljoin( 'https://%s' % mp3_url_split.netloc, mp3_url_split.path )
+        #
+        ## now get order
+        bname = re.sub('_$', '', os.path.basename( mp3_url ).split('.')[0].strip( ) ).strip( )
+        order = int( bname.split('_')[-1] )
+        #
+        ## return tuple of order, title, URL
+        return order, title, mp3_url
+
+    #
+    ## get the tuples in order
+    ordered_npr_waitwait = sorted(
+        filter(None, map(lambda episode_URL: get_npr_waitwait_story( episode_URL, date_s ), episode_urls ) ),
+        key = lambda tup: tup[0] )
+    assert( len( ordered_npr_waitwait ) == len( episode_urls ) )
+    return list(map(lambda tup: ( tup[1], tup[2] ), ordered_npr_waitwait ) )
+
 def get_waitwait(
-    outputdir, date_s, order_totnum = None,
-    file_data = None, debugonly = False,
-    exec_dict = None, verify = True, justFix = False ):
-  
-  # check if outputdir is a directory
-  if not os.path.isdir(outputdir):
-    raise ValueError("Error, %s is not a directory." % outputdir)
+    outputdir, date_s, order_totnum = None, debug = False, driver = None, justFix = False ):
+    # check if outputdir is a directory
+    if not os.path.isdir(outputdir):
+        raise ValueError("Error, %s is not a directory." % outputdir)
+    
+    # check if actually saturday
+    if not npr_utils.is_saturday(date_s):
+        raise ValueError(
+            "Error, date = %s not a Saturday." % npr_utils.get_datestring(date_s) )
 
-  # check if actually saturday
-  if not npr_utils.is_saturday(date_s):
-    raise ValueError(
-      "Error, date = %s not a Saturday." % npr_utils.get_datestring(date_s) )
+    #
+    ## if driver is None
+    if driver is None: driver = npr_utils.get_chrome_driver( )
 
-  if exec_dict is None: exec_dict = npr_utils.find_necessary_executables()
-  assert( exec_dict is not None )
-  avconv_exec = exec_dict['avconv']
+    exec_dict = npr_utils.find_necessary_executables()
+    assert( exec_dict is not None )
+    avconv_exec = exec_dict['avconv']
   
-  if order_totnum is None: order_totnum = npr_utils.get_order_number_saturday_in_year(date_s)
-  order_in_year, tot_in_year = order_totnum
+    if order_totnum is None:
+        order_totnum = npr_utils.get_order_number_saturday_in_year(date_s)
+    order_in_year, tot_in_year = order_totnum
   
-  if file_data is None: file_data = get_waitwait_image( verify = verify )
+    file_data = get_waitwait_image( )
   
-  year = date_s.year
-  decdate = npr_utils.get_decdate( date_s )
-  m4afile = os.path.join(outputdir, 'NPR.WaitWait.%s.m4a' % decdate )
-  
-  if year >= 2006:
-    tmpdir = tempfile.mkdtemp( )
-    tup = get_title_wavfile_standard(
-      date_s, tmpdir, avconv_exec,
-      debugonly = debugonly,
-      verify = verify, justFix = justFix )
-    if tup is None:
-      shutil.rmtree( tmpdir )
-      return
-    title, outfiles = tup
-    if justFix: # works only for year >= 2006
-      if not os.path.isfile( m4afile ):
-        print( "Error, %s does not exist." % os.path.basename( m4afile ) )
-        shutil.rmtree( tmpdir )
-        return
-      mp4tags = mutagen.mp4.MP4(m4afile)
-      mp4tags.tags['\xa9nam'] = [ title, ]
-      mp4tags.save( )
-      logging.debug('fixed title for %s.' % m4afile )
-      shutil.rmtree( tmpdir )
-      return m4afile
-    m4afile_temp = os.path.join(tmpdir, 'NPR.WaitWait.%s.m4a' % decdate )
-    fnames = map(lambda filename: filename.replace(' ', '\ '), outfiles)
-    sox_string_cmd = 'concat:%s' % '|'.join( fnames )
-    split_cmd = [ avconv_exec, '-y', '-i', sox_string_cmd, '-ar', '44100', '-ac', '2', '-threads', 
-                  '%d' % multiprocessing.cpu_count(), '-strict', 'experimental', '-acodec', 'aac',
-                  m4afile_temp ]
-    proc = subprocess.Popen(split_cmd, stdout = subprocess.PIPE,
-                            stderr = subprocess.PIPE)
-    stdout_val, stderr_val = proc.communicate()
-    #if 'Protocol not found' in stderr_val.strip( ):
-    #    for filename in outfiles:
-    #        os.remove( filename )
-    #    raise ValueError("Error, AVCONV does not have the concatenation protocol.")
-    for filename in outfiles: os.remove( filename )
-  else:
-    tmpdir = tempfile.mkdtemp( )
-    title = waitwait_realmedia.rm_get_title_from_url( date_s )
-    rmfile = waitwait_realmedia.rm_download_file( date_s, 
-                                                  outdir = tmpdir )
-    wavfile = waitwait_realmedia.rm_create_wav_file( date_s, rmfile,
-                                                     outdir = tmpdir )
-    os.remove( rmfile )
-    
-    # now convert to m4a file
-    m4afile_temp = os.path.join(outputdir, 'NPR.WaitWait.%s.m4a' % decdate )
-    split_cmd = [ avconv_exec, '-y', '-i', wavfile, '-ar', '44100',
-                  '-ac', '2', '-threads', '%d' % multiprocessing.cpu_count(),
-                  '-strict', 'experimental', '-acodec', 'aac', m4afile_temp ]
-    proc = subprocess.Popen(split_cmd, stdout = subprocess.PIPE,
-                            stderr = subprocess.PIPE)
-    stdout_val, stderr_val = proc.communicate()
-    
-    # remove wav file
-    os.remove( wavfile )
-    
-  # now put in metadata
-  mp4tags = mutagen.mp4.MP4(m4afile_temp)
-  mp4tags.tags['\xa9nam'] = [ title, ]
-  mp4tags.tags['\xa9alb'] = [ "Wait Wait...Don't Tell Me: %d" % year, ]
-  mp4tags.tags['\xa9ART'] = [ 'Peter Sagal', ]
-  mp4tags.tags['\xa9day'] = [ '%d' % year, ]
-  mp4tags.tags['\xa9cmt'] = [ "more info at : NPR Web site", ]
-  mp4tags.tags['trkn'] = [ ( order_in_year, tot_in_year ), ]
-  mp4tags.tags['covr'] = [ mutagen.mp4.MP4Cover(file_data, mutagen.mp4.MP4Cover.FORMAT_PNG ), ]
-  mp4tags.tags['\xa9gen'] = [ 'Podcast', ]
-  mp4tags.save()
-  os.chmod( m4afile_temp, 0o644 )
-  
-  # now copy to actual location and remove temp directory
-  shutil.copy( m4afile_temp, m4afile )
-  shutil.rmtree( tmpdir )
-  return m4afile
+    year = date_s.year
+    decdate = npr_utils.get_decdate( date_s )
+    m4afile = os.path.join(outputdir, 'NPR.WaitWait.%s.m4a' % decdate )
+    if year >= 2006:
+        data = get_title_mp3_urls_working( '.', date_s, driver, debug = debug )
+        if debug: return data
+        title_mp3_urls = data
+        if title_mp3_urls is None or len( title_mp3_urls ) == 0: return None
+        titles, songurls = list(zip(*title_mp3_urls))
+        title = date_s.strftime('%B %d, %Y')
+        title = '%s: %s.' % ( title,
+                             '; '.join([ '%d) %s' % ( num + 1, titl ) for
+                                    (num, titl) in enumerate(titles) ]) )
+        if justFix:
+            if not os.path.isfile( m4afile ):
+                print( "Error, %s does not exist." % os.path.basename( m4afile ) )
+                return
+            mp4tags = mutagen.mp4.MP4(m4afile)
+            mp4tags.tags['\xa9nam'] = [ title, ]
+            mp4tags.save( )
+            logging.debug('fixed title for %s.' % m4afile )
+            return m4afile
+        
+        # temporary directory
+        tmpdir = tempfile.mkdtemp( )
+        m4afile_temp = os.path.join( tmpdir,  'NPR.WaitWait.%s.m4a' % decdate )
+        outfiles = [ os.path.join(tmpdir, 'waitwait.%s.%d.mp3' % 
+                                  ( decdate, num + 1) ) for
+                    (num, mp3url) in enumerate( songurls ) ]
+
+        # download those files
+        with multiprocessing.Pool( processes = min( multiprocessing.cpu_count( ), len( songurls ) ) ) as pool:
+            outfiles = sorted( filter(None, pool.map( _download_file, zip( songurls, outfiles ) ) ) )
+
+        # now convert to m4a file
+        fnames = list(map(lambda filename: filename.replace(' ', '\ '), outfiles))
+        avconv_concat_cmd = 'concat:%s' % '|'.join(fnames)
+        split_cmd = [ avconv_exec, '-y', '-i', avconv_concat_cmd, '-ar', '44100', '-ac', '2', '-threads', 
+                     '%d' % multiprocessing.cpu_count(), '-strict', 'experimental', '-acodec', 'aac',
+                     m4afile_temp ]
+        proc = subprocess.Popen(split_cmd, stdout = subprocess.PIPE,
+                                stderr = subprocess.PIPE)
+        stdout_val, stderr_val = proc.communicate( )
+        #
+        ## remove mp3 files
+        for filename in outfiles: os.remove(filename)
+    else:
+        tmpdir = tempfile.mkdtemp( )
+        title = waitwait_realmedia.rm_get_title_from_url( date_s )
+        rmfile = waitwait_realmedia.rm_download_file(
+            date_s, outdir = tmpdir )
+        wavfile = waitwait_realmedia.rm_create_wav_file(
+            date_s, rmfile, outdir = tmpdir )
+        os.remove( rmfile )
+        #
+        ## now convert to m4a file
+        m4afile_temp = os.path.join(outputdir, 'NPR.WaitWait.%s.m4a' % decdate )
+        split_cmd = [ avconv_exec, '-y', '-i', wavfile, '-ar', '44100',
+                     '-ac', '2', '-threads', '%d' % multiprocessing.cpu_count(),
+                     '-strict', 'experimental', '-acodec', 'aac', m4afile_temp ]
+        proc = subprocess.Popen(split_cmd, stdout = subprocess.PIPE,
+                                stderr = subprocess.PIPE)
+        stdout_val, stderr_val = proc.communicate()
+        #
+        ## remove wav file
+        os.remove( wavfile )
+    #
+    ## now put in metadata
+    mp4tags = mutagen.mp4.MP4(m4afile_temp)
+    mp4tags.tags['\xa9nam'] = [ title, ]
+    mp4tags.tags['\xa9alb'] = [ "Wait Wait...Don't Tell Me: %d" % year, ]
+    mp4tags.tags['\xa9ART'] = [ 'Peter Sagal', ]
+    mp4tags.tags['\xa9day'] = [ '%d' % year, ]
+    mp4tags.tags['\xa9cmt'] = [ "more info at : NPR Web site", ]
+    mp4tags.tags['trkn'] = [ ( order_in_year, tot_in_year ), ]
+    mp4tags.tags['covr'] = [ mutagen.mp4.MP4Cover(file_data, mutagen.mp4.MP4Cover.FORMAT_PNG ), ]
+    mp4tags.tags['\xa9gen'] = [ 'Podcast', ]
+    mp4tags.save()
+    os.chmod( m4afile_temp, 0o644 )
+    #
+    ## now copy to actual location and remove temp directory
+    shutil.copy( m4afile_temp, m4afile )
+    shutil.rmtree( tmpdir )
+    return m4afile
 
 def waitwait_crontab( ):
-  """
-  This python module downloads a Wait Wait... episode on a particular Saturday
-  """
-  
-  # get current date
-  current_date = datetime.date.fromtimestamp( time.time() )
-  current_year = current_date.year
-  
-  #
-  ## if not on a saturday, go first saturday back
-  if not npr_utils.is_saturday( current_date ):
-    day_of_week = current_date.weekday( )
-    if day_of_week >= 5: days_back = day_of_week - 5
-    else: days_back = days_back = day_of_week + 2
-    days_back = relativedelta( days = days_back )
-    current_date = current_date - days_back
-    if current_date.year != current_year: return
+    """
+    This python module downloads a Wait Wait... episode on a particular Saturday
+    """
+    #
+    ## get current date
+    current_date = datetime.date.fromtimestamp( time.time() )
+    current_year = current_date.year
+    #
+    ## if not on a saturday, go first saturday back
+    if not npr_utils.is_saturday( current_date ):
+        day_of_week = current_date.weekday( )
+        if day_of_week >= 5: days_back = day_of_week - 5
+        else: days_back = days_back = day_of_week + 2
+        days_back = relativedelta( days = days_back )
+        current_date = current_date - days_back
+        if current_date.year != current_year: return
     
-  # now download the episode into the correct directory
-  get_waitwait(_default_inputdir, current_date)
+    #
+    ## now download the episode into the correct directory
+    get_waitwait(_default_inputdir, current_date)

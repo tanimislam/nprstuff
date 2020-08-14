@@ -58,7 +58,7 @@ def _freshair_by_year( ):
                         ' '.join([ 'Directory into which',
                                   'to store the NPR Fresh Air episodes.',
                                   'Default is %s.' % _default_inputdir ]) )
-    parser.add_argument('--quiet', dest='is_quiet', action='store_true', default = False,
+    parser.add_argument('--quiet', dest='is_verbose', action='store_false', default = True,
                         help = ' '.join([ 'If chosen, do not print verbose output from the action of this',
                                          'script. By default this is false.' ]) )
     parser.add_argument('--coverage', dest = 'get_coverage', action = 'store_true', default = False,
@@ -67,9 +67,8 @@ def _freshair_by_year( ):
                         help = 'If chosen, do the audit picture here.')
     args = parser.parse_args( )
     if not args.do_audit:
-        verbose = not args.is_quiet
         freshair.process_all_freshairs_by_year(
-            args.year, args.inputdir, verbose = verbose,
+            args.year, args.inputdir, verbose = args.is_verbose,
             justCoverage = args.get_coverage )
     else: freshair_by_year.create_plot_year( args.year )
 
