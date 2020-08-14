@@ -16,3 +16,4 @@ titlecase
 matplotlib
 youtube_dl
 beautifulsoup4
+pathos
