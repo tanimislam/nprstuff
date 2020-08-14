@@ -112,7 +112,6 @@ def get_american_life(
     :param str extraStuff: additional stuff to put into the candidate URL for `This American Life`_ episodes. Default is ``None``.
     :param bool verify: optional argument, whether to verify SSL connections. Default is ``True``.
     :param bool dump: optional argument, if ``True`` then instead of downloading first `This American Life`_, downloads the XML info as a file, named ``PRI.ThisAmericanLife.<NUM>.xml``. Default is ``False``.
-
     
     .. seealso:: :py:meth:`get_americanlife_info <nprstuff.core.thisamericanlife.get_americanlife_info>`.
     """

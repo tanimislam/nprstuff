@@ -40,6 +40,11 @@ def _get_file_type(file_data):
         return None
 
 def rename_m4a( m4afilename ):
+    """
+    Renames an M4A_ music file to ``<artist>.<song>.m4a``, where ``<artist>`` is the artist name and ``<song>`` is the song title.
+    
+    :param str m4filename: the input M4A_ file name.
+    """
     assert( os.path.isfile( m4afilename ) )
     assert( m4afilename.endswith( '.m4a' ) )
     #if magic.from_file(m4afilename, mime = True).strip() != 'audio/mp4':
@@ -56,6 +61,14 @@ def rename_m4a( m4afilename ):
     os.rename(m4afilename, newfile)
 
 def get_defaultname( m4afilename, showalbum = False ):
+    """
+    Returns a candidate default file name for an M4A_ file, given its metadata.
+    
+    :param str m4afilename: the input M4A_ file name.
+    :param bool showalbum: optional argument. If ``True``, then file name will include the song's album. If ``False``, only the artist and song title.
+    :returns: the candidate file name for the M4A_ file. If ``showalbum`` is ``True``, name is ``<artist>.<album>.<song>.m4a``. If ``False``, name is  ``<artist>.<song>.m4a``.
+    :rtype: str
+    """
     mp4tags = mutagen.mp4.MP4(m4afilename)
     curdir = os.path.dirname( os.path.abspath( m4afilename ) )
     if len(set([ '\xa9nam', '\xa9ART' ]) - set(mp4tags.keys())) != 0:
@@ -74,6 +87,18 @@ def get_defaultname( m4afilename, showalbum = False ):
 def music_to_m4a(filename, tottracks = None,
                  album_path = None, outfile = None,
                  verbose = True, toUpper = True):
+    """
+    Converts a non M4A_ file (MP3_, OGG_, or FLAC_) into an M4A_ file.
+
+    :param str filename: the input filename.
+    :param int tottracks: optional argument, the total number of tracks for the song in its album. If ``None``, then the total number of tracks won't explicitly be defined. Must be :math:`\ge 1`.
+    :param str album_path: optional argument, the file path to the album cover (must be a PNG_ or JPEG_ file). If ``None``, then no album cover will be added to the M4A_ song's metadata.
+    :param str outfile: optional argument, the name of the output M4A_ file. If ``None``, then file's name is ``<artist>.<song>.m4a``.
+    :param bool verbose: optional argument. If ``True``, the print out more debugging output.
+    :param bool toUpper: optional argument. If ``True``, then run titlecase_ on the song title.
+    
+    .. _titlecase: https://github.com/ppannuto/python-titlecase
+    """
     ffmpeg_exec = find_executable( 'ffmpeg' )
     if ffmpeg_exec is None:
         raise ValueError("Error, cannot find ffmpeg executable." )

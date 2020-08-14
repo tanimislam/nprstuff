@@ -466,9 +466,11 @@ def get_freshair(
     :param str outputdir: the directory into which one downloads the `NPR Fresh Air`_ episodes.
     :param date_s: the :py:class:`date <datetime.date>` for this episode, which must be a weekday.
     :param tuple order_totnum: optional argument, the :py:class:`tuple` of track number and total number of tracks of `NPR Fresh Air`_ episodes for that year. If ``None``, then this information is gathered from :py:meth:`get_order_num_weekday_in_year <nprstuff.core.npr_utils.get_order_num_weekday_in_year>`.
+    :param bool debug: optional argument, if ``True`` returns the :py:class:`BeautifulSoup <bs4.BeautifulSoup>` XML tree for the `NPR Fresh Air`_ episode, or its file representation. Default is ``False``.
+    :param bool check_if_exist: optional argument, if ``True`` and if the correct file name for the `NPR Fresh Air`_ episode exists, then won't overwrite it. Default is ``False``.
     :param bool mp3_exist: optional argument, if ``True`` then check whether the transitional MP3_ files for the stories in the `NPR Fresh Air`_ episode has been downloaded and use the fully downloaded stories to compose an episode. Otherwise, ignore existing downloaded MP3_ stories for download.
     :param bool to_file_debug: optional argument, if ``True`` then just download the XML file of date for that `NPR Fresh Air`_ episode, instead of the episode itself.
-    :param driver: optional argument, the :py:class:`Webdriver <selenium.webdriver.remote.webdriver.WebDriver>` used for webscraping and querying (instead of using a functional API) for `NPR Fresh Air`_ episodes. If ``None``, then a new :py:class:`Webdriver <selenium.webdriver.remote.webdriver.WebDriver>` will be used defined and used within this method's scope.
+    :param driver: optional argument, the :py:class:`Webdriver <selenium.webdriver.remote.webdriver.WebDriver>` used for webscraping and querying (instead of using a functional API) for `NPR Fresh Air`_ episodes. If ``None``, then a new :py:class:`Webdriver <selenium.webdriver.remote.webdriver.WebDriver>` will be defined and used within this method's scope.
 
     :returns: the name of the `NPR Fresh Air`_ episode file.
     :rtype: str

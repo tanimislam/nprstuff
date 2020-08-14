@@ -52,7 +52,7 @@ def get_waitwait_date_from_name(candidateNPRWaitWaitFile):
 def get_waitwait_valid_dates_remaining_tuples(yearnum, inputdir):
     """
     :param int yearnum: the year for which to search for missing `NPR Wait Wait <waitwait_>`_ episodes.
-    :param str inputfdir: the directory in which the `NPR Wait Wait <waitwait_>`_ episodes live.
+    :param str inputdir: the directory in which the `NPR Wait Wait <waitwait_>`_ episodes live.
     :returns: a sorted :py:class:`list` of :py:class:`tuple`, ordered by candidate track number of the `NPR Wait Wait <waitwait_>`_ episode. The :py:class:`tuple` has three elements: the track number of `NPR Wait Wait <waitwait_>`_ episodes that year, the total number of `NPR Wait Wait <waitwait_>`_ episodes that year, and the :py:class:`date <datetime.date>` for that episode.
     :rtype: list
     """
@@ -73,11 +73,13 @@ def get_waitwait_valid_dates_remaining_tuples(yearnum, inputdir):
 def _process_waitwaits_by_year_tuple(input_tuple):
     outputdir, totnum, verbose, datetimes_order_tuples = input_tuple
     ww_image = get_waitwait_image()
+    driver = npr_utils.get_chrome_driver( )
     for date_s, order in datetimes_order_tuples:
         time0 = time.time()
         try:
-            fname = get_waitwait(outputdir, date_s, order_totnum = ( order, totnum),
-                                 file_data = ww_image)
+            fname = get_waitwait(
+                outputdir, date_s, order_totnum = ( order, totnum),
+                driver = driver )
             if verbose:
                 print('Processed %s in %0.3f seconds.' % ( fname, time.time() - time0 ))
         except Exception as e:
@@ -85,21 +87,28 @@ def _process_waitwaits_by_year_tuple(input_tuple):
                 npr_utils.get_datestring( date_s ) ) )
 
 def get_all_waitwaits_year( yearnum, inputdir, verbose = True):
-  order_dates_remain = get_waitwait_valid_dates_remaining_tuples( yearnum, inputdir )
-  if len( order_dates_remain ) == 0: return
-  totnum = order_dates_remain[0][1]
-  nprocs = multiprocessing.cpu_count()
-  input_tuples = [ ( inputdir, totnum, verbose, [
-    ( date_s, order) for ( order, totnum, date_s ) in
-    order_dates_remain if ( order - 1 ) % nprocs == procno ] ) for
-                   procno in range( nprocs ) ]
-  time0 = time.time()
-  pool = npr_utils.MyPool(processes = nprocs )
-  pool.map(_process_waitwaits_by_year_tuple, input_tuples)
-  if verbose:
-    print('processed all Wait Wait downloads for %04d in %0.3f seconds.' % ( yearnum, time.time() - time0 ) )
+    """
+    Looks for missing `NPR Wait Wait <waitwait_>`_ episodes in a given year, then downloads them.
 
-def get_mp3_chapter_tuple_sorted( html, verify, npr_api_key ):
+    :param int yearnum: the year for which to search for missing `NPR Wait Wait <waitwait_>`_ episodes.
+    :param str inputdir: the directory into which the `NPR Wait Wait <waitwait_>`_ episodes are downloaded.
+    :param bool verbose: optional argument, if ``True`` then print out lots of progress statements.
+    """
+    order_dates_remain = get_waitwait_valid_dates_remaining_tuples( yearnum, inputdir )
+    if len( order_dates_remain ) == 0: return
+    totnum = order_dates_remain[0][1]
+    nprocs = multiprocessing.cpu_count()
+    input_tuples = [ ( inputdir, totnum, verbose, [
+        ( date_s, order) for ( order, totnum, date_s ) in
+        order_dates_remain if ( order - 1 ) % nprocs == procno ] ) for
+                    procno in range( nprocs ) ]
+    time0 = time.time()
+    pool = npr_utils.MyPool(processes = nprocs )
+    list( pool.map(_process_waitwaits_by_year_tuple, input_tuples) )
+    if verbose:
+        print('processed all Wait Wait downloads for %04d in %0.3f seconds.' % ( yearnum, time.time() - time0 ) )
+
+def _get_mp3_chapter_tuple_sorted( html, verify, npr_api_key ):
   story_elems = html.find_all('story')
   #
   ## now get the chapter names and mp3 URLs from each story elem
@@ -143,6 +152,37 @@ def get_mp3_chapter_tuple_sorted( html, verify, npr_api_key ):
 def get_title_mp3_urls_working( outputdir, date_s, driver, debug = False ):
     """
     Using the new, non-API NPR functionality, get a :py:class:`list` of :py:class:`tuple` of stories for an `NPR Wait Wait <waitwait_>`_ episode. This uses a :py:class:`Webdriver <selenium.webdriver.remote.webdriver.WebDriver>` to get an episode. Here is an example operation,
+    
+    .. code-block:: python
+
+       >> date_s = datetime.datetime.strptime('August 8, 2020', '%B %d, %Y' ).date( )
+       >> title_list_mp3_urls = get_title_mp3_urls_working( '.', date_s, driver )
+       >> title_list_mp3_urls
+       >> [("Who's Bill This Time?",
+         'https://ondemand.npr.org/anon.npr-mp3/npr/waitwait/2020/08/20200808_waitwait_01.mp3'),
+        ('Panel Questions',
+         'https://ondemand.npr.org/anon.npr-mp3/npr/waitwait/2020/08/20200808_waitwait_02.mp3'),
+        ('Bluff the Listener',
+         'https://ondemand.npr.org/anon.npr-mp3/npr/waitwait/2020/08/20200808_waitwait_03.mp3'),
+        ("Bryan Cranston Plays 'Not My Job' on 'Wait Wait... Don't Tell Me!'",
+         'https://ondemand.npr.org/anon.npr-mp3/npr/waitwait/2020/08/20200808_waitwait_04.mp3'),
+        ('Panel Questions',
+         'https://ondemand.npr.org/anon.npr-mp3/npr/waitwait/2020/08/20200808_waitwait_05.mp3'),
+        ('Limericks',
+         'https://ondemand.npr.org/anon.npr-mp3/npr/waitwait/2020/08/20200808_waitwait_06.mp3'),
+        ('Lightning Fill in the Blank',
+         'https://ondemand.npr.org/anon.npr-mp3/npr/waitwait/2020/08/20200808_waitwait_07.mp3'),
+        ('Predictions',
+         'https://ondemand.npr.org/anon.npr-mp3/npr/waitwait/2020/08/20200808_waitwait_08.mp3')]
+
+    :param str outputdir: the directory into which one downloads the `NPR Wait Wait <waitwait_>`_ episodes.
+    :param date_s: the :py:class:`date <datetime.date>` for this episode, which must be a Saturday.
+    :param driver: the :py:class:`Webdriver <selenium.webdriver.remote.webdriver.WebDriver>` used for webscraping and querying (instead of using a functional API) for `NPR Wait Wait <waitwait_>`_ episodes.
+    :param bool debug: optional argument, if ``True`` returns the :py:class:`BeautifulSoup <bs4.BeautifulSoup>` XML tree for the `NPR Fresh Air`_ episode, or its file representation, and dumps the XML data into an XML file. Default is ``False``.
+    
+    :returns: the :py:class:`list` of stories, by order, for the `NPR Wait Wait <waitwait_>`_ episode. The first element of each :py:class:`tuple` is the story title, and th second is the MP3_ URL for the story. *However*, if ``debug`` is ``True``, returns the :py:class:`BeautifulSoup <bs4.BeautifulSoup>` XML tree for this `NPR Wait Wait <waitwait_>`_ episode.
+    
+    .. seealso:: :py:meth:`get_waitwait <nprstuff.core.waitwait.get_waitwait>`.
     """
     #
     ## follow cargo cult code, https://stackoverflow.com/a/49823819/3362358
@@ -215,6 +255,19 @@ def get_title_mp3_urls_working( outputdir, date_s, driver, debug = False ):
 
 def get_waitwait(
     outputdir, date_s, order_totnum = None, debug = False, driver = None, justFix = False ):
+    """
+    The main driver method that downloads `NPR Wait Wait <waitwait_>`_ episodes for a given date into a specified output directory.
+    
+    :param str outputdir: the directory into which one downloads the `NPR Wait Wait <waitwait_>`_ episodes.
+    :param date_s: the :py:class:`date <datetime.date>` for this episode, which must be a weekday.
+    :param tuple order_totnum: optional argument, the :py:class:`tuple` of track number and total number of tracks of `NPR Wait Wait <waitwait_>`_ episodes for that year. If ``None``, then this information is gathered from :py:meth:`get_order_num_saturday_in_year <nprstuff.core.npr_utils.get_order_num_saturday_in_year>`.
+    :param bool debug: optional argument, if ``True`` returns the :py:class:`BeautifulSoup <bs4.BeautifulSoup>` XML tree for the `NPR Wait Wait <waitwait_>`_ episode. Default is ``False``.
+    :param driver: optional argument, the :py:class:`Webdriver <selenium.webdriver.remote.webdriver.WebDriver>` used for webscraping and querying (instead of using a functional API) for `NPR Wait Wait <waitwait_>`_ episodes. If ``None``, then a new :py:class:`Webdriver <selenium.webdriver.remote.webdriver.WebDriver>` will be defined and used within this method's scope.
+    :param bool justFix: optional argument, if ``True`` and if `NPR Wait Wait <waitwait_>`_ file exists, then just change the title of the M4A_ file. Default is ``False``.
+
+    :returns: the name of the `NPR Wait Wait <waitwait_>`_ episode file.
+    :rtype: str
+    """
     # check if outputdir is a directory
     if not os.path.isdir(outputdir):
         raise ValueError("Error, %s is not a directory." % outputdir)
@@ -325,7 +378,7 @@ def get_waitwait(
 
 def waitwait_crontab( ):
     """
-    This python module downloads a Wait Wait... episode on a particular Saturday
+    This python module downloads an `NPR Wait Wait <waitwait_>`_ episode on a particular Saturday.
     """
     #
     ## get current date

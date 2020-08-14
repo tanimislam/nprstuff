@@ -4,7 +4,7 @@
 .. _LibAV: https://libav.org
 .. _FFMPEG: https://ffmpeg.org
 .. _HandBrakeCLI: https://handbrake.fr
-.. _`older NPR API`: https://www.npr.org/api/index
+.. _`older NPR API`: https://api.npr.org
 .. _`NPR One API`: https://dev.npr.org/api
 .. _nprstuff: https://nprstuff.readthedocs.io
 .. _M4A: https://en.wikipedia.org/wiki/MPEG-4_Part_14
