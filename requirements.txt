@@ -8,5 +8,7 @@ python-magic
 requests
 mutagen
 selenium
+sphinx-argparse
+sphinx-issues
+sphinx_rtd_theme
 matplotlib
-youtube-dl
