@@ -14,7 +14,7 @@ The most fundamental change, from the `older NPR API`, is the usage of webscrapi
 
 To get `NPR Wait Wait <waitwait_>`_ episodes for 8 AUGUST 2020, one needs to put this URL into address bar of the Selenium_ headless browser,
 
-.. code-block:: python
+.. code-block:: console
 
    https://www.npr.org/search?query=*&page=1&refinementList[shows]=Wait Wait...Don't Tell Me!&range[lastModifiedDate][min]=1596783600&range[lastModifiedDate][max]=1596870000&sortType=byDateAsc
 

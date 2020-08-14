@@ -2,8 +2,7 @@
 
 Core Functionality
 ^^^^^^^^^^^^^^^^^^^
-
-This consists of functionality to grab episodes from `Fresh Air`_, `Wait Wait..Don't Tell Me <waitwait_>`_, and `This American Life`_.
+This consists of functionality to grab episodes from `NPR Fresh Air`_, `NPR Wait Wait..Don't Tell Me <waitwait_>`_, and `This American Life`_.
 
 NPR Fresh Air
 ==============
