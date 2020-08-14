@@ -1,6 +1,9 @@
 .. image:: https://badges.gitter.im/nprstuff-tanimislam/Lobby.svg
    :target: https://gitter.im/nprstuff-tanimislam/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=body_badge
 
+.. image:: https://readthedocs.org/projects/nprstuff/badge/?version=latest
+   :target: https://nprstuff.readthedocs.io/en/latest
+
 ###################################################################
 Nprstuff - Utility Functionality for NPR Programs and Other Things
 ###################################################################
