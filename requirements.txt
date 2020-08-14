@@ -11,4 +11,7 @@ selenium
 sphinx-argparse
 sphinx-issues
 sphinx_rtd_theme
+lxml
+titlecase
 matplotlib
+youtube_dl
