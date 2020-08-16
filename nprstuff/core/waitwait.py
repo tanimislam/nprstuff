@@ -20,7 +20,7 @@ def get_waitwait_image( verify = True ):
        :width: 100%
        :align: center
 
-    .. _`NPR Wait Wait logo`: https://upload.wikimedia.org/wikipedia/en/f/f4/WaitWait.png
+    .. _`NPR Wait Wait logo`: https://mediaapi.whro.org/images/59d53b5ec76ad8.94499837.jpg
     """
     fname = os.path.join( resourceDir, 'waitwaitnew.png' )
     assert( os.path.isfile( fname ) )
