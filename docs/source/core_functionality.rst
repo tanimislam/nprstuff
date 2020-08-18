@@ -13,17 +13,20 @@ freshair
 
 ``freshair`` is the main executable that downloads `NPR Fresh Air`_ episodes, converts them to M4A_ format, and then applies correct metadata. The help screen for this command line tool is here,
 
+
 .. code-block::  console
 
-    usage: freshair [-h] [--dirname DIRNAME] [--date DATE] [--mp3exist] [--debug]
+   usage: freshair [-h] [--dirname DIRNAME] [--date DATE] [--mp3exist] [--debug] [--level {DEBUG,ERROR,INFO,NONE}]
 
-    optional arguments:
-      -h, --help         show this help message and exit
-      --dirname DIRNAME  Name of the directory to store the file. Default is /mnt/media/freshair.
-      --date DATE        The date, in the form of "January 1, 2014." The default is today's date, August 11, 2020.
-      --mp3exist         If chosen, then do not download the transitional mp3 files. Use the ones that already exist.
-      --debug            If chosen, run freshair.py in debug mode. Useful for debugging :)
-
+   optional arguments:
+     -h, --help            show this help message and exit
+     --dirname DIRNAME     Name of the directory to store the file. Default is /mnt/media/freshair.
+     --date DATE           The date, in the form of "January 1, 2014." The default is today's date, August 18, 2020.
+     --mp3exist            If chosen, then do not download the transitional mp3 files. Use the ones that already exist.
+     --debug               If chosen, run freshair in debug mode. Useful for debugging :)
+     --level {DEBUG,ERROR,INFO,NONE}
+			   choose the debug level for downloading NPR Fresh Air episodes or their XML representation of episode info. Can be one of
+			   ['DEBUG', 'ERROR', 'INFO', 'NONE']. Default is NONE.
 
 freshair_crontab
 -----------------
@@ -42,15 +45,18 @@ freshair_by_year
 
 .. code-block:: console
 
-   usage: freshair_by_year [-h] [--year YEAR] [--inputdir INPUTDIR] [--quiet] [--coverage] [--audit]
+   usage: freshair_by_year [-h] [--year YEAR] [--inputdir INPUTDIR] [--quiet] [--coverage] [--audit] [--level {DEBUG,ERROR,INFO,NONE}]
 
    optional arguments:
-     -h, --help           show this help message and exit
-     --year YEAR          Year in which to write out all Fresh Air episodes. Default is 2020.
-     --inputdir INPUTDIR  Directory into which to store the NPR Fresh Air episodes. Default is /mnt/media/freshair.
-     --quiet              If chosen, do not print verbose output from the action of this script. By default this is false.
-     --coverage           If chosen, just give the list of missing Fresh Air episodes and nothing else.
-     --audit              If chosen, do the audit picture here.
+     -h, --help            show this help message and exit
+     --year YEAR           Year in which to write out all Fresh Air episodes. Default is 2020.
+     --inputdir INPUTDIR   Directory into which to store the NPR Fresh Air episodes. Default is /mnt/media/freshair.
+     --quiet               If chosen, do not print verbose output from the action of this script. By default this is false.
+     --coverage            If chosen, just give the list of missing Fresh Air episodes and nothing else.
+     --audit               If chosen, do the audit picture here.
+     --level {DEBUG,ERROR,INFO,NONE}
+			   choose the debug level for downloading NPR Fresh Air episodes or their XML representation of episode info. Can be one of
+			   ['DEBUG', 'ERROR', 'INFO', 'NONE']. Default is NONE.
 
 NPR Wait Wait
 ==============
@@ -63,15 +69,17 @@ waitwait
 
 .. code-block:: console
 
-   usage: waitwait [-h] [--dirname DIRNAME] [--date DATE] [--debugonly] [--noverify] [--justfix]
+   usage: waitwait [-h] [--dirname DIRNAME] [--date DATE] [--dump] [--level {DEBUG,ERROR,INFO,NONE}] [--justfix]
 
    optional arguments:
-     -h, --help         show this help message and exit
-     --dirname DIRNAME  Name of the directory to store the file. Default is /mnt/media/waitwait.
-     --date DATE        The date, in the form of "January 1, 2014." The default is last Saturday, August 08, 2020.
-     --debugonly        If chosen, download the NPR XML data sheet for this Wait Wait episode.
-     --noverify         If chosen, Do not verify the SSL connection.
-     --justfix          If chosen, just fix the title of an existing NPR Wait Wait episode's file.
+     -h, --help            show this help message and exit
+     --dirname DIRNAME     Name of the directory to store the file. Default is /mnt/media/waitwait.
+     --date DATE           The date, in the form of "January 1, 2014." The default is last Saturday, August 15, 2020.
+     --dump                If chosen, download the NPR XML data sheet for this Wait Wait episode.
+     --level {DEBUG,ERROR,INFO,NONE}
+			   choose the debug level for downloading NPR Wait Wait episodes or their XML representation of episode info. Can be one of
+			   ['DEBUG', 'ERROR', 'INFO', 'NONE']. Default is NONE.
+     --justfix             If chosen, just fix the title of an existing NPR Wait Wait episode's file.
 
 waitwait_crontab
 -----------------
@@ -85,13 +93,16 @@ waitwait_by_year
 
 .. code-block:: console
 
-   usage: waitwait_by_year [-h] [--year YEAR] [--inputdir INPUTDIR] [--quiet]
+   usage: waitwait_by_year [-h] [--year YEAR] [--inputdir INPUTDIR] [--quiet] [--level {DEBUG,ERROR,INFO,NONE}]
 
    optional arguments:
-     -h, --help           show this help message and exit
-     --year YEAR          Year in which to write out all Fresh Air episodes. Default is 2010.
-     --inputdir INPUTDIR  Directory into which to store the NPR Fresh Air episodes. Default is /mnt/media/waitwait.
-     --quiet              If chosen, do not print verbose output from the action of this script. By default this is false.
+     -h, --help            show this help message and exit
+     --year YEAR           Year in which to write out all Fresh Air episodes. Default is 2010.
+     --inputdir INPUTDIR   Directory into which to store the NPR Fresh Air episodes. Default is /mnt/media/waitwait.
+     --quiet               If chosen, do not print verbose output from the action of this script. By default this is false.
+     --level {DEBUG,ERROR,INFO,NONE}
+			   choose the debug level for downloading NPR Wait Wait episodes or their XML representation of episode info. Can be one of
+			   ['DEBUG', 'ERROR', 'INFO', 'NONE']. Default is NONE.
 
 This American Life
 ===================
@@ -100,7 +111,7 @@ The executable ``thisamericanlife`` *manually* downloads a given episode number 
 
 .. code-block:: console
 
-   usage: thisamericanlife [-h] [--episode EPISODE] [--directory DIRECTORY] [--extra EXTRASTUFF] [--noverify] [--dump] [--info]
+   usage: thisamericanlife [-h] [--episode EPISODE] [--directory DIRECTORY] [--extra EXTRASTUFF] [--noverify] [--dump] [--level {DEBUG,ERROR,INFO,NONE}]
 
    optional arguments:
      -h, --help            show this help message and exit
@@ -110,4 +121,6 @@ The executable ``thisamericanlife`` *manually* downloads a given episode number 
      --extra EXTRASTUFF    If defined, some extra stuff in the URL to get a This American Life episode.
      --noverify            If chosen, then do not verify the SSL connection.
      --dump                If chosen, just download the TAL episode XML into a file into the specified directory.
-     --info                If chosen, then do INFO logging.
+     --level {DEBUG,ERROR,INFO,NONE}
+			   choose the debug level for downloading NPR Fresh Air episodes or their XML representation of episode info. Can be one of
+			   ['DEBUG', 'ERROR', 'INFO', 'NONE']. Default is NONE.

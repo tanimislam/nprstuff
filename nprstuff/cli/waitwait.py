@@ -2,6 +2,8 @@ from nprstuff import signal_handler
 import logging, datetime, signal
 signal.signal( signal.SIGINT, signal_handler )
 from argparse import ArgumentParser
+from nprstuff import nprstuff_logger as logger
+from nprstuff import logging_dict
 from nprstuff.core.waitwait import get_waitwait, get_all_waitwaits_year
 from nprstuff.core.npr_utils import get_datestring, get_time_from_datestring
 
@@ -29,16 +31,18 @@ def _waitwait( ):
                         get_datestring(_get_last_saturday( datetime.datetime.now())),
                         help = 'The date, in the form of "January 1, 2014." The default is last Saturday, %s.' %
                         get_datestring( _get_last_saturday( datetime.datetime.now() ) ) )
-    parser.add_argument('--debug', dest='do_debug', action='store_true', default = False,
+    parser.add_argument('--dump', dest='do_dump', action='store_true', default = False,
                         help = 'If chosen, download the NPR XML data sheet for this Wait Wait episode.')
+    parser.add_argument('--level', dest='level', action='store', type=str, default = 'NONE',
+                        choices = sorted( logging_dict ),
+                        help = 'choose the debug level for downloading NPR Wait Wait episodes or their XML representation of episode info. Can be one of %s. Default is NONE.' % sorted( logging_dict ) )
     parser.add_argument('--justfix', dest='do_justfix', action='store_true', default = False,
                         help = "If chosen, just fix the title of an existing NPR Wait Wait episode's file.")
     args = parser.parse_args( )
-    logger = logging.getLogger( )
-    if args.do_debug: logger.basicConfig( level = logging.DEBUG )
+    logger.setLevel( logging_dict[ args.level ] )
     fname = get_waitwait(
         args.dirname, get_time_from_datestring( args.date ),
-        debug = args.do_debug, justFix = args.do_justfix )
+        dump = args.do_dump, justFix = args.do_justfix )
 
 def _waitwait_by_year( ):
     parser = ArgumentParser( )
@@ -52,6 +56,10 @@ def _waitwait_by_year( ):
     parser.add_argument('--quiet', dest='do_verbose', action='store_false', default = True,
                         help = 'If chosen, do not print verbose output from the action of this ' +
                         'script. By default this is false.')
+    parser.add_argument('--level', dest='level', action='store', type=str, default = 'NONE',
+                        choices = sorted( logging_dict ),
+                        help = 'choose the debug level for downloading NPR Wait Wait episodes or their XML representation of episode info. Can be one of %s. Default is NONE.' % sorted( logging_dict ) )
     args = parser.parse_args( )
+    logger.setLevel( logging_dict[ args.level ] )
     get_all_waitwaits_year( args.year, args.inputdir, verbose = args.do_verbose )
   

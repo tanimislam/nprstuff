@@ -2,6 +2,7 @@ import os, sys, signal
 from nprstuff import signal_handler
 signal.signal( signal.SIGINT, signal_handler )
 import datetime, time, multiprocessing, glob, mutagen.mp4
+from nprstuff import logging_dict, nprstuff_logger as logger
 from nprstuff.core import freshair, freshair_by_year, npr_utils
 from argparse import ArgumentParser
 
@@ -9,16 +10,17 @@ _default_inputdir = '/mnt/media/freshair'
 
 def _freshair_crontab( ):
     """
-    This python module downloads a Fresh Air episode on a particular weekday
+    This python method downloads a Fresh Air episode on a particular weekday.
     """
-    # get current time
+    #
+    ## get current time
     current_date = datetime.date.fromtimestamp(time.time())
     if not npr_utils.is_weekday( current_date ):
         print("Error, today is not a weekday. Instead, today is %s." %
             current_date.strftime('%A') )
         return
-  
-    # now download the episode into the correct directory
+    #
+    ## now download the episode into the correct directory
     try:
         freshair.get_freshair(
             _default_inputdir, current_date,
@@ -39,10 +41,14 @@ def _freshair( ):
                             'If chosen, then do not download the transitional mp3 files.',
                             'Use the ones that already exist.' ]) )
     parser.add_argument('--debug', dest='debug', action='store_true',
-                        help = 'If chosen, run freshair.py in debug mode. Useful for debugging :)',
+                        help = 'If chosen, run freshair in debug mode. Useful for debugging :)',
                         default = False)
+    parser.add_argument('--level', dest='level', action='store', type=str, default = 'NONE',
+                        choices = sorted( logging_dict ),
+                        help = 'choose the debug level for downloading NPR Fresh Air episodes or their XML representation of episode info. Can be one of %s. Default is NONE.' % sorted( logging_dict ) )
     args = parser.parse_args( )
     dirname = os.path.expanduser( args.dirname )
+    logger.setLevel( logging_dict[ args.level ] )
     fname = freshair.get_freshair(
         dirname, npr_utils.get_time_from_datestring( args.date ),
         debug = args.debug, mp3_exist = args.mp3_exist )
@@ -65,7 +71,11 @@ def _freshair_by_year( ):
                         help = 'If chosen, just give the list of missing Fresh Air episodes and nothing else.')
     parser.add_argument('--audit', dest = 'do_audit', action = 'store_true', default = False,
                         help = 'If chosen, do the audit picture here.')
+    parser.add_argument('--level', dest='level', action='store', type=str, default = 'NONE',
+                        choices = sorted( logging_dict ),
+                        help = 'choose the debug level for downloading NPR Fresh Air episodes or their XML representation of episode info. Can be one of %s. Default is NONE.' % sorted( logging_dict ) )
     args = parser.parse_args( )
+    logger.setLevel( logging_dict[ args.level ] )
     if not args.do_audit:
         freshair.process_all_freshairs_by_year(
             args.year, args.inputdir, verbose = args.is_verbose,
@@ -73,8 +83,7 @@ def _freshair_by_year( ):
     else: freshair_by_year.create_plot_year( args.year )
 
 #
-## 
-
+##
 def _find_NPR_files_to_modify_perproc( filename ):
     """
     This checks to see whether to modify this file
@@ -99,7 +108,7 @@ def _find_NPR_dates_to_fix( ):
         _default_inputdir, 'NPR.FreshAir.*.m4a' ) )
     with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
         return set(filter(None, pool.map(
-        _find_NPR_files_to_modify_perproc, filenames_to_process ) ) )
+            _find_NPR_files_to_modify_perproc, filenames_to_process ) ) )
 
 def _process_dates(npr_dates_to_fix, verbose = False):
     if verbose and len(npr_dates_to_fix) > 0:

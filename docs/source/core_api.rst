@@ -19,6 +19,12 @@ To get `NPR Wait Wait <waitwait_>`_ episodes for 8 AUGUST 2020, one needs to put
    https://www.npr.org/search?query=*&page=1&refinementList[shows]=Wait Wait...Don't Tell Me!&range[lastModifiedDate][min]=1596783600&range[lastModifiedDate][max]=1596870000&sortType=byDateAsc
 
 This unwieldy process required a fair amount of trial and error to (mostly) work.
+
+Second, I have redesigned the Python logging functionality in the following way,
+
+* custom format of the logging output, formatted as ``'%(levelname)s %(module)s.%(funcName)s: %(message)s'``. See the `logging cookbook`_ for more information on what this format means.
+
+* the :ref:`Core Functionality` command line tools have an extra argument flag, ``--level``, that specifies whether to print out logging output and the following debug levels: ``DEBUG``, ``INFO``, or ``ERROR``.
       
 npr_utils module
 ---------------------------------
@@ -38,7 +44,7 @@ convert_image module
 -----------------------------------
 This module provides the low-level functionality to use the CloudConvert_ API to convert PDF_, PNG_, and SVG_ images into a final PNG_ image, utility functions to create MP4_ movies from a sequence of images, and to create animated GIF_ files, and created square movies (useful for upload to Instagram_).
 
-This module also requires :py:class:`QtSvgRenderer <PyQt5.QtSvg.QsvgRenderer>` for some of its functionality. However, PyPI_ does not have QtSvg. To install on an Ubuntu_ machine, you can *thoughts and prayers* these instructions
+This module also requires :py:class:`QtSvgRenderer <PyQt5.QtSvg.QsvgRenderer>` for some of its functionality. However, PyPI_ does not have Python bindings to QtSVG_. To install on an Ubuntu_ machine, you can *thoughts and prayers* these instructions
 
 .. code-block:: console
 
@@ -95,3 +101,5 @@ These two modules provide the low level functionality to process and download `N
 .. _Ubuntu: https://ubuntu.com
 .. _MP4: https://en.wikipedia.org/wiki/MPEG-4_Part_14
 .. _RealMedia: https://en.wikipedia.org/wiki/RealMedia
+.. _`logging cookbook`: https://docs.python.org/3/howto/logging-cookbook.html
+.. _QtSVG: https://doc.qt.io/qt-5/qtsvg-index.html

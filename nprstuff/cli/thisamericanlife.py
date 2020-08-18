@@ -1,4 +1,5 @@
 import os, logging
+from nprstuff import logging_dict, nprstuff_logger as logger
 from nprstuff.core.thisamericanlife import get_american_life
 from argparse import ArgumentParser
 
@@ -18,11 +19,11 @@ def _main( ):
                         help = 'If chosen, then do not verify the SSL connection.')
     parser.add_argument('--dump', dest='do_dump', action = 'store_true', default = False,
                         help = 'If chosen, just download the TAL episode XML into a file into the specified directory.')
-    parser.add_argument('--info', dest='do_info', action = 'store_true', default = False,
-                        help = 'If chosen, then do INFO logging.' )
+    parser.add_argument('--level', dest='level', action='store', type=str, default = 'NONE',
+                        choices = sorted( logging_dict ),
+                        help = 'choose the debug level for downloading NPR Fresh Air episodes or their XML representation of episode info. Can be one of %s. Default is NONE.' % sorted( logging_dict ) )
     args = parser.parse_args( )
-    logger = logging.getLogger( )
-    if args.do_info: logger.setLevel( logging.INFO )
+    logger.setLevel( logging_dict[ args.level ] )
     direct = os.path.expanduser( args.directory )
     get_american_life(
         args.episode, directory=direct, extraStuff = args.extraStuff,
