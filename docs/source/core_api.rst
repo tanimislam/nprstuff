@@ -22,7 +22,7 @@ This unwieldy process required a fair amount of trial and error to (mostly) work
 
 Second, I have redesigned the Python logging functionality in the following way,
 
-* custom format of the logging output, formatted as ``'%(levelname)s %(module)s.%(funcName)s: %(message)s'``. See the `logging cookbook`_ for more information on what this format means.
+* custom format of the logging output, formatted as ``'%(levelname)s %(module)s.%(funcName)s (%(lineno)d): %(message)s'``. See the `logging cookbook`_ for more information on what this format means.
 
 * the :ref:`Core Functionality` command line tools have an extra argument flag, ``--level``, that specifies whether to print out logging output and the following debug levels: ``DEBUG``, ``INFO``, or ``ERROR``.
       

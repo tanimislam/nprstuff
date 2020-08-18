@@ -14,7 +14,7 @@ logging_dict = {
     "ERROR": logging.ERROR }
 
 def _get_nprstuff_logger( ):
-    logging.basicConfig(format = '%(levelname)s %(module)s.%(funcName)s: %(message)s' )
+    logging.basicConfig(format = '%(levelname)s %(module)s.%(funcName)s (%(lineno)d): %(message)s' )
     return logging.getLogger( )
     # h = logging.StreamHandler( sys.stdout )
     #formatter = logging.Formatter(
