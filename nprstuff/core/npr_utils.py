@@ -78,16 +78,17 @@ def store_api_key( npr_API_key ):
         cparser = ConfigParser( )
         cparser.read( absPath )
     #
-    cparser.remove_section( 'NPR_DATA' )
-    cparser.add_section('NPR_DATA')
+    if 'NPR_DATA' not in cparser.sections( ):
+        cparser.add_section( 'NPR_DATA' )
     cparser.set('NPR_DATA', 'apikey', npr_API_key)
-    with open( absPath, 'wb') as openfile:
+    with open( absPath, 'w' ) as openfile:
         cparser.write( openfile )
         os.chmod( absPath, 0o600 )
   
 def get_api_key( ):
     """
     :returns: the NPR API key, stored in ``~/.config/nprstuff/nprstuff.conf``, under the ``NPR_DATA`` section and ``apikey`` key.
+    :rtype: str
 
     .. seealso:: :py:meth:`store_api_key <nprstuff.core.npr_utils.store_api_key>`.
     """
@@ -106,6 +107,110 @@ def get_api_key( ):
         raise ValueError("Error, configuration files has not defined an apikey.")
     npr_api_key = cparser.get('NPR_DATA', 'apikey')
     return npr_api_key
+
+def store_freshair_downloaddir( freshair_downloaddir ):
+    """
+    Stores the default location of the `NPR Fresh Air`_ episodes into the configuration file, ``~/.config/nprstuff/nprstuff.com``, into the ``NPR_DATA`` section and ``freshair_downloaddir`` key.
+
+    :param str freshair_downloaddir: the default directory to download `NPR Fresh Air`_ episodes.
+    
+    .. seealso:: :py:meth:`get_freshair_downloaddir <nprstuff.core.npr_utils.get_freshair_downloaddir>`.
+    """
+    assert( os.path.isdir( os.path.abspath( freshair_downloaddir ) ) )
+    resource = 'nprstuff'
+    filename = '%s.conf' % resource
+    baseConfDir = os.path.abspath(
+        os.path.expanduser( '~/.config/%s' % resource ) )
+    absPath = os.path.join( baseConfDir, filename )
+    if os.path.isdir( absPath ):
+        shutil.rmtree( absPath )
+    if not os.path.isfile( absPath ):
+        cparser = RawConfigParser( )
+    else:
+        cparser = ConfigParser( )
+        cparser.read( absPath )
+    if 'NPR_DATA' not in cparser.sections( ):
+        cparser.add_section( 'NPR_DATA' )
+    cparser.set( 'NPR_DATA', 'freshair_downloaddir', os.path.abspath( freshair_downloaddir ) )
+    with open( absPath, 'w' ) as openfile:
+        cparser.write( openfile )
+        os.chmod( absPath, 0o600 )
+
+def get_freshair_downloaddir( ):
+    """
+    :returns: the `NPR Fresh Air`_ default download directory, stored in ``~/.config/nprstuff/nprstuff.conf``, under the ``NPR_DATA`` section and ``freshair_downloaddir`` key.
+    :rtype: str
+    
+    .. seealso:: :py:meth:`store_freshair_downloaddir <nprstuff.core.npr_utils.store_freshair_downloaddir>`.
+    """
+    resource = 'nprstuff'
+    filename = '%s.conf' % resource
+    baseConfDir = os.path.abspath(
+        os.path.expanduser( '~/.config/%s' % resource ) )
+    absPath = os.path.join( baseConfDir, filename )
+    if not os.path.isfile( absPath ):
+        raise ValueError("Error, default configuration file = %s does not exist." % absPath )
+    cparser = ConfigParser()
+    cparser.read( absPath )
+    if not cparser.has_section('NPR_DATA'):
+        raise ValueError("Error, configuration file has not defined NPR_DATA section.")
+    if not cparser.has_option('NPR_DATA', 'freshair_downloaddir'):
+        raise ValueError("Error, configuration file has not defined a default NPR Fresh Air download directory.")
+    freshair_downloaddir = cparser.get( 'NPR_DATA', 'freshair_downloaddir' )
+    assert( os.path.isdir( freshair_downloaddir ) )
+    return freshair_downloaddir
+
+def store_waitwait_downloaddir( waitwait_downloaddir ):
+    """
+    Stores the default location of the `NPR Fresh Air`_ episodes into the configuration file, ``~/.config/nprstuff/nprstuff.com``, into the ``NPR_DATA`` section and ``waitwait_downloaddir`` key.
+
+    :param str waitwait_downloaddir: the default directory to download `NPR Fresh Air`_ episodes.
+    
+    .. seealso:: :py:meth:`get_waitwait_downloaddir <nprstuff.core.npr_utils.get_waitwait_downloaddir>`.
+    """
+    assert( os.path.isdir( os.path.abspath( waitwait_downloaddir ) ) )
+    resource = 'nprstuff'
+    filename = '%s.conf' % resource
+    baseConfDir = os.path.abspath(
+        os.path.expanduser( '~/.config/%s' % resource ) )
+    absPath = os.path.join( baseConfDir, filename )
+    if os.path.isdir( absPath ):
+        shutil.rmtree( absPath )
+    if not os.path.isfile( absPath ):
+        cparser = RawConfigParser( )
+    else:
+        cparser = ConfigParser( )
+        cparser.read( absPath )
+    if 'NPR_DATA' not in cparser.sections( ):
+        cparser.add_section( 'NPR_DATA' )
+    cparser.set( 'NPR_DATA', 'waitwait_downloaddir', os.path.abspath( waitwait_downloaddir ) )
+    with open( absPath, 'w' ) as openfile:
+        cparser.write( openfile )
+        os.chmod( absPath, 0o600 )
+
+def get_waitwait_downloaddir( ):
+    """
+    :returns: the `NPR Fresh Air`_ default download directory, stored in ``~/.config/nprstuff/nprstuff.conf``, under the ``NPR_DATA`` section and ``waitwait_downloaddir`` key.
+    :rtype: str
+    
+    .. seealso:: :py:meth:`store_waitwait_downloaddir <nprstuff.core.npr_utils.store_waitwait_downloaddir>`.
+    """
+    resource = 'nprstuff'
+    filename = '%s.conf' % resource
+    baseConfDir = os.path.abspath(
+        os.path.expanduser( '~/.config/%s' % resource ) )
+    absPath = os.path.join( baseConfDir, filename )
+    if not os.path.isfile( absPath ):
+        raise ValueError("Error, default configuration file = %s does not exist." % absPath )
+    cparser = ConfigParser()
+    cparser.read( absPath )
+    if not cparser.has_section('NPR_DATA'):
+        raise ValueError("Error, configuration file has not defined NPR_DATA section.")
+    if not cparser.has_option('NPR_DATA', 'waitwait_downloaddir'):
+        raise ValueError("Error, configuration file has not defined a default NPR Fresh Air download directory.")
+    waitwait_downloaddir = cparser.get( 'NPR_DATA', 'waitwait_downloaddir' )
+    assert( os.path.isdir( waitwait_downloaddir ) )
+    return waitwait_downloaddir
   
 def get_decdate(date_s):
     """

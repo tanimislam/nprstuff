@@ -6,7 +6,10 @@ from nprstuff import logging_dict, nprstuff_logger as logger
 from nprstuff.core import freshair, freshair_by_year, npr_utils
 from argparse import ArgumentParser
 
-_default_inputdir = '/mnt/media/freshair'
+_default_inputdir = os.getcwd( )
+try:
+    _default_inputdir = npr_utils.get_freshair_downloaddir( )
+except: pass
 
 def _freshair_crontab( ):
     """

@@ -1,13 +1,15 @@
 from nprstuff import signal_handler
-import logging, datetime, signal
+import logging, datetime, signal, os
 signal.signal( signal.SIGINT, signal_handler )
 from argparse import ArgumentParser
-from nprstuff import nprstuff_logger as logger
-from nprstuff import logging_dict
+from nprstuff import logging_dict, nprstuff_logger as logger
 from nprstuff.core.waitwait import get_waitwait, get_all_waitwaits_year
-from nprstuff.core.npr_utils import get_datestring, get_time_from_datestring
+from nprstuff.core.npr_utils import get_datestring, get_time_from_datestring, get_waitwait_downloaddir
 
-_default_inputdir = '/mnt/media/waitwait'
+_default_inputdir = os.getcwd( )
+try:
+    _default_inputdir = get_waitwait_downloaddir( )
+except Exception as e: pass
 _default_year = 2010
 
 def _get_last_saturday(datetime_s):
@@ -47,11 +49,11 @@ def _waitwait( ):
 def _waitwait_by_year( ):
     parser = ArgumentParser( )
     parser.add_argument('--year', dest='year', action='store', type=int, default = _default_year,
-                        help = 'Year in which to write out all Fresh Air episodes. Default is %d.' %
+                        help = 'Year in which to write out all Wait Wait episodes. Default is %d.' %
                         _default_year )
     parser.add_argument('--inputdir', dest = 'inputdir', action='store', type = str,
                         default = _default_inputdir, help = 'Directory into which ' +
-                        'to store the NPR Fresh Air episodes. Default is %s.' %
+                        'to store the NPR Wait Wait episodes. Default is %s.' %
                         _default_inputdir)
     parser.add_argument('--quiet', dest='do_verbose', action='store_false', default = True,
                         help = 'If chosen, do not print verbose output from the action of this ' +
@@ -62,4 +64,3 @@ def _waitwait_by_year( ):
     args = parser.parse_args( )
     logger.setLevel( logging_dict[ args.level ] )
     get_all_waitwaits_year( args.year, args.inputdir, verbose = args.do_verbose )
-  

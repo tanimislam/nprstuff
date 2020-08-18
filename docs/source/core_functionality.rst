@@ -4,6 +4,54 @@ Core Functionality
 ^^^^^^^^^^^^^^^^^^^
 This consists of functionality to grab episodes from `NPR Fresh Air`_, `NPR Wait Wait..Don't Tell Me <waitwait_>`_, and `This American Life`_.
 
+CONFIGURATION
+==============
+The command line tool ``nprconfig`` shows the following core functionality configuration settings.
+
+* the NPR API key.
+* The default download directory for `NPR Fresh Air`_ episodes.
+* The default download directory for `NPR Wait Wait`_ episodes.
+
+It has two modes of operation: ``show`` displays nprstuff core functionality settings; and ``set`` sets any or all of the three configuration settings. The top level help is,
+
+.. code-block:: console
+
+   usage: nprconfig [-h] [--level {DEBUG,ERROR,INFO,NONE}] {show,set} ...
+
+   positional arguments:
+     {show,set}            Choose one of these options: (show) shows the NPR core functionality settings. (set) sets the default download directory for
+			   NPR Fresh Air and NPR Wait Wait episodes.
+       show                Just show the NPR core functionality settings.
+       set                 Set the default download directories for NPR Fresh Air and NPR Wait Wait episodes.
+
+   optional arguments:
+     -h, --help            show this help message and exit
+     --level {DEBUG,ERROR,INFO,NONE}
+			   choose the debug level for. Default is NONE.
+
+You can show the core functionality settings by running ``nprconfig show``. In my case it shows this. I have blocked out my NPR API key.
+
+.. code-block:: console
+
+   NPR CONFIGURATION
+   ----------------------  -------------------------------------
+   NPR API KEY             XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+   NPR Fresh Air download  /mnt/media/freshair
+   NPR Wait Wait download  /mnt/media/waitwait
+   ----------------------  -------------------------------------
+
+Here is the help when running ``nprconfig set -h``,
+
+.. code-block:: console
+
+   usage: nprconfig set [-h] [--freshair FRESHAIR] [--waitwait WAITWAIT] [--api API]
+
+   optional arguments:
+     -h, --help           show this help message and exit
+     --freshair FRESHAIR  Sets the default download directory for NPR Fresh Air episodes.
+     --waitwait WAITWAIT  Sets the default download directory for NPR Wait Wait episodes.
+     --api API            Sets the NPR API key.
+
 NPR Fresh Air
 ==============
 These four executables handle `NPR Fresh Air`_ downloads: ``freshair``, ``freshair_crontab``, ``freshair_fix_crontab``, and ``freshair_by_year``.
@@ -98,7 +146,7 @@ waitwait_by_year
    optional arguments:
      -h, --help            show this help message and exit
      --year YEAR           Year in which to write out all Fresh Air episodes. Default is 2010.
-     --inputdir INPUTDIR   Directory into which to store the NPR Fresh Air episodes. Default is /mnt/media/waitwait.
+     --inputdir INPUTDIR   Directory into which to store the NPR Wait Wait episodes. Default is /mnt/media/waitwait.
      --quiet               If chosen, do not print verbose output from the action of this script. By default this is false.
      --level {DEBUG,ERROR,INFO,NONE}
 			   choose the debug level for downloading NPR Wait Wait episodes or their XML representation of episode info. Can be one of

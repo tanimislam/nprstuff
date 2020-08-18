@@ -12,6 +12,7 @@ sphinx-argparse
 sphinx-issues
 sphinx_rtd_theme
 lxml
+tabulate
 titlecase
 matplotlib
 youtube_dl

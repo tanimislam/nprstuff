@@ -51,6 +51,7 @@ setup(
     entry_points = {
         'console_scripts' : [
             "music_to_m4a = nprstuff.cli.music_to_m4a:_main",
+            "nprconfig = nprstuff.cli.nprconfig:main",
             "freshair = nprstuff.cli.freshair:_freshair",
             "freshair_crontab = nprstuff.cli.freshair:_freshair_crontab",
             "freshair_by_year = nprstuff.cli.freshair:_freshair_by_year",

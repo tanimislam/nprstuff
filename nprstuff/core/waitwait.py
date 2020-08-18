@@ -8,7 +8,10 @@ from nprstuff.core import npr_utils, waitwait_realmedia
 from nprstuff import resourceDir
 
 _npr_waitwait_progid = 35
-_default_inputdir = '/mnt/media/waitwait'
+_default_inputdir = os.getcwd( )
+try:
+    _default_inputdir = npr_utils.get_waitwait_downloaddir( )
+except: pass
 
 def get_waitwait_image( verify = True ):
     """
