@@ -44,7 +44,7 @@ convert_image module
 -----------------------------------
 This module provides the low-level functionality to use the CloudConvert_ API to convert PDF_, PNG_, and SVG_ images into a final PNG_ image, utility functions to create MP4_ movies from a sequence of images, and to create animated GIF_ files, and created square movies (useful for upload to Instagram_).
 
-This module also requires :py:class:`QtSvgRenderer <PyQt5.QtSvg.QsvgRenderer>` for some of its functionality. However, PyPI_ does not have Python bindings to QtSVG_. To install on an Ubuntu_ machine, you can *thoughts and prayers* these instructions
+This module also requires :py:class:`QSvgRenderer <PyQt5.QtSvg.QSvgRenderer>` for some of its functionality. However, PyPI_ does not have Python bindings to QtSVG_. To install on an Ubuntu_ machine, you can *thoughts and prayers* these instructions
 
 .. code-block:: console
 

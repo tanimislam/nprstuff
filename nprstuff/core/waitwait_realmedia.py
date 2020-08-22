@@ -43,6 +43,7 @@ def rm_get_title_from_url( date_s ):
 def rm_download_file( date_s, outdir = os.getcwd() ):
     """
     downloads the RealMedia_ `NPR Wait Wait <waitwait_>`_ episode into a specified directory.
+    
     :param date_s: the :py:class:`date <datetime.date>` for this episode, which must be a Saturday.
     :param str outdir: the directory into which one downloads the `NPR Fresh Air`_ episodes.
     :returns: the RealMedia_ output file.

@@ -272,13 +272,13 @@ def _return_image_cc( width, height, inputFileName, form, files,
 
 def svg2png( input_svg_file, newWidth = None, verify = True ):
     """
-    Returns an :py:class:`Image <PIL.Image>` object of the PNG_ file produced when the CloudConvert_ server uploaded an input `SVG(Z) <svg_>`_ file. The PNG_ file has the same aspect ratio as the input file.
+    Returns an :py:class:`Image <PIL.Image.Image>` object of the PNG_ file produced when the CloudConvert_ server uploaded an input `SVG(Z) <svg_>`_ file. The PNG_ file has the same aspect ratio as the input file. Uses :py:class:`QSvgRenderer <PyQt5.QtSvg.QSvgRenderer>` to convert an `SVG(Z) <svg_>`_ into a PNG_.
 
     :param str input_svg_file: the input SVG or SVGZ file. Filename must end in ``.svg`` or ``.svgz``.
     :param int newWidth: optional argument. If specified, the pixel width of the output image.
     :param bool verify: optional argument, whether to verify SSL connections. Default is ``True``.
     
-    :returns: the :py:class:`Image <PIL.Image>` object of the PNG_ file from the input SVG or SVGZ file.
+    :returns: the :py:class:`Image <PIL.Image.Image>` object of the PNG_ file from the input SVG or SVGZ file.
     
     .. _PNG: https://en.wikipedia.org/wiki/Portable_Network_Graphics
     .. _svg: https://en.wikipedia.org/wiki/Scalable_Vector_Graphics
@@ -313,13 +313,13 @@ def svg2png( input_svg_file, newWidth = None, verify = True ):
 
 def png2png( input_png_file, newWidth = None, verify = True ):
     """
-    Returns an :py:class:`Image <PIL.Image>` object of the PNG_ file produced when the CloudConvert_ server uploaded an input PNG_ file. The output PNG_ file has the same aspect ratio as the input file.
+    Returns an :py:class:`Image <PIL.Image.Image>` object of the PNG_ file produced when the CloudConvert_ server uploaded an input PNG_ file. The output PNG_ file has the same aspect ratio as the input file.
 
     :param str input_png_file: the input PNG_ file. Filename must end in ``.png``.
     :param int newWidth: optional argument. If specified, the pixel width of the output image.
     :param bool verify: optional argument, whether to verify SSL connections. Default is ``True``.
     
-    :returns: the :py:class:`Image <PIL.Image>` object of the PNG_ file from the input PNG_ file.
+    :returns: the :py:class:`Image <PIL.Image.Image>` object of the PNG_ file from the input PNG_ file.
 
     
     .. seealso::
@@ -337,13 +337,13 @@ def png2png( input_png_file, newWidth = None, verify = True ):
 
 def pdf2png( input_pdf_file, newWidth = None, verify = True ):
     """
-    Returns an :py:class:`Image <PIL.Image>` object of the PNG_ file produced when the CloudConvert_ server uploaded an input PDF_ image file. The output PNG_ file has the same aspect ratio as the input file.
+    Returns an :py:class:`Image <PIL.Image.Image>` object of the PNG_ file produced when the CloudConvert_ server uploaded an input PDF_ image file. The output PNG_ file has the same aspect ratio as the input file.
 
     :param str input_png_file: the input PNG_ file. Filename must end in ``.png``.
     :param int newWidth: optional argument. If specified, the pixel width of the output image.
     :param bool verify: optional argument, whether to verify SSL connections. Default is ``True``.
     
-    :returns: the :py:class:`Image <PIL.Image>` object of the PNG_ file from the input PNG_ file.
+    :returns: the :py:class:`Image <PIL.Image.Image>` object of the PNG_ file from the input PNG_ file.
 
     .. _PDF: https://en.wikipedia.org/wiki/PDF
 

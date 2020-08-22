@@ -89,6 +89,7 @@ setup(
     package_data = {
         "nprstuff" : [
             "resources/*.png", "resources/fonts/*.ttf",
-            "resources/fonts/*.otf", "resources/icons/*.png" ]
-        }
+            "resources/fonts/*.otf", "resources/icons/*.png"
+        ]
+    }
 )

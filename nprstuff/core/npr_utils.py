@@ -285,7 +285,7 @@ def get_datestring( date_act ):
     :returns: a :py:class:`str`, with the format like "January 1, 2014", of this :py:class:`datetime <datetime.datetime>`.
     :rtype: str
 
-    .. seealso:: :py:meth:`get_time_froom_datestring <nprstuff.core.npr_utils.get_time_from_datestring>`.
+    .. seealso:: :py:meth:`get_time_from_datestring <nprstuff.core.npr_utils.get_time_from_datestring>`.
     """
     return date_act.strftime('%B %d, %Y')
 

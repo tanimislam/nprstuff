@@ -53,16 +53,16 @@ extensions = [
     'sphinxarg.ext'
 ]
 
-
 #
 ## following instructions here (https://github.com/svenevs/exhale/tree/master/docs/_intersphinx) to fix beautifulsoup doc.
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
     'requests': ( 'https://requests.kennethreitz.org/en/master/', None),
-    'beautifulsoup' : ( 'https://www.crummy.com/software/BeautifulSoup/bs4/doc/', "_intersphinx/bs4_objects.inv"),
+    'beautifulsoup' : ( 'https://www.crummy.com/software/BeautifulSoup/bs4/doc/', None ), # "_intersphinx/bs4_objects.inv"),
     'selenium' : ( 'https://selenium-python.readthedocs.io', None ),
-    'pyqt5' : ( 'https://www.riverbankcomputing.com/static/Docs/PyQt5', "_intersphinx/pyqt5_objects.inv" ),
+    'pyqt5' : ( 'https://www.riverbankcomputing.com/static/Docs/PyQt5', None ), # "_intersphinx/pyqt5_objects.inv" ),
     'PyPDF2' : ( 'https://pythonhosted.org/PyPDF2', None ),
+    'Pillow' : ( 'https://pillow.readthedocs.io/en/stable', None ),
 }
 
 
