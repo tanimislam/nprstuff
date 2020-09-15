@@ -52,13 +52,16 @@ Here is the help when running ``nprconfig set -h``,
      --waitwait WAITWAIT  Sets the default download directory for NPR Wait Wait episodes.
      --api API            Sets the NPR API key.
 
+.. _npr_freshair_label:
+     
 NPR Fresh Air
 ==============
-These four executables handle `NPR Fresh Air`_ downloads: ``freshair``, ``freshair_crontab``, ``freshair_fix_crontab``, and ``freshair_by_year``.
-  
-freshair
----------
+These four executables handle `NPR Fresh Air`_ downloads: :ref:`freshair_label`, :ref:`freshair_crontab_label`, :ref:`freshair_fix_crontab`, and :ref:`freshair_by_year`.
 
+.. _freshair_label:
+
+``freshair``
+---------------
 ``freshair`` is the main executable that downloads `NPR Fresh Air`_ episodes, converts them to M4A_ format, and then applies correct metadata. The help screen for this command line tool is here,
 
 
@@ -76,19 +79,23 @@ freshair
 			   choose the debug level for downloading NPR Fresh Air episodes or their XML representation of episode info. Can be one of
 			   ['DEBUG', 'ERROR', 'INFO', 'NONE']. Default is NONE.
 
-freshair_crontab
------------------
-      
+.. _freshair_crontab_label:
+			   
+``freshair_crontab``
+----------------------
 ``freshair_crontab`` downloads an `NPR Fresh Air`_ episode on a given weekday. It should be called by a cron job or a systemd service that runs every weekday.
 
-freshair_fix_crontab
----------------------
+.. _freshair_fix_crontab_label:
 
+``freshair_fix_crontab``
+--------------------------
 ``freshair_fix_crontab`` tries to re-download `NPR Fresh Air`_ episodes that may be incomplete – defined as shorter than 30 minutes – and which are 90 days or older. This executable searches through the library of all NPR Fresh Air episodes, and tries to re-download older, possibly incomplete episodes.
 
-freshair_by_year
-------------------  
 
+.. _freshair_by_year_label:
+
+``freshair_by_year``
+---------------------
 ``freshair_by_year`` downloads all the NPR Fresh Air episodes in a given year. The help screen for this command line tool is here,
 
 .. code-block:: console
@@ -106,14 +113,17 @@ freshair_by_year
 			   choose the debug level for downloading NPR Fresh Air episodes or their XML representation of episode info. Can be one of
 			   ['DEBUG', 'ERROR', 'INFO', 'NONE']. Default is NONE.
 
+.. _npr_waitwait_label:
+			   
 NPR Wait Wait
 ==============
-These four executables handle `NPR Wait Wait <waitwait_>`_ downloads: ``waitwait``, ``waitwait_realmedia``, ``waitwait_crontab``, and ``waitwait_by_year``.
+These three executables handle `NPR Wait Wait <waitwait_>`_ downloads: :ref:`waitwait_label`, :ref:`waitwait_crontab_label`, and :ref:`waitwait_by_year`.
 
-waitwait
----------
+.. _waitwait_label:
 
-``waitwait`` is the main executable that downloads NPR Wait Wait episodes, converts them to M4A_ format, and then applies correct metadata. ``waitwait_realmedia.py`` is a Python module that allows one to download `NPR Wait Wait <waitwait_>`_ episodes older than 2004, which are in RealMedia_ format. The help screen for this command line tool is here,
+``waitwait``
+--------------
+``waitwait`` is the main executable that downloads NPR Wait Wait episodes, converts them to M4A_ format, and then applies correct metadata. :py:mod:`waitwait_realmedia <nprstuff.core.waitwait_realmedia>` is a Python module that allows one to download `NPR Wait Wait <waitwait_>`_ episodes older than 2004, which are in RealMedia_ format. The help screen for this command line tool is here,
 
 .. code-block:: console
 
@@ -129,14 +139,16 @@ waitwait
 			   ['DEBUG', 'ERROR', 'INFO', 'NONE']. Default is NONE.
      --justfix             If chosen, just fix the title of an existing NPR Wait Wait episode's file.
 
-waitwait_crontab
------------------
-
+.. _waitwait_crontab_label:
+     
+``waitwait_crontab``
+---------------------
 ``waitwait_crontab`` downloads an NPR Wait Wait episode on a given Saturday. It should be called by a cron job or systemd service that is run every Saturday.
 
-waitwait_by_year
-------------------
+.. _waitwait_by_year_label:
 
+``waitwait_by_year``
+----------------------
 ``waitwait_by_year`` downloads all the NPR Wait Wait episodes in a given year. The help screen for this command line tool is here,
 
 .. code-block:: console
@@ -152,9 +164,10 @@ waitwait_by_year
 			   choose the debug level for downloading NPR Wait Wait episodes or their XML representation of episode info. Can be one of
 			   ['DEBUG', 'ERROR', 'INFO', 'NONE']. Default is NONE.
 
+.. _this_american_life_label:
+			   
 This American Life
 ===================
-
 The executable ``thisamericanlife`` *manually* downloads a given episode number of `This American Life`_. The help screen for this command line tool is here,
 
 .. code-block:: console

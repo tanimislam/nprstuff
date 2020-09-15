@@ -49,7 +49,7 @@ def rename_m4a( m4afilename ):
     assert( m4afilename.endswith( '.m4a' ) )
     #if magic.from_file(m4afilename, mime = True).strip() != 'audio/mp4':
     #    return
-    mp4tags = mutagen.mp4.MP4(m4afilename)
+    mp4tags = MP4(m4afilename)
     curdir = os.path.dirname( os.path.abspath( m4afilename ) )
     if len(set([ '\xa9nam', '\xa9ART' ]) - set(mp4tags.keys())) != 0:
         return
@@ -69,7 +69,7 @@ def get_defaultname( m4afilename, showalbum = False ):
     :returns: the candidate file name for the M4A_ file. If ``showalbum`` is ``True``, name is ``<artist>.<album>.<song>.m4a``. If ``False``, name is  ``<artist>.<song>.m4a``.
     :rtype: str
     """
-    mp4tags = mutagen.mp4.MP4(m4afilename)
+    mp4tags = MP4(m4afilename)
     curdir = os.path.dirname( os.path.abspath( m4afilename ) )
     if len(set([ '\xa9nam', '\xa9ART' ]) - set(mp4tags.keys())) != 0:
         return
