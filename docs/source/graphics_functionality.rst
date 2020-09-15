@@ -3,21 +3,20 @@
 Graphics Functionality
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-This section describes the two graphical tools I have developed: ``gui`` matches a small subset of functionality that the Readability_ tool handles excellently; ``gui2`` is a PyQt4_ GUI front-end to the Readability_ API.
+This section describes the two graphical tools I have developed: :numref:`gui_section_label` matches a small subset of functionality that the Readability_ tool handles excellently; :numref:`gui2_section_label` is a PyQt4_ GUI front-end to the Readability_ API.
+
+.. _gui_section_label:
 
 GUI: Media Website Text Formatter
 ------------------------------------
 
 This GUI can read from the following media websites: `Lightspeed Magazine`_, Medium_, `The New Yorker`_, `The New York Times`_, and the `Virginia Quarterly Review`_. Here is a screenshot!
 
-.. |gui_screenshot| image:: images/gui_screenshot.png
+.. figure:: images/gui_screenshot.png
    :width: 100%
-   :align: middle
+   :align: left
 
-==================================================================================================================================================================================== =
-|gui_screenshot|
-A screenshot of the GUI reader, converting the URL for the `The New York Times`_ into text. Note the separate icons above for the five media websites from which this GUI can read.
-==================================================================================================================================================================================== =
+   A screenshot of the GUI reader, converting the URL for the `The New York Times`_ into text. Note the separate icons above for the five media websites from which this GUI can read.
 
 The screenshots of the save file dialog and the print preview dialog are shown below.
 
@@ -37,38 +36,38 @@ The GUI screenshot of the save dialog. The GUI screenshot of the print preview d
 .. note:: 
    I do not support or maintain this tool after I found out about Readability_.
 
+.. _gui2_section_label:
+   
 GUI2: Readability GUI Front-End
 ----------------------------------
 
-This is the PyQt4 GUI front-end to Readability_.
+This is the PyQt4_ GUI front-end to Readability_.
 
-.. |gui2_screenshot_articlelist| image:: images/gui2_screenshot_articlelist.png
+.. figure:: images/gui2_screenshot_articlelist.png
    :width: 100%
-   :align: middle
+   :align: left
 
-.. |gui2_screenshot_articletext| image:: images/gui2_screenshot_articletext.png
+   The list form of the article’s content, with working dialogs for ``Font`` and ``Print Preview``. Coloration helps with readability.
+
+.. figure:: images/gui2_screenshot_articletext.png
    :width: 100%
-   :align: middle
-
-================================================================================================ ================================================================================================
-|gui2_screenshot_articlelist|                                                                    |gui2_screenshot_articletext|
-The list form of the article’s content, with working dialogs for ``Font`` and ``Print Preview``. The text form of the article’s content, with working dialogs for ``Font`` and ``Print Preview``. 
-================================================================================================ ================================================================================================
+   :align: left
+	   
+   The text form of the article’s content, with working dialogs for ``Font`` and ``Print Preview``. The behavior of the buttons are shown in the subsequent figures.
 
 A screenshot of the font changing dialog, the ``Font`` button, and a screenshot of the print preview dialog, the ``Print`` button, are shown below.
 
-.. |gui2_screenshot_fontdialog| image:: images/gui2_screenshot_fontdialog.png
+.. figure:: images/gui2_screenshot_fontdialog.png
    :width: 100%
-   :align: middle
+   :align: left
 
-.. |gui2_screenshot_printpreviewdialog| image:: images/gui2_screenshot_printpreviewdialog.png
+   The ``Font`` button dialog. This lets the user select through the fonts that currently exist in the system.
+
+.. figure:: images/gui2_screenshot_printpreviewdialog.png
    :width: 100%
-   :align: middle
-
-============================= =====================================================================================
-|gui2_screenshot_fontdialog|  |gui2_screenshot_printpreviewdialog|
-The ``Font`` button dialog.   The print preview dialog launched by the ``Print`` button in the article text widget.
-============================= =====================================================================================
+   :align: left
+	   
+   The print preview dialog launched by the ``Print`` button in the article text widget.
 
 In the immediate future, I plan on at least implementing the following, all using the Readability_ API.
 
