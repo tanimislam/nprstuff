@@ -27,6 +27,9 @@ logger.info( 'READTHEDOCS: %s.' % os.environ.get('READTHEDOCS') )
 ## now don't verify the TLS if not in READTHEDOCS
 tls_verify = is_in_readthedocs
 
+#
+## numfig stuff
+numfig = True
 
 # -- Project information -----------------------------------------------------
 

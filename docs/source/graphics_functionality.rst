@@ -20,21 +20,23 @@ This GUI can read from the following media websites: `Lightspeed Magazine`_, Med
 
 The screenshots of the save file dialog and the print preview dialog are shown below.
 
-.. |gui_screenshot_save| image:: images/gui_screenshot_save.png
+.. figure:: images/gui_screenshot_save.png
    :width: 100%
-   :align: middle
+   :align: left
 
-.. |gui_screenshot_preview| image:: images/gui_screenshot_printpreview.png
+   The GUI screenshot of the save dialog.
+
+.. figure:: images/gui_screenshot_printpreview.png
    :width: 100%
-   :align: middle
+   :align: left
 
-====================================== ===============================================
-|gui_screenshot_save|                  |gui_screenshot_preview|
-The GUI screenshot of the save dialog. The GUI screenshot of the print preview dialog.
-====================================== ===============================================
+   The GUI screenshot of the print preview dialog.
 
 .. note:: 
+
    I do not support or maintain this tool after I found out about Readability_.
+
+   **Furthermore**, Readability is long gone and its developers and maintainers have scattered to the four winds. None of its functionalities work anymore.
 
 .. _gui2_section_label:
    
