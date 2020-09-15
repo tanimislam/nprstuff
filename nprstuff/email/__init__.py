@@ -65,6 +65,7 @@ def get_imgurl_credentials( ):
        * :py:meth:`store_imgurl_credentials <nprstuff.email.store_imgurl_credentials>`.
     
     .. _Imgur: https://imgur.com/
+    .. _SQLite3: https://en.wikipedia.org/wiki/SQLite
     """
     val = session.query( NPRStuffConfig ).filter( NPRStuffConfig.service == 'imgurl' ).first( )
     if val is None:
@@ -148,7 +149,7 @@ def store_imgurl_credentials(
 
 def oauthGetOauth2ClientGoogleCredentials( ):
     """
-    Gets the `Google Oauth2`_ credentials, stored in the SQLite3_ configuration database, in the form of a refreshed :py:class:`AccessTokenCredentials <oauth2client.client.AccessTokenCredentials>` object. This OAuth2 authentication method IS used for all the services accessed by Howdy_.
+    Gets the `Google Oauth2`_ credentials, stored in the SQLite3_ configuration database, in the form of a refreshed :py:class:`AccessTokenCredentials <oauth2client.client.AccessTokenCredentials>` object. This OAuth2 authentication method IS used for all the services accessed by NPRStuff_.
 
     :returns: a :py:class:`AccessTokenCredentials <oauth2client.client.AccessTokenCredentials>` form of the `Google Oauth2`_ credentials for various Oauth2 services.
     :rtype: :py:class:`AccessTokenCredentials <oauth2client.client.AccessTokenCredentials>`
@@ -159,7 +160,7 @@ def oauthGetOauth2ClientGoogleCredentials( ):
        * :py:meth:`oauth_generate_google_permission_url <nprstuff.email.oauth_generate_google_permission_url>`.
        * :py:meth:`oauth_store_google_credentials <nprstuff.email.oauth_store_google_credentials>`.
 
-    .. _Howdy: https://howdy.readthedocs.io
+    .. _NPRStuff: https://nprstuff.readthedocs.io
     """
     val = session.query( NPRStuffConfig ).filter( NPRStuffConfig.service == 'google' ).first( )
     if val is None: return None
@@ -170,9 +171,9 @@ def oauthGetOauth2ClientGoogleCredentials( ):
 
 def oauth_generate_google_permission_url( ):
     """
-    Generates a `Google OAuth2`_ web-based flow for all the Google services used in Howdy_. The authentication process that uses this flow is described in :ref:`this subsection <Summary of Setting Up Google Credentials>`. Here are the programmatic steps to finally generate an  :py:class:`AccessTokenCredentials <oauth2client.client.AccessTokenCredentials>` object.
+    Generates a `Google OAuth2`_ web-based flow for all the Google services used in NPRStuff_. The authentication process that uses this flow is described in :ref:`this subsection <Summary of Setting Up Google Credentials>`. Here are the programmatic steps to finally generate an :py:class:`AccessTokenCredentials <oauth2client.client.AccessTokenCredentials>` object.
     
-      1. Get the  :py:class:`OAuth2WebServerFlow <oauth2client.client.OAuth2WebServerFlow>` and authentication URI.
+      1. Get the :py:class:`OAuth2WebServerFlow <oauth2client.client.OAuth2WebServerFlow>` and authentication URI.
 
          .. code-block:: python
 
@@ -196,6 +197,7 @@ def oauth_generate_google_permission_url( ):
        * :py:meth:`oauth_store_google_credentials <nprstuff.email.oauth_store_google_credentials>`.
 
     .. _Oauth2: https://oauth.net/2
+    .. _`Google OAuth2`: https://developers.google.com/identity/protocols/oauth2
     """
     
     #flow = Flow.from_client_secrets_file(

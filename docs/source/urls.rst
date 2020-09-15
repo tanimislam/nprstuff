@@ -24,6 +24,12 @@
 .. _PyQt4: https://www.riverbankcomputing.com/software/pyqt/download
 .. _EPUB: https://en.wikipedia.org/wiki/EPUB
 .. _Github: https://github.com
+.. _SQLAlchemy: https://www.sqlalchemy.org
+.. _PyQt5: https://www.riverbankcomputing.com/static/Docs/PyQt5
+.. _SQLite3: https://en.wikipedia.org/wiki/SQLite
+.. _`Google OAuth2`: https://developers.google.com/identity/protocols/oauth2
+.. _`GMail API`: https://developers.google.com/gmail/api
+.. _Base64: https://en.wikipedia.org/wiki/Base64
 ..
 .. these are magazine URLS
 ..

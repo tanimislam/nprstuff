@@ -304,8 +304,6 @@ class NPRStuffIMGClient( object ):
 
     .. seealso:: :py:meth:`refreshImages <howdy.email.email_imgur.NPRStuffIMGClient.refreshImages>`.
     
-    .. _Imgur: https://imgur.com
-    .. _SQLite3: https://www.sqlite.org/index.html
     .. _MD5: https://en.wikipedia.org/wiki/MD5
     """
 
@@ -614,9 +612,9 @@ class NPRStuffIMGClient( object ):
 
         .. seealso::
 
-           * :py:meth:`refreshImages <howdy.email.email_imgur.NPRStuffIMGClient.refreshImages>`.
-           * :py:meth:`delete_image <howdy.email.email_imgur.NPRStuffIMGClient.delete_image>`.
-           * :py:meth:`change_name <howdy.email.email_imgur.NPRStuffIMGClient.change_name>`.
+           * :py:meth:`refreshImages <nprstuff.email.email_imgur.NPRStuffIMGClient.refreshImages>`.
+           * :py:meth:`delete_image <nprstuff.email.email_imgur.NPRStuffIMGClient.delete_image>`.
+           * :py:meth:`change_name <nprstuff.email.email_imgur.NPRStuffIMGClient.change_name>`.
         
         .. _Base64: https://en.wikipedia.org/wiki/Base64
         """
@@ -657,8 +655,8 @@ class NPRStuffIMGClient( object ):
 
         .. seealso::
 
-           * :py:meth:`upload_image <howdy.email.email_imgur.NPRStuffIMGClient.upload_image>`.
-           * :py:meth:`change_name <howdy.email.email_imgur.NPRStuffIMGClient.change_name>`.
+           * :py:meth:`upload_image <nprstuff.email.email_imgur.NPRStuffIMGClient.upload_image>`.
+           * :py:meth:`change_name <nprstuff.email.email_imgur.NPRStuffIMGClient.change_name>`.
         """
         if imgMD5 is None:
             imgMD5 = hashlib.md5( b64img ).hexdigest( )
@@ -683,8 +681,8 @@ class NPRStuffIMGClient( object ):
 
         .. seealso::
 
-           * :py:meth:`upload_image <howdy.email.email_imgur.NPRStuffIMGClient.upload_image>`.
-           * :py:meth:`delete_image <howdy.email.email_imgur.NPRStuffIMGClient.delete_image>`.
+           * :py:meth:`upload_image <nprstuff.email.email_imgur.NPRStuffIMGClient.upload_image>`.
+           * :py:meth:`delete_image <nprstuff.email.email_imgur.NPRStuffIMGClient.delete_image>`.
         """
         assert( os.path.basename( new_name ).endswith('.png') )
         if imgMD5 not in self.imghashes:
@@ -699,7 +697,7 @@ class NPRStuffIMGClient( object ):
 
 class PNGPicObject( object ):
     """
-    This provides a GUI widget to the Imgur_ interface implemented in :py:class:`PlexIMGClient <howdy.email.email_imgur.NPRStuffIMGClient>`. Initializaton of the image can either upload this image to the Imgur_ account, or retrieve the image from the main Imgur_ album. This object can also launch a GUI dialog window through :py:meth:`getInfoGUI <howdy.email.PNGPicObject.getInfoGUI>`.
+    This provides a GUI widget to the Imgur_ interface implemented in :py:class:`PlexIMGClient <nprstuff.email.email_imgur.NPRStuffIMGClient>`. Initializaton of the image can either upload this image to the Imgur_ account, or retrieve the image from the main Imgur_ album. This object can also launch a GUI dialog window through :py:meth:`getInfoGUI <nprstuff.email.PNGPicObject.getInfoGUI>`.
 
     :param dict initdata: the low-level dictionary that contains important information on the image, located in a file, that will either be uploaded into the main Imgur_ album or merely kept in memory. The main key that determines operation is ``initialization``. It can be one of ``"FILE"`` or ``"SERVER"``.
 
@@ -719,7 +717,7 @@ class PNGPicObject( object ):
     
       * ``imgDateTime`` is the :py:class:`datetime <datetime.datetime>` at which the image was initially uploaded into the main Imgur_ album.
 
-    :param PlexIMGClient pImgClient: the :py:class:`PlexIMGClient <howdy.email.email_imgur.NPRStuffIMGClient>` used to access and manipulate (add, delete, rename) images in the main Imgur_ album.
+    :param PlexIMGClient pImgClient: the :py:class:`PlexIMGClient <nprstuff.email.email_imgur.NPRStuffIMGClient>` used to access and manipulate (add, delete, rename) images in the main Imgur_ album.
 
     :var str actName: the file name without full path, which must end in ``png``.
     :var QImage img: the :py:class:`QImage <PyQt4.QtGui.QImage>` representation of this image.
@@ -736,8 +734,8 @@ class PNGPicObject( object ):
     @classmethod
     def createPNGPicObjects( cls, pImgClient ):
         """
-        :param PlexIMGClient pImgClient: the :py:class:`PlexIMGClient <howdy.email.email_imgur.NPRStuffIMGClient>` used to access and manipulate (add, delete, rename) images in the main Imgur_ album.
-        :returns: a :py:class:`list` of :py:class:`PNGPicObject <howdy.email.PNGPicObject>` representing the images in the main Imgur_ album.
+        :param PlexIMGClient pImgClient: the :py:class:`PlexIMGClient <nprstuff.email.email_imgur.NPRStuffIMGClient>` used to access and manipulate (add, delete, rename) images in the main Imgur_ album.
+        :returns: a :py:class:`list` of :py:class:`PNGPicObject <nprstuff.email.PNGPicObject>` representing the images in the main Imgur_ album.
         :rtype: list
         """
         pngPICObjects = [ ]
@@ -854,14 +852,14 @@ class PNGPicObject( object ):
         #return base64.b64encode( buffer.getvalue( ) ), self.currentWidth, self.imgurlLink
         return self.b64string, self.currentWidth, self.imgurlLink
 
-    def changeName( self, new_name, hImgClient ):
+    def changeName( self, new_name, nImgClient ):
         """
         changes the filename into a new name.
 
         :param str new_name: the new name of the image file to be changed in the main album on the Imgur_ account. This must end in ``png``.
-        :param NPRStuffIMGClient hImgClient: the :py:class:`NPRStuffIMGClient <howdy.email.email_imgur.NPRStuffIMGClient>` used to access and manipulate (add, delete, rename) images in the main Imgur_ album.
+        :param NPRStuffIMGClient nImgClient: the :py:class:`NPRStuffIMGClient <nprstuff.email.email_imgur.NPRStuffIMGClient>` used to access and manipulate (add, delete, rename) images in the main Imgur_ album.
         """
         assert( new_name.endswith( '.png' ) )
-        status = hImgClient.change_name( self.imgMD5, os.path.basename( new_name ) )
+        status = nImgClient.change_name( self.imgMD5, os.path.basename( new_name ) )
         if not status: return
         self.actName = os.path.basename( new_name )
