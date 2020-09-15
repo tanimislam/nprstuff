@@ -1,7 +1,276 @@
 import os, sys, base64, httplib2, numpy, glob, traceback
-import hashlib, requests, io, datetime, logging
+import hashlib, requests, io, datetime, logging, time
+import pathos.multiprocessing as multiprocessing
 from PIL import Image
-from nprstuff.email import get_imgurl_credentials, store_imgurl_credentials, check_imgurl_credentials
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+from PyQt5.QtGui import *
+#
+from nprstuff import QDialogWithPrinting
+from nprstuff.email import (
+    get_imgurl_credentials, store_imgurl_credentials, check_imgurl_credentials )
+
+class PNGWidget( QDialogWithPrinting ):
+    
+    def __init__( self, parent ):
+        time0 = time.time( )
+        if parent is not None:
+            super( PNGWidget, self ).__init__( parent, isIsolated = True, doQuit = False )
+        else:
+            super( PNGWidget, self ).__init__( parent, isIsolated = True, doQuit = True )
+        self.setModal( True )
+        self.parent = parent
+        self.setWindowTitle( 'PNG IMAGES' )
+        logging.debug( 'just about to initialize NPRStuffIMGClient in %0.3f seconds.' % (
+            time.time( ) - time0 ) )
+        self.nIMGClient = NPRStuffIMGClient( verify = False )
+        logging.debug( 'initialized NPRStuffIMGClient in %0.3f seconds.' % (
+            time.time( ) - time0 ) )
+        #
+        myLayout = QVBoxLayout( )
+        self.setLayout( myLayout )
+        logging.debug( 'just about to initialize PNGPicTableModel in %0.3f seconds.' % (
+            time.time( ) - time0 ) )
+        self.pngPicTableModel = PNGPicTableModel( self )
+        logging.debug( 'initialized PNGPicTableModel in %0.3f seconds.' % (
+            time.time( ) - time0 ) )
+        self.pngTV = PNGPicTableView( self )
+        myLayout.addWidget( self.pngTV )
+        #
+        # self.setFixedWidth( self.pngTV.sizeHint( ).width( ) )
+        self.setFixedHeight( 450 )
+        self.hide( )
+
+    def getAllDataAsDict( self ):
+        return self.pngPicTableModel.getDataAsDict( )
+
+class PNGPicTableView( QTableView ):
+    
+    def __init__( self, parent ):
+        super( PNGPicTableView, self ).__init__( parent )
+        self.parent = parent
+        self.setModel( parent.pngPicTableModel )
+        self.setShowGrid( True )
+        self.verticalHeader( ).setSectionResizeMode( QHeaderView.Fixed )
+        self.horizontalHeader( ).setSectionResizeMode( QHeaderView.Fixed )
+        self.setSelectionBehavior( QAbstractItemView.SelectRows )
+        self.setSelectionMode( QAbstractItemView.SingleSelection )
+        self.setSortingEnabled( True )
+        #
+        self.setColumnWidth( 0, 200 )
+        self.setColumnWidth( 1, 80 )
+        self.setColumnWidth( 2, 120 )
+        self.setFixedWidth( 410 )
+        #
+        toBotAction = QAction( self )
+        toBotAction.setShortcut( 'End' )
+        toBotAction.triggered.connect( self.scrollToBottom )
+        self.addAction( toBotAction )
+        #
+        toTopAction = QAction( self )
+        toTopAction.setShortcut( 'Home' )
+        toTopAction.triggered.connect( self.scrollToTop )
+        self.addAction( toTopAction )
+
+    def add( self ):
+        pngFileName, _ = QFileDialog.getOpenFileName(
+            self, 'Choose PNG file', os.getcwd( ), filter = '*.png' )
+        if len( os.path.basename( pngFileName.strip( ) ) ) == 0:
+            return
+        if not os.path.isfile( pngFileName ):
+            return
+
+        #
+        ## now check to see if this image already in nIMGClient
+        imgMD5 = NPRStuffIMGClient.get_image_md5(
+            Image.open( pngFileName.strip( ) ) )
+        if imgMD5 in self.parent.nIMGClient.imghashes: return
+        
+        #
+        ## now collisions in name are not allowed, just pick a random name
+        if os.path.basename( pngFileName.strip( ) ) in set(
+                map(lambda pngpo: pngpo.actName, self.parent.pngPicTableModel.pngPicObjects ) ):
+            actName = os.path.join( os.path.dirname( pngFileName.strip( ) ),
+                                    'figure-%s.png' % str( uuid.uuid4( ) ).split('-')[0] )
+        else:
+            actName = pngFileName.strip( )
+            
+        self.parent.pngPicTableModel.addPicObject(
+            PNGPicObject( {
+                'initialization' : 'FILE',
+                'filename' : pngFileName,
+                'actName' : actName }, self.parent.nIMGClient ) )
+    
+    def copyImageURL( self ):
+        indices_valid = list(
+            filter(lambda index: index.column( ) == 0,
+                   self.selectionModel().selectedIndexes( ) ) )
+        if indices_valid is None or len( indices_valid ) == 0: return
+        row = max(map(lambda index: index.row( ), indices_valid ) )
+        self.parent.pngPicTableModel.copyURLAtRow( row )
+        
+    def info( self ):
+        indices_valid = list(
+            filter(lambda index: index.column( ) == 0,
+                   self.selectionModel().selectedIndexes( ) ) )
+        if indices_valid is None or len( indices_valid ) == 0: return
+        row = max(map(lambda index: index.row( ), indices_valid ) )
+        self.parent.pngPicTableModel.infoOnPicAtRow( row )
+
+    def remove( self ):
+        indices_valid = list(
+            filter(lambda index: index.column( ) == 0,
+                   self.selectionModel().selectedIndexes( ) ) )
+        if indices_valid is None or len( indices_valid ) == 0: return
+        row = max(map(lambda index: index.row( ), indices_valid ) )
+        self.parent.pngPicTableModel.removePicObject( row )
+
+    def removeAndDelete( self ):
+        indices_valid = list(
+            filter(lambda index: index.column( ) == 0,
+                   self.selectionModel().selectedIndexes( ) ) )
+        if indices_valid is None or len( indices_valid ) == 0: return
+        row = max(map(lambda index: index.row( ), indices_valid ) )
+        self.parent.pngPicTableModel.removeAndDeletePicObject( row )
+        
+    def contextMenuEvent( self, event ):
+        menu = QMenu( self )
+        addAction = QAction( 'Add', menu )
+        addAction.setShortcut( 'Ctrl+O' )
+        addAction.triggered.connect( self.add )
+        menu.addAction( addAction )
+        if len( self.parent.pngPicTableModel.pngPicObjects ) != 0:
+            copyURLAction = QAction( 'Copy Image URL', menu )
+            copyURLAction.triggered.connect( self.copyImageURL )
+            menu.addAction( copyURLAction )
+            infoAction = QAction( 'Information', menu )
+            infoAction.triggered.connect( self.info )
+            menu.addAction( infoAction)
+            removeAction = QAction( 'Remove', menu )
+            removeAction.triggered.connect( self.remove )
+            menu.addAction( removeAction )
+            removeAndDeleteAction = QAction( 'Remove and Delete', menu )
+            removeAndDeleteAction.triggered.connect( self.removeAndDelete )
+            menu.addAction( removeAndDeleteAction )
+        menu.popup( QCursor.pos( ) )
+
+class PNGPicTableModel( QAbstractTableModel ):
+    def __init__( self, parent ):
+        super(PNGPicTableModel, self).__init__( parent )
+        self.parent = parent
+        self.layoutAboutToBeChanged.emit( )
+        self.pngPicObjects = sorted( PNGPicObject.createPNGPicObjects(
+            parent.nIMGClient ), key = lambda pngpo: pngpo.imgDateTime )[::-1]
+        self.layoutChanged.emit( )
+
+    def infoOnPicAtRow( self, actualRow ):
+        currentRow = self.pngPicObjects[ actualRow ]
+        currentRow.getInfoGUI( self.parent )
+
+    def rowCount( self, parent ):
+        return len( self.pngPicObjects )
+
+    def columnCount( self, parent ):
+        return 3
+
+    def flags( self, index ):
+        col = index.column( )
+        if col in ( 0, ):
+            return Qt.ItemIsEnabled | Qt.ItemIsSelectable | Qt.ItemIsEditable
+        else:
+            return Qt.ItemIsEnabled | Qt.ItemIsSelectable
+
+    def headerData( self, col, orientation, role ):
+        if orientation == Qt.Horizontal and role == Qt.DisplayRole:
+            if col == 0: return 'PNG PICTURE'
+            elif col == 1: return 'WIDTH IN CM'
+            elif col == 2: return 'UPLOADED'
+        return None
+
+    def setData( self, index, value, role ):
+        col = index.column( )
+        row = index.row( )
+        if col == 0:
+            picObjNames = set(map(lambda picObject: picObject.actName, self.pngPicObjects ) )
+            candActName = os.path.basename( value.strip( ) )
+            if not candActName.endswith('.png'):
+                return False
+            if candActName in picObjNames:
+                return False
+            self.pngPicObjects[ row ].changeName(
+                candActName, self.parent.nIMGClient )
+            return True
+        elif col == 1:
+            try:
+                currentWidth = float( str( value.toString( ) ).strip( ) )
+                if currentWidth <= 0:
+                    return False
+                self.pngPicObjects[ row ].currentWidth = currentWidth
+                return True
+            except Exception as e:
+                return False
+
+    def data( self, index, role ):
+        if not index.isValid( ): return ""
+        row = index.row( )
+        col = index.column( )
+        if role == Qt.BackgroundRole:
+            color = QColor( 'yellow' )
+            color.setAlphaF( 0.2 )
+            return QBrush( color )
+        elif role == Qt.DisplayRole:
+            if col == 0:
+                return self.pngPicObjects[ row ].actName
+            elif col == 1:
+                return '%0.3f' % self.pngPicObjects[ row ].currentWidth
+            elif col == 2:
+                return self.pngPicObjects[ row ].imgDateTime.strftime( '%d/%m/%Y' )
+
+    def sort( self, col, order ): # sort on datetime
+        self.layoutAboutToBeChanged.emit( )
+        if col == 0: # name
+            self.pngPicObjects.sort(
+                key = lambda pngpo: pngpo.actName  )
+        elif col == 1: # image width
+            self.pngPicObjects.sort(
+                key = lambda pngpo: -pngpo.originalWidth )
+        elif col == 2: # date uploaded
+            self.pngPicObjects.sort(
+                key = lambda pngpo: -datetime.datetime.timestamp( pngpo.imgDateTime ) )
+        self.layoutChanged.emit( )
+
+    def copyURLAtRow( self, row ):
+        assert( row >= 0 and row < len( self.pngPicObjects ) )
+        pngpo = self.pngPicObjects[ row ]
+        QApplication.clipboard( ).setText( pngpo.imgurlLink )
+
+    def removePicObject( self, row ):
+        assert( row >= 0 and row < len( self.pngPicObjects ) )
+        pngpo = self.pngPicObjects.pop( row )
+        pngpo.delete( parent.plexImgClient )
+        self.layoutAboutToBeChanged.emit( )
+        self.layoutChanged.emit( )
+
+    def removeAndDeletePicObject( self, row ):
+        assert( row >= 0 and row < len( self.pngPicObjects ) )
+        pngpo = self.pngPicObjects.pop( row )
+        self.parent.nIMGClient.delete_image( pngpo.b64string, pngpo.imgMD5 )
+        self.layoutAboutToBeChanged.emit( )
+        self.layoutChanged.emit( )
+
+    def addPicObject( self, pngPicObject ):
+        picObjNames = set(map(lambda picObject: picObject.actName, self.pngPicObjects ) )
+        assert( pngPicObject.actName not in picObjNames )
+        self.pngPicObjects.append( pngPicObject )
+        self.layoutAboutToBeChanged.emit( )
+        self.layoutChanged.emit( )
+
+    def getDataAsDict( self ):
+        data = { }
+        for pngpo in self.pngPicObjects:
+            b64data, widthInCM, link = pngpo.b64String( )
+            data[ pngpo.actName ] = ( b64data, widthInCM, link )
+        return data
 
 class NPRStuffIMGClient( object ):
     """
@@ -54,11 +323,12 @@ class NPRStuffIMGClient( object ):
         return imgMD5
     
     def __init__( self, verify = True, data_imgurl = None ):
+        time0 = time.time( )
         #
         ## https://api.imgur.com/oauth2 advice on using refresh tokens
         self.verify = verify
         if data_imgurl is None:
-            data_imgurl = core.get_imgurl_credentials( )
+            data_imgurl = get_imgurl_credentials( )
         clientID = data_imgurl[ 'clientID' ]
         clientSECRET = data_imgurl[ 'clientSECRET' ]
         clientREFRESHTOKEN = data_imgurl[ 'clientREFRESHTOKEN' ]
@@ -70,7 +340,10 @@ class NPRStuffIMGClient( object ):
                                   verify = self.verify )
         if response.status_code != 200:
             raise ValueError( "ERROR, COULD NOT GET ACCESS TOKEN." )
+        logging.debug( 'was able to check is valid IMGUR access in %0.3f seconds.' % (
+            time.time( ) - time0 ) )
         data = response.json( )
+        self.logger = logging.getLogger( )
         self.access_token = data[ 'access_token' ]
         self.clientID = clientID
         self.clientSECRET = clientSECRET
@@ -87,6 +360,8 @@ class NPRStuffIMGClient( object ):
         if response.status_code != 200:
             self.albumID = None
             return
+        logging.debug( 'was able to access albums in %0.3f seconds.' % (
+            time.time( ) - time0 ) )
 
         #
         ## error state #2: do not have any albums
@@ -94,6 +369,9 @@ class NPRStuffIMGClient( object ):
         if len( albumDatas ) == 0:
             self.albumID = None
             return
+
+        logging.debug( 'could find my albums in %0.3f seconds.' % (
+            time.time( ) - time0 ) )
 
         #
         ## three possible situations
@@ -104,7 +382,7 @@ class NPRStuffIMGClient( object ):
             self.albumID, albumName = sorting_cand
             #
             ## put new information into database
-            core.store_imgurl_credentials(
+            store_imgurl_credentials(
                 clientID, clientSECRET, clientREFRESHTOKEN, 
                 mainALBUMID = self.albumID,
                 mainALBUMNAME = albumName,
@@ -114,6 +392,8 @@ class NPRStuffIMGClient( object ):
         #
         ## now get all the images in that album
         ## remember: Authorization: Bearer YOUR_ACCESS_TOKEN
+        logging.debug( 'got out to refreshImages in %0.3f seconds.' % (
+            time.time( ) - time0 ) )
         self.refreshImages( )
 
     def get_main_album_name( self ):
@@ -145,7 +425,7 @@ class NPRStuffIMGClient( object ):
 
         #
         ## put new information into database
-        core.store_imgurl_credentials(
+        store_imgurl_credentials(
             self.clientID, self.clientSECRET, self.clientREFRESHTOKEN, 
             mainALBUMID = self.albumID,
             mainALBUMNAME = new_album_name,
@@ -193,7 +473,7 @@ class NPRStuffIMGClient( object ):
 
         #
         ## put new information into database
-        core.store_imgurl_credentials(
+        store_imgurl_credentials(
             self.clientID, self.clientSECRET, self.clientREFRESHTOKEN, 
             mainALBUMID = self.albumID,
             mainALBUMNAME = new_album_name,
@@ -282,14 +562,13 @@ class NPRStuffIMGClient( object ):
         #
         ## put new information into database
         if self.albumID is not None:
-            core.store_imgurl_credentials(
+            store_imgurl_credentials(
                 self.clientID, self.clientSECRET, self.clientREFRESHTOKEN, 
                 mainALBUMID = self.albumID,
                 mainALBUMNAME = self.get_main_album_name( ),
                 verify = self.verify )
 
         self.refreshImages( )
-        
             
     def refreshImages( self ):
         """
@@ -299,13 +578,17 @@ class NPRStuffIMGClient( object ):
     
         * The value is a four element :py:class:`tuple`: image name, image ID, the URL link to this image, and the :py:class:`datetime <datetime.datetime>` at which the image was uploaded.
         """
+        time0 = time.time( )
         self.imghashes = { }
         if self.albumID is None: return
-        response = requests.get( 'https://api.imgur.com/3/album/%s/images' % self.albumID,
-                                 headers = { 'Authorization' : 'Bearer %s' % self.access_token },
-                                 verify = self.verify )
+        response = requests.get(
+            'https://api.imgur.com/3/album/%s/images' % self.albumID,
+            headers = { 'Authorization' : 'Bearer %s' % self.access_token },
+            verify = self.verify )
         if response.status_code != 200:
             raise ValueError("ERROR, COULD NOT ACCESS ALBUM IMAGES." )
+        logging.debug( 'was able to access album images, %s, in %0.3f seconds.' % (
+            self.albumID, time.time( ) - time0 ) )
         all_imgs = response.json( )[ 'data' ]
         for imgurl_img in all_imgs:
             imgMD5 = imgurl_img[ 'name' ]
@@ -315,6 +598,8 @@ class NPRStuffIMGClient( object ):
             imgDateTime = datetime.datetime.fromtimestamp(
                 imgurl_img[ 'datetime' ] )
             self.imghashes[ imgMD5 ] = [ imgName, imgID, imgLINK, imgDateTime ]
+        logging.debug( 'was able to populate a dictionary of %d images in %0.3f seconds.' % (
+            len( self.imghashes ), time.time( ) - time0 ) )
             
     def upload_image( self, b64img, name, imgMD5 = None ):
         """
@@ -469,6 +754,8 @@ class PNGPicObject( object ):
             except: return None
 
         with multiprocessing.Pool( processes = multiprocessing.cpu_count( ) ) as pool:
+            #
+            ## doesn't work with multiprocessing for some reason...
             pngPICObjects = list( filter(
                 None, map( _create_object, pImgClient.imghashes ) ) )
             return pngPICObjects

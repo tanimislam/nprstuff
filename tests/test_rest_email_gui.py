@@ -11,13 +11,15 @@ from PyQt5.QtWidgets import QApplication
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt
 #
-from nprstuff.email.email_config_gui import NPRStuffConfigCredWidget
+from nprstuff.email.email_gui import NPRStuffReSTEmailGUI as RestEmail
 
 if __name__=='__main__':
+    logger = logging.getLogger( )
+    logger.setLevel( logging.INFO )
     app = QApplication([])
     app.setAttribute(Qt.AA_UseHighDpiPixmaps)
     qtmodern.styles.dark( app )
-    nprccw = NPRStuffConfigCredWidget( verify = False )
-    mw = qtmodern.windows.ModernWindow( nprccw )
+    rest_email = RestEmail( verify = False )
+    mw = qtmodern.windows.ModernWindow( rest_email )
     mw.show( )
     result = app.exec_( )

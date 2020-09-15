@@ -1,4 +1,4 @@
-import os, sys, requests, logging
+import os, sys, requests, logging, numpy, webbrowser
 from requests_oauthlib import OAuth2Session
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
@@ -202,7 +202,7 @@ class NPRStuffConfigWidget( QDialogWithPrinting ):
 
     def __init__( self, service, verify = True ):
         super( NPRStuffConfigWidget, self ).__init__(
-            None, isIsolated = True, doQuit = False )
+            None, isIsolated = True, doQuit = True )
         self.hide( )
         self.setModal( True )
         self.service = service
@@ -234,6 +234,7 @@ class NPRStuffConfigCredWidget( NPRStuffConfigWidget ):
                     mainALBUMNAME = imgur_credentials[ 'mainALBUMNAME' ]
                 return clientID, clientSECRET, clientREFRESHTOKEN, mainALBUMNAME
             except Exception as e:
+                print( str( e ) )
                 return '', '', '', ''
 
         clientID, clientSECRET, clientREFRESHTOKEN, mainALBUMNAME = _get_creds( )            
@@ -321,6 +322,11 @@ class NPRStuffConfigCredWidget( NPRStuffConfigWidget ):
     def __init__( self, verify = True ):
         super( NPRStuffConfigCredWidget, self ).__init__(
             'CREDENTIALS', verify = verify )
+        self.setStyleSheet("""
+        QWidget {
+        font-family: Consolas;
+        font-size: 11;
+        }""" )
         #
         ## gui stuff
         myLayout = QVBoxLayout( )
@@ -381,6 +387,7 @@ class NPRStuffConfigCredWidget( NPRStuffConfigWidget ):
         ## now initialize
         self._initNPRStuffConfigCredStatus( ) # set everything up
         self.setFixedWidth( self.sizeHint( ).width( ) * 1.25 )
+        self.show( )
 
     def contextMenuEvent( self, event ):
         menu = QMenu( self )
@@ -437,7 +444,8 @@ class ImgurOauth2Dialog( QDialogWithPrinting ):
         imgur = OAuth2Session( self.imgur_clientId )
         authorization_url, self.state = imgur.authorization_url(
             auth_url, verify = self.verify )
-        self.launchBrowser( authorization_url )
+        #self.launchBrowser( authorization_url )
+        webbrowser.open_new_tab( authorization_url )
         self.hide( )
 
     def launchBrowser( self, url ):
@@ -451,7 +459,7 @@ class ImgurOauth2Dialog( QDialogWithPrinting ):
         #
         ##
         qte = HtmlView( qdl )
-        qte.load( url )
+        qte.load( QUrl( url ) )
         qdlLayout = QVBoxLayout( )
         qdl.setLayout( qdlLayout )
         qdlLayout.addWidget( qte )
@@ -469,7 +477,7 @@ class ImgurOauth2Dialog( QDialogWithPrinting ):
         qte.setMinimumSize( 85 * qfm.width( 'A' ), 550 )
         qdl.setMinimumSize( 85 * qfm.width( 'A' ), 550 )
         #
-        def _reset( ): qte.load( url )
+        def _reset( ): qte.load( QUrl( url ) )
         resetButton.clicked.connect( _reset )
         backButton.clicked.connect( qte.back )
         forwardButton.clicked.connect( qte.forward )
@@ -537,7 +545,8 @@ class GoogleOauth2Dialog( QDialogWithPrinting ):
         self.setFixedHeight( self.sizeHint( ).height( ) )
         #
         self.flow, url = oauth_generate_google_permission_url( )
-        self.launchBrowser( url )
+        #self.launchBrowser( url )
+        webbrowser.open_new_tab( url )
         self.hide( )
 
     def launchBrowser( self, url ):
@@ -551,7 +560,7 @@ class GoogleOauth2Dialog( QDialogWithPrinting ):
         #
         ##
         qte = HtmlView( qdl )
-        qte.load( url )
+        qte.load( QUrl( url ) )
         qdlLayout = QVBoxLayout( )
         qdl.setLayout( qdlLayout )
         qdlLayout.addWidget( qte )
@@ -569,7 +578,7 @@ class GoogleOauth2Dialog( QDialogWithPrinting ):
         qte.setMinimumSize( 85 * qfm.width( 'A' ), 550 )
         qdl.setMinimumSize( 85 * qfm.width( 'A' ), 550 )
         #
-        def _reset( ): qte.load( url )
+        def _reset( ): qte.load( QUrl( url ) )
         resetButton.clicked.connect( _reset )
         backButton.clicked.connect( qte.back )
         forwardButton.clicked.connect( qte.forward )
@@ -582,8 +591,8 @@ class GoogleOauth2Dialog( QDialogWithPrinting ):
         
     def check_authCredentials( self ):
         self.statusLabel.setText( '' )
-        self.authCredentials.setText( str( self.authCredentials.text( ) ).strip( ) )
-        authorization_code = str( self.authCredentials.text( ) )
+        self.authCredentials.setText( self.authCredentials.text( ).strip( ) )
+        authorization_code = self.authCredentials.text( ).strip( )
         try:
             credentials = self.flow.step2_exchange( authorization_code )
             oauth_store_google_credentials( credentials )

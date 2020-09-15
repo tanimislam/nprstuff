@@ -1,7 +1,7 @@
 __author__ = 'Tanim Islam'
 __email__ = 'tanim.islam@gmail.com'
 
-import sys, os, logging
+import sys, os, logging, numpy, requests, urllib3
 
 #
 ## PyQt5 stuff
@@ -14,6 +14,11 @@ from PyQt5.QtCore import *
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine, Column, String, JSON, Date, Boolean
+
+#
+## disable insecure request warnings
+requests.packages.urllib3.disable_warnings( )
+urllib3.disable_warnings( )
 
 _mainDir = os.path.dirname( os.path.abspath( __file__ ) )
 resourceDir = os.path.join( _mainDir, 'resources' )

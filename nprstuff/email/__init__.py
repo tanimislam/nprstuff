@@ -1,8 +1,47 @@
-import oauth2client.client, json, requests, os
+import oauth2client.client, json, requests, os, logging
 from google.oauth2.credentials import Credentials
-from nprstuff import session, NPRStuffConfig, resourceDir
+from docutils.examples import html_parts
+from bs4 import BeautifulSoup
+from PyQt5.QtWidgets import *
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 from PyQt5.QtNetwork import QNetworkAccessManager
+#
+from nprstuff import session, NPRStuffConfig, resourceDir
+
+def check_valid_RST( myString ):
+    """
+    Checks to see whether the input string is valid reStructuredText_.
+
+    :param str myString: the candidate reStructuredText_ input.
+    :returns: ``True`` if valid, otherwise ``False``.
+    :rtype: bool
+
+    .. seealso:: :py:meth:`convert_string_RST <howdy.core.convert_string_RST>`.
+
+    .. _reStructuredText: https://en.wikipedia.org/wiki/ReStructuredText
+    """
+    body = html_parts( myString)[ 'body' ]
+    html = BeautifulSoup( body, 'lxml' )
+    error_messages = html.find_all('p', { 'class' : 'system-message-title' } )
+    return len( error_messages) == 0
+
+def convert_string_RST( myString ):
+    """
+    Converts a valid reStructuredText_ input string into rich HTML.
+
+    :param str myString: the candidate reStructuredText_ input.
+    :returns: If the input string is valid reStructuredText_, returns the rich HTML as a :py:class:`string <str>`. Otherwise emits a :py:meth:`logging error message <logging.error>` and returns ``None``.
+    :rtype: str
+
+    .. seealso:: :py:meth:`check_valid_RST <howdy.core.check_valid_RST>`.
+    """
+    if not check_valid_RST( myString ):
+        logging.error( "Error, could not convert %s into RST." % myString )
+        return None
+    html_body = html_parts( myString )[ 'whole' ]
+    html = BeautifulSoup( html_body, 'lxml' )
+    return html.prettify( )
+
 
 def get_imgurl_credentials( ):
     """

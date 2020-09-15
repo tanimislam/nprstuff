@@ -5,10 +5,6 @@ from setuptools import setup, find_packages
 reqs = sorted(set(map(lambda line: line.strip(),
                       filter(lambda line: len( line.strip( ) ) != 0,
                              open( 'requirements.txt', 'r').readlines()))))
-#
-## if not python 2
-if sys.version_info.major == 2:
-    reqs = sorted(set(reqs) - set([ 'PyQt5', 'pyexiv2'] ) )
 
 setup(
     name = 'nprstuff',
@@ -34,7 +30,6 @@ setup(
       'Environment :: Console',
       'Environment :: X11 Applications :: Qt',
       'Programming Language :: Python :: 3',
-      'Programming Language :: Python :: 2.7',
     # uncomment if you test on these interpreters:
     # 'Programming Language :: Python :: Implementation :: IronPython',
     # 'Programming Language :: Python :: Implementation :: Jython',
@@ -45,7 +40,7 @@ setup(
     #
     ## requirements
     install_requires = reqs,
-    python_requires = '>=2.7',
+    python_requires = '>=3.5',
     #
     ## the executables I am creating
     entry_points = {
@@ -76,6 +71,7 @@ setup(
             "nprstuff_gui_newyorker = nprstuff.cli.gui:_newyorker",
             "nprstuff_gui_nytimes = nprstuff.cli.gui:_nytimes",
             "nprstuff_gui_vqronline = nprstuff.cli.gui:_vqronline",
+            "rest_email = nprstuff.cli.rest_email:main",
             #
             ## gui2 stuff, superseded by what's in plexstuff project
             "nprstuff_gui2_loginwindow = nprstuff.cli.gui2:_loginwindow",
