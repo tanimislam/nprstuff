@@ -18,6 +18,6 @@ TODO
 
 Here are some things I would like to finish.
 
-* Get the non-NPR-API functionality working as robustly as the old, working, discontinued NPR API stuff.
+* Get the non-NPR-API functionality working as robustly as the old, working, discontinued NPR API stuff. |cbox|
 
 .. |cbox| unicode:: U+2611 .. BALLOT BOX WITH CHECK
