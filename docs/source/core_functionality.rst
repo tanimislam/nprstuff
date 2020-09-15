@@ -56,7 +56,7 @@ Here is the help when running ``nprconfig set -h``,
      
 NPR Fresh Air
 ==============
-These four executables handle `NPR Fresh Air`_ downloads: :ref:`freshair_label`, :ref:`freshair_crontab_label`, :ref:`freshair_fix_crontab`, and :ref:`freshair_by_year`.
+These four executables handle `NPR Fresh Air`_ downloads: :ref:`freshair_label`, :ref:`freshair_crontab_label`, :ref:`freshair_fix_crontab_label`, and :ref:`freshair_by_year_label`.
 
 .. _freshair_label:
 
@@ -117,7 +117,7 @@ These four executables handle `NPR Fresh Air`_ downloads: :ref:`freshair_label`,
 			   
 NPR Wait Wait
 ==============
-These three executables handle `NPR Wait Wait <waitwait_>`_ downloads: :ref:`waitwait_label`, :ref:`waitwait_crontab_label`, and :ref:`waitwait_by_year`.
+These three executables handle `NPR Wait Wait <waitwait_>`_ downloads: :ref:`waitwait_label`, :ref:`waitwait_crontab_label`, and :ref:`waitwait_by_year_label`.
 
 .. _waitwait_label:
 
