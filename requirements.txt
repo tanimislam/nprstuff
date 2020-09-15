@@ -11,6 +11,7 @@ selenium
 sphinx-argparse
 sphinx-issues
 sphinx_rtd_theme
+SQLAlchemy
 lxml
 tabulate
 titlecase
