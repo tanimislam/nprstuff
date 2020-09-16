@@ -32,11 +32,9 @@ The screenshots of the save file dialog and the print preview dialog are shown b
 
    The GUI screenshot of the print preview dialog.
 
-.. note:: 
+I do not support or maintain this tool after I found out about Readability_.
 
-   I do not support or maintain this tool after I found out about Readability_.
-
-   **Furthermore**, Readability is long gone and its developers and maintainers have scattered to the four winds. None of its functionalities work anymore.
+**Furthermore**, Readability is long gone and its developers and maintainers have scattered to the four winds. None of its functionalities work anymore.
 
 .. _gui2_section_label:
    

@@ -1,4 +1,4 @@
-import glob, os, sys, textwrap, logging, time
+import glob, os, sys, textwrap, logging, time, magic, uuid
 from email.utils import parseaddr, formataddr
 from itertools import chain
 from bs4 import BeautifulSoup
@@ -7,31 +7,381 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 #
 from nprstuff import QDialogWithPrinting
-from nprstuff.email import HtmlView, check_valid_RST, convert_string_RST
+from nprstuff.email import HtmlView, check_valid_RST, convert_string_RST, format_size, md5sum
 from nprstuff.email.email_imgur import PNGWidget
 from nprstuff.email import email as nprstuff_email
 #from howdy.email.email import get_all_email_contacts_dict
 
+class AttachmentListDialog( QDialogWithPrinting ):
+
+    class AttachmentListDelegate( QItemDelegate ):
+        def __init__( self ):
+            super( AttachmentListDialog.AttachmentListDelegate, self ).__init__( )
+
+        def createEditor( self, parent, option, index ):
+            return QLineEdit( parent )
+
+        def setEditorData( self, editor, index ):
+            index_unproxy = index.model( ).mapToSource( index )
+            model = index.model( ).sourceModel( )
+            row = index_unproxy.row( )
+            column = index_unproxy.column( )
+            #
+            name = model.names[ row ]
+            if column == 0: editor.setText( name.strip( ) )
+
+    class AttachmentListQSortFilterModel( QSortFilterProxyModel ):
+        def __init__( self, model ):
+            super( AttachmentListDialog.AttachmentListQSortFilterModel, self ).__init__( )
+            self.setSourceModel( model )
+            model.emitFilterChanged.connect( self.invalidateFilter )
+
+        def filterAcceptsRow( self, rowNumber, sourceParent ):
+            return self.sourceModel( ).filterRow( rowNumber )
+
+    class AttachmentListQSortFilterFileModel( QSortFilterProxyModel ):
+        def __init__( self ):
+            super( AttachmentListDialog.AttachmentListQSortFilterFileModel, self ).__init__( )
+            model = QFileSystemModel( )
+            model.setRootPath( os.getcwd( ) )
+            model.setReadOnly( True )
+            self.setSourceModel( model )
+            self.maxSize = 15 * 1024**2 # total size of attachments = 15 MB
+
+        def filterAcceptsRow( self, rowNumber, sourceParent ):
+            model = self.sourceModel( )
+            index = model.index( rowNumber, 0, sourceParent )
+            if model.isDir( index ): return False
+            size = model.size( index )
+            return size <= self.maxSize
+
+        def setMaxSize( self, newSize ):
+            assert( newSize <= 15 * 1024**2 )
+            assert( newSize >= 0 )
+            self.maxSize = newSize            
+
+    class AttachmentListTableModel( QAbstractTableModel ):
+        _columnNames = [ 'NAME', 'MIMETYPE', 'SIZE' ]
+
+        statusSignal = pyqtSignal( str )
+        emitFilterChanged = pyqtSignal( )
+        attachmentsSignal = pyqtSignal( dict )
+
+        def __init__( self, parent ):
+            super( AttachmentListDialog.AttachmentListTableModel, self ).__init__( )
+            self.parent = parent
+            self.names = [ ]
+            self.mimetypes = [ ]
+            self.sizes = [ ]
+            self.md5s = [ ]
+            self.filepaths = [ ]
+            self.names_dict = { }
+            self.qfilefiltermodel = AttachmentListDialog.AttachmentListQSortFilterFileModel( )
+            self.qfd = QFileDialog( parent )
+            self.qfd.setProxyModel( self.qfilefiltermodel )
+            self.qfd.hide( )
+            self.mime = magic.Magic(mime=True)
+            #
+            self.filterOnNames = QLineEdit( '' )
+            self.filterRegExp = QRegExp( '.', Qt.CaseInsensitive, QRegExp.RegExp )
+            self.filterOnNames.textChanged.connect( self.setFilterString )
+            self.showingAttachmentsLabel = QLabel( '' )
+            self.emitFilterChanged.connect( self.showNumberFilterAttachments )
+            self.showNumberFilterAttachments( )
+
+        def columnCount( self, parent ):
+            return len( self._columnNames )
+
+        def rowCount( self, parent ):
+            return len( self.names )
+
+        def headerData( self, col, orientation, role ):
+            if orientation == Qt.Horizontal and role == Qt.DisplayRole:
+                return self._columnNames[ col ]
+
+        def flags( self, index ):
+            col = index.column( )
+            if col == 0:
+                return Qt.ItemIsEditable | Qt.ItemIsEnabled | Qt.ItemIsSelectable
+            else:
+                return Qt.ItemIsEnabled | Qt.ItemIsSelectable
+
+        def data( self, index, role ):
+            if not index.isValid( ): return None
+            row = index.row( )
+            col = index.column( )
+            name = self.names[ row ]
+            if role != Qt.DisplayRole: return
+            #
+            if col == 0: return self.names[ row ]
+            if col == 1: return self.mimetypes[ row ]
+            if col == 2: return format_size( self.sizes[ row ] )
+
+        def getInfoOnAttachment( self, currentRow ):
+            assert( currentRow >= 0 )
+            assert( currentRow < len( self.names ) )
+            qdl = QDialog( self.parent )
+            qdl.setModal( True )
+            myLayout = QVBoxLayout( )
+            mainColor = qdl.palette( ).color( QPalette.Background )
+            qdl.setWindowTitle( 'ATTACHMENT INFO: %s.' % self.names[ currentRow ] )
+            qdl.setLayout( myLayout )
+            qte = QTextEdit( qdl )
+            qte.setReadOnly( True )
+            qte.setPlainText('\n'.join([
+                'NAME: %s.' % self.names[ currentRow ],
+                'FULL PATH: %s.' % self.filepaths[ currentRow ],
+                'SIZE: %s.' % format_size( self.sizes[ currentRow ] ),
+                'MD5: %s.' % self.md5s[ currentRow ] ] ) )
+            myLayout.addWidget( qte )
+            qdl.setFixedWidth( 450 )
+            qdl.setFixedHeight( qdl.sizeHint( ).height( ) )
+            result = qdl.exec_( )            
+
+        def addFile( self ):
+            fname, _ = self.qfd.getOpenFileName(
+                self.parent, 'Choose Attachment', os.getcwd( ) )
+            if not os.path.abspath( fname ): return
+            if len( os.path.basename( fname ) ) == 0: return
+            #
+            ## now try to add the file
+            #
+            ## first check the MD5
+            md5 = md5sum( os.path.abspath( fname ) )
+            if md5 in self.md5s:
+                self.statusSignal.emit( 'ATTACHMENT ALREADY INCLUDED.' )
+                return
+            #
+            ## second, check to see if adding this file will keep us from adding it to here
+            size_rem = 15 * 1024**2 - sum( self.sizes )
+            size = os.path.getsize( os.path.abspath( fname ) )
+            if size > size_rem:
+                self.statusSignal.emit( 'ATTACHMENT TOO BIG, WOULD EXCEED 15 MB.' )
+                return
+            #
+            ## third, check the name, then add
+            self.layoutAboutToBeChanged.emit( )
+            name = os.path.basename( fname )
+            if name in self.names:
+                prefixpart = '.'.join( name.split('.')[:-1] )
+                suffix = name.split('.')[-1]
+                rando = str( uuid.uuid4( ) )[:5]
+                name = '%s %s.%s' % ( prefixpart, rando, suffix )
+            #
+            ## fourth, get the mimetype
+            mimetype = self.mime.from_file( os.path.abspath( fname ) )
+            #
+            ## fifth, add this entry to the list and adjust maximum size
+            self.names.append( name )
+            self.md5s.append( md5 )
+            self.mimetypes.append( mimetype )
+            self.filepaths.append( os.path.abspath( fname ) )
+            self.sizes.append( size )
+            self.qfilefiltermodel.setMaxSize( 15 * 1024**2 - sum( self.sizes ) )
+            #
+            attachmentList = list(map(lambda idx: {
+                'name' : self.names[ idx ],
+                'mimetype' : self.mimetypes[ idx ],
+                'filepath' : self.filepaths[ idx ] }, range(len( self.names ) ) ) )
+            self.attachmentsSignal.emit({
+                'attachments' : attachmentList })
+            self.layoutChanged.emit( )
+            self.emitFilterChanged.emit( )
+            self.statusSignal.emit( '' )
+
+        def removeFileAtRow( self, row ):
+            assert( row >= 0 and row < len( self.names ) )
+            self.layoutAboutToBeChanged.emit( )
+            self.names.pop( row )
+            self.md5s.pop( row )
+            self.mimetypes.pop( row )
+            self.filepaths.pop( row )
+            self.sizes.pop( row )
+            self.qfilefiltermodel.setMaxSize( 15 * 1024**2 - sum( self.sizes ) )
+            #
+            attachmentList = list(map(lambda idx: {
+                'name' : self.names[ idx ],
+                'mimetype' : self.mimetypes[ idx ],
+                'filepath' : self.filepaths[ idx ] }, range(len( self.names ) ) ) )
+            self.attachmentsSignal.emit({
+                'attachments' : attachmentList })
+            self.layoutChanged.emit( )
+            self.emitFilterChanged.emit( )
+
+        def setData( self, index, val, role ):
+            if not index.isValid( ): return False
+            if role != Qt.EditRole: return False
+            #
+            row = index.row( )
+            col = index.column( )
+            if col != 0: return False
+            currentName = self.names[ row ]
+            if len( val.strip( ) ) == 0: return False
+            if val.strip( ) in self.names: return False
+            self.names[ row ] = val.strip( )
+            #
+            attachmentList = list(map(lambda idx: {
+                'name' : self.names[ idx ],
+                'mimetype' : self.mimetypes[ idx ],
+                'filepath' : self.filepaths[ idx ] }, range(len( self.names ) ) ) )
+            self.attachmentsSignal.emit({
+                'attachments' : attachmentList })
+            self.emitFilterChanged.emit( )
+            return True
+
+        def filterRow( self, rowNumber ):
+            assert( rowNumber >= 0 )
+            assert( rowNumber < len( self.names ) )
+            name = self.names[ rowNumber ]
+            return self.filterRegExp.indexIn( name ) != -1
+
+        def showNumberFilterAttachments( self ):
+            num_attachs = len(list(filter(self.filterRow, range(len(self.names)))))
+            self.showingAttachmentsLabel.setText( 'SHOWING %d ATTACHMENTS' % num_attachs )
+
+        def setFilterString( self, newString ):
+            mytext = newString.strip( )
+            if len( mytext ) == 0: mytext = '.'
+            self.filterRegExp = QRegExp( mytext, Qt.CaseInsensitive, QRegExp.RegExp )
+            self.emitFilterChanged.emit( )
+
+    class AttachmentListTableView( QTableView ):
+        def __init__( self, attachmentListTableModel ):
+            super( AttachmentListDialog.AttachmentListTableView, self ).__init__( )
+            self.setModel( AttachmentListDialog.AttachmentListQSortFilterModel(
+                attachmentListTableModel ) )
+            self.setItemDelegateForColumn(
+                0, AttachmentListDialog.AttachmentListDelegate( ) )
+            self.menu = self.createContextMenuEvent( attachmentListTableModel )
+            #
+            self.setShowGrid( True )
+            self.verticalHeader( ).setSectionResizeMode( QHeaderView.Fixed )
+            self.horizontalHeader( ).setSectionResizeMode( QHeaderView.Fixed )
+            self.setSelectionBehavior( QAbstractItemView.SelectRows )
+            self.setSelectionMode( QAbstractItemView.SingleSelection )
+            #
+            self.setColumnWidth( 0, 180 )
+            self.setColumnWidth( 1, 180 )
+            self.setColumnWidth( 2, 180 )
+            #
+            toBotAction = QAction( self )
+            toBotAction.setShortcut( 'End' )
+            toBotAction.triggered.connect( self.scrollToBottom )
+            self.addAction( toBotAction )
+            #
+            toTopAction = QAction( self )
+            toTopAction.setShortcut( 'Home' )
+            toTopAction.triggered.connect( self.scrollToTop )
+            self.addAction( toTopAction )
+            #
+            addAction = QAction( self )
+            addAction.setShortcut( 'Ctrl+A' )
+            addAction.triggered.connect( attachmentListTableModel.addFile )
+            self.addAction( addAction )
+
+        def createContextMenuEvent( self, model ):
+            menu = QMenu( self )
+            addAction = QAction( 'ADD FILE', menu )
+            addAction.setShortcut( 'Ctrl+A' )
+            addAction.triggered.connect( model.addFile )
+            menu.addAction( addAction )
+            #
+            def infoFile( ):
+                row = self.getValidIndexAtRow( )
+                if row == -1: return
+                model.getInfoOnAttachment( row )
+            infoAction = QAction( 'INFO', menu )
+            infoAction.triggered.connect( infoFile )
+            menu.addAction( infoAction )
+            def removeFile( ):
+                row = self.getValidIndexAtRow( )
+                if row == -1: return
+                model.removeFileAtRow( row )
+            removeAction = QAction( 'REMOVE FILE', menu )
+            removeAction.triggered.connect( removeFile )
+            menu.addAction( removeAction )
+            return menu
+
+        def contextMenuEvent( self, evt ):
+            self.menu.popup( QCursor.pos( ) )
+
+        def getValidIndexAtRow( self ):
+            try:
+                index_valid_proxy = max(
+                    filter(
+                        lambda index: index.column( ) == 0,
+                        self.selectionModel( ).selectedIndexes( ) ) )
+                index_valid = self.model( ).mapToSource( index_valid_proxy )
+                return index_valid.row( )
+            except: return -1
+
+        def resizeTableColumns( self, newsize ):
+            width = newsize.width( )
+            self.setColumnWidth( 0, int( 0.6 * width ) )
+            self.setColumnWidth( 1, int( 0.2 * width ) )
+            self.setColumnWidth( 2, int( 0.2 * width ) )
+
+    def __init__( self, parent ):
+        super( AttachmentListDialog, self ).__init__( parent, doQuit = False, isIsolated = False )
+        time0 = time.time( )
+        self.setWindowTitle( 'ATTACHMENTS' )
+        #
+        self.attachmentListTableModel = AttachmentListDialog.AttachmentListTableModel( self )
+        attachmentListTableView = AttachmentListDialog.AttachmentListTableView( self.attachmentListTableModel )
+        statusLabel = QLabel( '' )
+        #
+        hideAction = QAction( self )
+        hideAction.setShortcut( 'Ctrl+W' )
+        hideAction.triggered.connect( self.hide )
+        self.addAction( hideAction )
+        #
+        myLayout = QVBoxLayout( )
+        self.setLayout( myLayout )
+        #
+        topWidget = QWidget( )
+        topLayout = QHBoxLayout( )
+        topWidget.setLayout( topLayout )
+        topLayout.addWidget( QLabel( 'FILTER' ) )
+        topLayout.addWidget( self.attachmentListTableModel.filterOnNames )
+        myLayout.addWidget( topWidget )
+        #
+        myLayout.addWidget( attachmentListTableView )
+        #
+        botWidget = QWidget( )
+        botLayout = QHBoxLayout( )
+        botWidget.setLayout( botLayout )
+        botLayout.addWidget( self.attachmentListTableModel.showingAttachmentsLabel )
+        botLayout.addWidget( statusLabel )
+        myLayout.addWidget( botWidget )
+        #
+        self.attachmentListTableModel.statusSignal.connect( statusLabel.setText )
+        #
+        self.setFixedWidth( 600 )
+        self.setFixedHeight( 600 )
+        attachmentListTableView.resizeTableColumns( self.size( ) )
+        self.hide( )
+        logging.info( 'initialized AttachmentListDialog in %0.3f seconds.' % (
+            time.time( ) - time0 ) )
+                
 class EmailListDialog( QDialogWithPrinting ):
-    """
-    This PyQt5_ widget performs the 
-    """
+    
     class EmailListDelegate( QItemDelegate ):
         def __init__( self, parent ):
-            super( EmailListDialog.EmailListDelegate, self ).__init__( parent )
-            self.parent = parent
+            super( EmailListDialog.EmailListDelegate, self ).__init__( )
+            self.emailCompleter = parent.emailCompleter
+            self.nameComplerer = parent.nameCompleter
 
         def createEditor( self, parent, option, index ):
             lineedit = QLineEdit( parent )
             if index.column( ) == 0:
-                lineedit.setCompleter( self.parent.emailCompleter )
+                lineedit.setCompleter( self.emailCompleter )
             elif index.column( ) == 1:
-                lineedit.setCompleter( self.parent.nameCompleter )
+                lineedit.setCompleter( self.nameCompleter )
             return lineedit
 
         def setEditorData( self, editor, index ):
             index_unproxy = index.model( ).mapToSource( index )
-            model = self.parent.emailListTableModel
+            model = index.model( ).sourceModel( )
             row = index_unproxy.row( )
             column = index_unproxy.column( )
             emailC = model.emails[ row ]
@@ -55,6 +405,7 @@ class EmailListDialog( QDialogWithPrinting ):
 
         statusSignal = pyqtSignal( str )
         emitFilterChanged = pyqtSignal( )
+        changedEmailSignal = pyqtSignal( dict )
         
         def __init__( self, parent ):
             super( EmailListDialog.EmailListTableModel, self ).__init__( parent )
@@ -110,8 +461,10 @@ class EmailListDialog( QDialogWithPrinting ):
             self.layoutAboutToBeChanged.emit( )
             self.emails.append( emailCurrent )
             self.names.append( name )
-            self.parent.allData[ self.key ] = sorted(
-                map(formataddr, zip( self.names, self.emails ) ) )
+            self.changedEmailSignal.emit({
+                'key' : self.key,
+                'names and emails' : sorted(
+                map(formataddr, zip( self.names, self.emails ) ) ) } )
             self.layoutChanged.emit( )
             self.emitFilterChanged.emit( )
             self.sort( 1, Qt.AscendingOrder )
@@ -308,9 +661,9 @@ class EmailListDialog( QDialogWithPrinting ):
         assert( key in ( 'to', 'cc', 'bcc' ) )
         assert( key in parent.allData )
         self.key = key
+        self.allData = parent.allData
         self.setWindowTitle( 'EMAIL %s' % key.upper( ) )
         #
-        self.allData = parent.allData
         self.all_emails = sorted( parent.allData[ 'emails dict rev' ] )
         self.all_names = sorted( parent.allData[ 'emails dict' ] )
         self.emailCompleter = QCompleter( self.all_emails )
@@ -348,6 +701,10 @@ class EmailListDialog( QDialogWithPrinting ):
             self.key, time.time( ) - time0 ) )
 
 class FromDialog( QDialogWithPrinting ):
+
+    emailAndNameChangedSignal = pyqtSignal( str )
+    changedDataSignal = pyqtSignal( dict )
+    
     class EmailListModel( QAbstractListModel ):
         def __init__( self, emails ):
             super( FromDialog.EmailListModel, self ).__init__( None )
@@ -391,8 +748,8 @@ class FromDialog( QDialogWithPrinting ):
         self.parent = parent
         self.emailLineEdit = QLineEdit( '' )
         self.nameLineEdit = QLineEdit( '' )
-        self.emailListModel = FromDialog.EmailListModel( sorted( self.parent.allData[ 'emails dict rev' ] ) )
-        self.nameListModel = FromDialog.NameListModel( sorted( self.parent.allData[ 'emails dict' ] ) )
+        self.emailListModel = FromDialog.EmailListModel( sorted( parent.allData[ 'emails dict rev' ] ) )
+        self.nameListModel = FromDialog.NameListModel( sorted( parent.allData[ 'emails dict' ] ) )
         #
         myLayout = QGridLayout( )
         self.setLayout( myLayout )
@@ -401,9 +758,10 @@ class FromDialog( QDialogWithPrinting ):
         myLayout.addWidget( QLabel( 'NAME:' ), 1, 0, 1, 1 )
         myLayout.addWidget( self.nameLineEdit, 1, 1, 1, 3 )
         #
+        self.emailLineEdit.setCompleter( QCompleter( sorted( parent.allData[ 'emails dict rev' ] ) ) )
+        self.nameLineEdit.setCompleter( QCompleter( sorted( parent.allData[ 'emails dict' ] ) ) )
         self.emailLineEdit.returnPressed.connect( self.setValidEmail )
         self.nameLineEdit.returnPressed.connect( self.setValidName )
-        self.setCompleters( )
         hideAction = QAction( self )
         hideAction.setShortcut( 'Ctrl+W' )
         hideAction.triggered.connect( self.actuallyCloseHide )
@@ -412,21 +770,23 @@ class FromDialog( QDialogWithPrinting ):
         self.setFixedWidth( 300 )
         self.hide( )
 
-    def setCompleters( self ):
-        emailC = QCompleter( self )
-        emailC.setPopup( QListView( self ) )
-        emailC.setModel( self.emailListModel )
-        emailC.setCompletionMode( QCompleter.PopupCompletion )
-        emailC.setMaxVisibleItems( 7 )
+    def setCompleters( self, allData ):
+        assert( len(
+            set([ 'emails dict', 'emails dict rev' ] ) - set( allData ) ) == 0 )
+        #emailC = QCompleter( self )
+        #emailC.setPopup( QListView( self ) )
+        #emailC.setModel( self.emailListModel )
+        #emailC.setCompletionMode( QCompleter.PopupCompletion )
+        #emailC.setMaxVisibleItems( 7 )
         #self.emailLineEdit.setCompleter( emailC )
-        self.emailLineEdit.setCompleter( QCompleter( sorted( self.parent.allData[ 'emails dict rev' ] ) ) )
+        self.emailLineEdit.setCompleter( QCompleter( sorted( allData[ 'emails dict rev' ] ) ) )
         #
-        nameC = QCompleter( self )
-        nameC.setModel( self.nameListModel )
-        nameC.setCompletionMode( QCompleter.PopupCompletion )
-        nameC.setMaxVisibleItems( 7 )
+        #nameC = QCompleter( self )
+        #nameC.setModel( self.nameListModel )
+        #nameC.setCompletionMode( QCompleter.PopupCompletion )
+        #nameC.setMaxVisibleItems( 7 )
         #self.nameLineEdit.setCompleter( nameC )
-        self.nameLineEdit.setCompleter( QCompleter( sorted( self.parent.allData[ 'emails dict' ] ) ) )
+        self.nameLineEdit.setCompleter( QCompleter( sorted( allData[ 'emails dict' ] ) ) )
 
     def closeEvent( self, evt ):
         self.actuallyCloseHide( )
@@ -435,7 +795,7 @@ class FromDialog( QDialogWithPrinting ):
         self.hide( )
         self.setValidEmail( False )
         self.setValidName( False )
-        self.parent.emailAndNameChangedSignal.emit( )
+        self.emailAndNameChangedSignal.emit( self.getEmailAndName( ) )
 
     def setValidEmail( self, emit = True ):
         _, checkEmail = parseaddr( self.emailLineEdit.text( ) )
@@ -445,6 +805,8 @@ class FromDialog( QDialogWithPrinting ):
             return
         self.parent.allData[ 'from email' ] = checkEmail
         self.emailLineEdit.setText( checkEmail )
+        self.changedDataSignal.emit({
+            'from email' : checkEmail })
         if checkEmail in self.parent.allData[ 'emails dict rev' ]:
             checkName = self.parent.allData[ 'emails dict rev' ][ checkEmail ]
             self.parent.allData[ 'from name' ] = checkName
@@ -452,21 +814,23 @@ class FromDialog( QDialogWithPrinting ):
             emails = self.parent.allData[ 'emails dict' ][ checkName ]
             #self.emailListModel.changeData( emails )
             #self.emailLineEdit.setCompleter( QCompleter( sorted( emails ) ) )
-        if emit: self.parent.emailAndNameChangedSignal.emit( )
+        if emit: self.emailAndNameChangedSignal.emit( self.getEmailAndName( ) )
 
     def setValidName( self, emit = True, setEmail = False ):
         checkName = self.nameLineEdit.text( ).strip( )
         self.parent.allData[ 'from name' ] = checkName
         self.nameLineEdit.setText( checkName )
+        self.changedDataSignal.emit({
+            'from name' : checkName })
         if checkName == '' or checkName not in self.parent.allData[ 'emails dict' ]:
             emails = sorted( self.parent.allData[ 'emails dict rev' ] )
             #self.emailListModel.changeData( emails )
-            self.emailLineEdit.setCompleter( QCompleter( sorted( emails ) ) )
+            #self.emailLineEdit.setCompleter( QCompleter( sorted( emails ) ) )
         elif checkName in self.parent.allData[ 'emails dict' ]:
             emails = self.parent.allData[ 'emails dict' ][ checkName ]
             #self.emailListModel.changeData( emails )
             #self.emailLineEdit.setCompleter( QCompleter( sorted( emails ) ) )
-        if emit: self.parent.emailAndNameChangedSignal.emit( )        
+        if emit: self.emailAndNameChangedSignal.emit( self.getEmailAndName( ) ) 
 
     def getEmailAndName( self ):
         validEmail = self.parent.allData[ 'from email' ]
@@ -477,7 +841,6 @@ class FromDialog( QDialogWithPrinting ):
         return formataddr( ( validName, validEmail ) )
 
 class NPRStuffReSTEmailGUI( QDialogWithPrinting ):
-    emailAndNameChangedSignal = pyqtSignal( )
     
     def __init__( self, verify = True ):
         super( NPRStuffReSTEmailGUI, self ).__init__( None, doQuit = True, isIsolated = True )
@@ -498,7 +861,8 @@ class NPRStuffReSTEmailGUI( QDialogWithPrinting ):
             'from name' : '',
             'to' : [ ],
             'cc' : [ ],
-            'bcc' : [ ] }
+            'bcc' : [ ],
+            'attachments' : [ ] }
         time0 = time.time( )
         self.allData[ 'emails dict' ] = nprstuff_email.get_all_email_contacts_dict(
             verify = self.verify, pagesize = 2000 )
@@ -520,6 +884,7 @@ class NPRStuffReSTEmailGUI( QDialogWithPrinting ):
         self.toEmailListDialog = EmailListDialog( self, key = 'to' )
         self.ccEmailListDialog = EmailListDialog( self, key = 'cc' )
         self.bccEmailListDialog = EmailListDialog( self, key = 'bcc' )
+        self.attachmentListDialog = AttachmentListDialog( self )
         #
         self.fromButton = QPushButton( 'FROM' )
         self.toButton = QPushButton( 'TO' )
@@ -575,7 +940,8 @@ class NPRStuffReSTEmailGUI( QDialogWithPrinting ):
         self.sendButton.clicked.connect( self.sendEmail )
         self.convertButton.clicked.connect( self.printHTML )
         #
-        self.emailAndNameChangedSignal.connect( self.changeEmailAndName )
+        self.fromDialog.emailAndNameChangedSignal.connect(
+            self.fromLabel.setText )
         #
         ## save reStructuredText file
         saveAction = QAction( self )
@@ -593,11 +959,17 @@ class NPRStuffReSTEmailGUI( QDialogWithPrinting ):
         self.textOutput.cursorPositionChanged.connect( self.showRowCol )
         self.subjLineEdit.returnPressed.connect( self.fixSubject )
         #
+        ## change to/cc/bcc/attachments data
+        self.toEmailListDialog.emailListTableModel.changedEmailSignal.connect( self.changeEmailData )
+        self.ccEmailListDialog.emailListTableModel.changedEmailSignal.connect( self.changeEmailData )
+        self.bccEmailListDialog.emailListTableModel.changedEmailSignal.connect( self.changeEmailData )
+        self.attachmentListDialog.attachmentListTableModel.attachmentsSignal.connect( self.changeAttachmentsData )
+        #
         ## make popup menu
         self.popupMenu = self._makePopupMenu( )
         #
         ## geometry stuff and final initialization
-        logging.info( 'WAS ABLE TO INITIALIZE EVERYTHING IN %0.3f SECONDS.' % (
+        logging.debug( 'WAS ABLE TO INITIALIZE EVERYTHING IN %0.3f SECONDS.' % (
             time.time( ) - time0 ) )
         self.setFixedHeight( 700 )
         self.setFixedWidth( 600 )
@@ -607,21 +979,24 @@ class NPRStuffReSTEmailGUI( QDialogWithPrinting ):
         menu = QMenu( self )
         #
         menu.addSection( 'SENDING ACTIONS' )
-        ccAction = QAction( 'CC', self )
+        ccAction = QAction( 'CC', menu )
         ccAction.triggered.connect( self.ccEmailListDialog.show )
         menu.addAction( ccAction )
-        bccAction= QAction( 'BCC', self )
+        bccAction= QAction( 'BCC', menu )
         bccAction.triggered.connect( self.bccEmailListDialog.show )
         menu.addAction(bccAction )
+        attachAction = QAction( 'ATTACH', menu )
+        attachAction.triggered.connect( self.attachmentListDialog.show )
+        menu.addAction( attachAction )
         #
         menu.addSection( 'EMAIL ACTIONS' )
-        pngAction = QAction( 'SHOW PNGS', self )
+        pngAction = QAction( 'SHOW PNGS', menu )
         pngAction.triggered.connect( self.pngWidget.show )
         menu.addAction( pngAction )
-        loadAction = QAction( 'LOAD RST', self )
+        loadAction = QAction( 'LOAD RST', menu )
         loadAction.triggered.connect( self.loadFileName )
         menu.addAction( loadAction )
-        saveAction = QAction( 'SAVE RST', self )
+        saveAction = QAction( 'SAVE RST', menu )
         saveAction.triggered.connect( self.saveFileName )
         menu.addAction( saveAction )
         #
@@ -629,6 +1004,15 @@ class NPRStuffReSTEmailGUI( QDialogWithPrinting ):
 
     def contextMenuEvent( self, evt ):
         self.popupMenu.popup( QCursor.pos( ) )
+
+    def changeEmailData( self, mydict ):
+        assert('key' in mydict and 'names and emails' in mydict )
+        assert(mydict[ 'key' ] in ( 'to', 'cc', 'bcc' ) )
+        self.allData[ mydict[ 'key' ] ] = mydict[ 'names and emails' ]
+
+    def changeAttachmentsData( self, mydict ):
+        assert( 'attachments' in mydict )
+        self.allData[ 'attachments' ] = mydict[ 'attachments' ]
 
     def sendEmail( self ):
         myString = self.getTextOutput( )
@@ -664,10 +1048,7 @@ class NPRStuffReSTEmailGUI( QDialogWithPrinting ):
             to_emails, cc_emails, bcc_emails, verify = self.verify )
         logging.info( 'sent out %d TO/CC/BCC emails in %0.3f seconds.' % (
             num_emails, time.time( ) - time0 ) )
-        self.statusLabel.setText( 'SUCCESSFULLY SENT OUT EMAILS.' )
-        
-    def changeEmailAndName( self ):
-        self.fromLabel.setText( self.fromDialog.getEmailAndName( ) )
+        self.statusLabel.setText( 'SUCCESSFULLY SENT OUT %d EMAILS.' % num_emails )
 
     def fixSubject( self ):
         """

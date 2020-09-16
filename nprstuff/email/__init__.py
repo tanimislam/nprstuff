@@ -1,4 +1,5 @@
-import oauth2client.client, json, requests, os, logging
+import oauth2client.client, json, requests, os, logging, hashlib
+from functools import partial
 from google.oauth2.credentials import Credentials
 from docutils.examples import html_parts
 from bs4 import BeautifulSoup
@@ -7,6 +8,46 @@ from PyQt5.QtWebEngineWidgets import QWebEngineView
 from PyQt5.QtNetwork import QNetworkAccessManager
 #
 from nprstuff import session, NPRStuffConfig, resourceDir
+
+def md5sum( filename ):
+    """
+    Taken from `This StackOverflow`_ on how to calculate the MD5 sum of a file.
+    
+    :param str filename: the candidate file's name to open.
+    :returns: an MD5 hash of the file.
+    :rtype: str
+
+    .. _`This StackOverflow`: https://stackoverflow.com/a/7829658/3362358
+    """
+    assert( os.path.isfile( filename ) )
+    with open(filename, mode='rb') as f:
+        d = hashlib.md5()
+        for buf in iter(partial(f.read, 128), b''):
+            d.update(buf)
+        return d.hexdigest()
+
+def format_size( fsize_b ):
+    """
+    Formats the bytes value into a string with KiB, MiB or GiB units. This code has been copied from :py:meth:`deluge's format_size <deluge.ui.console.utils.format_utils.format_size>`.
+
+    :param int fsize_b: the filesize in bytes.
+    :returns: formatted string in KiB, MiB or GiB units.
+    :rtype: str
+
+    **Usage**
+    
+    >>> format_size( 112245 )
+    '109.6 KiB'
+
+    """
+    fsize_kb = fsize_b / 1024.0
+    if fsize_kb < 1024:
+        return "%.1f KiB" % fsize_kb
+    fsize_mb = fsize_kb / 1024.0
+    if fsize_mb < 1024:
+        return "%.1f MiB" % fsize_mb
+    fsize_gb = fsize_mb / 1024.0
+    return "%.1f GiB" % fsize_gb
 
 def check_valid_RST( myString ):
     """
