@@ -148,13 +148,13 @@ def send_collective_email_full(
                 if mainType == 'application':
                     att = MIMEApplication( openfile.read( ), subtype = subtype )
                 elif mainType == 'text':
-                    att = MIMEText( f.read( ), subtype = subtype )
+                    att = MIMEText( openfile.read( ), subtype = subtype )
                 elif mainType == 'image':
-                    att = MIMEImage( f.read( ), subtype = subtype )
+                    att = MIMEImage( openfile.read( ), subtype = subtype )
                 elif mainType == 'audio':
-                    att = MIMEAudio( f.read( ), subtype = subtype )
+                    att = MIMEAudio( openfile.read( ), subtype = subtype )
                 else:
-                    att = MIMEApplication( f.read( ) )
+                    att = MIMEApplication( openfile.read( ) )
                 att.add_header( 'content-disposition', 'attachment', filename = name )
                 msg.attach( att )
     send_email_lowlevel( msg, email_service = email_service, verify = verify )
