@@ -110,7 +110,7 @@ def get_all_email_contacts_dict( verify = True, people_service = None, pagesize 
 
 def send_collective_email_full(
     mainHTML, subject, fromEmail, to_emails, cc_emails, bcc_emails, verify = True,
-    email_service = None ):
+    email_service = None, attachments = [ ] ):
     """
     Sends the HTML email to the following ``TO`` recipients, ``CC`` recipients, and ``BCC`` recipients altogether. It uses the `GMail API`_.
 
@@ -122,6 +122,7 @@ def send_collective_email_full(
     :param set bcc_emails: the `RFC 2047`_ :py:class:`set` of ``BCC`` recipients.
     :param bool verify: optional argument, whether to verify SSL connections. Default is ``True``.
     :param email_service: optional argument, the :py:class:`Resource <googleapiclient.discovery.Resource>` representing the Google email service used to send and receive emails. If ``None``, then generated here.
+    :param list attachments: the collection of attachments to send out.
 
     .. _`RFC 2047`: https://tools.ietf.org/html/rfc2047.html
     """
@@ -137,6 +138,25 @@ def send_collective_email_full(
     logging.info( 'cc_emails: %s.' % msg['Cc'] )
     logging.info('bcc_emails: %s.' % msg['Bcc'])
     msg.attach( MIMEText( mainHTML, 'html', 'utf-8' ) )
+    if len( attachments ) != 0:
+        for attach in attachments:
+            name = attach[ 'name' ]
+            mimetype = attach[ 'mimetype' ]
+            filepath = attach[ 'filepath' ]
+            mainType, subtype = mimetype.split('/')[:2]
+            with open( filepath, 'rb' ) as openfile:
+                if mainType == 'application':
+                    att = MIMEApplication( openfile.read( ), subtype = subtype )
+                elif mainType == 'text':
+                    att = MIMEText( f.read( ), subtype = subtype )
+                elif mainType == 'image':
+                    att = MIMEImage( f.read( ), subtype = subtype )
+                elif mainType == 'audio':
+                    att = MIMEAudio( f.read( ), subtype = subtype )
+                else:
+                    att = MIMEApplication( f.read( ) )
+                att.add_header( 'content-disposition', 'attachment', filename = name )
+                msg.attach( att )
     send_email_lowlevel( msg, email_service = email_service, verify = verify )
 
 def send_individual_email_full(

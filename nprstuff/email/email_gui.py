@@ -1032,6 +1032,7 @@ class NPRStuffReSTEmailGUI( QDialogWithPrinting ):
         to_emails = set( self.allData[ 'to' ] )
         cc_emails = set( self.allData[ 'cc' ] )
         bcc_emails= set( self.allData[ 'bcc' ] ) | set([ fullEmailString ])
+        attachments = self.allData[ 'attachments' ]
         logging.info( 'to_emails: %s.' % to_emails )
         logging.info( 'cc_emails: %s.' % cc_emails )
         logging.info( 'bcc_emails: %s.' % bcc_emails )
@@ -1045,7 +1046,8 @@ class NPRStuffReSTEmailGUI( QDialogWithPrinting ):
         num_emails = len( to_emails | cc_emails | bcc_emails )
         nprstuff_email.send_collective_email_full(
             htmlString, subject, fullEmailString,
-            to_emails, cc_emails, bcc_emails, verify = self.verify )
+            to_emails, cc_emails, bcc_emails, verify = self.verify ,
+            attachments = attachments )
         logging.info( 'sent out %d TO/CC/BCC emails in %0.3f seconds.' % (
             num_emails, time.time( ) - time0 ) )
         self.statusLabel.setText( 'SUCCESSFULLY SENT OUT %d EMAILS.' % num_emails )
