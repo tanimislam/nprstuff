@@ -253,8 +253,8 @@ def oauth_generate_google_permission_url( ):
     flow = oauth2client.client.flow_from_clientsecrets(
         os.path.join( resourceDir, 'client_secrets.json' ),
         scope = [ 'https://www.googleapis.com/auth/gmail.send',
-                  'https://www.googleapis.com/auth/contacts.readonly',
-                  'https://www.googleapis.com/auth/spreadsheets.readonly' ], # google spreadsheet scope readonly
+                  'https://www.googleapis.com/auth/contacts.readonly' ],
+        # 'https://www.googleapis.com/auth/spreadsheets.readonly' ], # google spreadsheet scope readonly
         redirect_uri = "urn:ietf:wg:oauth:2.0:oob" )
     auth_uri = flow.step1_get_authorize_url( )
     return flow, auth_uri
