@@ -192,6 +192,7 @@ class NPRStuffImgurChooseAlbumTableModel( QAbstractTableModel ):
 
 class NPRStuffConfigWidget( QDialogWithPrinting ):
     workingStatus = pyqtSignal( dict )
+    workingStatusClosed = pyqtSignal( dict )
     _emitWorkingStatusDict = { }
     
     def showHelpInfo( self ):
@@ -208,6 +209,10 @@ class NPRStuffConfigWidget( QDialogWithPrinting ):
         self.service = service
         self.verify = verify
         self.setWindowTitle( 'NPRSTUFF %s CONFIGURATION' % service.upper( ) )
+
+    def closeEvent( self, event ):
+        self.workingStatusClosed.emit( self._emitWorkingStatusDict )
+        event.accept( )
 
 class NPRStuffConfigCredWidget( NPRStuffConfigWidget ):
     _emitWorkingStatusDict = {
