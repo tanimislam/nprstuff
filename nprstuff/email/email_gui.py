@@ -369,7 +369,7 @@ class EmailListDialog( QDialogWithPrinting ):
         def __init__( self, parent ):
             super( EmailListDialog.EmailListDelegate, self ).__init__( )
             self.emailCompleter = parent.emailCompleter
-            self.nameComplerer = parent.nameCompleter
+            self.nameCompleter = parent.nameCompleter
 
         def createEditor( self, parent, option, index ):
             lineedit = QLineEdit( parent )
@@ -1119,7 +1119,7 @@ class NPRStuffReSTEmailGUI( QDialogWithPrinting ):
         myString = self.getTextOutput( )
         if not check_valid_RST( myString ):
             self.statusLabel.setText(
-                'COULD NOT CONVERT FROM %s TO HTML' % form.upper( ) )
+                'COULD NOT CONVERT FROM RST TO HTML' )
             return
         #
         qdl = QDialogWithPrinting( self, doQuit = False, isIsolated = True )

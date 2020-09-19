@@ -144,19 +144,18 @@ def send_collective_email_full(
             mimetype = attach[ 'mimetype' ]
             filepath = attach[ 'filepath' ]
             mainType, subtype = mimetype.split('/')[:2]
-            with open( filepath, 'rb' ) as openfile:
-                if mainType == 'application':
-                    att = MIMEApplication( openfile.read( ), subtype = subtype )
-                elif mainType == 'text':
-                    att = MIMEText( openfile.read( ), subtype = subtype )
-                elif mainType == 'image':
-                    att = MIMEImage( openfile.read( ), subtype = subtype )
-                elif mainType == 'audio':
-                    att = MIMEAudio( openfile.read( ), subtype = subtype )
-                else:
-                    att = MIMEApplication( openfile.read( ) )
-                att.add_header( 'content-disposition', 'attachment', filename = name )
-                msg.attach( att )
+            if mainType == 'application':
+                att = MIMEApplication( open( filepath, 'rb' ).read( ), _subtype = subtype )
+            elif mainType == 'text':
+                att = MIMEText( open( filepath, 'r' ).read( ), _subtype = subtype )
+            elif mainType == 'image':
+                att = MIMEImage( open( filepath, 'rb' ).read( ), _subtype = subtype )
+            elif mainType == 'audio':
+                att = MIMEAudio( open( filepath, 'rb' ).read( ), _subtype = subtype )
+            else:
+                att = MIMEApplication( open( filepath, 'rb' ).read( ) )
+            att.add_header( 'content-disposition', 'attachment', filename = name )
+            msg.attach( att )
     send_email_lowlevel( msg, email_service = email_service, verify = verify )
 
 def send_individual_email_full(

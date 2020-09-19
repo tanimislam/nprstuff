@@ -208,11 +208,7 @@ class NPRStuffConfigWidget( QDialogWithPrinting ):
         self.setModal( True )
         self.service = service
         self.verify = verify
-        self.setWindowTitle( 'NPRSTUFF %s CONFIGURATION' % service.upper( ) )
-
-    def closeEvent( self, event ):
-        self.workingStatusClosed.emit( self._emitWorkingStatusDict )
-        event.accept( )
+        self.setWindowTitle( '%s CONFIGURATION' % service.upper( ) )
 
 class NPRStuffConfigCredWidget( NPRStuffConfigWidget ):
     _emitWorkingStatusDict = {
@@ -326,7 +322,7 @@ class NPRStuffConfigCredWidget( NPRStuffConfigWidget ):
 
     def __init__( self, verify = True ):
         super( NPRStuffConfigCredWidget, self ).__init__(
-            'CREDENTIALS', verify = verify )
+            'REST EMAIL CREDENTIALS', verify = verify )
         self.setStyleSheet("""
         QWidget {
         font-family: Consolas;
