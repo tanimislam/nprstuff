@@ -1,6 +1,7 @@
-import os, sys, base64, httplib2, numpy, glob, traceback
+import os, sys, base64, numpy, glob, traceback
 import hashlib, requests, io, datetime, logging
 import pathos.multiprocessing as multiprocessing
+from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
 #
 from email.mime.multipart import MIMEMultipart
@@ -10,7 +11,7 @@ from email.mime.audio import MIMEAudio
 from email.mime.image import MIMEImage
 #
 # import google_auth_httplib2.httplib2 as httplib2, in requirements.txt put in google-auth-httplib2
-from nprstuff.email import oauthGetOauth2ClientGoogleCredentials
+from nprstuff.email import oauthGetGoogleCredentials
 
 def get_email_service( verify = True, credentials = None ):
     """
@@ -21,12 +22,12 @@ def get_email_service( verify = True, credentials = None ):
     :returns: the :py:class:`Resource <googleapiclient.discovery.Resource>` representing the Google email service used to send and receive emails.
     :rtype: :py:class:`Resource <googleapiclient.discovery.Resource>`
     """
-    if credentials is None: credentials = oauthGetOauth2ClientGoogleCredentials( )
+    if credentials is None: credentials = oauthGetGoogleCredentials( )
     assert( credentials is not None )
-    http_auth = credentials.authorize( httplib2.Http(
-        disable_ssl_certificate_validation = not verify ) )
-    email_service = build('gmail', 'v1', http = http_auth,
-                          cache_discovery = False )
+    s = requests.Session( )
+    s.verify = verify
+    credentials.refresh( Request( s ) )
+    email_service = build('gmail', 'v1', credentials = credentials, cache_discovery = False )
     return email_service
 
 def get_people_service( verify = True, credentials = None ):
@@ -38,12 +39,12 @@ def get_people_service( verify = True, credentials = None ):
     :returns: the :py:class:`Resource <googleapiclient.discovery.Resource>` representing the Google people service.
     :rtype: :py:class:`Resource <googleapiclient.discovery.Resource>`
     """
-    if credentials is None: credentials = oauthGetOauth2ClientGoogleCredentials( )
+    if credentials is None: credentials = oauthGetGoogleCredentials( )
     assert( credentials is not None )
-    http_auth = credentials.authorize( httplib2.Http(
-        disable_ssl_certificate_validation = not verify ) )
-    people_service = build( 'people', 'v1', http = http_auth,
-                            cache_discovery = False )
+    s = requests.Session( )
+    s.verify = verify
+    credentials.refresh( Request( s ) )
+    people_service = build( 'people', 'v1', credentials = credentials, cache_discovery = False )
     return people_service
     
 def send_email_lowlevel( msg, email_service = None, verify = True ):

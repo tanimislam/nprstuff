@@ -14,6 +14,8 @@ from PyQt5.QtCore import Qt
 from nprstuff.email.email_config_gui import NPRStuffConfigCredWidget
 
 if __name__=='__main__':
+    logger = logging.getLogger( )
+    logger.setLevel( logging.INFO )
     app = QApplication([])
     app.setAttribute(Qt.AA_UseHighDpiPixmaps)
     qtmodern.styles.dark( app )

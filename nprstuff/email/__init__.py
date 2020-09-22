@@ -1,4 +1,6 @@
-import oauth2client.client, json, requests, os, logging, hashlib
+import json, requests, os, logging, hashlib
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import Flow
 from functools import partial
 from docutils.examples import html_parts
 from bs4 import BeautifulSoup
@@ -188,12 +190,12 @@ def store_imgurl_credentials(
     session.commit( )
     return 'SUCCESS'
 
-def oauthGetOauth2ClientGoogleCredentials( ):
+def oauthGetGoogleCredentials( ):
     """
-    Gets the `Google Oauth2`_ credentials, stored in the SQLite3_ configuration database, in the form of a refreshed :py:class:`AccessTokenCredentials <oauth2client.client.AccessTokenCredentials>` object. This OAuth2 authentication method IS used for all the services accessed by NPRStuff_.
+    Gets the `Google Oauth2`_ credentials, stored in the SQLite3_ configuration database, in the form of a refreshed :py:class:`Credentials <google.oauth2.credentials.Credentials>` object. This OAuth2 authentication method is used for ALL the services accessed by NPRStuff_.
 
-    :returns: a :py:class:`AccessTokenCredentials <oauth2client.client.AccessTokenCredentials>` form of the `Google Oauth2`_ credentials for various Oauth2 services.
-    :rtype: :py:class:`AccessTokenCredentials <oauth2client.client.AccessTokenCredentials>`
+    :returns: a :py:class:`Credentials <google.oauth2.credentials.Credential>` form of the `Google Oauth2`_ credentials for various OAuth2 services.
+    :rtype: :py:class:`Credentials <google.oauth2.credentials.Credential>`
     
     .. seealso::
 
@@ -206,69 +208,80 @@ def oauthGetOauth2ClientGoogleCredentials( ):
     val = session.query( NPRStuffConfig ).filter( NPRStuffConfig.service == 'google' ).first( )
     if val is None: return None
     cred_data = val.data
-    credentials = oauth2client.client.OAuth2Credentials.from_json(
-        json.dumps( cred_data ) )
+    credentials = Credentials.from_authorized_user_info( cred_data )
     return credentials
+
+# def oauthGetOauth2ClientGoogleCredentials( ):
+#     """
+#     Gets the `Google Oauth2`_ credentials, stored in the SQLite3_ configuration database, in the form of a refreshed :py:class:`AccessTokenCredentials <oauth2client.client.AccessTokenCredentials>` object. This OAuth2 authentication method IS used for all the services accessed by NPRStuff_.
+
+#     :returns: a :py:class:`AccessTokenCredentials <oauth2client.client.AccessTokenCredentials>` form of the `Google Oauth2`_ credentials for various OAuth2_ services.
+#     :rtype: :py:class:`AccessTokenCredentials <oauth2client.client.AccessTokenCredentials>`
+    
+#     .. seealso::
+
+#        * :py:meth:`oauthCheckGoogleCredentials <nprstuff.email.oauthCheckGoogleCredentials>`.
+#        * :py:meth:`oauth_generate_google_permission_url <nprstuff.email.oauth_generate_google_permission_url>`.
+#        * :py:meth:`oauth_store_google_credentials <nprstuff.email.oauth_store_google_credentials>`.
+
+#     .. _NPRStuff: https://nprstuff.readthedocs.io
+#     """
+#     val = session.query( NPRStuffConfig ).filter( NPRStuffConfig.service == 'google' ).first( )
+#     if val is None: return None
+#     cred_data = val.data
+#     credentials = oauth2client.client.OAuth2Credentials.from_json(
+#         json.dumps( cred_data ) )
+#     return credentials
 
 def oauth_generate_google_permission_url( ):
     """
-    Generates a `Google OAuth2`_ web-based flow for all the Google services used in NPRStuff_. The authentication process that uses this flow is described in :ref:`this subsection <Summary of Setting Up Google Credentials>`. Here are the programmatic steps to finally generate an :py:class:`AccessTokenCredentials <oauth2client.client.AccessTokenCredentials>` object.
+    Generates a `Google OAuth2`_ web-based flow for all the Google services used in NPRStuff_. The authentication process that uses this flow is described in :ref:`this subsection <Summary of Setting Up Google Credentials>`. Here are the programmatic steps to finally generate an :py:class:`Credentials <google.oauth2.credentials.Credentials>` object.
     
-      1. Get the :py:class:`OAuth2WebServerFlow <oauth2client.client.OAuth2WebServerFlow>` and authentication URI.
+    1. Get the :py:class:`Flow <google_auth_oauthlib.flow.Flow>` and authentication URI.
 
-         .. code-block:: python
+       .. code-block:: python
 
-            flow, auth_uri = oauth_generate_google_permission_url( )
+          flow, auth_uri = oauth_generate_google_permission_url( )
 
-      2. Go to the URL, ``auth_uri``, in a browser, grant permissions, and copy the authorization code in the browser window. This authorization code is referred to as ``authorization_code``.
+    2. Go to the URL, ``auth_uri``, in a browser, grant permissions, and copy the authorization code in the browser window. This authorization code is referred to as ``authorization_code``.
 
-      3. Create the :py:class:`AccessTokenCredentials <oauth2client.client.AccessTokenCredentials>` using ``authorization_code``.
-    
-         .. code-block:: python
+    3. Create the :py:class:`Credentials <google.oauth2.credentials.Credential>` using ``authorization_code``.
 
-            credentials = flow.step2_exchange( authorization_code )
+       .. code-block:: python
 
-    :returns: a :py:class:`tuple` of two elements. The first element is an :py:class:`OAuth2WebServerFlow <oauth2client.client.OAuth2WebServerFlow>` web server flow object. The second element is the redirection URI :py:class:`string <str>` that redirects the user to begin the authorization flow.
+          credentials = flow.fetch_token( code = authorization_code )
+
+    :returns: a :py:class:`tuple` of two elements. The first element is a :py:class:`Flow <google_auth_oauthlib.flow.Flow>` web server flow object. The second element is the redirection URI :py:class:`string <str>` that redirects the user to begin the authorization flow.
     :rtype: tuple
     
     .. seealso::
 
        * :py:meth:`oauthCheckGoogleCredentials <nprstuff.email.oauthCheckGoogleCredentials>`.
-       * :py:meth:`oauthGetOauth2ClientGoogleCredentials <nprstuff.email.oauthGetOauth2ClientGoogleCredentials>`.
+       * :py:meth:`oauthGetGoogleCredentials <nprstuff.email.oauthGetGoogleCredentials>`.
        * :py:meth:`oauth_store_google_credentials <nprstuff.email.oauth_store_google_credentials>`.
 
     .. _Oauth2: https://oauth.net/2
     .. _`Google OAuth2`: https://developers.google.com/identity/protocols/oauth2
     """
-    
-    #flow = Flow.from_client_secrets_file(
-    #    os.path.join( mainDir, 'resources', 'client_secrets.json' ),
-    #    scopes = [ 'https://www.googleapis.com/auth/gmail.send',
-    #               'https://www.googleapis.com/auth/contacts.readonly',
-    #               'https://www.googleapis.com/auth/youtube.readonly',
-    #               'https://www.googleapis.com/auth/spreadsheets.readonly', # google spreadsheet scope
-    #               'https://www.googleapis.com/auth/musicmanager' ], # this is the gmusicapi one
-    #    redirect_uri = "urn:ietf:wg:oauth:2.0:oob" )
-    #auth_uri = flow.authorization_url( )
-    flow = oauth2client.client.flow_from_clientsecrets(
+    flow = Flow.from_client_secrets_file(
         os.path.join( resourceDir, 'client_secrets.json' ),
-        scope = [ 'https://www.googleapis.com/auth/gmail.send',
-                  'https://www.googleapis.com/auth/contacts.readonly' ],
-        # 'https://www.googleapis.com/auth/spreadsheets.readonly' ], # google spreadsheet scope readonly
+        scopes = [
+            'https://www.googleapis.com/auth/gmail.send',
+            'https://www.googleapis.com/auth/contacts.readonly' ],
         redirect_uri = "urn:ietf:wg:oauth:2.0:oob" )
-    auth_uri = flow.step1_get_authorize_url( )
+    auth_uri, _ = flow.authorization_url( )
     return flow, auth_uri
 
 def oauth_store_google_credentials( credentials ):
     """
-    Store the `Google OAuth2`_ credentials, in the form of a :py:class:`AccessTokenCredentials <oauth2client.client.AccessTokenCredentials>` object, into the SQLite3_ configuration database.
+    Store the form of a :py:class:`Credentials <google.oauth2.credentials.Credential>` object, as a JSON string, into the SQLite3_ configuration database.
     
-    :param credentials: the :py:class:`AccessTokenCredentials <oauth2client.client.AccessTokenCredentials>` object to store into the database.
+    :param credentials: the :py:class:`Credentials <google.oauth2.credentials.Credential>` object to store into the database.
 
     .. seealso::
 
        * :py:meth:`oauthCheckGoogleCredentials <nprstuff.email.oauthCheckGoogleCredentials>`.
-       * :py:meth:`oauthGetOauth2ClientGoogleCredentials <nprstuff.email.oauthGetOauth2ClientGoogleCredentials>`.
+       * :py:meth:`oauthGetGoogleCredentials <nprstuff.email.oauthGetGoogleCredentials>`.
        * :py:meth:`oauth_generate_google_permission_url <nprstuff.email.oauth_generate_google_permission_url>`.
     """
     val = session.query( NPRStuffConfig ).filter( NPRStuffConfig.service == 'google' ).first( )

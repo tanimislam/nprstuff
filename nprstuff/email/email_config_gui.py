@@ -6,7 +6,7 @@ from PyQt5.QtCore import *
 #
 from nprstuff import QDialogWithPrinting
 from nprstuff.email import (
-    oauthGetOauth2ClientGoogleCredentials, check_imgurl_credentials, get_imgurl_credentials, HtmlView,
+    oauthGetGoogleCredentials, check_imgurl_credentials, get_imgurl_credentials, HtmlView,
     oauth_store_google_credentials, oauth_generate_google_permission_url )
 from nprstuff.email.email_imgur import NPRStuffIMGClient
 
@@ -235,7 +235,7 @@ class NPRStuffConfigCredWidget( NPRStuffConfigWidget ):
                     mainALBUMNAME = imgur_credentials[ 'mainALBUMNAME' ]
                 return clientID, clientSECRET, clientREFRESHTOKEN, mainALBUMNAME
             except Exception as e:
-                print( str( e ) )
+                logging.info( str( e ) )
                 return '', '', '', ''
 
         clientID, clientSECRET, clientREFRESHTOKEN, mainALBUMNAME = _get_creds( )            
@@ -265,12 +265,13 @@ class NPRStuffConfigCredWidget( NPRStuffConfigWidget ):
         #
         ## now the GOOGLE
         try:
-            cred2 = oauthGetOauth2ClientGoogleCredentials( )
+            cred2 = oauthGetGoogleCredentials( )
             if cred2 is None:
                 raise ValueError( "ERROR, PROBLEMS WITH GOOGLE CREDENTIALS" )
             self.google_status.setText( 'WORKING' )
             self._emitWorkingStatusDict[ 'GOOGLE' ] = True
         except Exception as e:
+            logging.info( str( e ) )
             self.google_status.setText( 'NOT WORKING' )
             self._emitWorkingStatusDict[ 'GOOGLE' ] = False
 
@@ -595,12 +596,16 @@ class GoogleOauth2Dialog( QDialogWithPrinting ):
         self.authCredentials.setText( self.authCredentials.text( ).strip( ) )
         authorization_code = self.authCredentials.text( ).strip( )
         try:
-            credentials = self.flow.step2_exchange( authorization_code )
+            self.flow.fetch_token( code = authorization_code )
+            credentials = self.flow.credentials
+            logging.debug( 'credentials object: %s.' % credentials )
+            logging.debug( 'credentials object type: %s.' % type( credentials ) )
             oauth_store_google_credentials( credentials )
             self.authCredentials.setText( '' )
             self.accept( )
             self.emitState.emit( True )
-        except:
+        except Exception as e:
+            logging.info( str( e ) )
             self.statusLabel.setText( 'ERROR: INVALID AUTHORIZATION CODE.' )
             self.authCredentials.setText( '' )
             self.emitState.emit( False )

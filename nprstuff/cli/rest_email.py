@@ -12,7 +12,7 @@ from argparse import ArgumentParser
 #
 from nprstuff import resourceDir
 from nprstuff.email import (
-    oauthGetOauth2ClientGoogleCredentials, check_imgurl_credentials, get_imgurl_credentials )
+    oauthGetGoogleCredentials, check_imgurl_credentials, get_imgurl_credentials )
 from nprstuff.email.email_gui import NPRStuffReSTEmailGUI as RestEmail
 from nprstuff.email.email_config_gui import NPRStuffConfigCredWidget
 #
@@ -31,7 +31,7 @@ def check_valid_imgurl_credentials( verify = True ):
 
 def check_google_credentials( ):
     try:
-        cred2 = oauthGetOauth2ClientGoogleCredentials( )
+        cred2 = oauthGetGoogleCredentials( )
         if cred2 is None: return False
     except: return False
 
