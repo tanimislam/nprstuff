@@ -11,13 +11,14 @@ from nprstuff import session, NPRStuffConfig, resourceDir
 
 def md5sum( filename ):
     """
-    Taken from `This StackOverflow`_ on how to calculate the MD5 sum of a file.
+    Taken from `This StackOverflow`_ on how to calculate the MD5_ sum of a file.
     
     :param str filename: the candidate file's name to open.
     :returns: an MD5 hash of the file.
     :rtype: str
 
     .. _`This StackOverflow`: https://stackoverflow.com/a/7829658/3362358
+    .. _MD5: https://en.wikipedia.org/wiki/MD5
     """
     assert( os.path.isfile( filename ) )
     with open(filename, mode='rb') as f:
@@ -57,7 +58,7 @@ def check_valid_RST( myString ):
     :returns: ``True`` if valid, otherwise ``False``.
     :rtype: bool
 
-    .. seealso:: :py:meth:`convert_string_RST <howdy.core.convert_string_RST>`.
+    .. seealso:: :py:meth:`convert_string_RST <nprstuff.email.convert_string_RST>`.
 
     .. _reStructuredText: https://en.wikipedia.org/wiki/ReStructuredText
     """
@@ -74,7 +75,7 @@ def convert_string_RST( myString ):
     :returns: If the input string is valid reStructuredText_, returns the rich HTML as a :py:class:`string <str>`. Otherwise emits a :py:meth:`logging error message <logging.error>` and returns ``None``.
     :rtype: str
 
-    .. seealso:: :py:meth:`check_valid_RST <howdy.core.check_valid_RST>`.
+    .. seealso:: :py:meth:`check_valid_RST <nprstuff.email.check_valid_RST>`.
     """
     if not check_valid_RST( myString ):
         logging.error( "Error, could not convert %s into RST." % myString )
@@ -281,10 +282,14 @@ def oauth_store_google_credentials( credentials ):
     session.add( newval )
     session.commit( )
 
-
 class HtmlView( QWebEngineView ):
     """
-    A convenient PyQt5_ widget that displays rich and interactive HTML (HTML with CSS and Javascript). This extends :py:class:`QWebEngineView <PyQt5.QtWebEngineWidgets.QWebEngineView>`.
+    A convenient PyQt5_ widget that displays rich and interactive HTML (HTML with CSS and Javascript). This extends :py:class:`QWebEngineView <PyQt5.QtWebEngineWidgets.QWebEngineView>`. This defines new actions, with shortcuts, to move *forward* one page, *backward* one page, or *reset*.
+
+    :param parent: the controlling :py:class:`QWidgert <PyQt5.QtWidgets.QWidget>`, if any.
+    :param str htmlString: the input initial rich HTML.
+
+    :var str initHTMLString: this widget has the ability to *reset* to the initial HTML web page used to construct it. This attribute stores that rich HTML as a :py:class:`string <str>`.
     """
     def __init__( self, parent, htmlString = '' ):
         super( HtmlView, self ).__init__( parent )
@@ -312,12 +317,18 @@ class HtmlView( QWebEngineView ):
         self.addAction( forwardAction )
 
     def reset( self ):
+        """
+        Reverts to the initial website.
+        """
         self.setHtml( self.initHtmlString )
         
     def on_loadFinished( self ):
         self.initialized = True
 
     def waitUntilReady( self ):
+        """
+        A subordinate process that loads all website elements (CSS and Javascript) until done.
+        """
         if not self.initialized:
             loop = QEventLoop( )
             self.loadFinished.connect( loop.quit )

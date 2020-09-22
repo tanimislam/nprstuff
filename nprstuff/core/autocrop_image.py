@@ -46,6 +46,7 @@ def autocrop_image(inputfilename, outputfilename = None, color = 'white', newWid
     .. _JPEG: https://en.wikipedia.org/wiki/JPEG
     .. _TIFF: https://en.wikipedia.org/wiki/TIFF
     .. _Preview: https://en.wikipedia.org/wiki/Preview_(macOS)
+    .. _PDF: https://en.wikipedia.org/wiki/PDF
     
     .. seealso:: :py:meth:`autocrop_perproc <nprstuff.core.autocrop_image.autocrop_perproc>`
     """
@@ -124,23 +125,6 @@ def autocrop_image(inputfilename, outputfilename = None, color = 'white', newWid
 ## 1) all attributes and methods except for crop_pdf() are underscored
 ## 2) first search for "gs" executable. If there, then functionality can work
 ## 3) made a new method, crop_pdf_singlepage(), only for cropping SINGLE page (image) PDF files
-"""
-Pdfcrop
-=======
-
-Based on pdfcrop.pl_. Uses the BoundingBox [#]_
-
-Dependencies:
-  - PyPDF2_
-  - ghostscript_
-
-
-.. [#] http://commons.wikimedia.org/wiki/File:PDF_BOX_01.svg
-
-.. _PyPDF2: https://github.com/mstamy2/PyPDF2/
-.. _pdfcrop.pl: ftp://ftp.tex.ac.uk/tex-archive/support/pdfcrop/pdfcrop.pl
-
-"""
 
 _root_logger = logging.getLogger()
 _handler = logging.StreamHandler()
@@ -168,7 +152,7 @@ def _hiresbb(value):
 
 def get_boundingbox(pdfpath, hiresbb = False):
     """
-    Given a PDF_ file, returns its BoundingBox_. Requires working ghostscript_ (``gs`` executable) to calculate the bounding box.
+    Given a PDF_ file, returns its BoundingBox_. Requires working ghostscript_ (``gs`` executable) to calculate it.
     
     .. code-block:: python
 
@@ -181,9 +165,9 @@ def get_boundingbox(pdfpath, hiresbb = False):
     :rtype: list
     :raises IOError: if the ghostscript_ executable could noty be found.
 
-    
     .. _ghostscript: https://www.ghostscript.com
-    .. _BoundingBox: https://commons.wikimedia.org/wiki/File:PDF_BOX_01.svg
+    .. _BoundingBox: https://upload.wikimedia.org/wikipedia/commons/2/2a/PDF_BOX_01.svg
+    .. _pdfcrop.pl: https://github.com/ho-tex/pdfcrop
     """
     gs_exec = find_executable( 'gs' )
     if gs_exec is None:
@@ -204,18 +188,16 @@ def _make_pdf(i, fname, page):
         pdf_out.addPage(page)
         pdf_out.write(fout)
 
-def crop_pdf(inputfile, outputfile = None):
+def crop_pdf( inputfile, outputfile = None ):
     """
     Given a possible multi-page PDF_ file that consists of :math:`N \ge 1` pages, creates :math:`N` separate single-page autocropped PDF_ files for each page in the input PDF_ file. Given a file with name ``inputfile``, the collection of output files are named ``outputfile<idx>``, where ``<idx>`` is the page number. This uses :py:class:`PdfFileReader <PyPDF2.PdfFileReader>` to read in, and :py:class:`PdfFileWriter <PyPDF2.PdfFileWriter>` to write out, PDF_ files.
 
-    The Python functionality is a port of the `pdfcrop.pl`_ PERL script.
+    The Python functionality is a port of the `pdfcrop.pl`_ Perl script.
     
     :param str inputfile: the name of the input PDF_ file.
     :param str outputfile: optional argument, the prefix of the output PDF_ files. If ``None``, then the prefix is the part of ``inputfile`` with the ``.pdf`` suffix removed.
 
-    .. seealso:: :py:meth:`crop_pdf_singlepage <nprstuff.core.autocrop_image.crop_pdf_singlepage>`
-
-    .. _`pdfcrop.pl`: ftp://ftp.tex.ac.uk/tex-archive/support/pdfcrop/pdfcrop.pl
+    .. seealso:: :py:meth:`crop_pdf_singlepage <nprstuff.core.autocrop_image.crop_pdf_singlepage>`.
     """
     logger = logging.getLogger(__name__)
     bboxes = get_boundingbox(inputfile)
@@ -234,7 +216,7 @@ def crop_pdf(inputfile, outputfile = None):
             logger.debug('modified mediabox: %s, %s', page.mediaBox.lowerLeft, page.mediaBox.upperRight)
             _make_pdf(i, outputfile, page)
 
-def crop_pdf_singlepage(inputfile, outputfile = None ):
+def crop_pdf_singlepage( inputfile, outputfile = None ):
     """
     Given a *single-paged* PDF_ file, creates an autocropped output PDF_ file. This uses :py:class:`PdfFileReader <PyPDF2.PdfFileReader>` to read in, and :py:class:`PdfFileWriter <PyPDF2.PdfFileWriter>` to write out, PDF_ files.
     
@@ -242,8 +224,8 @@ def crop_pdf_singlepage(inputfile, outputfile = None ):
     
     :param str inputfile: the name of the input PDF_ file.
     :param str outputfile: optional argument, the name of the output PDF_ file. If ``None``, then the autocropped output PDF_ file replaces the input PDF_ file.
-    
-    .. _seealso:: :py:meth:`crop_pdf <nprstuff.core.autocrop_image.crop_pdf>`.
+
+    .. seealso:: :py:meth:`crop_pdf <nprstuff.core.autocrop_image.crop_pdf>`.
     """
     logger = _root_logger
     bboxes = get_boundingbox(inputfile)

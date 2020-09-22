@@ -37,6 +37,13 @@ autocrop_image module
 ------------------------------------
 This module provides low-level functionality that implements automatic cropping of lossy (PNG_, JPEG_, TIFF_) and PDF_ images.
 
+This PDF_ autocropping functionality is copied over from `this repo`_. That repository is based off `pdfcrop.pl`_ to calculate the BoundingBox_. This functionality requires a working ghostscript_ (using the ``gs`` executable) to calculate the bounding box, and the PyPDF2_ module to read and manipulate PDF_ files.
+
+.. image:: https://upload.wikimedia.org/wikipedia/commons/2/2a/PDF_BOX_01.svg
+   :width: 100%
+
+Three methods -- :py:meth:`get_boundingbox <nprstuff.core.autocrop_image.get_boundingbox>`, :py:meth:`crop_pdf <nprstuff.core.autocrop_image.crop_pdf>`, and  :py:meth:`crop_pdf_singlepage <nprstuff.core.autocrop_image.crop_pdf_singlepage>` -- are the higher level hooks to the PDF_ autocropping functionality.
+
 .. automodule:: nprstuff.core.autocrop_image
    :members:
 
@@ -103,3 +110,8 @@ These two modules provide the low level functionality to process and download `N
 .. _RealMedia: https://en.wikipedia.org/wiki/RealMedia
 .. _`logging cookbook`: https://docs.python.org/3/howto/logging-cookbook.html
 .. _QtSVG: https://doc.qt.io/qt-5/qtsvg-index.html
+.. _`this repo`: https://gist.github.com/jpscaletti/7321281
+.. _BoundingBox: https://upload.wikimedia.org/wikipedia/commons/2/2a/PDF_BOX_01.svg
+.. _ghostscript: https://www.ghostscript.com
+.. _pdfcrop.pl: https://github.com/ho-tex/pdfcrop
+.. _PyPDF2: https://mstamy2.github.io/PyPDF2
