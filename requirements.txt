@@ -1,5 +1,6 @@
 docutils
 feedparser
+oauth2client
 pyexiv2
 Pillow
 PyQt5
