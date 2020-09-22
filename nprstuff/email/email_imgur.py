@@ -385,11 +385,11 @@ class NPRStuffIMGClient( object ):
         :param image: the native Pillow PNG image object.
         :type image: :py:class:`PngImageFile <PIL.PngImagePlugin.PngImageFile>`
         """
-        buf = io.BytesIO( )
-        image.save( buf, format = 'PNG' )
-        b64string = base64.b64encode( buf.getvalue( ) )
-        imgMD5 = hashlib.md5( b64string ).hexdigest( )
-        return imgMD5
+        with io.BytesIO( ) as buf:
+            image.save( buf, format = 'PNG' )
+            b64string = base64.b64encode( buf.getvalue( ) )
+            imgMD5 = hashlib.md5( b64string ).hexdigest( )
+            return imgMD5
     
     def __init__( self, verify = True, data_imgurl = None ):
         time0 = time.time( )
@@ -401,12 +401,13 @@ class NPRStuffIMGClient( object ):
         clientID = data_imgurl[ 'clientID' ]
         clientSECRET = data_imgurl[ 'clientSECRET' ]
         clientREFRESHTOKEN = data_imgurl[ 'clientREFRESHTOKEN' ]
-        response = requests.post( 'https://api.imgur.com/oauth2/token',
-                                  data = {'client_id': clientID,
-                                          'client_secret': clientSECRET,
-                                          'grant_type': 'refresh_token',
-                                          'refresh_token': clientREFRESHTOKEN },
-                                  verify = self.verify )
+        response = requests.post(
+            'https://api.imgur.com/oauth2/token',
+            data = {'client_id': clientID,
+                    'client_secret': clientSECRET,
+                    'grant_type': 'refresh_token',
+                    'refresh_token': clientREFRESHTOKEN },
+            verify = self.verify )
         if response.status_code != 200:
             raise ValueError( "ERROR, COULD NOT GET ACCESS TOKEN." )
         logging.debug( 'was able to check is valid IMGUR access in %0.3f seconds.' % (
@@ -422,7 +423,7 @@ class NPRStuffIMGClient( object ):
         ## now first see if there are any albums
         response = requests.get( 'https://api.imgur.com/3/account/me/albums',
                                  headers = { 'Authorization' : 'Bearer %s' % self.access_token },
-                                 verify = self.verify )
+                                 verify = verify )
 
         #
         ## error state #1: cannot access my own albums
@@ -455,7 +456,7 @@ class NPRStuffIMGClient( object ):
                 clientID, clientSECRET, clientREFRESHTOKEN, 
                 mainALBUMID = self.albumID,
                 mainALBUMNAME = albumName,
-                verify = self.verify )
+                verify = verify )
         else:
             self.albumID = data_imgurl['mainALBUMID']
         #
@@ -510,7 +511,7 @@ class NPRStuffIMGClient( object ):
 
         * sets the new Imgur_ credentials using :py:meth:`store_imgur_credentials <nprstuff.email.store_imgurl_credentials>`.
 
-        * populates ``self.imghashes`` with all the images found in this library. Of course, if the album does not exist, then ``self.imghashes`` is an empty :py:class:`dict`.
+        * populates ``self.imghashes`` with all the images found in this library. If the album does not exist, then ``self.imghashes`` is an empty :py:class:`dict`.
         
         :param str new_album_name: the new name of the Imgur_ album to use for images.
         :raise ValueError: if images in the new album cannot be accessed.
@@ -768,10 +769,12 @@ class NPRStuffIMGClient( object ):
 
 class PNGPicLabel( QLabel ):
     """
-    This class that extends :py:class:`QLabel <PyQt5.QtWidgets.QLabel>` follows advice from `this StackOverflow article`_. 
+    This class that extends :py:class:`QLabel <PyQt5.QtWidgets.QLabel>` follows advice from `this StackOverflow article`_. This object also generates its own :py:class:`QPixMap <PyQT5.QtGui.QPixMap>` from the :py:class:`QImage <PyQt5.QtGui.QImage>` it keepts.
 
     :param img: the :py:class:`QImage <PyQt5.QtGui.QImage>` of the PNG_ image either loaded from a file or from Imgur_.
     :param parent: the parent :py:class:`QWidget <PyQt5.QtWidgets.QWidget>`, if defined, and for which *this* widget is a child.
+
+    :var img: the source :py:class:`QImage <PyQt5.QtGui.QImage>` used to regenerate its own background :py:class:`QPixMap <PyQT5.QtGui.QPixMap>`.
 
     .. _`this StackOverflow article`: https://stackoverflow.com/a/30553468/3362358
     """
@@ -785,10 +788,20 @@ class PNGPicLabel( QLabel ):
         return self.pixmap( ) is not None
 
     def heightForWidth( self, width ):
+        """
+        This method is slotted to one of the resize events, and is defined to fix the aspect ratio of the source :py:class:`QImage <PyQt5.QtGui.QImage>`
+        
+        :param int width: the width passed on a resizing event for this widget.
+        """
         if self.hasHeightForWidth( ):
             return int( width * ( self.pixmap( ).height( ) / self.pixmap( ).width( ) ) )
 
     def resizeEvent( self, evt ):
+        """
+        On resize, regenerates its own background :py:class:`QPixMap <PyQT5.QtGui.QPixMap>` with the same aspect ratio as its source :py:class:`QImage <PyQt5.QtGui.QImage>`, but with the widget's new width.
+        
+        :param evt: the resizing :py:class:`QEvent <PyQt5.QtCore.QEvent>`.
+        """
         wdth = self.size( ).width( )
         self.setPixmap( QPixmap.fromImage( self.img ).scaledToWidth( wdth ) )
 
