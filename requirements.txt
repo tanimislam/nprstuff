@@ -1,10 +1,12 @@
 google-api-python-client
+google-auth-httplib2
 docutils
 feedparser
 oauth2client
 pyexiv2
 Pillow
 PyQt5
+PyQtWebEngine
 PyPDF2
 webcolors
 python-magic
