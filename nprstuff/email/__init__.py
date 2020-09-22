@@ -1,6 +1,5 @@
 import oauth2client.client, json, requests, os, logging, hashlib
 from functools import partial
-from google.oauth2.credentials import Credentials
 from docutils.examples import html_parts
 from bs4 import BeautifulSoup
 from PyQt5.QtWidgets import *
