@@ -533,6 +533,13 @@ class EmailListDialog( QDialogWithPrinting ):
             if len( mytext ) == 0: mytext = '.'
             self.filterRegExp = QRegExp( mytext, Qt.CaseInsensitive, QRegExp.RegExp )
             self.emitFilterChanged.emit( )
+
+        def createCopyTextEmails( self ):
+            allText = '\n'.join(
+                map(lambda formaddr: '.. %s: %s' % ( self.key.upper( ), formaddr ),
+                    sorted( self.parent.allData[ self.key ] ) ) )
+            clipboard = QApplication.clipboard( )
+            clipboard.setText( allText )
             
     class EmailListTableView( QTableView ):
         def __init__( self, parent ):
@@ -580,6 +587,10 @@ class EmailListDialog( QDialogWithPrinting ):
                 removeAction = QAction( 'REMOVE EMAIL', menu )
                 removeAction.triggered.connect( removeEmail )
                 menu.addAction( removeAction )
+                #
+                copyEmailsAction = QAction( 'COPY %s EMAILS' % self.parent.emailListTableModel.key.upper( ), menu )
+                copyEmailsAction.triggered.connect( self.parent.emailListTableModel.createCopyTextEmails )
+                menu.addAction( copyEmailsAction )
             menu.popup( QCursor.pos( ) )
 
         def getValidIndexRow( self ):
@@ -633,14 +644,21 @@ class EmailListDialog( QDialogWithPrinting ):
                 self.emailLineEdit.setText( '' )
                 return False
             self.emailLineEdit.setText( checkEmail )
-            if checkEmail in self.parent.all_emails and replaceName:
-                checkName = self.parent.allData[ 'emails dict rev' ][ checkEmail ]
-                self.nameLineEdit.setText( checkName )
+            if not replaceName: return True
+            if self.parent.get_name_for_email( checkEmail ) is None: return True
+            #
+            checkName = self.parent.get_name_for_email( checkEmail )
+            self.nameLineEdit.setText( checkName )
             return True
 
-        def checkValidName( self ):
+        def checkValidName( self, replaceEmail = True ):
             checkName = self.nameLineEdit.text( ).strip( )
             self.nameLineEdit.setText( checkName )
+            if not replaceEmail: return True
+            if len( self.parent.get_emails_for_name( checkName ) ) != 1: return True
+            #
+            checkEmail = max( self.parent.get_emails_for_name( checkName ) )
+            self.emailLineEdit.setText( checkEmail )
             return True
 
         def addEmail( self ):
@@ -699,6 +717,15 @@ class EmailListDialog( QDialogWithPrinting ):
         self.hide( )
         logging.info( 'initialized %s EmailListDialog in %0.3f seconds.' % (
             self.key, time.time( ) - time0 ) )
+
+    def get_emails_for_name( self, name ):
+        if name not in self.all_names: return [ ]
+        return sorted( set(
+            self.allData[ 'emails dict' ][ name ] ) )
+
+    def get_name_for_email( self, email ):
+        if email not in self.all_emails: return None
+        return self.allData[ 'emails dict rev' ][ email ]
 
 class FromDialog( QDialogWithPrinting ):
 

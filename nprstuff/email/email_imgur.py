@@ -28,28 +28,55 @@ class PNGWidget( QDialogWithPrinting ):
             time.time( ) - time0 ) )
         #
         myLayout = QVBoxLayout( )
-        self.setLayout( myLayout )
+        self.setLayout( myLayout )        
         logging.debug( 'just about to initialize PNGPicTableModel in %0.3f seconds.' % (
             time.time( ) - time0 ) )
         self.pngPicTableModel = PNGPicTableModel( self )
         logging.debug( 'initialized PNGPicTableModel in %0.3f seconds.' % (
             time.time( ) - time0 ) )
+        #
+        topWidget = QWidget( self )
+        topLayout = QHBoxLayout( )
+        topWidget.setLayout( topLayout )
+        topLayout.addWidget( QLabel( 'FILTER' ) )
+        topLayout.addWidget( self.pngPicTableModel.filterOnNames )
+        myLayout.addWidget( topWidget )
+        #
         self.pngTV = PNGPicTableView( self )
         myLayout.addWidget( self.pngTV )
+        myLayout.addWidget( self.pngPicTableModel.showingPNGPicturesLabel )
         #
         # self.setFixedWidth( self.pngTV.sizeHint( ).width( ) )
+        self.resize( 550, 450 )
         self.setFixedHeight( 450 )
         self.hide( )
 
     def getAllDataAsDict( self ):
         return self.pngPicTableModel.getDataAsDict( )
 
+class PNGPicDelegate( QItemDelegate ):
+    def __init__( self ):
+        super( PNGPicDelegate, self ).__init__( )
+
+    def createEditor( self, parent, option, index ):
+        return QLineEdit( parent )
+
+    def setEditorData( self, editor, index ):
+        index_unproxy = index.model( ).mapToSource( index )
+        model = index.model( ).sourceModel( )
+        row = index_unproxy.row( )
+        col = index_unproxy.column ( )
+        #
+        name = model.pngPicObjects[ row ].actName
+        if col == 0: editor.setText( name.strip( ) )
+
 class PNGPicTableView( QTableView ):
     
     def __init__( self, parent ):
         super( PNGPicTableView, self ).__init__( parent )
-        self.parent = parent
-        self.setModel( parent.pngPicTableModel )
+        self.nIMGClient = parent.nIMGClient
+        self.setModel( PNGPicQSortFilterModel( parent.pngPicTableModel ) )
+        self.setItemDelegateForColumn( 0, PNGPicDelegate( ) )
         self.setShowGrid( True )
         self.verticalHeader( ).setSectionResizeMode( QHeaderView.Fixed )
         self.horizontalHeader( ).setSectionResizeMode( QHeaderView.Fixed )
@@ -57,10 +84,10 @@ class PNGPicTableView( QTableView ):
         self.setSelectionMode( QAbstractItemView.SingleSelection )
         self.setSortingEnabled( True )
         #
-        self.setColumnWidth( 0, 200 )
-        self.setColumnWidth( 1, 80 )
-        self.setColumnWidth( 2, 120 )
-        self.setFixedWidth( 410 )
+        self.setColumnWidth( 0, 270 )
+        self.setColumnWidth( 1, 55 )
+        self.setColumnWidth( 2, 85 )
+        #self.setFixedWidth( 410 )
         #
         toBotAction = QAction( self )
         toBotAction.setShortcut( 'End' )
@@ -84,7 +111,7 @@ class PNGPicTableView( QTableView ):
         ## now check to see if this image already in nIMGClient
         imgMD5 = NPRStuffIMGClient.get_image_md5(
             Image.open( pngFileName.strip( ) ) )
-        if imgMD5 in self.parent.nIMGClient.imghashes: return
+        if imgMD5 in self.nIMGClient.imghashes: return
         
         #
         ## now collisions in name are not allowed, just pick a random name
@@ -94,44 +121,32 @@ class PNGPicTableView( QTableView ):
                                     'figure-%s.png' % str( uuid.uuid4( ) ).split('-')[0] )
         else:
             actName = pngFileName.strip( )
-            
-        self.parent.pngPicTableModel.addPicObject(
+
+        self.model( ).sourceModel( ).addPicObject(
             PNGPicObject( {
                 'initialization' : 'FILE',
                 'filename' : pngFileName,
-                'actName' : actName }, self.parent.nIMGClient ) )
+                'actName' : actName }, self.nIMGClient ) )
     
     def copyImageURL( self ):
-        indices_valid = list(
-            filter(lambda index: index.column( ) == 0,
-                   self.selectionModel().selectedIndexes( ) ) )
-        if indices_valid is None or len( indices_valid ) == 0: return
-        row = max(map(lambda index: index.row( ), indices_valid ) )
-        self.parent.pngPicTableModel.copyURLAtRow( row )
+        indices_valid_row = self.getValidIndicesAtRow( )
+        if indices_valid_row is None or len( indices_valid_row ) == 0: return
+        self.model( ).sourceModel( ).copyURLAtRow( max( indices_valid_row ) )
         
     def info( self ):
-        indices_valid = list(
-            filter(lambda index: index.column( ) == 0,
-                   self.selectionModel().selectedIndexes( ) ) )
-        if indices_valid is None or len( indices_valid ) == 0: return
-        row = max(map(lambda index: index.row( ), indices_valid ) )
-        self.parent.pngPicTableModel.infoOnPicAtRow( row )
+        indices_valid_row = self.getValidIndicesAtRow( )
+        if indices_valid_row is None or len( indices_valid_row ) == 0: return
+        self.model( ).sourceModel( ).infoOnPicAtRow( max( indices_valid_row ) )
 
     def remove( self ):
-        indices_valid = list(
-            filter(lambda index: index.column( ) == 0,
-                   self.selectionModel().selectedIndexes( ) ) )
-        if indices_valid is None or len( indices_valid ) == 0: return
-        row = max(map(lambda index: index.row( ), indices_valid ) )
-        self.parent.pngPicTableModel.removePicObject( row )
+        indices_valid_row = self.getValidIndicesAtRow( )
+        if indices_valid_row is None or len( indices_valid_row ) == 0: return
+        self.model( ).sourceModel( ).removePicObject( max( indices_valid_row ) )
 
     def removeAndDelete( self ):
-        indices_valid = list(
-            filter(lambda index: index.column( ) == 0,
-                   self.selectionModel().selectedIndexes( ) ) )
-        if indices_valid is None or len( indices_valid ) == 0: return
-        row = max(map(lambda index: index.row( ), indices_valid ) )
-        self.parent.pngPicTableModel.removeAndDeletePicObject( row )
+        indices_valid_row = self.getValidIndicesAtRow( )
+        if indices_valid_row is None or len( indices_valid_row ) == 0: return
+        self.model( ).sourceModel( ).removeAndDeletePicObject( max( indices_valid_row ) )
         
     def contextMenuEvent( self, event ):
         menu = QMenu( self )
@@ -139,29 +154,71 @@ class PNGPicTableView( QTableView ):
         addAction.setShortcut( 'Ctrl+O' )
         addAction.triggered.connect( self.add )
         menu.addAction( addAction )
-        if len( self.parent.pngPicTableModel.pngPicObjects ) != 0:
+        if len( self.model( ).sourceModel( ).pngPicObjects ) != 0:
             copyURLAction = QAction( 'Copy Image URL', menu )
             copyURLAction.triggered.connect( self.copyImageURL )
             menu.addAction( copyURLAction )
             infoAction = QAction( 'Information', menu )
             infoAction.triggered.connect( self.info )
             menu.addAction( infoAction)
-            removeAction = QAction( 'Remove', menu )
-            removeAction.triggered.connect( self.remove )
-            menu.addAction( removeAction )
+            #removeAction = QAction( 'Remove', menu )
+            #removeAction.triggered.connect( self.remove )
+            #menu.addAction( removeAction )
             removeAndDeleteAction = QAction( 'Remove and Delete', menu )
             removeAndDeleteAction.triggered.connect( self.removeAndDelete )
             menu.addAction( removeAndDeleteAction )
         menu.popup( QCursor.pos( ) )
 
+    def getValidIndicesAtRow( self ):
+        try:
+            indices_valid_proxy = list(
+                filter(
+                    lambda index: index.column( ) == 0,
+                    self.selectionModel( ).selectedIndexes( ) ) )
+            indices_valid = list(map(
+                lambda index_proxy: self.model( ).mapToSource( index_proxy ),
+                indices_valid_proxy ) )
+            return list(map(lambda index: index.row( ), indices_valid ) )
+        except: return [ ]
+
+    def resizeEvent( self, evt ):
+        width = self.size( ).width( )
+        self.setColumnWidth( 0, int( 270.0 / 410 * width ) )
+        self.setColumnWidth( 1, int( 55.0 / 410 * width ) )
+        self.setColumnWidth( 2, int( 85.0 / 410 * width ) )
+
+class PNGPicQSortFilterModel( QSortFilterProxyModel ):
+    def __init__( self, model ):
+        super( PNGPicQSortFilterModel, self ).__init__( )
+        assert( isinstance( model, PNGPicTableModel ) )
+        self.setSourceModel( model )
+        model.emitFilterChanged.connect( self.invalidateFilter )
+
+    def filterAcceptsRow( self, rowNumber, sourceParent ):
+        return self.sourceModel( ).filterRow( rowNumber )
+
 class PNGPicTableModel( QAbstractTableModel ):
+    _columnNames = [ 'PNG PICTURE',  'WIDTH IN CM', 'UPLOADED' ]
+        
+    statusSignal = pyqtSignal( str )
+    emitFilterChanged = pyqtSignal( )
+    
     def __init__( self, parent ):
         super(PNGPicTableModel, self).__init__( parent )
         self.parent = parent
+        #
+        self.filterOnNames = QLineEdit( '' )
+        self.filterRegExp = QRegExp( '.', Qt.CaseInsensitive, QRegExp.RegExp )
+        self.filterOnNames.textChanged.connect( self.setFilterString )
+        self.showingPNGPicturesLabel = QLabel( '' )
+        self.emitFilterChanged.connect( self.showNumberPNGPictures )
+        #
         self.layoutAboutToBeChanged.emit( )
         self.pngPicObjects = sorted( PNGPicObject.createPNGPicObjects(
             parent.nIMGClient ), key = lambda pngpo: pngpo.imgDateTime )[::-1]
         self.layoutChanged.emit( )
+        #
+        self.showNumberPNGPictures( )
 
     def infoOnPicAtRow( self, actualRow ):
         currentRow = self.pngPicObjects[ actualRow ]
@@ -171,7 +228,7 @@ class PNGPicTableModel( QAbstractTableModel ):
         return len( self.pngPicObjects )
 
     def columnCount( self, parent ):
-        return 3
+        return len( self._columnNames )
 
     def flags( self, index ):
         col = index.column( )
@@ -182,9 +239,7 @@ class PNGPicTableModel( QAbstractTableModel ):
 
     def headerData( self, col, orientation, role ):
         if orientation == Qt.Horizontal and role == Qt.DisplayRole:
-            if col == 0: return 'PNG PICTURE'
-            elif col == 1: return 'WIDTH IN CM'
-            elif col == 2: return 'UPLOADED'
+            return self._columnNames[ col ]
         return None
 
     def setData( self, index, value, role ):
@@ -211,7 +266,7 @@ class PNGPicTableModel( QAbstractTableModel ):
                 return False
 
     def data( self, index, role ):
-        if not index.isValid( ): return ""
+        if not index.isValid( ): return None
         row = index.row( )
         col = index.column( )
         if role == Qt.BackgroundRole:
@@ -236,7 +291,7 @@ class PNGPicTableModel( QAbstractTableModel ):
                 key = lambda pngpo: -pngpo.originalWidth )
         elif col == 2: # date uploaded
             self.pngPicObjects.sort(
-                key = lambda pngpo: -datetime.datetime.timestamp( pngpo.imgDateTime ) )
+                key = lambda pngpo: pngpo.imgDateTime )
         self.layoutChanged.emit( )
 
     def copyURLAtRow( self, row ):
@@ -271,6 +326,22 @@ class PNGPicTableModel( QAbstractTableModel ):
             b64data, widthInCM, link = pngpo.b64String( )
             data[ pngpo.actName ] = ( b64data, widthInCM, link )
         return data
+
+    def filterRow( self, rowNumber ):
+        assert( rowNumber >= 0 )
+        assert( rowNumber < len( self.pngPicObjects ) )
+        name = self.pngPicObjects[ rowNumber ].actName
+        return self.filterRegExp.indexIn( name ) != -1
+
+    def setFilterString( self, newString ):
+        mytext = newString.strip( )
+        if len( mytext ) == 0: mytext = '.'
+        self.filterRegExp = QRegExp( mytext, Qt.CaseInsensitive, QRegExp.RegExp )
+        self.emitFilterChanged.emit( )
+
+    def showNumberPNGPictures( self ):
+        num_pics = len(list(filter(self.filterRow, range(len(self.pngPicObjects)))))
+        self.showingPNGPicturesLabel.setText( 'SHOWING %d PNG PICTURES' % num_pics )
 
 class NPRStuffIMGClient( object ):
     """
@@ -695,6 +766,32 @@ class NPRStuffIMGClient( object ):
         self.imghashes[ imgMD5 ][ 0 ] = new_name
         return True
 
+class PNGPicLabel( QLabel ):
+    """
+    This class that extends :py:class:`QLabel <PyQt5.QtWidgets.QLabel>` follows advice from `this StackOverflow article`_. 
+
+    :param img: the :py:class:`QImage <PyQt5.QtGui.QImage>` of the PNG_ image either loaded from a file or from Imgur_.
+    :param parent: the parent :py:class:`QWidget <PyQt5.QtWidgets.QWidget>`, if defined, and for which *this* widget is a child.
+
+    .. _`this StackOverflow article`: https://stackoverflow.com/a/30553468/3362358
+    """
+    def __init__( self, img, parent = None ):
+        super( PNGPicLabel, self ).__init__( parent )
+        self.img = img
+        self.setPixmap( QPixmap.fromImage( self.img ).scaledToWidth( 450 ) )
+        self.setScaledContents( True )
+
+    def hasHeightForWidth( self ):
+        return self.pixmap( ) is not None
+
+    def heightForWidth( self, width ):
+        if self.hasHeightForWidth( ):
+            return int( width * ( self.pixmap( ).height( ) / self.pixmap( ).width( ) ) )
+
+    def resizeEvent( self, evt ):
+        wdth = self.size( ).width( )
+        self.setPixmap( QPixmap.fromImage( self.img ).scaledToWidth( wdth ) )
+
 class PNGPicObject( object ):
     """
     This provides a GUI widget to the Imgur_ interface implemented in :py:class:`PlexIMGClient <nprstuff.email.email_imgur.NPRStuffIMGClient>`. Initializaton of the image can either upload this image to the Imgur_ account, or retrieve the image from the main Imgur_ album. This object can also launch a GUI dialog window through :py:meth:`getInfoGUI <nprstuff.email.PNGPicObject.getInfoGUI>`.
@@ -833,11 +930,9 @@ class PNGPicObject( object ):
             'UPLOADED AT: %s' %
             self.imgDateTime.strftime( '%B %d, %Y @ %I:%M:%S %p' ) ) )
         qpm = QPixmap.fromImage( self.img ).scaledToWidth( 450 )
-        qlabel = QLabel( )
-        qlabel.setPixmap( qpm )
+        qlabel = PNGPicLabel( self.img, qdl )
         myLayout.addWidget( qlabel )
-        qdl.setFixedWidth( 1.1 * qpm.width( ) )
-        qdl.setFixedHeight( qdl.sizeHint( ).height( ) )
+        qdl.resize( 1.1 * qpm.width( ), qdl.sizeHint( ).height( ) )
         result = qdl.exec_( )
 
     def b64String( self ):
