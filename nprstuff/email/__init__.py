@@ -190,12 +190,14 @@ def store_imgurl_credentials(
     session.commit( )
     return 'SUCCESS'
 
-def oauthGetGoogleCredentials( ):
+def oauthGetGoogleCredentials( verify = True ):
     """
     Gets the `Google Oauth2`_ credentials, stored in the SQLite3_ configuration database, in the form of a refreshed :py:class:`Credentials <google.oauth2.credentials.Credentials>` object. This OAuth2 authentication method is used for ALL the services accessed by NPRStuff_.
 
-    :returns: a :py:class:`Credentials <google.oauth2.credentials.Credential>` form of the `Google Oauth2`_ credentials for various OAuth2 services.
-    :rtype: :py:class:`Credentials <google.oauth2.credentials.Credential>`
+    :param bool verify: optional argument, whether to verify SSL connections. Default is ``True``.
+
+    :returns: a :py:class:`Credentials <google.oauth2.credentials.Credentials>` form of the `Google Oauth2`_ credentials for various OAuth2 services.
+    :rtype: :py:class:`Credentials <google.oauth2.credentials.Credentials>`
     
     .. seealso::
 
@@ -209,6 +211,9 @@ def oauthGetGoogleCredentials( ):
     if val is None: return None
     cred_data = val.data
     credentials = Credentials.from_authorized_user_info( cred_data )
+    s = requests.Session( )
+    s.verify = verify
+    credentials.refresh( Request( session = s ) )
     return credentials
 
 # def oauthGetOauth2ClientGoogleCredentials( ):
@@ -245,11 +250,12 @@ def oauth_generate_google_permission_url( ):
 
     2. Go to the URL, ``auth_uri``, in a browser, grant permissions, and copy the authorization code in the browser window. This authorization code is referred to as ``authorization_code``.
 
-    3. Create the :py:class:`Credentials <google.oauth2.credentials.Credential>` using ``authorization_code``.
+    3. Create the :py:class:`Credentials <google.oauth2.credentials.Credentials>` using ``authorization_code``.
 
        .. code-block:: python
 
-          credentials = flow.fetch_token( code = authorization_code )
+          fetch_token( code = authorization_code )
+          credentials = flow.credentials
 
     :returns: a :py:class:`tuple` of two elements. The first element is a :py:class:`Flow <google_auth_oauthlib.flow.Flow>` web server flow object. The second element is the redirection URI :py:class:`string <str>` that redirects the user to begin the authorization flow.
     :rtype: tuple
@@ -274,9 +280,9 @@ def oauth_generate_google_permission_url( ):
 
 def oauth_store_google_credentials( credentials ):
     """
-    Store the form of a :py:class:`Credentials <google.oauth2.credentials.Credential>` object, as a JSON string, into the SQLite3_ configuration database.
+    Store the form of a :py:class:`Credentials <google.oauth2.credentials.Credentials>` object, as a JSON string, into the SQLite3_ configuration database.
     
-    :param credentials: the :py:class:`Credentials <google.oauth2.credentials.Credential>` object to store into the database.
+    :param credentials: the :py:class:`Credentials <google.oauth2.credentials.Credentials>` object to store into the database.
 
     .. seealso::
 
