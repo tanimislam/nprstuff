@@ -7,7 +7,8 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 #
 from nprstuff import QDialogWithPrinting
-from nprstuff.email import HtmlView, check_valid_RST, convert_string_RST, format_size, md5sum
+from nprstuff.email import (
+    HtmlView, check_valid_RST, convert_string_RST, format_size, md5sum, oauthGetGoogleCredentials )
 from nprstuff.email.email_imgur import PNGWidget
 from nprstuff.email import email as nprstuff_email
 #from howdy.email.email import get_all_email_contacts_dict
@@ -872,7 +873,6 @@ class NPRStuffReSTEmailGUI( QDialogWithPrinting ):
     def __init__( self, verify = True ):
         super( NPRStuffReSTEmailGUI, self ).__init__( None, doQuit = True, isIsolated = True )
         self.setWindowTitle( 'RESTRUCTUREDTEXT EMAIL SENDER' )
-        self.verify = verify
         self.setStyleSheet("""
         QWidget {
         font-family: Consolas;
@@ -891,14 +891,20 @@ class NPRStuffReSTEmailGUI( QDialogWithPrinting ):
             'bcc' : [ ],
             'attachments' : [ ] }
         time0 = time.time( )
+        credentials = oauthGetGoogleCredentials( verify = verify )
+        self.email_service = nprstuff_email.get_email_service(
+            verify = verify, credentials = credentials )
+        self.people_service = nprstuff_email.get_people_service(
+            verify = verify, credentials = credentials )
         self.allData[ 'emails dict' ] = nprstuff_email.get_all_email_contacts_dict(
-            verify = self.verify, pagesize = 2000 )
+            people_service = self.people_service, pagesize = 2000 )
         if len( self.allData[ 'emails dict' ] ) == 0:
             raise ValueError("Error, could find no Google contacts! Exiting..." )
         emails_dict_rev = dict(chain.from_iterable(
-            map(lambda name: map(lambda email: ( email, name ), self.allData[ 'emails dict' ][ name ] ),
+            map(lambda name: map(lambda email: ( email, name ),
+                                 self.allData[ 'emails dict' ][ name ] ),
                 self.allData[ 'emails dict' ] ) ) )
-        self.allData[ 'emails dict rev' ] = emails_dict_rev                                                      
+        self.allData[ 'emails dict rev' ] = emails_dict_rev
         logging.info( 'took %0.3f seconds to find all %d Google contacts.' % (
             time.time( ) - time0, len( self.allData[ 'emails dict' ] ) ) )
         #
@@ -1073,7 +1079,7 @@ class NPRStuffReSTEmailGUI( QDialogWithPrinting ):
         num_emails = len( to_emails | cc_emails | bcc_emails )
         nprstuff_email.send_collective_email_full(
             htmlString, subject, fullEmailString,
-            to_emails, cc_emails, bcc_emails, verify = self.verify ,
+            to_emails, cc_emails, bcc_emails, email_service = self.email_service,
             attachments = attachments )
         logging.info( 'sent out %d TO/CC/BCC emails in %0.3f seconds.' % (
             num_emails, time.time( ) - time0 ) )

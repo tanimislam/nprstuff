@@ -1,8 +1,8 @@
-import os, sys, base64, numpy, glob, traceback
+import os, sys, base64, numpy, glob, traceback, httplib2
 import hashlib, requests, io, datetime, logging
 import pathos.multiprocessing as multiprocessing
-from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
+from google_auth_httplib2 import AuthorizedHttp
 #
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -22,12 +22,13 @@ def get_email_service( verify = True, credentials = None ):
     :returns: the :py:class:`Resource <googleapiclient.discovery.Resource>` representing the Google email service used to send and receive emails.
     :rtype: :py:class:`Resource <googleapiclient.discovery.Resource>`
     """
-    if credentials is None: credentials = oauthGetGoogleCredentials( )
+    if credentials is None: credentials = oauthGetGoogleCredentials( verify = verify )
     assert( credentials is not None )
-    s = requests.Session( )
-    s.verify = verify
-    credentials.refresh( Request( s ) )
-    email_service = build('gmail', 'v1', credentials = credentials, cache_discovery = False )
+    #
+    ## got this construction from https://github.com/googleapis/google-api-python-client/issues/808#issuecomment-648301090
+    http_auth = AuthorizedHttp( credentials, http = httplib2.Http(
+        disable_ssl_certificate_validation = not verify ) )
+    email_service = build('gmail', 'v1', http = http_auth, cache_discovery = False )
     return email_service
 
 def get_people_service( verify = True, credentials = None ):
@@ -39,12 +40,13 @@ def get_people_service( verify = True, credentials = None ):
     :returns: the :py:class:`Resource <googleapiclient.discovery.Resource>` representing the Google people service.
     :rtype: :py:class:`Resource <googleapiclient.discovery.Resource>`
     """
-    if credentials is None: credentials = oauthGetGoogleCredentials( )
+    if credentials is None: credentials = oauthGetGoogleCredentials( verify = verify )
     assert( credentials is not None )
-    s = requests.Session( )
-    s.verify = verify
-    credentials.refresh( Request( s ) )
-    people_service = build( 'people', 'v1', credentials = credentials, cache_discovery = False )
+    #
+    ## got this construction from https://github.com/googleapis/google-api-python-client/issues/808#issuecomment-648301090
+    http_auth = AuthorizedHttp( credentials, http = httplib2.Http(
+        disable_ssl_certificate_validation = not verify ) )
+    people_service = build( 'people', 'v1', http = http_auth, cache_discovery = False )
     return people_service
     
 def send_email_lowlevel( msg, email_service = None, verify = True ):
@@ -54,18 +56,20 @@ def send_email_lowlevel( msg, email_service = None, verify = True ):
     :param MIMEMultiPart msg: the :py:class:`MIMEMultiPart <email.mime.multipart.MIMEMultiPart>` email message to send. At a high level, this is an email with body, sender, recipients, and optional attachments.
     :param email_service: optional argument, the :py:class:`Resource <googleapiclient.discovery.Resource>` representing the Google email service used to send and receive emails. If ``None``, then generated here.
     :param bool verify: optional argument, whether to verify SSL connections. Default is ``True``.
+    :param str userId: The user ID to send email as, using the Google Mail API. Can be an `RFC 2047`_ sender's email with name, but default is ``me``. See `this page`_ for info on method signature.
 
     .. seealso:: :py:meth:`get_email_service <howdy.email.get_email_service>`.
 
     .. _`Google Contacts API`: https://developers.google.com/contacts/v3
     .. _Ubuntu: https://www.ubuntu.com
+    .. _`this page`: https://developers.google.com/gmail/api/reference/rest/v1/users.messages/send
     """
     
     data = { 'raw' : base64.urlsafe_b64encode(
         msg.as_bytes( ) ).decode('utf-8') }
     #
     if email_service is None: email_service = get_email_service( verify = verify )
-    try: message = email_service.users( ).messages( ).send( userId='me', body = data ).execute( )
+    try: message = email_service.users( ).messages( ).send( userId = 'me', body = data ).execute( )
     except Exception as e:
         traceback.print_exc(file=sys.stdout)
         logging.error('here is exception: %s' % str( e ) )
@@ -136,6 +140,7 @@ def send_collective_email_full(
     msg[ 'To' ] = ', '.join( sorted(to_emails ) )
     msg[ 'Cc' ] = ', '.join( sorted(cc_emails ) )
     msg[ 'Bcc'] = ', '.join( sorted(bcc_emails ) )
+    logging.info( 'from_email: %s' % msg[ 'From' ] )
     logging.info( 'to_emails: %s.' % msg['To'] )
     logging.info( 'cc_emails: %s.' % msg['Cc'] )
     logging.info('bcc_emails: %s.' % msg['Bcc'])

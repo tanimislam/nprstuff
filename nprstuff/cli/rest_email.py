@@ -29,9 +29,9 @@ def check_valid_imgurl_credentials( verify = True ):
             verify = verify )
     except: return False
 
-def check_google_credentials( ):
+def check_google_credentials( verify = True ):
     try:
-        cred2 = oauthGetGoogleCredentials( )
+        cred2 = oauthGetGoogleCredentials( verify = verify )
         if cred2 is None: return False
     except: return False
 
@@ -120,7 +120,7 @@ def main( ):
     #
     statuses = {
         'IMGURL' : check_valid_imgurl_credentials( args.do_verify ),
-        'GOOGLE' : check_google_credentials( ) }
+        'GOOGLE' : check_google_credentials( args.do_verify ) }
     nlfc = NowLaunchFromConfigClass( verify = args.do_verify )
     if NowLaunchFromConfigClass.numWorkings( statuses ) == 2 and args.do_nothing:
         nlfc.launchRestEmail( )

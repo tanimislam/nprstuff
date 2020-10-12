@@ -265,7 +265,7 @@ class NPRStuffConfigCredWidget( NPRStuffConfigWidget ):
         #
         ## now the GOOGLE
         try:
-            cred2 = oauthGetGoogleCredentials( )
+            cred2 = oauthGetGoogleCredentials( verify = self.verify )
             if cred2 is None:
                 raise ValueError( "ERROR, PROBLEMS WITH GOOGLE CREDENTIALS" )
             self.google_status.setText( 'WORKING' )
@@ -520,13 +520,14 @@ class ImgurOauth2Dialog( QDialogWithPrinting ):
 class GoogleOauth2Dialog( QDialogWithPrinting ):
     emitState = pyqtSignal( bool )
     
-    def __init__( self, parent ):
+    def __init__( self, parent, verify = True ):
         super( GoogleOauth2Dialog, self ).__init__(
             parent, isIsolated = True, doQuit = False )
         self.setModal( True )
         self.setWindowTitle( 'GOOGLE OAUTH2 CREDENTIALS' )
         mainLayout = QVBoxLayout( )
         self.setLayout( mainLayout )
+        self.verify = verify
         #
         mainLayout.addWidget( QLabel( 'TOOL TO STORE GOOGLE SETTINGS AS OAUTH2 TOKENS.' ) )
         #
@@ -596,7 +597,7 @@ class GoogleOauth2Dialog( QDialogWithPrinting ):
         self.authCredentials.setText( self.authCredentials.text( ).strip( ) )
         authorization_code = self.authCredentials.text( ).strip( )
         try:
-            self.flow.fetch_token( code = authorization_code )
+            self.flow.fetch_token( code = authorization_code, verify = self.verify )
             credentials = self.flow.credentials
             logging.debug( 'credentials object: %s.' % credentials )
             logging.debug( 'credentials object type: %s.' % type( credentials ) )

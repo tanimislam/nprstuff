@@ -1,6 +1,7 @@
 import json, requests, os, logging, hashlib
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import Flow
+from google.auth.transport.requests import Request
 from functools import partial
 from docutils.examples import html_parts
 from bs4 import BeautifulSoup
@@ -136,7 +137,7 @@ def check_imgurl_credentials(
        * :py:meth:`store_imgurl_credentials <nprstuff.email.store_imgurl_credentials>`.
     """
     response = requests.post(
-         'https://api.imgur.com/oauth2/token',
+        'https://api.imgur.com/oauth2/token',
         data = {'client_id': clientID,
                 'client_secret': clientSECRET,
                 'grant_type': 'refresh_token',
@@ -304,7 +305,7 @@ class HtmlView( QWebEngineView ):
     """
     A convenient PyQt5_ widget that displays rich and interactive HTML (HTML with CSS and Javascript). This extends :py:class:`QWebEngineView <PyQt5.QtWebEngineWidgets.QWebEngineView>`. This defines new actions, with shortcuts, to move *forward* one page, *backward* one page, or *reset*.
 
-    :param parent: the controlling :py:class:`QWidgert <PyQt5.QtWidgets.QWidget>`, if any.
+    :param parent: the controlling :py:class:`QWidget <PyQt5.QtWidgets.QWidget>`, if any.
     :param str htmlString: the input initial rich HTML.
 
     :var str initHTMLString: this widget has the ability to *reset* to the initial HTML web page used to construct it. This attribute stores that rich HTML as a :py:class:`string <str>`.
