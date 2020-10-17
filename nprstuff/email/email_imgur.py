@@ -115,8 +115,9 @@ class PNGPicTableView( QTableView ):
         
         #
         ## now collisions in name are not allowed, just pick a random name
+        model = self.model( ).sourceModel( )
         if os.path.basename( pngFileName.strip( ) ) in set(
-                map(lambda pngpo: pngpo.actName, self.parent.pngPicTableModel.pngPicObjects ) ):
+            map(lambda pngpo: pngpo.actName, model.pngPicObjects ) ):
             actName = os.path.join( os.path.dirname( pngFileName.strip( ) ),
                                     'figure-%s.png' % str( uuid.uuid4( ) ).split('-')[0] )
         else:
