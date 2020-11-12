@@ -62,18 +62,20 @@ class NowLaunchFromConfigClass( QApplication ):
             self.closeStuff( )
             evt.accept( )
     
-    def __init__( self, verify = True ):
+    def __init__( self, verify = True, use_mathjax = False ):
         super( QApplication, self ).__init__( [] )
         self.verify = verify
+        self.use_mathjax = use_mathjax
         self.setAttribute(Qt.AA_UseHighDpiPixmaps)
         icn = QIcon( os.path.join(
             resourceDir, 'icons', 'ReST-Email-Blue.svg' ) )
         self.setWindowIcon( icn )
         qtmodern.styles.dark( self )
         #
-        self.email_config_gui = NowLaunchFromConfigClass.NPRStuffConfigCredWidgetSub( verify = verify )
+        self.email_config_gui = NowLaunchFromConfigClass.NPRStuffConfigCredWidgetSub(
+            verify = verify )
         self.email_config_gui.workingStatusClosed.connect( self.nowLaunchFromConfig )
-        self.rest_email = RestEmail( verify = verify )
+        self.rest_email = RestEmail( verify = verify, use_mathjax = use_mathjax )
         self.email_config_gui.hide( )
         self.rest_email.hide( )
         #
@@ -109,6 +111,8 @@ def main( ):
                         default = False, help = 'Run info mode if chosen.')
     parser.add_argument('--noverify', dest='do_verify', action='store_false',
                         default = True, help = 'Do not verify SSL transactions if chosen.')
+    parser.add_argument('--mathjax', dest='use_mathjax', action='store_true',
+                        default = False, help = 'If chosen, then use MathJax in your email for LaTeX formulae.')
     parser.add_argument('--reconfig', dest='do_nothing', action='store_false', default = True,
                         help = ' '.join([
                             'If chosen, then reconfigure the Imgurl credentials (or main windows)',
@@ -121,7 +125,8 @@ def main( ):
     statuses = {
         'IMGURL' : check_valid_imgurl_credentials( args.do_verify ),
         'GOOGLE' : check_google_credentials( args.do_verify ) }
-    nlfc = NowLaunchFromConfigClass( verify = args.do_verify )
+    print( args.use_mathjax )
+    nlfc = NowLaunchFromConfigClass( verify = args.do_verify, use_mathjax = args.use_mathjax )
     if NowLaunchFromConfigClass.numWorkings( statuses ) == 2 and args.do_nothing:
         nlfc.launchRestEmail( )
     else: nlfc.launchConfig( )

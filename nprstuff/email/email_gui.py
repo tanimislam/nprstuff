@@ -870,7 +870,7 @@ class FromDialog( QDialogWithPrinting ):
 
 class NPRStuffReSTEmailGUI( QDialogWithPrinting ):
     
-    def __init__( self, verify = True ):
+    def __init__( self, verify = True, use_mathjax = False ):
         super( NPRStuffReSTEmailGUI, self ).__init__( None, doQuit = True, isIsolated = True )
         self.setWindowTitle( 'RESTRUCTUREDTEXT EMAIL SENDER' )
         self.setStyleSheet("""
@@ -891,6 +891,7 @@ class NPRStuffReSTEmailGUI( QDialogWithPrinting ):
             'bcc' : [ ],
             'attachments' : [ ] }
         time0 = time.time( )
+        self.use_mathjax = use_mathjax
         credentials = oauthGetGoogleCredentials( verify = verify )
         self.email_service = nprstuff_email.get_email_service(
             verify = verify, credentials = credentials )
@@ -1150,7 +1151,7 @@ class NPRStuffReSTEmailGUI( QDialogWithPrinting ):
         """
         self.statusLabel.setText( '' )
         myString = self.getTextOutput( )
-        if not check_valid_RST( myString ):
+        if not check_valid_RST( myString, use_mathjax = self.use_mathjax ):
             self.statusLabel.setText(
                 'COULD NOT CONVERT FROM RST TO HTML' )
             return
@@ -1163,7 +1164,7 @@ class NPRStuffReSTEmailGUI( QDialogWithPrinting ):
         resetButton = QPushButton( 'RESET' )
         #
         ##
-        qte = HtmlView( qdl, convert_string_RST( myString ) )
+        qte = HtmlView( qdl, convert_string_RST( myString, use_mathjax = self.use_mathjax ) )
         qdlLayout = QVBoxLayout( )
         qdl.setLayout( qdlLayout )
         qdlLayout.addWidget( qte )
