@@ -57,6 +57,7 @@ setup(
             "changedates = nprstuff.cli.changedates:_main",
             "display = nprstuff.cli.display:_main",
             "download_surahs = nprstuff.cli.download_surahs:_main",
+            "myrst2html = nprstuff.cli.myrst2html:_main",
             "imageFromURL = nprstuff.cli.imageFromURL:_main",
             "thisamericanlife = nprstuff.cli.thisamericanlife:_main",
             "thisamericanlife_crontab = nprstuff.core.thisamericanlife:thisamericanlife_crontab",
