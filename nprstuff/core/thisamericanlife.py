@@ -10,9 +10,9 @@ _default_inputdir = '/mnt/media/thisamericanlife'
 
 def get_americanlife_info(
     epno, throwException = True, extraStuff = None, verify = True, dump = False,
-    directory = '.' ):
+    directory = '.', hardURL = None ):
     """
-    Returns a tuple of title, year given the episode number for `This American Life`_.
+    Returns a tuple of title, year given the episode number for `This American Life`_. Sometimes `This American Life`_ is extremely uncooperative; for example, on 25 OCTOBER 2020, `This American Life`_ said episode 721 implied that it was "Small Worlds", but in actuality it was `The Moment After This Moment`_. An extra optional argument, ``hardURL``, is used to hard-encode this URL if the standard method of supplying an episode number through ``epno`` does not work.
     
     :param int epno: the episode number of `This American Life`_.
     :param bool throwException: optional argument, whether to throw a :py:class:`ValueError` exception if *cannot* find the title of this candidate `This American Life`_ episode. Default is ``True``.
@@ -20,18 +20,28 @@ def get_americanlife_info(
     :param bool verify: optional argument, whether to verify SSL connections. Default is ``True``.
     :param bool dump: optional argument, if ``True`` then instead of downloading first `This American Life`_, downloads the XML info as a file, named ``PRI.ThisAmericanLife.<NUM>.xml``. Default is ``False``.
     :param str directory: the directory into which to download a `This American Life`_ episode. Default is the current working directory.
+    :param str hardURL: optional argument, the hard-coded URL for a given TAL episode, if ``epno`` does not work.
     :returns: a :py:class:`tuple` of ``title``, ``year``, and ``html`` in which this episode was aired. Otherwise, if ``throwException`` is ``False`` and title is not found, returns ``None``. ``html`` is the :py:class:`BeautifulSoup <bs4.BeautifulSoup>` tree of the XML data for this `This American Life`_ episode.
     :rtype: tuple
 
     .. seealso:: :py:meth:`get_american_life <nprstuff.core.thisamericanlife.get_american_life>`.
+
+    .. _`The Moment After This Moment`: https://www.thisamericanlife.org/720/the-moment-after-this-moment
     """
     
     # the see if this episode of this american life exists...
-    if extraStuff is None:
-        resp = requests.get( 'https://www.thisamericanlife.org/radio-archives/episode/%d' % epno, verify = verify )
-    else:
-        resp = requests.get( 'https://www.thisamericanlife.org/radio-archives/episode/%d/%s' % ( epno, extraStuff ),
-                            verify = verify )
+    def _get_response( ):
+        if hardURL is not None:
+            logging.info('GOING TO %s.' % hardURL )
+            return requests.get( hardURL, verify = verify )
+        if extraStuff is None:
+            logging.info('GOING TO https://www.thisamericanlife.org/radio-archives/episode/%d.' % epno )
+            return requests.get( 'https://www.thisamericanlife.org/radio-archives/episode/%d' % epno, verify = verify )
+        logging.info('GOING TO https://www.thisamericanlife.org/radio-archives/episode/%d/%s.' % ( epno, extraStuff ) )
+        return requests.get(
+            'https://www.thisamericanlife.org/radio-archives/episode/%d/%s' % ( epno, extraStuff ),
+            verify = verify )
+    resp = _get_response( )
     if resp.status_code != 200:
         raise ValueError("Error, could not find This American Life episode %d, because could not open webpage." % epno)
     #
@@ -103,7 +113,7 @@ def get_TAL_URL( epno, verify = True ):
   
 def get_american_life(
     epno, directory = '/mnt/media/thisamericanlife', extraStuff = None, verify = True,
-    dump = False ):
+    dump = False, hardURL = None ):
     """
     Downloads an episode of `This American Life`_ into a given directory.
 
@@ -112,15 +122,17 @@ def get_american_life(
     :param str extraStuff: additional stuff to put into the candidate URL for `This American Life`_ episodes. Default is ``None``.
     :param bool verify: optional argument, whether to verify SSL connections. Default is ``True``.
     :param bool dump: optional argument, if ``True`` then instead of downloading first `This American Life`_, downloads the XML info as a file, named ``PRI.ThisAmericanLife.<NUM>.xml``. Default is ``False``.
+    :param str hardURL: optional argument, the hard-coded URL for a given TAL episode, if ``epno`` does not work.
     
     .. seealso:: :py:meth:`get_americanlife_info <nprstuff.core.thisamericanlife.get_americanlife_info>`.
     """
     
     try:
         tup = get_americanlife_info(epno, extraStuff = extraStuff, verify = verify, dump = dump,
-                                    directory = directory )
+                                    directory = directory, hardURL = hardURL )
         if dump: return
         title, year, html = tup
+        logging.info('TITLE = %s, YEAR = %d.' % ( title, year ) )
     except ValueError as e:
         print(e)
         print('Cannot find date and title for This American Life episode #%d.' % epno)

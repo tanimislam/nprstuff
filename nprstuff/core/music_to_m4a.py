@@ -145,7 +145,8 @@ def music_to_m4a(filename, tottracks = None,
     else:
         if 'trkn' not in mp4tags.tags.keys():
             mp4tags.tags['trkn'] = [ ( trackno, 0), ]
-            
+
+    fmttype = None
     if album_path is not None:
         file_data = _get_file_data( album_path )
         fmttype = _get_file_type( file_data)
