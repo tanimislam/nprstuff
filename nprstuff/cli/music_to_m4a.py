@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 from argparse import ArgumentParser
 from nprstuff.core.music_to_m4a import music_to_m4a, rename_m4a
 

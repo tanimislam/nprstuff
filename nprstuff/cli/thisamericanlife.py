@@ -22,9 +22,11 @@ def _main( ):
     parser.add_argument('--level', dest='level', action='store', type=str, default = 'NONE',
                         choices = sorted( logging_dict ),
                         help = 'choose the debug level for downloading NPR Fresh Air episodes or their XML representation of episode info. Can be one of %s. Default is NONE.' % sorted( logging_dict ) )
+    parser.add_argument('--hardURL', dest='hardURL', action='store', type=str,
+                        help = 'If you specify the episode AND IT DOESNT WORK, maybe giving the explicit URL will get you out of this jam.' )
     args = parser.parse_args( )
     logger.setLevel( logging_dict[ args.level ] )
     direct = os.path.expanduser( args.directory )
     get_american_life(
         args.episode, directory=direct, extraStuff = args.extraStuff,
-        verify = args.do_verify, dump = args.do_dump )
+        verify = args.do_verify, dump = args.do_dump, hardURL = args.hardURL )
