@@ -247,4 +247,5 @@ def crop_pdf_singlepage( inputfile, outputfile = None ):
     pdf_out = PdfFileWriter( )
     pdf_out.addPage( page )
     pdf_out.write( open(outputfile, 'wb') )
+    os.chmod( outputfile, 0o644 )
     if sameFile: os.rename( outputfile, inputfile )
