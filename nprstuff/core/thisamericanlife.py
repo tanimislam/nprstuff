@@ -188,6 +188,10 @@ def thisamericanlife_crontab( ):
     """
     This python module downloads a `This American Life`_ episode every weekend. It uses the Feedparser_'s functionality using its RSS feed.
 
+    .. warning::
+
+       UPDATE 10 JANUARY 2021, to determine the latest episode it looks at the `This American Life`_ website.
+
     .. _Feedparser: https://feedparser.readthedocs.io
     """
     def _get_track( filename ):
@@ -201,6 +205,19 @@ def thisamericanlife_crontab( ):
         title = entry['title']
         epno = int( title.split(':')[0].strip( ) )
         return epno
+
+    def _get_latest_epno_from_website( ):
+        response = requests.get( 'https://www.thisamericanlife.org' )
+        if response.status_code != 200:
+            return 'ERROR, could not reach www.thisamericanlife.org. Status code = %d.' % response.status_code, None
+        html = BeautifulSoup( response.content, 'lxml' )
+        episode_elements = list(filter(lambda elem: 'data-episode' in elem.attrs and 'class' in elem.attrs, html.find_all('a', { 'data-type' : 'episode' } ) ) )
+        if len( episode_elements ) == 0:
+            return 'Error, could not determine latest episode number from www.thisamericanlife.org.', None
+        epno_latest = int( episode_elements[ 0 ].attrs['data-episode'] )
+        return 'SUCCESS', epno_latest
+        
+    
     #
     ## get all track numbers, and find what's left
     episodes_here = set(filter(None, map(
@@ -209,16 +226,22 @@ def thisamericanlife_crontab( ):
     #episodes_left = set( range( 1, max( episodes_here ) + 1 ) ) - episodes_here
     
     #
-    ## from RSS feed, find latest episode number
-    d = feedparser.parse( 'http://feed.thisamericanlife.org/talpodcast' )
-    epno = _get_epno( max(d['entries'], key = lambda ent: _get_epno( ent ) ) )
-    if epno not in episodes_here:
-        time0 = time.time( )
-        logging.debug('downloading This American Life epsiode #%03d' % epno )
-        try:
-            thisamericanlife.get_american_life( epno )
-            logging.debug("finished downloading This American Life episode #%03d in %0.3f seconds" % (
-                epno, time.time( ) - time0 ) )
-        except:
-            print( "Could not download This American Life episode #%03d" % epno )
-    else: print( "Already have This American Life episode #%03d" % epno )
+    ## from website, find latest episode number  
+    #d = feedparser.parse( 'http://feed.thisamericanlife.org/talpodcast' )
+    #epno = _get_epno( max(d['entries'], key = lambda ent: _get_epno( ent ) ) )
+    status, epno = _get_latest_epno_from_website( )
+    if status != 'SUCCESS':
+        print( status )
+        return
+    if epno in episodes_here:
+        print( "Already have This American Life episode #%03d" % epno )
+        return
+    #
+    time0 = time.time( )
+    logging.debug('downloading This American Life episode #%03d' % epno )
+    try:
+        thisamericanlife.get_american_life( epno )
+        logging.debug("finished downloading This American Life episode #%03d in %0.3f seconds" % (
+            epno, time.time( ) - time0 ) )
+    except:
+        print( "Could not download This American Life episode #%03d" % epno )
