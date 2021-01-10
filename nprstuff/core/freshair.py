@@ -188,7 +188,7 @@ def _find_missing_dates(
         '%d.%m.%Y').date( ), days_remain ) )
     logging.info( 'list of input_tuples: %s.' % input_tuples )
     # pool = multiprocessing.Pool( processes = multiprocessing.cpu_count( ) )
-    with npr_utils.MyPool( processes = min( multiprocessing.cpu_count( ), len( input_tuples ) ) ) as pool:
+    with multiprocessing.ThreadPool( processes = min( multiprocessing.cpu_count( ), len( input_tuples ) ) ) as pool:
         successes = list(
             filter(None, pool.map( _process_freshair_perproc, input_tuples ) ) )
     print( 'successes (%d/%d): %s' % ( len(successes), len(input_tuples), successes ) )

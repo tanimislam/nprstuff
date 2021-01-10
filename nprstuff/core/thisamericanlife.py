@@ -3,10 +3,23 @@ import codecs, feedparser, glob, time, logging
 from mutagen.id3 import APIC, TDRC, TALB, COMM, TRCK, TPE2, TPE1, TIT2, TCON, ID3
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
+from pathos.multiprocessing import ThreadPool, cpu_count
 
 _talPICURL = 'https://upload.wikimedia.org/wikipedia/commons/8/8a/Thisamericanlife-wbez.png'
 _talurl = 'http://feed.thisamericanlife.org/talpodcast'
 _default_inputdir = '/mnt/media/thisamericanlife'
+
+def _get_tal_track( filename ):
+    assert( os.path.basename( filename ).endswith( '.mp3' ) ) 
+    mp3tags = ID3( filename ) 
+    if 'TRCK' not in mp3tags: return None 
+    return int( mp3tags['TRCK'].text[0] )
+
+def _get_tal_epno( entry ):
+    if 'title' not in entry: return -1
+    title = entry['title']
+    epno = int( title.split(':')[0].strip( ) )
+    return epno
 
 def get_americanlife_info(
     epno, throwException = True, extraStuff = None, verify = True, dump = False,
@@ -110,7 +123,26 @@ def get_TAL_URL( epno, verify = True ):
     podcast_URL_elem = podcast_URL_elems[ 0 ]
     podcast_URL = podcast_URL_elem['href']
     return podcast_URL
-  
+
+def get_american_life_remaining( ):
+    """
+    This downloads *remaining* `This American Life`_ episodes. To determine missing episodes, it first finds the maximum episode number that we have downloaded. It subtracts the episodes we have downloaded from the integer list that runs from 1 to the maximum episode number. Then it downloads these remaining episodes *in parallel*.
+    """
+    #
+    ## get all track numbers, and find what's left
+    episodes_here = set(filter(None, map(
+        _get_tal_track, glob.glob( os.path.join(
+        _default_inputdir, 'PRI.ThisAmericanLife.*.mp3' ) ) ) ) )
+    episodes_remaining = set(range(1, max( episodes_here ) + 1 ) ) - episodes_here
+    if len( episodes_remaining ) == 0:
+        return
+    with ThreadPool( processes = max(1, cpu_count( ) // 2 ) ) as pool:
+        time0 = time.time( )
+        _ = list( pool.map( get_american_life, episodes_remaining ) )
+        logging.debug( 'was able to download %d missing TAL episodes (%s) in %0.3f seconds.' % (
+            len( episodes_remaining ), ', '.join(sorted(episodes_remaining)),
+            time.time( ) - time0 ) )
+    
 def get_american_life(
     epno, directory = '/mnt/media/thisamericanlife', extraStuff = None, verify = True,
     dump = False, hardURL = None ):
@@ -186,25 +218,14 @@ def get_american_life(
     
 def thisamericanlife_crontab( ):
     """
-    This python module downloads a `This American Life`_ episode every weekend. It uses the Feedparser_'s functionality using its RSS feed.
+    Downloads a `This American Life`_ episode every weekend. It looks at the `This American Life`_ website to determine the latest episode.
 
     .. warning::
 
-       UPDATE 10 JANUARY 2021, to determine the latest episode it looks at the `This American Life`_ website.
+       UPDATE 10 JANUARY 2021, it *no longer* uses the Feedparser_'s functionality using its RSS feed.
 
     .. _Feedparser: https://feedparser.readthedocs.io
     """
-    def _get_track( filename ):
-        assert( os.path.basename( filename ).endswith( '.mp3' ) ) 
-        mp3tags = ID3( filename ) 
-        if 'TRCK' not in mp3tags: return None 
-        return int( mp3tags['TRCK'].text[0] )
-    #
-    def _get_epno( entry ):
-        if 'title' not in entry: return -1
-        title = entry['title']
-        epno = int( title.split(':')[0].strip( ) )
-        return epno
 
     def _get_latest_epno_from_website( ):
         response = requests.get( 'https://www.thisamericanlife.org' )
@@ -221,14 +242,14 @@ def thisamericanlife_crontab( ):
     #
     ## get all track numbers, and find what's left
     episodes_here = set(filter(None, map(
-        _get_track, glob.glob( os.path.join(
+        _get_tal_track, glob.glob( os.path.join(
         _default_inputdir, 'PRI.ThisAmericanLife.*mp3' ) ) ) ) )
     #episodes_left = set( range( 1, max( episodes_here ) + 1 ) ) - episodes_here
     
     #
     ## from website, find latest episode number  
     #d = feedparser.parse( 'http://feed.thisamericanlife.org/talpodcast' )
-    #epno = _get_epno( max(d['entries'], key = lambda ent: _get_epno( ent ) ) )
+    #epno = _get_tal_epno( max(d['entries'], key = lambda ent: _get_epno( ent ) ) )
     status, epno = _get_latest_epno_from_website( )
     if status != 'SUCCESS':
         print( status )

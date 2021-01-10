@@ -61,6 +61,7 @@ setup(
             "imageFromURL = nprstuff.cli.imageFromURL:_main",
             "thisamericanlife = nprstuff.cli.thisamericanlife:_main",
             "thisamericanlife_crontab = nprstuff.core.thisamericanlife:thisamericanlife_crontab",
+            "thisamericanlife_remaining = nprstuff.core.thisamericanlife:get_american_life_remaining",
             "waitwait = nprstuff.cli.waitwait:_waitwait",
             "waitwait_crontab = nprstuff.core.waitwait:waitwait_crontab",
             "waitwait_by_year = nprstuff.cli.waitwait:_waitwait_by_year",
