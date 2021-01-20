@@ -1,0 +1,300 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Nprstuff - Utility Functionality for NPR Programs and Other Things &mdash; nprstuff 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="1. Core Functionality" href="core_functionality.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="#" class="icon icon-home" alt="Documentation Home"> nprstuff
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="core_functionality.html">1. Core Functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="new_functionality.html">2. New Functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="graphics_functionality.html">3. Graphics Functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="oldstuff.html">4. Oldstuff</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core_api.html">5. Core APIs</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">nprstuff</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Nprstuff - Utility Functionality for NPR Programs and Other Things</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <a class="reference external image-reference" href="https://gitter.im/nprstuff-tanimislam/Lobby?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge&amp;utm_content=body_badge"><img alt="https://badges.gitter.im/nprstuff-tanimislam/Lobby.svg" src="https://badges.gitter.im/nprstuff-tanimislam/Lobby.svg" /></a>
+<a class="reference external image-reference" href="https://nprstuff.readthedocs.io/en/latest"><img alt="https://readthedocs.org/projects/nprstuff/badge/?version=latest" src="https://readthedocs.org/projects/nprstuff/badge/?version=latest" /></a>
+<div class="section" id="nprstuff-utility-functionality-for-npr-programs-and-other-things">
+<h1>Nprstuff - Utility Functionality for NPR Programs and Other Things<a class="headerlink" href="#nprstuff-utility-functionality-for-npr-programs-and-other-things" title="Permalink to this headline">¶</a></h1>
+<p>I like NPR, so I made some scripts to download my favorite programs from NPR. For now, I have something that downloads <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a>, <a class="reference external" href="https://waitwait.npr.org">Wait Wait…Don’t Tell
+Me</a>, and <a class="reference external" href="https://www.thisamericanlife.org">This American Life</a>. This package can probably, straightforwardly be extended to other NPR and PRI programs (although I haven’t yet done so).</p>
+<p>Although this project started off as a way to download these three programs, I have expanded it to include a grab bag of altogether different types of functionalities. What remains the same? This distribution consists mainly of executable Python scripts. Detailed documentation lives in the Sphinx repository</p>
+<p>NPR changed their API, which means that old functionality does not work. NPR has discontinued the <a class="reference external" href="https://www.npr.org/api/index">older NPR API</a>, that powers much of this repository’s functionality. I quote,</p>
+<blockquote>
+<div><p>This API is no longer publicly available for client integrations; for documentation of current API services, please visit the NPR Developer Center.</p>
+</div></blockquote>
+<p>Furthermore, the newer <a class="reference external" href="https://dev.npr.org/api">NPR One API</a> does not appear to have the necessary functionality to make my magic happen. The rest of the functionality lives in the</p>
+<p>The comprehensive documentation lives in HTML created with <a class="reference external" href="https://www.sphinx-doc.org/en/master/">Sphinx</a>, and now in the <a class="reference external" href="https://nprstuff.readthedocs.io">Read the Docs</a> page for this project. To generate the documentation, go to the <code class="docutils literal notranslate"><span class="pre">docs</span></code> subdirectory. In that directory, run <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">html</span></code>. Load <code class="docutils literal notranslate"><span class="pre">docs/build/html/index.html</span></code> into a browser to see the documentation.</p>
+<div class="section" id="installation-instructions">
+<h2>Installation Instructions<a class="headerlink" href="#installation-instructions" title="Permalink to this headline">¶</a></h2>
+<p>Installing this Python module is easy.</p>
+<ul>
+<li><p>If you want to get it from <a class="reference external" href="https://github.com">Github</a>, then run this command,</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">python3 -m pip install --user git+https://github.com/tanimislam/nprstuff#egginfo=nprstuff</span>
+</pre></div>
+</div>
+</li>
+<li><p>If you want to have more control, follow these several steps.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">git clone https://github.com/tanimislam/nprstuff</span>
+<span class="go">cd nprstuff</span>
+<span class="go">python3 -m pip install --user -e .</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<p>Both installation workflows install <code class="docutils literal notranslate"><span class="pre">nprstuff</span></code> into your user Python folder (<code class="docutils literal notranslate"><span class="pre">~/.local</span></code> by default on Linux and Mac OS X systems). Its executables are installed into <code class="docutils literal notranslate"><span class="pre">~/.local/bin</span></code> by default on Linux or Mac OS X systems.</p>
+</div>
+<div class="section" id="table-of-contents">
+<h2>Table of Contents<a class="headerlink" href="#table-of-contents" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="core_functionality.html">1. Core Functionality</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="core_functionality.html#configuration">1.1. CONFIGURATION</a></li>
+<li class="toctree-l2"><a class="reference internal" href="core_functionality.html#npr-freshair-label">1.2. NPR Fresh Air</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="core_functionality.html#freshair">1.2.1. <code class="docutils literal notranslate"><span class="pre">freshair</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="core_functionality.html#freshair-crontab">1.2.2. <code class="docutils literal notranslate"><span class="pre">freshair_crontab</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="core_functionality.html#freshair-fix-crontab">1.2.3. <code class="docutils literal notranslate"><span class="pre">freshair_fix_crontab</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="core_functionality.html#freshair-by-year">1.2.4. <code class="docutils literal notranslate"><span class="pre">freshair_by_year</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="core_functionality.html#npr-wait-wait">1.3. NPR Wait Wait</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="core_functionality.html#waitwait-label">1.3.1. <code class="docutils literal notranslate"><span class="pre">waitwait</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="core_functionality.html#waitwait-crontab">1.3.2. <code class="docutils literal notranslate"><span class="pre">waitwait_crontab</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="core_functionality.html#waitwait-by-year">1.3.3. <code class="docutils literal notranslate"><span class="pre">waitwait_by_year</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="core_functionality.html#this-american-life-label">1.4. This American Life</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="new_functionality.html">2. New Functionality</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="new_functionality.html#autocropimage">2.1. <code class="docutils literal notranslate"><span class="pre">autoCropImage</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="new_functionality.html#convertimage">2.2. <code class="docutils literal notranslate"><span class="pre">convertImage</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="new_functionality.html#changedates">2.3. <code class="docutils literal notranslate"><span class="pre">changedates</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="new_functionality.html#music-to-m4a">2.4. <code class="docutils literal notranslate"><span class="pre">music_to_m4a</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="new_functionality.html#download-surahs">2.5. <code class="docutils literal notranslate"><span class="pre">download_surahs</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="graphics_functionality.html">3. Graphics Functionality</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="graphics_functionality.html#gui-media-website-text-formatter">3.1. GUI: Media Website Text Formatter</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphics_functionality.html#gui2-readability-gui-front-end">3.2. GUI2: Readability GUI Front-End</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="oldstuff.html">4. Oldstuff</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core_api.html">5. Core APIs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="core_api.html#npr-utils-module">5.1. npr_utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="core_api.html#autocrop-image-module">5.2. autocrop_image module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="core_api.html#convert-image-module">5.3. convert_image module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="core_api.html#music-to-m4a-module">5.4. music_to_m4a module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="core_api.html#freshair-and-freshair-by-year-modules">5.5. freshair and freshair_by_year modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="core_api.html#thisamericanlife-module">5.6. thisamericanlife module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="core_api.html#waitwait-and-waitwait-realmedia-modules">5.7. waitwait and waitwait_realmedia modules</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="todo">
+<h2>TODO<a class="headerlink" href="#todo" title="Permalink to this headline">¶</a></h2>
+<p>Here are some things I would like to finish.</p>
+<ul class="simple">
+<li><p>Get the non-NPR-API functionality working as robustly as the old, working, discontinued NPR API stuff. ☑</p></li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="core_functionality.html" class="btn btn-neutral float-right" title="1. Core Functionality" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Tanim Islam
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

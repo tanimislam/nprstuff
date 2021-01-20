@@ -1,0 +1,295 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>2. New Functionality &mdash; nprstuff 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="3. Graphics Functionality" href="graphics_functionality.html" />
+    <link rel="prev" title="1. Core Functionality" href="core_functionality.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> nprstuff
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="core_functionality.html">1. Core Functionality</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">2. New Functionality</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#autocropimage">2.1. <code class="docutils literal notranslate"><span class="pre">autoCropImage</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#convertimage">2.2. <code class="docutils literal notranslate"><span class="pre">convertImage</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#changedates">2.3. <code class="docutils literal notranslate"><span class="pre">changedates</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#music-to-m4a">2.4. <code class="docutils literal notranslate"><span class="pre">music_to_m4a</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#download-surahs">2.5. <code class="docutils literal notranslate"><span class="pre">download_surahs</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="graphics_functionality.html">3. Graphics Functionality</a></li>
+<li class="toctree-l1"><a class="reference internal" href="oldstuff.html">4. Oldstuff</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core_api.html">5. Core APIs</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">nprstuff</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li><span class="section-number">2. </span>New Functionality</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/new_functionality.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="new-functionality">
+<span id="new-functionality-label"></span><h1><span class="section-number">2. </span>New Functionality<a class="headerlink" href="#new-functionality" title="Permalink to this headline">¶</a></h1>
+<p>This consists of newer functionality that does not download NPR episodes, nor can one straightforwardly modify them to download NPR episodes.</p>
+<div class="section" id="autocropimage">
+<span id="autocropimage-label"></span><h2><span class="section-number">2.1. </span><code class="docutils literal notranslate"><span class="pre">autoCropImage</span></code><a class="headerlink" href="#autocropimage" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">autoCropImage</span></code> automatically crops image (<a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a>, <a class="reference external" href="https://en.wikipedia.org/wiki/JPEG">JPEG</a>, <a class="reference external" href="https://en.wikipedia.org/wiki/TIFF">TIFF</a>, etc.) and <a class="reference external" href="https://en.wikipedia.org/wiki/PDF">PDF</a> files to remove whitespace. The default whitespace color is <code class="docutils literal notranslate"><span class="pre">white</span></code>. The help screen for this command line tool is here,</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">usage: autoCropImage [-h] --input INPUT [--output OUTPUT] [--color COLOR] [--trans] [--newwidth NEWWIDTH] [--show]</span>
+
+<span class="go">optional arguments:</span>
+<span class="go">  -h, --help           show this help message and exit</span>
+<span class="go">  --input INPUT        Name of the input file.</span>
+<span class="go">  --output OUTPUT      Name of the output file. Optional.</span>
+<span class="go">  --color COLOR        Name of the color over which to autocrop. Default is white.</span>
+<span class="go">  --trans              If chosen, also remove the transparency wrapping around the image. Works only for non-PDF images.</span>
+<span class="go">  --newwidth NEWWIDTH  New width of the image.</span>
+<span class="go">  --show               If chosen, then show the final image after cropped.</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="convertimage">
+<span id="convertimage-label"></span><h2><span class="section-number">2.2. </span><code class="docutils literal notranslate"><span class="pre">convertImage</span></code><a class="headerlink" href="#convertimage" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">convertImage</span></code> uses the <a class="reference external" href="https://cloudconvert.com/apiconsole">CloudConvert REST API</a> to <em>smoothly and without pain points</em> convert and resize <a class="reference external" href="https://en.wikipedia.org/wiki/Scalable_Vector_Graphics">SVG</a> images to <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> images of the same base name. The help screen for this command line tool is here,</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">Usage: convertImage [options]</span>
+
+<span class="go">Options:</span>
+<span class="go">  -h, --help           show this help message and exit</span>
+<span class="go">  --filename=FILENAME  Name of the input SVG file.</span>
+<span class="go">  --width=WIDTH        If defined, new width of the file. Optional</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="changedates">
+<span id="changedates-label"></span><h2><span class="section-number">2.3. </span><code class="docutils literal notranslate"><span class="pre">changedates</span></code><a class="headerlink" href="#changedates" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">changedates</span></code> changes the creation date of <a class="reference external" href="https://en.wikipedia.org/wiki/JPEG">JPEG</a> and <a class="reference external" href="https://en.wikipedia.org/wiki/QuickTime_File_Format">MOV</a> files, that my Canon digital camera creates, by up and down one year. I created this tool because my Canon digital camera does not set the right year on the creation date for image files it creates. This caused problems when I uploaded those images to <a class="reference external" href="https://picasaweb.google.com/home">Google Picasa</a> or <a class="reference external" href="https://plus.google.com/">Google+</a>. The help screen for this command line tool is here,</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">usage: changedates [-h] --dirname DIRNAME [--movs] [--minus]</span>
+
+<span class="go">optional arguments:</span>
+<span class="go">  -h, --help         show this help message and exit</span>
+<span class="go">  --dirname DIRNAME  Name of the directory to look for jpeg files.</span>
+<span class="go">  --movs             If chosen, process MOV files instead.</span>
+<span class="go">  --minus            If chosen, subtract a year from the files.</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="music-to-m4a">
+<span id="music-to-m4a-label"></span><h2><span class="section-number">2.4. </span><code class="docutils literal notranslate"><span class="pre">music_to_m4a</span></code><a class="headerlink" href="#music-to-m4a" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">music_to_m4a</span></code> can convert a single file from <a class="reference external" href="https://en.wikipedia.org/wiki/MP3">MP3</a>, <a class="reference external" href="https://en.wikipedia.org/wiki/Vorbis">OGG</a>, or <a class="reference external" href="https://en.wikipedia.org/wiki/FLAC">FLAC</a> format to <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">M4A</a> format while preserving music file metadata, and can optionally set the total number of album tracks and the album cover if the music files is in an album. It can also rename an m4a music file into the format “<em>artist name</em> - <em>song name</em>.m4a.” The help screen for this command line tool is here,</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">usage: music_to_m4a [-h] --inputfile INPUTFILE [--outfile OUTFILE] [--tottracks TOTTRACKS] [--albumloc ALBUMLOC] [--quiet] [--rename] [--notitle]</span>
+
+<span class="go">optional arguments:</span>
+<span class="go">  -h, --help            show this help message and exit</span>
+<span class="go">  --inputfile INPUTFILE</span>
+<span class="go">                        Name of the input audio file to convert.</span>
+<span class="go">  --outfile OUTFILE     Optional name of the output file.</span>
+<span class="go">  --tottracks TOTTRACKS</span>
+<span class="go">                        Optional total number of tracks in album of which song is a part.</span>
+<span class="go">  --albumloc ALBUMLOC   Optional path to location of the album cover image file. Must be in JPEG or PNG.</span>
+<span class="go">  --quiet               If chosen, then verbosely print output of processing.</span>
+<span class="go">  --rename              If chosen, simply rename the m4a file to the form &lt;artist&gt;.&lt;song title&gt;.m4a</span>
+<span class="go">  --notitle             If chosen, do not use titlecase functionality to fix the titles of songs.</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="download-surahs">
+<span id="download-surahs-label"></span><h2><span class="section-number">2.5. </span><code class="docutils literal notranslate"><span class="pre">download_surahs</span></code><a class="headerlink" href="#download-surahs" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">download_surahs</span></code> downloads recorded surahs (<a class="reference external" href="http://quranicaudio.com/quran/109">Abdur-Rashid Sufi</a>) to a directory of your choice. The help screen for this command line tool is here,</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">usage: download_surahs [-h] [--outdir OUTDIR]</span>
+
+<span class="go">optional arguments:</span>
+<span class="go">  -h, --help       show this help message and exit</span>
+<span class="go">  --outdir OUTDIR  Directory to put this data into. Default is /mnt/software/sources/pythonics/nprstuff.</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="graphics_functionality.html" class="btn btn-neutral float-right" title="3. Graphics Functionality" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="core_functionality.html" class="btn btn-neutral float-left" title="1. Core Functionality" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Tanim Islam
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

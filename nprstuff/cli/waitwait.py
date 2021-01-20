@@ -55,12 +55,9 @@ def _waitwait_by_year( ):
                         default = _default_inputdir, help = 'Directory into which ' +
                         'to store the NPR Wait Wait episodes. Default is %s.' %
                         _default_inputdir)
-    parser.add_argument('--quiet', dest='do_verbose', action='store_false', default = True,
-                        help = 'If chosen, do not print verbose output from the action of this ' +
-                        'script. By default this is false.')
     parser.add_argument('--level', dest='level', action='store', type=str, default = 'NONE',
                         choices = sorted( logging_dict ),
                         help = 'choose the debug level for downloading NPR Wait Wait episodes or their XML representation of episode info. Can be one of %s. Default is NONE.' % sorted( logging_dict ) )
     args = parser.parse_args( )
     logger.setLevel( logging_dict[ args.level ] )
-    get_all_waitwaits_year( args.year, args.inputdir, verbose = args.do_verbose )
+    get_all_waitwaits_year( args.year, args.inputdir )

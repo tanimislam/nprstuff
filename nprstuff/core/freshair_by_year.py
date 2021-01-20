@@ -6,7 +6,7 @@ from matplotlib.patches import Rectangle
 from mutagen.easymp4 import EasyMP4
 from distutils.spawn import find_executable
 from PyQt5.QtGui import QColor
-from nprstuff.core import freshair, npr_utils
+from nprstuff.core import freshair, npr_utils, autocrop_image
 
 _default_inputdir = '/mnt/media/freshair'
 _default_year = 2010
@@ -129,7 +129,7 @@ def find_underoccupied_dates( mon, year = _default_year ):
         day, mon, year, actdict ), actdict ) ) )
     return newdict
 
-def create_plot_year( year = _default_year ):
+def create_plot_year( year = _default_year, format = 'svgz', dirname = os.getcwd( ) ):
     """
     Creates an SVGZ (GZIP_ compressed SVG_) calendar plot that summarizes the `NPR Fresh Air`_ episodes in a specified year. It is easier to show the figure with description than to describe without a figure, here for 2020 (created on 13 AUGUST 2020).
 
@@ -140,12 +140,15 @@ def create_plot_year( year = _default_year ):
     The dark blue boxes are for ``existing`` episodes. The light yellow boxes are for episodes that have not yet aired. The light orange boxes are for ``missing`` episodes. And those boxes colored from light orange on the left to turquoise on the right are ``underoccupied`` episodes: I have downloaded them, but they are shorter than the published duration of that `NPR Fresh Air`_ episode.
 
     :param int year: the calendar year.
+    :param str format: the format of the figure to create. Must be one of ``svgz``, ``svg``, or ``png``. Default is ``svgz``.
+    :param str dirname: the directory into which to dump these figures. Default is current working directory.
 
     .. seealso:: :py:meth:`suncal <nprstuff.core.freshair_by_year.suncal>`.
 
     .. _SVG: https://en.wikipedia.org/wiki/Scalable_Vector_Graphics
     .. _GZIP: https://en.wikipedia.org/wiki/Gzip
     """
+    assert( format in ( 'svg', 'svgz', 'png' ) )
     # calendar.setfirstweekday( 6 )
     fig = Figure( figsize = ( 8 * 3, 6 * 5 ) )
     days = [ 'SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT' ]
@@ -291,4 +294,8 @@ def create_plot_year( year = _default_year ):
     list(map(lambda mon: _process_axes( fig.add_subplot(5, 3, mon + 3 ), mon, data ),
            range(1, 13) ) )
     canvas = FigureCanvasAgg(fig)
-    canvas.print_figure( 'freshair.%d.svgz' % year, bbox_inches = 'tight' )
+    canvas.print_figure( os.path.join( dirname, 'freshair.%d.%s' % ( year, format ) ), bbox_inches = 'tight' )
+    #
+    if format != 'png': return
+    autocrop_image.autocrop_image(
+        os.path.join( dirname, 'freshair.%d.png' % year ) )

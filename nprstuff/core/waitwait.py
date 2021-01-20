@@ -1,5 +1,6 @@
-import os, sys, glob, re, requests, multiprocessing, mutagen.mp4
+import os, sys, glob, re, requests, mutagen.mp4
 import subprocess, logging, datetime, time, titlecase, tempfile, shutil
+import pathos.multiprocessing as multiprocessing
 from dateutil.relativedelta import relativedelta
 from urllib.parse import urljoin, urlsplit
 from bs4 import BeautifulSoup
@@ -73,8 +74,8 @@ def get_waitwait_valid_dates_remaining_tuples(yearnum, inputdir):
                                  date_s in saturdays_left ], key = lambda tup: tup[0] )
     return order_dates_remain
 
-def _process_waitwaits_by_year_tuple(input_tuple):
-    outputdir, totnum, verbose, datetimes_order_tuples = input_tuple
+def _process_waitwaits_by_year_tuple( input_tuple ):
+    outputdir, totnum, datetimes_order_tuples = input_tuple
     ww_image = get_waitwait_image()
     driver = npr_utils.get_chrome_driver( )
     for date_s, order in datetimes_order_tuples:
@@ -89,27 +90,25 @@ def _process_waitwaits_by_year_tuple(input_tuple):
             print('Could not create Wait Wait episode for date %s for some reason.' % (
                 npr_utils.get_datestring( date_s ) ) )
 
-def get_all_waitwaits_year( yearnum, inputdir, verbose = True):
+def get_all_waitwaits_year( yearnum, inputdir ):
     """
     Looks for missing `NPR Wait Wait <waitwait_>`_ episodes in a given year, then downloads them.
 
     :param int yearnum: the year for which to search for missing `NPR Wait Wait <waitwait_>`_ episodes.
     :param str inputdir: the directory into which the `NPR Wait Wait <waitwait_>`_ episodes are downloaded.
-    :param bool verbose: optional argument, if ``True`` then print out lots of progress statements.
     """
     order_dates_remain = get_waitwait_valid_dates_remaining_tuples( yearnum, inputdir )
     if len( order_dates_remain ) == 0: return
     totnum = order_dates_remain[0][1]
     nprocs = multiprocessing.cpu_count()
-    input_tuples = [ ( inputdir, totnum, verbose, [
+    input_tuples = [ ( inputdir, totnum, [
         ( date_s, order) for ( order, totnum, date_s ) in
         order_dates_remain if ( order - 1 ) % nprocs == procno ] ) for
                     procno in range( nprocs ) ]
     time0 = time.time()
-    pool = npr_utils.MyPool(processes = nprocs )
-    list( pool.map(_process_waitwaits_by_year_tuple, input_tuples) )
-    if verbose:
-        print('processed all Wait Wait downloads for %04d in %0.3f seconds.' % ( yearnum, time.time() - time0 ) )
+    with multiprocessing.ThreadPool( processes = nprocs ) as pool:
+        _ = list( pool.map(_process_waitwaits_by_year_tuple, input_tuples) )
+    logging.info('processed all Wait Wait downloads for %04d in %0.3f seconds.' % ( yearnum, time.time() - time0 ) )
 
 def _get_mp3_chapter_tuple_sorted( html, verify, npr_api_key ):
   story_elems = html.find_all('story')
