@@ -91,3 +91,20 @@ This consists of newer functionality that does not download NPR episodes, nor ca
    optional arguments:
      -h, --help       show this help message and exit
      --outdir OUTDIR  Directory to put this data into. Default is /mnt/software/sources/pythonics/nprstuff.
+
+``myrst2html``
+=================
+``myrst2html`` acts *almost* like rst2html_ in default mode, except instead of using (for LaTeX math formulae) the ``math.css`` default it uses MathJax_ with the correct CDN_, which in this case is https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML. I borrow shamelessly from `this GitHub gist`_ with some slight modifications.
+
+One uses it *just* like default rst2html_,
+
+.. code-block:: console
+
+   myrst2html filename.rst > filename.html
+
+This generates the HTML file, ``filename.html``, from the RST markup file, ``filename.rst``, but now with MathJax_.
+   
+.. _rst2html: https://manpages.debian.org/testing/docutils-common/rst2html.1.en.html
+.. _MathJax: https://www.mathjax.org/
+.. _CDN: https://en.wikipedia.org/wiki/Content_delivery_network
+.. _`this GitHub gist`: https://gist.github.com/Matherunner/c0397ae11cc72f2f35ae

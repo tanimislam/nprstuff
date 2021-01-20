@@ -11,7 +11,9 @@ Table of Contents
    new_functionality
    graphics_functionality
    oldstuff
+   top_level_api
    core_api
+   email_api
 
 TODO
 ^^^^^
