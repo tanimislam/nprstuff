@@ -1,8 +1,8 @@
 .. image:: https://badges.gitter.im/nprstuff-tanimislam/Lobby.svg
    :target: https://gitter.im/nprstuff-tanimislam/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=body_badge
 
-.. image:: https://readthedocs.org/projects/nprstuff/badge/?version=latest
-   :target: https://nprstuff.readthedocs.io/en/latest
+.. image: https://readthedocs.org/projects/nprstuff/badge/?version=latest
+..   :target: https://nprstuff.readthedocs.io/en/latest
 
 ###################################################################
 Nprstuff - Utility Functionality for NPR Programs and Other Things
@@ -18,11 +18,10 @@ NPR changed their API, which means that old functionality does not work. NPR has
 
 Furthermore, the newer `NPR One API`_ does not appear to have the necessary functionality to make my magic happen. The rest of the functionality lives in the
 
-The comprehensive documentation lives in HTML created with `Sphinx <https://www.sphinx-doc.org/en/master/>`_, and now in the `Read the Docs <nprstuff_>`_ page for this project. To generate the documentation, go to the ``docs`` subdirectory. In that directory, run ``make html``. Load ``docs/build/html/index.html`` into a browser to see the documentation.
+The comprehensive documentation lives in HTML created with `Sphinx <https://www.sphinx-doc.org/en/master/>`_, and now in the `NPRStuff Github Page <nprstuff_>`_ for this project. To generate the documentation, go to the ``docs`` subdirectory. In that directory, run ``make html``. Load ``docs/build/html/index.html`` into a browser to see the documentation.
 
 Installation Instructions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
-
 Installing this Python module is easy.
 
 * If you want to get it from Github_, then run this command,
@@ -49,7 +48,7 @@ Both installation workflows install ``nprstuff`` into your user Python folder (`
 .. _HandBrakeCLI: https://handbrake.fr
 .. _`older NPR API`: https://www.npr.org/api/index
 .. _`NPR One API`: https://dev.npr.org/api
-.. _nprstuff: https://nprstuff.readthedocs.io
+.. _nprstuff: https://tanimislam.github.io/nprstuff
 .. _M4A: https://en.wikipedia.org/wiki/MPEG-4_Part_14
 .. _MP3: https://en.wikipedia.org/wiki/MP3
 .. _RealMedia: https://en.wikipedia.org/wiki/RealMedia
