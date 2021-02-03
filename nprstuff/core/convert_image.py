@@ -49,7 +49,7 @@ def make_square_mp4video( input_mp4_file, output_mp4_file ):
     .. _MP4: https://en.wikipedia.org/wiki/MPEG-4_Part_14
     .. _Instagram: https://www.instagram.com
     .. _padding_movie: https://superuser.com/questions/1212106/add-border-to-video-ffmpeg
-    .. _ffprobe_json: https://tanimislamblog.wordpress.com/2018/09/12/ffprobe-to-get-output-in-json-format
+    .. _ffprobe_json: https://tanimislam.github.io/blog/ffprobe-to-get-output-in-json-format.html
     """
     from distutils.spawn import find_executable
     import shutil
