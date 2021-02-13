@@ -61,7 +61,10 @@ You can generate :download:`cumulative_plot_emission_cropped.pdf <images/cumulat
 
 ``convertImage``
 ================
-``convertImage`` uses the `CloudConvert REST API`_ to *smoothly and without pain points* convert and resize SVG_ images to PNG_ images of the same base name. The help screen for this command line tool is here,
+*Quite a long time ago*, ``convertImage`` used the `CloudConvert REST API`_ to *smoothly and without pain points* convert and resize SVG_ images to PNG_ images of the same base name. And no, I'm not going to `git bisect`_ my way to the commit when that last happened.
+
+
+The help screen for this command line tool is here,
 
 .. code-block:: console
 
