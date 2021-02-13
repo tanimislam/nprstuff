@@ -42,6 +42,12 @@ def _main( ):
     parser_movie.add_argument(
         '-f', '--filename', dest='parser_movie_filename', type=str, action='store', metavar = 'filename',
         help = 'Name of the input video (MP4) file.', required = True )
+    parser_movie.add_argument(
+        '-s', '--scale', dest='parser_movie_scale', type=float, action='store', metavar='scale', default = 1.0,
+        help = 'Multiply the width and height of the input MP4 file into the output GIF. Default is 1.0 (GIF file has same dimensions as input MP4 file). Must be greater than 0.')
+    parser_movie.add_argument(
+        '-d', '--dirname', dest='parser_movie_dirname', type=str, action='store',
+        help = 'Optional argument. If defined, the directory into which to store the file.' )
     #
     ## animated gif from youtube video
     parser_youtube.add_argument(
@@ -87,7 +93,18 @@ def _main( ):
     #
     ## movie
     if args.choose_option == 'movie':
-        img = convert_image.mp4togif( args.parser_movie_filename )
+        assert( os.path.isfile( args.parser_movie_filename ) )
+        dirname = os.path.dirname( os.path.dirname( args.parser_movie_filename ) )
+        basname = os.path.basename( os.path.basename( args.parser_movie_filename ) )
+        if args.parser_movie_dirname is not None:
+            assert( os.path.isdir( args.parser_movie_dirname ) )
+            dirname = args.parser_movie_dirname
+        gif_file = os.path.join( dirname, basname.replace( '.mp4', '.gif' ) )
+        assert( args.parser_movie_scale > 0 )
+        img = convert_image.mp4togif(
+            args.parser_movie_filename,
+            gif_file = gif_file,
+            scale = args.parser_movie_scale )
         return
     #
     ## make square movie

@@ -194,27 +194,37 @@ def mp4togif( input_mp4_file, gif_file = None, duration = None, scale = 1.0 ):
     if gif_file is None: gif_file = input_mp4_file.replace('.mp4', '.gif' )
     else: assert( os.path.basename( gif_file ).endswith( '.gif' ) )
     palettefile = '%s.png' % str( uuid.uuid4( ) )
-
     #
     ## step #0: first scale the image if not X1
+    newmp4file = input_mp4_file
     if scale != 1.0:
         newmp4file = '%s.mp4' % str( uuid.uuid4( ) )
+        #
+        ## motherfucker
+        ## thought experiment: you want to scale a (divisible-by-two) MP4 file by some multiplier
+        ## the OUTPUT file itself must have width AND height divisible by two
+        ## the corporate knowledge is embedded in 'scale=ceil(iw*%0.2f)*2:ceil(ih*%0.2f)*2' % ( scale * 0.5, scale * 0.5 )
+        ## intent of that video filter: scale width and height by HALF of scale, round-up width + height, multiple by 2.
+        ## by definition this will create a final (scaled) width and height that are divisible by two
+        ## solution to impossib-error: https://stackoverflow.com/questions/20847674/ffmpeg-libx264-height-not-divisible-by-2
+        ## motherfucker
         cmd = [
             ffmpeg_exec, '-y', '-v', 'warning', '-i', input_mp4_file,
-            '-vf', 'scale=iw*%0.1f:ih*%0.1f' % ( scale, scale ),
+            '-vf', 'scale=ceil(iw*%0.2f)*2:ceil(ih*%0.2f)*2' % ( scale * 0.5, scale * 0.5 ),
             newmp4file ]
-        proc = subprocess.Popen(cmd, stdout = subprocess.PIPE, stderr = subprocess.STDOUT )
-        stdout_val, stderr_val = proc.communicate( )
-        os.rename( newmp4file, input_mp4_file )
+        logging.debug('COMMAND TO SCALE = %s.' % ' '.join( cmd ) )
+        stdout_val = subprocess.check_output(
+            cmd, stderr = subprocess.STDOUT )
+        logging.debug( 'OUTPUT FFMPEG SCALE = %s.' % stdout_val )
     
     #
     ## get info JSON to get width, fps
-    proc = subprocess.Popen(
+    stdout_val = subprocess.check_output(
         [ ffprobe_exec, '-v', 'quiet', '-show_streams',
-         '-show_format', '-print_format', 'json', input_mp4_file ],
-        stdout = subprocess.PIPE, stderr = subprocess.STDOUT )
-    stdout_val, stderr_val = proc.communicate( )
+         '-show_format', '-print_format', 'json', newmp4file ],
+        stderr = subprocess.STDOUT )
     mp4file_info = json.loads( stdout_val )
+    logging.debug( 'mp4file_info = %s.' % mp4file_info )
     # from dictionary, get width
     width_of_mp4 = int( mp4file_info[ 'streams' ][ 0 ][ 'width' ] )
     fps_string = mp4file_info[ 'streams' ][ 0 ][ 'avg_frame_rate' ]
@@ -228,7 +238,7 @@ def mp4togif( input_mp4_file, gif_file = None, duration = None, scale = 1.0 ):
     if duration is not None: args_mov_before = [ '-t', '%0.3f' % duration ]
     cmd = [
         ffmpeg_exec, '-y', '-v', 'warning', ] + args_mov_before + [
-            '-i', input_mp4_file,
+            '-i', newmp4file,
             '-vf', 'fps=%d,scale=%d:-1:flags=lanczos,palettegen' % ( fps, width_of_mp4 ),
             palettefile ]
     proc = subprocess.Popen(cmd, stdout = subprocess.PIPE, stderr = subprocess.STDOUT )
@@ -238,15 +248,19 @@ def mp4togif( input_mp4_file, gif_file = None, duration = None, scale = 1.0 ):
     ## step #2: take palette file, MP4 file, create animated GIF
     cmd = [
         ffmpeg_exec, '-y', '-v', 'warning' ] + args_mov_before + [
-            '-i', input_mp4_file,
+            '-i', newmp4file,
             '-i', palettefile, '-lavfi', 'fps=%d,scale=%d:-1:flags=lanczos[x];[x][1:v]paletteuse' % (
             fps, width_of_mp4 ), gif_file ]
     proc = subprocess.Popen(cmd, stdout = subprocess.PIPE, stderr = subprocess.STDOUT )
     stdout_val, stderr_val = proc.communicate( )
     #
     ## now batting cleanup
-    try: os.remove( palettefile )
-    except: pass
+    try:
+        if newmp4file != input_mp4_file: os.remove( newmp4file )
+        os.remove( palettefile )
+    except Exception as e:
+        print( 'REASON FAILURE WHY:', e )
+        pass
 
 def _return_image_cc( width, height, inputFileName, form, files,
                       newWidth = None, verify = True ):
