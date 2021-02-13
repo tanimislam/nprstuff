@@ -6,7 +6,7 @@ from argparse import ArgumentParser
     
 def _main( ):
     logger = logging.getLogger( )
-    parser = ArgumentParser( description = 'Uses CloudConvert to convert image or video files.' )
+    parser = ArgumentParser( description = 'Now does four different things, where only "image" operates on image files!' )
     #
     ## top level arguments
     parser.add_argument('--noverify', dest='do_verify', action='store_false', default = True,
