@@ -272,13 +272,101 @@
 </div>
 <div class="section" id="convertimage-movie">
 <span id="id2"></span><h3><span class="section-number">2.2.2. </span>convertImage movie<a class="headerlink" href="#convertimage-movie" title="Permalink to this headline">¶</a></h3>
-<p><code class="docutils literal notranslate"><span class="pre">convertImage</span> <span class="pre">movie</span></code> converts</p>
+<p><code class="docutils literal notranslate"><span class="pre">convertImage</span> <span class="pre">movie</span></code> converts an <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> file into an animated <a class="reference external" href="https://en.wikipedia.org/wiki/GIF">GIF</a>. Its help screen, when running <code class="docutils literal notranslate"><span class="pre">convertImage</span> <span class="pre">movie</span> <span class="pre">-h</span></code>, is,</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">usage: convertImage movie [-h] -f filename [-s scale] [-d PARSER_MOVIE_DIRNAME]</span>
+
+<span class="go">optional arguments:</span>
+<span class="go">  -h, --help            show this help message and exit</span>
+<span class="go">  -f filename, --filename filename</span>
+<span class="go">                        Name of the input video (MP4) file.</span>
+<span class="go">  -s scale, --scale scale</span>
+<span class="go">                        Multiply the width and height of the input MP4 file into the output GIF. Default is 1.0 (GIF file has same dimensions as input MP4 file).</span>
+<span class="go">                        Must be greater than 0.</span>
+<span class="go">  -d PARSER_MOVIE_DIRNAME, --dirname PARSER_MOVIE_DIRNAME</span>
+<span class="go">                        Optional argument. If defined, the directory into which to store the file.</span>
+</pre></div>
+</div>
+<p>The required flag is <code class="docutils literal notranslate"><span class="pre">-f</span></code> or <code class="docutils literal notranslate"><span class="pre">--filename</span></code>, to specify the input <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> file. There are two optional flags.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-s</span></code> or <code class="docutils literal notranslate"><span class="pre">--scale</span></code> resizes the width and height of the input <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> file by some factor. Its default is 1.0, and it must be greater than zero.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-d</span></code> or <code class="docutils literal notranslate"><span class="pre">--dirname</span></code> specifies the directory into which to store the output animated <a class="reference external" href="https://en.wikipedia.org/wiki/GIF">GIF</a>. By default, it is the <em>same</em> directory as the <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> file.</p></li>
+</ul>
+<p>For example, when we run <code class="docutils literal notranslate"><span class="pre">convertImage</span> <span class="pre">movie</span></code> on <a class="reference download internal" download="" href="_downloads/7e08001ad012b85deff6627ed0e42e26/covid19_conus_LATEST.mp4"><code class="xref download docutils literal notranslate"><span class="pre">covid19_conus_LATEST.mp4</span></code></a> (2.6 MB in size) with a scale factor of 0.5 with this command,</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">convertImage movie -f covid19_conus_LATEST.mp4 -s 0.5</span>
+</pre></div>
+</div>
+<p>Then we get this animated <a class="reference external" href="https://en.wikipedia.org/wiki/GIF">GIF</a> in <a class="reference internal" href="#covid19-conus-latest-gif"><span class="std std-numref">Fig. 2.3</span></a> (13M in size).</p>
+<div class="figure align-left" id="id11">
+<span id="covid19-conus-latest-gif"></span><a class="reference internal image-reference" href="_images/covid19_conus_LATEST.gif"><img alt="_images/covid19_conus_LATEST.gif" src="_images/covid19_conus_LATEST.gif" style="width: 100%;" /></a>
+<p class="caption"><span class="caption-number">Fig. 2.3 </span><span class="caption-text">The animated <a class="reference external" href="https://en.wikipedia.org/wiki/GIF">GIF</a> of COVID-19 cumulative cases and deaths in the <a class="reference external" href="https://en.wikipedia.org/wiki/Contiguous_United_States">CONUS</a>, as of 11 February 2021: nearly 27.1 million cases, and over 470k deaths.</span><a class="headerlink" href="#id11" title="Permalink to this image">¶</a></p>
+</div>
 </div>
 <div class="section" id="convertimage-youtube">
 <span id="id3"></span><h3><span class="section-number">2.2.3. </span>convertImage youtube<a class="headerlink" href="#convertimage-youtube" title="Permalink to this headline">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">convertImage</span> <span class="pre">youtube</span></code> converts a <a class="reference external" href="https://www.youtube.com">YouTube</a> clip into an animated <a class="reference external" href="https://en.wikipedia.org/wiki/GIF">GIF</a>. It <em>first</em> creates an <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> file, and then converts that <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> file into an animated <a class="reference external" href="https://en.wikipedia.org/wiki/GIF">GIF</a>. Its help screen, when running <code class="docutils literal notranslate"><span class="pre">convertImage</span> <span class="pre">youtube</span> <span class="pre">-h</span></code>, is,</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">usage: convertImage youtube [-h] -u url -o output [-q quality] [-d duration] [-s scale]</span>
+
+<span class="go">optional arguments:</span>
+<span class="go">  -h, --help            show this help message and exit</span>
+<span class="go">  -u url, --url url     YouTube URL of the input video.</span>
+<span class="go">  -o output, --output output</span>
+<span class="go">                        Name of the output animated GIF file that will be created.</span>
+<span class="go">  -q quality, --quality quality</span>
+<span class="go">                        The quality of the YouTube clip to download. Only video portion is downloaded. May be one of highest, high, medium, low. Default is highest.</span>
+<span class="go">  -d duration, --duration duration</span>
+<span class="go">                        Optional argument. If chosen, the duration (in seconds, from beginning) of the video to be converted into an animated GIF.</span>
+<span class="go">  -s scale, --scale scale</span>
+<span class="go">                        Optional scaling of the input video. Default is 1.0.</span>
+</pre></div>
+</div>
+<p>The two required arguments are <code class="docutils literal notranslate"><span class="pre">-u</span></code> or <code class="docutils literal notranslate"><span class="pre">--url</span></code> (the <a class="reference external" href="https://www.youtube.com">YouTube</a> URL of the input video), and <code class="docutils literal notranslate"><span class="pre">-o</span></code> or <code class="docutils literal notranslate"><span class="pre">--output</span></code> for the name of the output animated <a class="reference external" href="https://en.wikipedia.org/wiki/GIF">GIF</a>. There are three optional arguments,</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-q</span></code> or <code class="docutils literal notranslate"><span class="pre">--quality</span></code> specifies the quality of the <a class="reference external" href="https://www.youtube.com">YouTube</a> clip to download. May be one of <code class="docutils literal notranslate"><span class="pre">highest</span></code>, <code class="docutils literal notranslate"><span class="pre">high</span></code>, <code class="docutils literal notranslate"><span class="pre">medium</span></code>, or <code class="docutils literal notranslate"><span class="pre">low</span></code>. The default is <code class="docutils literal notranslate"><span class="pre">highest</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-d</span></code> or <code class="docutils literal notranslate"><span class="pre">--duration</span></code> specifies the duration (in seconds, from the beginning) of the video to convert into an animated <a class="reference external" href="https://en.wikipedia.org/wiki/GIF">GIF</a>. If you don’t specify, then it will use the <em>whole</em> video.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-s</span></code> or <code class="docutils literal notranslate"><span class="pre">--scale</span></code> resizes the width and height of the intermediate <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> file by some number. Its default is 1.0, and it must be greater than zero.</p></li>
+</ul>
+<p>So for example, we take this <a class="reference external" href="https://www.youtube.com/watch?v=R-pmYwr8zbU">fun clip from the Lucas Bros. Moving Co.</a>, which we show below,</p>
+<div class="youtube_wrapper" style="padding-bottom: 56.250000%; padding-top: 30px; position: relative; width: 100%">
+<iframe allowfullscreen="true" src="https://www.youtube.com/embed/R-pmYwr8zbU" style="border: 0; height: 100%; left: 0; position: absolute; top: 0; width: 100%">
+</iframe></div><p>And run this command,</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">convertImage youtube -u &quot;https://www.youtube.com/watch?v=R-pmYwr8zbU&quot; -o &quot;lucas_bros.gif&quot; -q highest -s 0.5</span>
+</pre></div>
+</div>
+<p>to generate a <code class="docutils literal notranslate"><span class="pre">highest</span></code> quality animated <a class="reference external" href="https://en.wikipedia.org/wiki/GIF">GIF</a>, scaled to <em>half</em> the original size of the <a class="reference external" href="https://www.youtube.com">YouTube</a> clip, into <a class="reference internal" href="#lucas-bros-gif"><span class="std std-numref">Fig. 2.4</span></a> (17M in size).</p>
+<div class="figure align-left" id="id12">
+<span id="lucas-bros-gif"></span><a class="reference internal image-reference" href="_images/lucas_bros.gif"><img alt="_images/lucas_bros.gif" src="_images/lucas_bros.gif" style="width: 100%;" /></a>
+<p class="caption"><span class="caption-number">Fig. 2.4 </span><span class="caption-text">One of my favorite scenes from <a class="reference external" href="https://www.imdb.com/title/tt3472130/?ref_=ttep_ep3">Lucas Bros. Moving Co. S01E03: Before &amp; After Models</a>. I giggle each time I see it.</span><a class="headerlink" href="#id12" title="Permalink to this image">¶</a></p>
+</div>
 </div>
 <div class="section" id="convertimage-square">
 <span id="id4"></span><h3><span class="section-number">2.2.4. </span>convertImage square<a class="headerlink" href="#convertimage-square" title="Permalink to this headline">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">convertImage</span> <span class="pre">square</span></code> <em>symmetrically letterboxes</em> a non-square input <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> file, so that the output <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> file is square. If the input <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> file’s <em>width is greater than its height</em>, the output <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> file will have equal height <em>black</em> on the top and bottom so its height matches the input <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> file’s width. If the input <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> file’s <em>height is greater than its width</em>, the output <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> file will have equal width <em>black</em> on the left and right so its width matches the input <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> file’s height.</p>
+<p>Its help screen, when running <code class="docutils literal notranslate"><span class="pre">convertImage</span> <span class="pre">square</span> <span class="pre">-h</span></code>, is,</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">usage: convertImage square [-h] -f filename -o OUTPUTFILENAME</span>
+
+<span class="go">optional arguments:</span>
+<span class="go">  -h, --help            show this help message and exit</span>
+<span class="go">  -f filename, --filename filename</span>
+<span class="go">                        Name of the input video (MP4) file.</span>
+<span class="go">  -o OUTPUTFILENAME, --output OUTPUTFILENAME</span>
+<span class="go">                        Name of the output MP4 video that will be square.</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">-f</span></code> or <code class="docutils literal notranslate"><span class="pre">--filename</span></code> specifies the input <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> file. <code class="docutils literal notranslate"><span class="pre">-o</span></code> or <code class="docutils literal notranslate"><span class="pre">--output</span></code> specifies the output file name. Here are two examples.</p>
+<ol class="arabic">
+<li><p>For an <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> file wider than it is high, this command,</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">convertImage square -f covid19_conus_LATEST.mp4 -o covid19_conus_LATEST_square.mp4</span>
+</pre></div>
+</div>
+<p>Converts <a class="reference download internal" download="" href="_downloads/7e08001ad012b85deff6627ed0e42e26/covid19_conus_LATEST.mp4"><code class="xref download docutils literal notranslate"><span class="pre">covid19_conus_LATEST.mp4</span></code></a> into <a class="reference download internal" download="" href="_downloads/df6e8b82d1eceabaf3097ab87262cf24/covid19_conus_LATEST_square.mp4"><code class="xref download docutils literal notranslate"><span class="pre">covid19_conus_LATEST_square.mp4</span></code></a>, which has black letterboxes on its top and bottom.</p>
+</li>
+<li><p>For an <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> file higher than it is wide, this command,</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">convertImage square -f covid19_california_LATEST.mp4 -o covid19_california_LATEST_square.mp4</span>
+</pre></div>
+</div>
+<p>Converts <a class="reference download internal" download="" href="_downloads/fc3ee953c0c8283c9fe8fb269c531b62/covid19_california_LATEST.mp4"><code class="xref download docutils literal notranslate"><span class="pre">covid19_california_LATEST.mp4</span></code></a> into <a class="reference download internal" download="" href="_downloads/8aee3dccb7f129f83209dd77dd8b7886/covid19_california_LATEST_square.mp4"><code class="xref download docutils literal notranslate"><span class="pre">covid19_california_LATEST_square.mp4</span></code></a>, which has black letterboxes on its left and right.</p>
+</li>
+</ol>
 </div>
 </div>
 <div class="section" id="changedates">

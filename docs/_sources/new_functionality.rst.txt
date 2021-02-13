@@ -135,19 +135,132 @@ Fortunately, pdftocairo_ can convert PDF_ to PNG_, and cairosvg_ can convert SVG
 
 convertImage movie
 --------------------
-``convertImage movie`` converts 
+``convertImage movie`` converts an MP4_ file into an animated GIF_. Its help screen, when running ``convertImage movie -h``, is,
 
+.. code-block:: console
+
+   usage: convertImage movie [-h] -f filename [-s scale] [-d PARSER_MOVIE_DIRNAME]
+
+   optional arguments:
+     -h, --help            show this help message and exit
+     -f filename, --filename filename
+			   Name of the input video (MP4) file.
+     -s scale, --scale scale
+			   Multiply the width and height of the input MP4 file into the output GIF. Default is 1.0 (GIF file has same dimensions as input MP4 file).
+			   Must be greater than 0.
+     -d PARSER_MOVIE_DIRNAME, --dirname PARSER_MOVIE_DIRNAME
+			   Optional argument. If defined, the directory into which to store the file.
+
+The required flag is ``-f`` or ``--filename``, to specify the input MP4_ file. There are two optional flags.
+
+* ``-s`` or ``--scale`` resizes the width and height of the input MP4_ file by some factor. Its default is 1.0, and it must be greater than zero.
+
+* ``-d`` or ``--dirname`` specifies the directory into which to store the output animated GIF_. By default, it is the *same* directory as the MP4_ file.
+
+For example, when we run ``convertImage movie`` on :download:`covid19_conus_LATEST.mp4 <images/covid19_conus_LATEST.mp4>` (2.6 MB in size) with a scale factor of 0.5 with this command,
+
+.. code-block:: console
+
+   convertImage movie -f covid19_conus_LATEST.mp4 -s 0.5
+
+Then we get this animated GIF_ in :numref:`covid19_conus_LATEST_gif` (13M in size).
+
+.. _covid19_conus_LATEST_gif:
+
+.. figure:: images/covid19_conus_LATEST.gif
+   :width: 100%
+   :align: left
+
+   The animated GIF_ of COVID-19 cumulative cases and deaths in the `CONUS <https://en.wikipedia.org/wiki/Contiguous_United_States>`_, as of 11 February 2021: nearly 27.1 million cases, and over 470k deaths.
+   
 .. _convertImage_youtube:
 
 convertImage youtube
 ----------------------
+``convertImage youtube`` converts a YouTube_ clip into an animated GIF_. It *first* creates an MP4_ file, and then converts that MP4_ file into an animated GIF_. Its help screen, when running ``convertImage youtube -h``, is,
+
+.. code-block:: console
+
+   usage: convertImage youtube [-h] -u url -o output [-q quality] [-d duration] [-s scale]
+
+   optional arguments:
+     -h, --help            show this help message and exit
+     -u url, --url url     YouTube URL of the input video.
+     -o output, --output output
+			   Name of the output animated GIF file that will be created.
+     -q quality, --quality quality
+			   The quality of the YouTube clip to download. Only video portion is downloaded. May be one of highest, high, medium, low. Default is highest.
+     -d duration, --duration duration
+			   Optional argument. If chosen, the duration (in seconds, from beginning) of the video to be converted into an animated GIF.
+     -s scale, --scale scale
+			   Optional scaling of the input video. Default is 1.0.
+
+The two required arguments are ``-u`` or ``--url`` (the YouTube_ URL of the input video), and ``-o`` or ``--output`` for the name of the output animated GIF_. There are three optional arguments,
+
+* ``-q`` or ``--quality`` specifies the quality of the YouTube_ clip to download. May be one of ``highest``, ``high``, ``medium``, or ``low``. The default is ``highest``.
+
+* ``-d`` or ``--duration`` specifies the duration (in seconds, from the beginning) of the video to convert into an animated GIF_. If you don't specify, then it will use the *whole* video.
+
+* ``-s`` or ``--scale`` resizes the width and height of the intermediate MP4_ file by some number. Its default is 1.0, and it must be greater than zero.
+
+So for example, we take this `fun clip from the Lucas Bros. Moving Co. <https://www.youtube.com/watch?v=R-pmYwr8zbU>`_, which we show below,
+
+.. youtube:: R-pmYwr8zbU
+   :width: 100%
+
+And run this command,
+
+.. code-block:: console
+
+   convertImage youtube -u "https://www.youtube.com/watch?v=R-pmYwr8zbU" -o "lucas_bros.gif" -q highest -s 0.5
+
+to generate a ``highest`` quality animated GIF_, scaled to *half* the original size of the YouTube_ clip, into :numref:`lucas_bros_gif` (17M in size).
+
+.. _lucas_bros_gif:
+
+.. figure:: images/lucas_bros.gif
+   :width: 100%
+   :align: left
+
+   One of my favorite scenes from `Lucas Bros. Moving Co. S01E03: Before & After Models <https://www.imdb.com/title/tt3472130/?ref_=ttep_ep3>`_. I giggle each time I see it.
 
 .. _convertImage_square:
 
 convertImage square
 --------------------
-     
+``convertImage square`` *symmetrically letterboxes* a non-square input MP4_ file, so that the output MP4_ file is square. If the input MP4_ file's *width is greater than its height*, the output MP4_ file will have equal height *black* on the top and bottom so its height matches the input MP4_ file's width. If the input MP4_ file's *height is greater than its width*, the output MP4_ file will have equal width *black* on the left and right so its width matches the input MP4_ file's height.
 
+Its help screen, when running ``convertImage square -h``, is,
+
+.. code-block:: console
+
+   usage: convertImage square [-h] -f filename -o OUTPUTFILENAME
+
+   optional arguments:
+     -h, --help            show this help message and exit
+     -f filename, --filename filename
+			   Name of the input video (MP4) file.
+     -o OUTPUTFILENAME, --output OUTPUTFILENAME
+			   Name of the output MP4 video that will be square.
+
+``-f`` or ``--filename`` specifies the input MP4_ file. ``-o`` or ``--output`` specifies the output file name. Here are two examples.
+
+1. For an MP4_ file wider than it is high, this command,
+
+   .. code-block:: console
+
+      convertImage square -f covid19_conus_LATEST.mp4 -o covid19_conus_LATEST_square.mp4
+
+   Converts :download:`covid19_conus_LATEST.mp4 <images/covid19_conus_LATEST.mp4>` into :download:`covid19_conus_LATEST_square.mp4 <images/covid19_conus_LATEST_square.mp4>`, which has black letterboxes on its top and bottom.
+
+2. For an MP4_ file higher than it is wide, this command,
+
+   .. code-block:: console
+
+      convertImage square -f covid19_california_LATEST.mp4 -o covid19_california_LATEST_square.mp4
+
+   Converts :download:`covid19_california_LATEST.mp4 <images/covid19_california_LATEST.mp4>` into :download:`covid19_california_LATEST_square.mp4 <images/covid19_california_LATEST_square.mp4>`, which has black letterboxes on its left and right.
+      
 .. _changedates_label:
 
 ``changedates``

@@ -51,6 +51,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.intersphinx',
     'sphinx.ext.napoleon',
+    'sphinxcontrib.youtube',
     'sphinx.ext.todo',
     'sphinx_issues',
     'sphinxarg.ext'

@@ -737,13 +737,13 @@
 
 <dl class="py function">
 <dt id="nprstuff.core.convert_image.get_youtube_file">
-<code class="sig-prename descclassname">nprstuff.core.convert_image.</code><code class="sig-name descname">get_youtube_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">youtube_URL</span></em>, <em class="sig-param"><span class="n">output_mp4_file</span></em>, <em class="sig-param"><span class="n">quality</span><span class="o">=</span><span class="default_value">'highest'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.convert_image.get_youtube_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Uses <a class="reference external" href="https://ytdl-org.github.io/youtube-dl/index.html">youtube-dl</a> programmatically to download into an <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> file.</p>
+<code class="sig-prename descclassname">nprstuff.core.convert_image.</code><code class="sig-name descname">get_youtube_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">youtube_URL</span></em>, <em class="sig-param"><span class="n">output_file</span></em>, <em class="sig-param"><span class="n">quality</span><span class="o">=</span><span class="default_value">'highest'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.convert_image.get_youtube_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses <a class="reference external" href="https://ytdl-org.github.io/youtube-dl/index.html">youtube-dl</a> programmatically to download into an <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> or <a class="reference external" href="https://en.wikipedia.org/wiki/Matroska">MKV</a> file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>youtube_URL</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – a valid <a class="reference external" href="https://www.youtube.com">YouTube</a> URL for the song clip.</p></li>
-<li><p><strong>output_mp4_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> video file name.</p></li>
+<li><p><strong>output_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> or <a class="reference external" href="https://en.wikipedia.org/wiki/Matroska">MKV</a> video file name.</p></li>
 <li><p><strong>quality</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the quality level of the MP4 video to download. Default is “highest.” Can be one of “highest”, “high”, “medium”, “low”.</p></li>
 </ul>
 </dd>

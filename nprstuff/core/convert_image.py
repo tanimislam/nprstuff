@@ -47,6 +47,7 @@ def make_square_mp4video( input_mp4_file, output_mp4_file ):
 
     .. _FFmpeg: https://ffmpeg.org
     .. _MP4: https://en.wikipedia.org/wiki/MPEG-4_Part_14
+    .. _MKV: https://en.wikipedia.org/wiki/Matroska
     .. _Instagram: https://www.instagram.com
     .. _padding_movie: https://superuser.com/questions/1212106/add-border-to-video-ffmpeg
     .. _ffprobe_json: https://tanimislam.github.io/blog/ffprobe-to-get-output-in-json-format.html
@@ -95,12 +96,12 @@ def make_square_mp4video( input_mp4_file, output_mp4_file ):
         stderr = subprocess.STDOUT )
     stdout_val, stderr = proc.communicate( )
 
-def get_youtube_file( youtube_URL, output_mp4_file, quality = 'highest' ):
+def get_youtube_file( youtube_URL, output_file, quality = 'highest' ):
     """
-    Uses youtube-dl_ programmatically to download into an MP4_ file.
+    Uses youtube-dl_ programmatically to download into an MP4_ or MKV_ file.
 
     :param str youtube_URL: a valid YouTube_ URL for the song clip.
-    :param str output_mp4_file: the MP4_ video file name.
+    :param str output_file: the MP4_ or MKV_ video file name.
     :param str quality: the quality level of the MP4 video to download. Default is "highest." Can be one of "highest", "high", "medium", "low".
 
     :returns: ``True`` if successful, otherwise ``False``.
@@ -109,20 +110,21 @@ def get_youtube_file( youtube_URL, output_mp4_file, quality = 'highest' ):
     .. _youtube-dl: https://ytdl-org.github.io/youtube-dl/index.html
     .. _YouTube: https://www.youtube.com
     """
-    assert( os.path.basename( output_mp4_file ).endswith( '.mp4' ) )
+    assert( any(map(lambda suffix: os.path.basename( output_file ).endswith( '.%s' % suffix ),
+                    ( 'mkv', 'mp4' ) ) ) )
     assert( quality in ( 'highest', 'high', 'medium', 'low' ) )
-    qualmap = { 'highest' : '22', 'high' : '133', 'medium' : '134', 'low' : '160' }
-    logging.info( 'URL: %s, output_mp4_file: %s.' % (
-        youtube_URL, output_mp4_file ) )
+    qualmap = { 'highest' : '18', 'high' : '134', 'medium' : '133', 'low' : '160' }
+    logging.info( 'URL: %s, output_file: %s.' % (
+        youtube_URL, output_file ) )
     try:
         ydl_opts = {
-            'format' : qualmap[ quality ], # try highest quality MP4?? DOES IT WORK??
-            'outtmpl' : output_mp4_file }
+            'format' : qualmap[ quality ], # try highest quality MP4 OR MKV?? DOES IT WORK??
+            'outtmpl' : output_file }
         with youtube_dl.YoutubeDL( ydl_opts ) as ydl:
             ydl.download([ youtube_URL ])
             return True
-    except youtube_dl.DownloadError: # could not download the file to MP4 format
-        logging.info( "ERROR, CANNOT DOWNLOAD %s INTO MP4 FILE. MY BAD (FOR NOW)." %
+    except youtube_dl.DownloadError: # could not download the file to MP4 OR MKV format
+        logging.info( "ERROR, CANNOT DOWNLOAD %s INTO MP4 OR MKV FILE. MY BAD (FOR NOW)." %
                      youtube_URL )
         return False
 
@@ -141,9 +143,13 @@ def youtube2gif( input_youtube_URL, gif_file, quality = 'highest', duration = No
        * :py:meth:`mp4togif <nprstuff.core.convert_image.mp4togif>`.
        * :py:meth:`get_youtube_file <nprstuff.core.convert_image.get_youtube_file>`.
     """
-    intermediate_mp4_file = '%s.mp4' % str( uuid.uuid4( ) )
+    intermediate_file = '%s.mp4' % str( uuid.uuid4( ) )
     status = get_youtube_file(
-        input_youtube_URL, intermediate_mp4_file, quality = quality )
+        input_youtube_URL, intermediate_file, quality = quality )
+    if not status:
+        intermediate_file = '%s.mkv' % str( uuid.uuid4( ) )
+        status = get_youtube_file(
+            input_youtube_URL, intermediate_file, quality = quality )
     if not status:
         logging.error( "ERROR, COULD NOT DOWNLOAD YOUTUBE URL: %s." % input_youtube_URL )
         try: os.remove( intermediate_mp4_file )
@@ -151,8 +157,8 @@ def youtube2gif( input_youtube_URL, gif_file, quality = 'highest', duration = No
         return
     #
     ## now to gif
-    mp4togif( intermediate_mp4_file, gif_file, duration = duration, scale = scale )
-    try: os.remove( intermediate_mp4_file )
+    mp4togif( intermediate_file, gif_file, duration = duration, scale = scale )
+    try: os.remove( intermediate_file )
     except: pass
     
 def mp4togif( input_mp4_file, gif_file = None, duration = None, scale = 1.0 ):
