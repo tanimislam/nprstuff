@@ -35,6 +35,12 @@ In the two examples shown here, I use only *white* (default) background. The fir
 
    On the left (with dark black borders) is the uncropped file, :download:`iwanttobelieve_uncropped.png <images/iwanttobelieve_uncropped.png>`, and on the right is the cropped-without-any-whitespace (with dark black borders) file, :download:`iwanttobelieve_cropped.png <images/iwanttobelieve_cropped.png>`.
 
+You can generate :download:`iwanttobelieve_cropped.png <images/iwanttobelieve_cropped.png>` from :download:`iwanttobelieve_uncropped.png <images/iwanttobelieve_uncropped.png>` by running,
+
+.. code-block:: console
+
+   autoCropImage --input=iwanttobelieve_uncropped.png --output=iwanttobelieve_cropped.png
+
 The second example, :numref:`fig_autocrop_pdf` demonstrates how this tool autocrops a PDF_ image file.
 
 .. _fig_autocrop_pdf:
@@ -44,7 +50,13 @@ The second example, :numref:`fig_autocrop_pdf` demonstrates how this tool autocr
    :align: left
 
    On the left (with dark black borders) is the uncropped file, :download:`cumulative_plot_emission_uncropped.pdf <images/cumulative_plot_emission_uncropped.pdf>`, and on the right is the cropped-without-any-whitespace (with dark black borders) file, :download:`cumulative_plot_emission_cropped.pdf <images/cumulative_plot_emission_cropped.pdf>`.
-     
+
+You can generate :download:`cumulative_plot_emission_cropped.pdf <images/cumulative_plot_emission_cropped.pdf>` from :download:`cumulative_plot_emission_uncropped.pdf <images/cumulative_plot_emission_uncropped.pdf>` by running,
+
+.. code-block:: console
+
+   autoCropImage --input=cumulative_plot_emission_uncropped.pdf --output=cumulative_plot_emission_cropped.pdf
+
 .. _convertImage_label:
 
 ``convertImage``

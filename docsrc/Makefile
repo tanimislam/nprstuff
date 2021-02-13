@@ -19,6 +19,10 @@ help:
 %: Makefile
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
-deploy:
+deploy: html
 	rsync -avz --delete --progress build/html/ ../docs/
 	touch ../docs/.nojekyll
+	git pull
+	git stage ../docs ../docsrc
+	git commit -a -m "documentation fix."
+	git push
