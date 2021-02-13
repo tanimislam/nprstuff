@@ -25,6 +25,26 @@ This consists of newer functionality that does not download NPR episodes, nor ca
      --newwidth NEWWIDTH  New width of the image.
      --show               If chosen, then show the final image after cropped.
 
+In the two examples shown here, I use only *white* (default) background. The first example, :numref:`fig_autocrop_png` demonstrates how this tool autocrops a PNG_ image file.
+
+.. _fig_autocrop_png:
+
+.. figure:: images/iwanttobelieve_uncropped_cropped.png
+   :width: 100%
+   :align: left
+
+   On the left (with dark black borders) is the uncropped file, :download:`iwanttobelieve_uncropped.png <images/iwanttobelieve_uncropped.png>`, and on the right is the cropped-without-any-whitespace (with dark black borders) file, :download:`iwanttobelieve_cropped.png <images/iwanttobelieve_cropped.png>`.
+
+The second example, :numref:`fig_autocrop_pdf` demonstrates how this tool autocrops a PDF_ image file.
+
+.. _fig_autocrop_pdf:
+
+.. figure:: images/cumulative_plot_emission_uncropped_cropped.png
+   :width: 100%
+   :align: left
+
+   On the left (with dark black borders) is the uncropped file, :download:`cumulative_plot_emission_uncropped.pdf <images/cumulative_plot_emission_uncropped.pdf>`, and on the right is the cropped-without-any-whitespace (with dark black borders) file, :download:`cumulative_plot_emission_cropped.pdf <images/cumulative_plot_emission_cropped.pdf>`.
+     
 .. _convertImage_label:
 
 ``convertImage``
@@ -108,3 +128,5 @@ This generates the HTML file, ``filename.html``, from the RST markup file, ``fil
 .. _MathJax: https://www.mathjax.org/
 .. _CDN: https://en.wikipedia.org/wiki/Content_delivery_network
 .. _`this GitHub gist`: https://gist.github.com/Matherunner/c0397ae11cc72f2f35ae
+.. _PNG: https://en.wikipedia.org/wiki/Portable_Network_Graphics
+.. _PDF: https://en.wikipedia.org/wiki/PDF
