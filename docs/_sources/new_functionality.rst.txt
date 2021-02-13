@@ -63,17 +63,90 @@ You can generate :download:`cumulative_plot_emission_cropped.pdf <images/cumulat
 ================
 *Quite a long time ago*, ``convertImage`` used the `CloudConvert REST API`_ to *smoothly and without pain points* convert and resize SVG_ images to PNG_ images of the same base name. And no, I'm not going to `git bisect`_ my way to the commit when that last happened.
 
-
-The help screen for this command line tool is here,
+Now ``convertImage`` does four things, as seen when running ``convertImage -h``.
 
 .. code-block:: console
 
-   Usage: convertImage [options]
+   usage: convertImage [-h] [--noverify] [--info] {image,movie,youtube,square} ...
 
-   Options:
-     -h, --help           show this help message and exit
-     --filename=FILENAME  Name of the input SVG file.
-     --width=WIDTH        If defined, new width of the file. Optional
+   Now does four different things, where only "image" operates on image files!
+
+   positional arguments:
+     {image,movie,youtube,square}
+			   Choose whether to convert a video or an image
+       image               If chosen, convert an SVG(Z), PDF, or PNG into PNG.
+       movie               If chosen, convert an MP4 into an animated GIF.
+       youtube             If chosen, convert a YOUTUBE video with URL into an animated GIF.
+       square              If chosen, create a square MP4 file from an input MP4 file.
+
+   optional arguments:
+     -h, --help            show this help message and exit
+     --noverify            If chosen, do not verify the SSL connection.
+     --info                If chosen, then print out INFO level logging.
+
+There are two optional top-level flags.
+
+* ``--info`` prints out :py:const:`INFO <logging.INFO>` level :py:mod:`logging` output.
+
+* ``--noverify`` ignores verification of SSL transactions. It is optional and defaults to ``False``.
+
+:ref:`convertImage image <convertImage_image>` *tries* to use the `CloudConvert REST API`_ to convert SVG_ or SVGZ_, PDF_, or PNG_ images to another PNG_ image. :ref:`convertImage movie <convertImage_movie>` creates an animated GIF_ file from an MP4_ file. :ref:`convertImage youtube <convertImage_youtube>` creates an animated GIF_ from a YouTube_ clip. Finally, :ref:`convertImage square <convertImage_square>` creates a *square* MP4_ file a non-square MP4_ file.
+
+Both :ref:`convertImage movie <convertImage_movie>` and :ref:`convertImage youtube <convertImage_youtube>` use FFmpeg_ underneath the hood, using a :py:mod:`subprocess <subprocess.Popen>` that implements this `tutorial on high quality movie to animated GIF conversion <movie_2_gif_>`_.
+
+.. note::
+
+   A recent `Medium article`_ describes two ways to produce similarly high quality animated GIF_ files.
+
+   * create the animated GIF_ from a frame-by-frame list of PNG_ files, such as those used to create the MP4_ file.
+     
+   * Use `Gifsicle <http://www.lcdf.org/gifsicle>`_ to optimize (make smaller but same quality) the initial animated GIF_ file.
+
+   I have not yet implemented these improvements into NPRstuff.
+   
+.. _convertImage_image:
+
+convertImage image
+--------------------
+``convertImage image`` *tries* to use the  `CloudConvert REST API`_ to convert SVG_ or SVGZ_, PDF_, or PNG_ images to another PNG_ image. Its help screen, when running ``convertImage image -h``, is,
+
+.. code-block:: console
+
+   usage: convertImage image [-h] -f filename [--width WIDTH] [-F {svg,pdf,png}]
+
+   optional arguments:
+     -h, --help            show this help message and exit
+     -f filename, --filename filename
+			   Name of the input image file.
+     --width WIDTH         If defined, new width of the file. Optional
+     -F {svg,pdf,png}, --format {svg,pdf,png}
+			   Format of input file. Must be one of SVG/SVGZ, PDF, or PNG.
+
+However, **it currently does not work**. When I run ``convertImage image`` on :download:`cumulative_plot_emission_cropped.pdf <images/cumulative_plot_emission_cropped.pdf>`, here is what I get,
+
+.. code-block:: console
+
+   bash$ convertImage image -f cumulative_plot_emission_cropped.pdf
+   ERROR, CloudConvert sort of pooped the bed. This conversion functionality no longer works. Exiting...
+
+Fortunately, pdftocairo_ can convert PDF_ to PNG_, and cairosvg_ can convert SVG_ and SVGZ_ to PNG_.
+   
+.. _convertImage_movie:
+
+convertImage movie
+--------------------
+``convertImage movie`` converts 
+
+.. _convertImage_youtube:
+
+convertImage youtube
+----------------------
+
+.. _convertImage_square:
+
+convertImage square
+--------------------
+     
 
 .. _changedates_label:
 
@@ -145,3 +218,14 @@ This generates the HTML file, ``filename.html``, from the RST markup file, ``fil
 .. _`this GitHub gist`: https://gist.github.com/Matherunner/c0397ae11cc72f2f35ae
 .. _PNG: https://en.wikipedia.org/wiki/Portable_Network_Graphics
 .. _PDF: https://en.wikipedia.org/wiki/PDF
+.. _`git bisect`: https://git-scm.com/docs/git-bisect
+.. _GIF: https://en.wikipedia.org/wiki/GIF
+.. _YouTube: https://www.youtube.com
+.. _FFmpeg: https://ffmpeg.org
+.. _movie_2_gif: http://blog.pkh.me/p/21-high-quality-gif-with-ffmpeg.html
+.. _SVG: https://en.wikipedia.org/wiki/Scalable_Vector_Graphics
+.. _SVGZ: https://en.wikipedia.org/wiki/Scalable_Vector_Graphics#Compression
+.. _pdftocairo: http://manpages.ubuntu.com/manpages/trusty/man1/pdftocairo.1.html
+.. _cairosvg: http://manpages.ubuntu.com/manpages/focal/en/man1/cairosvg.1.html
+.. _MP4: https://en.wikipedia.org/wiki/MPEG-4_Part_14
+.. _`Medium article`: https://medium.com/@Peter_UXer/small-sized-and-beautiful-gifs-with-ffmpeg-25c5082ed733
