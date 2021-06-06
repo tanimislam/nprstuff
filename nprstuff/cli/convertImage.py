@@ -20,6 +20,7 @@ def _main( ):
     parser_movie  = subparsers.add_parser( 'movie',   help = 'If chosen, convert an MP4 into an animated GIF.' )
     parser_youtube= subparsers.add_parser( 'youtube', help = 'If chosen, convert a YOUTUBE video with URL into an animated GIF.' )
     parser_square = subparsers.add_parser( 'square',  help = 'If chosen, create a square MP4 file from an input MP4 file.' )
+    parser_fromimages = subparsers.add_parser( 'fromimages', help = 'If chosen, then convert a sequence of PNG images into an MP4 file.' )
     #
     ## convert image
     parser_image.add_argument(
@@ -66,6 +67,16 @@ def _main( ):
     parser_youtube.add_argument(
         '-s', '--scale', dest='parser_youtube_scale', type=float, action='store', metavar = 'scale', default = 1.0,
         help = 'Optional scaling of the input video. Default is 1.0.' )
+    #
+    ## create an MP4 file from a sequence of images
+    parser_fromimages.add_argument( '-d', '--dirname', dest='parser_fromimages_dirname', type=str, action='store', metavar='dirname', default = os.getcwd( ),
+                                   help = 'The name of the directory to look for a sequence of PNG images. Default is %s.' % os.getcwd( ) )
+    parser_fromimages.add_argument( '-p', '--prefix', dest='parser_fromimages_prefix', type=str, action='store', metavar='prefix', required=True,
+                                   help = 'The prefix of PNG files through which to go.' )
+    parser_fromimages.add_argument( '-f', '--fps', dest='parser_fromimages_fps', type=int, action='store', metavar='fps', default = 5,
+                                   help = 'The number of frames per second in the MP4 file. Default is 5.' )
+    parser_fromimages.add_argument( '--autocrop', dest='parser_fromimages_do_autocrop', action='store_true', default = False,
+                                   help = 'If chosen, then perform an autocrop, and then (where necessary) resize each image so that their widths and heights are multiples of 2.')
     #
     ## parsing arguments
     args = parser.parse_args( )
@@ -122,4 +133,20 @@ def _main( ):
             quality = args.parser_youtube_quality,
             duration = args.parser_youtube_duration,
             scale = args.parser_youtube_scale )
+        return
+    #
+    ## create an MP4 file from a collection of images
+    if args.choose_option == 'fromimages':
+        assert( os.path.isdir( args.parser_fromimages_dirname ) )
+        png2mp4dict = convert_image.create_png2mp4dict(
+            args.parser_fromimages_prefix,
+            dirname = args.parser_fromimages_dirname,
+            fps = args.parser_fromimages_fps,
+            autocrop = args.parser_fromimages_do_autocrop )
+        if png2mp4dict['status'] != 'SUCCESS':
+            print( png2mp4dict['status'] )
+            return
+        #
+        ## now perform the operation to autocrop those images
+        convert_image.mp4frompngs( png2mp4dict )
 

@@ -1,10 +1,114 @@
-import requests, os, gzip, magic, uuid
-import subprocess, json, youtube_dl, logging
+import requests, os, gzip, magic, uuid, pathlib, glob, time
+import subprocess, json, youtube_dl, logging, re, numpy
+from pathos.multiprocessing import Pool, cpu_count
+from distutils.spawn import find_executable
 from PIL import Image
 from io import BytesIO
 from PyPDF2 import PdfFileReader
 from configparser import ConfigParser, RawConfigParser
 from PyQt5.QtCore import QByteArray
+from nprstuff.core import autocrop_image
+
+def mp4frompngs( png2mp4dict ):
+    #
+    ## barf out if cannot find ffmpeg
+    ffmpeg_exec = find_executable( 'ffmpeg' )
+    if ffmpeg_exec is None:
+        raise ValueError("Error, ffmpeg could not be found." )
+    assert( png2mp4dict['status'] == 'SUCCESS' )
+    def _resize_image( fname ):
+        im = Image.open( fname )
+        sizeChanged = False
+        newWidth, newHeight = im.size
+        if newWidth % 2 != 0:
+            newWidth += 1
+            sizeChanged = True
+        if newHeight % 2 != 0:
+            newHeight += 1
+            sizeChanged = True
+        if sizeChanged:
+            im = im.resize(( newWidth, newHeight ))
+            im.save( fname )
+    #
+    ## now ensure that these files are of even-width-and-height
+    with Pool( processes = cpu_count( ) ) as pool:
+        time0 = time.time( )
+        autocrop = png2mp4dict[ 'autocrop' ]
+        if not autocrop:
+            _ = list(pool.map(_resize_image, png2mp4dict['files'] ) )
+        else:
+            _ = list(pool.map(lambda fname: autocrop_image.autocrop_image( fname, fixEven = True ),
+                              png2mp4dict['files']))
+        logging.info('fixed widths and heights of %d images in %0.3f seconds.' % (
+            len( png2mp4dict['files'] ), time.time( ) - time0 ) )
+    #
+    ## now create the FFMPEG movie file
+    ## thank instructions from https://hamelot.io/visualization/using-ffmpeg-to-convert-a-set-of-images-into-a-video/
+    ## make MP4 movie, 5 fps, quality = 25
+    time0 = time.time( )
+    movie_name = '%s.mp4' % '.'.join(png2mp4dict['prefix'].split('.')[:-1])
+    stdout_val = subprocess.check_output(
+        [ ffmpeg_exec, '-y', '-r', '%d' % png2mp4dict['fps'], '-f', 'image2',
+         '-i', png2mp4dict['actual prefix'],
+         '-vcodec', 'libx264', '-crf', '25', '-pix_fmt', 'yuv420p', movie_name ],
+        stderr = subprocess.STDOUT )        
+    logging.info('created movie = %s from %d PNG frame images in %0.3f seconds.' % (
+        movie_name, len( png2mp4dict['files'] ), time.time( ) - time0 ) )
+    
+def create_png2mp4dict( prefix, dirname = os.getcwd( ), fps = 5, autocrop = False ):
+    png2mp4dict = { }
+    if fps < 1:
+        png2mp4dict['status'] = 'Error, fps = %d is less than 1.' % fps
+        return png2mp4dict
+    png2mp4dict['fps'] = fps
+    png2mp4dict['autocrop'] = autocrop
+    #
+    ## check that it is a dirname
+    if not os.path.isdir( dirname ):
+        png2mp4dict['status'] = 'Error, %s is not a directory.' % dirname
+        return png2mp4dict
+    #
+    ## now see if PNG files with prefix
+    collection_of_png_files = list(filter(os.path.isfile, glob.glob( os.path.join( dirname, '%s*.png' % prefix ) ) ) )
+    if not collection_of_png_files:
+        png2mp4dict['status'] = 'Error, no PNG files with prefix = %s found in %s.' % (
+            prefix, dirname )
+        return mpg2mp4dict
+    #
+    ## now only those collection of png files that have number suffix
+    def _is_numbered_prop( fname ):
+        bname = os.path.basename( fname )
+        bname = bname.replace( prefix, '' ).strip( )
+        bname = re.sub('\.png$', '', bname ).strip( )
+        try:
+            val = int( bname )
+            return True, val, bname
+        except:
+            return False, None, bname
+    collection_files_valid = sorted(filter(lambda fname: _is_numbered_prop(fname)[0], collection_of_png_files ) )
+    sorted_numbers_dict = dict(map(lambda fname: ( _is_numbered_prop( fname )[1], fname ), collection_files_valid ) )
+    zero_padded_nums = set(map(lambda fname: _is_numbered_prop( fname )[2], collection_files_valid))
+    min_zero_padding = min(map(lambda zpn: len(zpn) - len(zpn.lstrip('0')), zero_padded_nums))
+    if not sorted_numbers_dict:
+        png2mp4dict['status'] = 'Error, no PNG files with prefix = %s AND PROPER NUMBERING found in %s.' % (
+            prefix, dirname )
+        return png2mp4dict
+    #
+    ## now check that the numbers are all ordered from 0 to SOME MAX NUMBER
+    set_numbers = set(sorted_numbers_dict)
+    should_be_sorted = set(range(len(sorted_numbers_dict)))
+    if should_be_sorted != set_numbers:
+        numbers_missing = sorted((set_numbers - should_be_sorted) | (should_be_sorted - set_numbers))
+        png2mp4dict['status'] = 'Error, XOR operations found these %d numbers mismatched between what SHOULD be there, and what is: %s.' % ( len( numbers_missing ), numbers_missing )
+        return png2mp4dict
+    #
+    ## success?
+    png2mp4dict['prefix'] = prefix
+    png2mp4dict['files'] = sorted( sorted_numbers_dict.values( ) )
+    num_digits = int(numpy.log10(len(set_numbers)-1)) + 1 + min_zero_padding
+    png2mp4dict['actual prefix'] = os.path.join( dirname, '%s%%0%dd.png' % ( prefix, num_digits ) ) # prefix to ffmpeg for images
+    png2mp4dict['status'] = 'SUCCESS'
+    return png2mp4dict
 
 def get_cloudconvert_api_key( ):
     """
