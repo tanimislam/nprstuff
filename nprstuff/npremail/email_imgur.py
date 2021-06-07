@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 #
 from nprstuff import QDialogWithPrinting
-from nprstuff.email import (
+from nprstuff.npremail import (
     get_imgurl_credentials, store_imgurl_credentials, check_imgurl_credentials )
 
 class PNGWidget( QDialogWithPrinting ):

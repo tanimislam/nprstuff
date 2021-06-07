@@ -7,10 +7,10 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 #
 from nprstuff import QDialogWithPrinting
-from nprstuff.email import (
+from nprstuff.npremail import (
     HtmlView, check_valid_RST, convert_string_RST, format_size, md5sum, oauthGetGoogleCredentials )
-from nprstuff.email.email_imgur import PNGWidget
-from nprstuff.email import email as nprstuff_email
+from nprstuff.npremail.email_imgur import PNGWidget
+from nprstuff.npremail import npremail as nprstuff_email
 #from howdy.email.email import get_all_email_contacts_dict
 
 class AttachmentListDialog( QDialogWithPrinting ):

@@ -11,7 +11,7 @@ from email.mime.audio import MIMEAudio
 from email.mime.image import MIMEImage
 #
 # import google_auth_httplib2.httplib2 as httplib2, in requirements.txt put in google-auth-httplib2
-from nprstuff.email import oauthGetGoogleCredentials
+from nprstuff.npremail import oauthGetGoogleCredentials
 
 def get_email_service( verify = True, credentials = None ):
     """

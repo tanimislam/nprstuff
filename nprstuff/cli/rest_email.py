@@ -11,10 +11,10 @@ from PyQt5.QtCore import Qt, pyqtSignal
 from argparse import ArgumentParser
 #
 from nprstuff import resourceDir
-from nprstuff.email import (
+from nprstuff.npremail import (
     oauthGetGoogleCredentials, check_imgurl_credentials, get_imgurl_credentials )
-from nprstuff.email.email_gui import NPRStuffReSTEmailGUI as RestEmail
-from nprstuff.email.email_config_gui import NPRStuffConfigCredWidget
+from nprstuff.npremail.email_gui import NPRStuffReSTEmailGUI as RestEmail
+from nprstuff.npremail.email_config_gui import NPRStuffConfigCredWidget
 #
 warnings.simplefilter( 'ignore' )
 

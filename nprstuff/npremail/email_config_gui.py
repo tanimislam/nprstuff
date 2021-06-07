@@ -5,10 +5,10 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 #
 from nprstuff import QDialogWithPrinting
-from nprstuff.email import (
+from nprstuff.npremail import (
     oauthGetGoogleCredentials, check_imgurl_credentials, get_imgurl_credentials, HtmlView,
     oauth_store_google_credentials, oauth_generate_google_permission_url )
-from nprstuff.email.email_imgur import NPRStuffIMGClient
+from nprstuff.npremail.email_imgur import NPRStuffIMGClient
 
 class NPRStuffImgurChooseAlbumWidget( QDialogWithPrinting ):
     changedAlbumSignal = pyqtSignal( str )
