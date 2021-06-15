@@ -32,6 +32,7 @@
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -93,6 +94,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#convertimage-movie">2.2.2. convertImage movie</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#convertimage-youtube">2.2.3. convertImage youtube</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#convertimage-square">2.2.4. convertImage square</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#convertimage-fromimages">2.2.5. convertImage fromimages</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#changedates">2.3. <code class="docutils literal notranslate"><span class="pre">changedates</span></code></a></li>
@@ -192,18 +194,18 @@
 </pre></div>
 </div>
 <p>In the two examples shown here, I use only <em>white</em> (default) background. The first example, <a class="reference internal" href="#fig-autocrop-png"><span class="std std-numref">Fig. 2.1</span></a> demonstrates how this tool autocrops a <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> image file.</p>
-<div class="figure align-left" id="id9">
+<div class="figure align-left" id="id10">
 <span id="fig-autocrop-png"></span><a class="reference internal image-reference" href="_images/iwanttobelieve_uncropped_cropped.png"><img alt="_images/iwanttobelieve_uncropped_cropped.png" src="_images/iwanttobelieve_uncropped_cropped.png" style="width: 100%;" /></a>
-<p class="caption"><span class="caption-number">Fig. 2.1 </span><span class="caption-text">On the left (with dark black borders) is the uncropped file, <a class="reference download internal" download="" href="_downloads/7ddf745e99ada28663a8280f32fcb8f2/iwanttobelieve_uncropped.png"><code class="xref download docutils literal notranslate"><span class="pre">iwanttobelieve_uncropped.png</span></code></a>, and on the right is the cropped-without-any-whitespace (with dark black borders) file, <a class="reference download internal" download="" href="_downloads/f6ee3a48fe423aa3aef25e96794f3e35/iwanttobelieve_cropped.png"><code class="xref download docutils literal notranslate"><span class="pre">iwanttobelieve_cropped.png</span></code></a>.</span><a class="headerlink" href="#id9" title="Permalink to this image">¶</a></p>
+<p class="caption"><span class="caption-number">Fig. 2.1 </span><span class="caption-text">On the left (with dark black borders) is the uncropped file, <a class="reference download internal" download="" href="_downloads/7ddf745e99ada28663a8280f32fcb8f2/iwanttobelieve_uncropped.png"><code class="xref download docutils literal notranslate"><span class="pre">iwanttobelieve_uncropped.png</span></code></a>, and on the right is the cropped-without-any-whitespace (with dark black borders) file, <a class="reference download internal" download="" href="_downloads/f6ee3a48fe423aa3aef25e96794f3e35/iwanttobelieve_cropped.png"><code class="xref download docutils literal notranslate"><span class="pre">iwanttobelieve_cropped.png</span></code></a>.</span><a class="headerlink" href="#id10" title="Permalink to this image">¶</a></p>
 </div>
 <p>You can generate <a class="reference download internal" download="" href="_downloads/f6ee3a48fe423aa3aef25e96794f3e35/iwanttobelieve_cropped.png"><code class="xref download docutils literal notranslate"><span class="pre">iwanttobelieve_cropped.png</span></code></a> from <a class="reference download internal" download="" href="_downloads/7ddf745e99ada28663a8280f32fcb8f2/iwanttobelieve_uncropped.png"><code class="xref download docutils literal notranslate"><span class="pre">iwanttobelieve_uncropped.png</span></code></a> by running,</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">autoCropImage --input=iwanttobelieve_uncropped.png --output=iwanttobelieve_cropped.png</span>
 </pre></div>
 </div>
 <p>The second example, <a class="reference internal" href="#fig-autocrop-pdf"><span class="std std-numref">Fig. 2.2</span></a> demonstrates how this tool autocrops a <a class="reference external" href="https://en.wikipedia.org/wiki/PDF">PDF</a> image file.</p>
-<div class="figure align-left" id="id10">
+<div class="figure align-left" id="id11">
 <span id="fig-autocrop-pdf"></span><a class="reference internal image-reference" href="_images/cumulative_plot_emission_uncropped_cropped.png"><img alt="_images/cumulative_plot_emission_uncropped_cropped.png" src="_images/cumulative_plot_emission_uncropped_cropped.png" style="width: 100%;" /></a>
-<p class="caption"><span class="caption-number">Fig. 2.2 </span><span class="caption-text">On the left (with dark black borders) is the uncropped file, <a class="reference download internal" download="" href="_downloads/3647f15c28f5b339c14c66e8b62a41bd/cumulative_plot_emission_uncropped.pdf"><code class="xref download docutils literal notranslate"><span class="pre">cumulative_plot_emission_uncropped.pdf</span></code></a>, and on the right is the cropped-without-any-whitespace (with dark black borders) file, <a class="reference download internal" download="" href="_downloads/7b917c539232813b9fc5a433167402e8/cumulative_plot_emission_cropped.pdf"><code class="xref download docutils literal notranslate"><span class="pre">cumulative_plot_emission_cropped.pdf</span></code></a>.</span><a class="headerlink" href="#id10" title="Permalink to this image">¶</a></p>
+<p class="caption"><span class="caption-number">Fig. 2.2 </span><span class="caption-text">On the left (with dark black borders) is the uncropped file, <a class="reference download internal" download="" href="_downloads/3647f15c28f5b339c14c66e8b62a41bd/cumulative_plot_emission_uncropped.pdf"><code class="xref download docutils literal notranslate"><span class="pre">cumulative_plot_emission_uncropped.pdf</span></code></a>, and on the right is the cropped-without-any-whitespace (with dark black borders) file, <a class="reference download internal" download="" href="_downloads/7b917c539232813b9fc5a433167402e8/cumulative_plot_emission_cropped.pdf"><code class="xref download docutils literal notranslate"><span class="pre">cumulative_plot_emission_cropped.pdf</span></code></a>.</span><a class="headerlink" href="#id11" title="Permalink to this image">¶</a></p>
 </div>
 <p>You can generate <a class="reference download internal" download="" href="_downloads/7b917c539232813b9fc5a433167402e8/cumulative_plot_emission_cropped.pdf"><code class="xref download docutils literal notranslate"><span class="pre">cumulative_plot_emission_cropped.pdf</span></code></a> from <a class="reference download internal" download="" href="_downloads/3647f15c28f5b339c14c66e8b62a41bd/cumulative_plot_emission_uncropped.pdf"><code class="xref download docutils literal notranslate"><span class="pre">cumulative_plot_emission_uncropped.pdf</span></code></a> by running,</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">autoCropImage --input=cumulative_plot_emission_uncropped.pdf --output=cumulative_plot_emission_cropped.pdf</span>
@@ -213,10 +215,10 @@
 <div class="section" id="convertimage">
 <span id="convertimage-label"></span><h2><span class="section-number">2.2. </span><code class="docutils literal notranslate"><span class="pre">convertImage</span></code><a class="headerlink" href="#convertimage" title="Permalink to this headline">¶</a></h2>
 <p><em>Quite a long time ago</em>, <code class="docutils literal notranslate"><span class="pre">convertImage</span></code> used the <a class="reference external" href="https://cloudconvert.com/apiconsole">CloudConvert REST API</a> to <em>smoothly and without pain points</em> convert and resize <a class="reference external" href="https://en.wikipedia.org/wiki/Scalable_Vector_Graphics">SVG</a> images to <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> images of the same base name. And no, I’m not going to <a class="reference external" href="https://git-scm.com/docs/git-bisect">git bisect</a> my way to the commit when that last happened.</p>
-<p>Now <code class="docutils literal notranslate"><span class="pre">convertImage</span></code> does four things, as seen when running <code class="docutils literal notranslate"><span class="pre">convertImage</span> <span class="pre">-h</span></code>.</p>
+<p>Now <code class="docutils literal notranslate"><span class="pre">convertImage</span></code> does five things, as seen when running <code class="docutils literal notranslate"><span class="pre">convertImage</span> <span class="pre">-h</span></code>.</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">usage: convertImage [-h] [--noverify] [--info] {image,movie,youtube,square} ...</span>
 
-<span class="go">Now does four different things, where only &quot;image&quot; operates on image files!</span>
+<span class="go">Now does five different things, where only &quot;image&quot; operates on image files!</span>
 
 <span class="go">positional arguments:</span>
 <span class="go">  {image,movie,youtube,square}</span>
@@ -225,6 +227,7 @@
 <span class="go">    movie               If chosen, convert an MP4 into an animated GIF.</span>
 <span class="go">    youtube             If chosen, convert a YOUTUBE video with URL into an animated GIF.</span>
 <span class="go">    square              If chosen, create a square MP4 file from an input MP4 file.</span>
+<span class="go">    fromimages          If chosen, then convert a sequence of PNG images into an MP4 file.</span>
 
 <span class="go">optional arguments:</span>
 <span class="go">  -h, --help            show this help message and exit</span>
@@ -238,7 +241,7 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">--noverify</span></code> ignores verification of SSL transactions. It is optional and defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
 </ul>
 <p><a class="reference internal" href="#convertimage-image"><span class="std std-ref">convertImage image</span></a> <em>tries</em> to use the <a class="reference external" href="https://cloudconvert.com/apiconsole">CloudConvert REST API</a> to convert <a class="reference external" href="https://en.wikipedia.org/wiki/Scalable_Vector_Graphics">SVG</a> or <a class="reference external" href="https://en.wikipedia.org/wiki/Scalable_Vector_Graphics#Compression">SVGZ</a>, <a class="reference external" href="https://en.wikipedia.org/wiki/PDF">PDF</a>, or <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> images to another <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> image. <a class="reference internal" href="#convertimage-movie"><span class="std std-ref">convertImage movie</span></a> creates an animated <a class="reference external" href="https://en.wikipedia.org/wiki/GIF">GIF</a> file from an <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> file. <a class="reference internal" href="#convertimage-youtube"><span class="std std-ref">convertImage youtube</span></a> creates an animated <a class="reference external" href="https://en.wikipedia.org/wiki/GIF">GIF</a> from a <a class="reference external" href="https://www.youtube.com">YouTube</a> clip. Finally, <a class="reference internal" href="#convertimage-square"><span class="std std-ref">convertImage square</span></a> creates a <em>square</em> <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> file a non-square <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> file.</p>
-<p>Both <a class="reference internal" href="#convertimage-movie"><span class="std std-ref">convertImage movie</span></a> and <a class="reference internal" href="#convertimage-youtube"><span class="std std-ref">convertImage youtube</span></a> use <a class="reference external" href="https://ffmpeg.org">FFmpeg</a> underneath the hood, using a <code class="xref py py-mod docutils literal notranslate"><span class="pre">subprocess</span></code> that implements this <a class="reference external" href="http://blog.pkh.me/p/21-high-quality-gif-with-ffmpeg.html">tutorial on high quality movie to animated GIF conversion</a>.</p>
+<p><a class="reference internal" href="#convertimage-movie"><span class="std std-ref">convertImage movie</span></a>, <a class="reference internal" href="#convertimage-youtube"><span class="std std-ref">convertImage youtube</span></a>, and <a class="reference internal" href="#convertimage-fromimages"><span class="std std-ref">convertImage fromimages</span></a> use <a class="reference external" href="https://ffmpeg.org">FFmpeg</a> underneath the hood, using a <code class="xref py py-mod docutils literal notranslate"><span class="pre">subprocess</span></code> that implements this <a class="reference external" href="http://blog.pkh.me/p/21-high-quality-gif-with-ffmpeg.html">tutorial on high quality movie to animated GIF conversion</a>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>A recent <a class="reference external" href="https://medium.com/&#64;Peter_UXer/small-sized-and-beautiful-gifs-with-ffmpeg-25c5082ed733">Medium article</a> describes two ways to produce similarly high quality animated <a class="reference external" href="https://en.wikipedia.org/wiki/GIF">GIF</a> files.</p>
@@ -295,9 +298,9 @@
 </pre></div>
 </div>
 <p>Then we get this animated <a class="reference external" href="https://en.wikipedia.org/wiki/GIF">GIF</a> in <a class="reference internal" href="#covid19-conus-latest-gif"><span class="std std-numref">Fig. 2.3</span></a> (13M in size).</p>
-<div class="figure align-left" id="id11">
+<div class="figure align-left" id="id12">
 <span id="covid19-conus-latest-gif"></span><a class="reference internal image-reference" href="_images/covid19_conus_LATEST.gif"><img alt="_images/covid19_conus_LATEST.gif" src="_images/covid19_conus_LATEST.gif" style="width: 100%;" /></a>
-<p class="caption"><span class="caption-number">Fig. 2.3 </span><span class="caption-text">The animated <a class="reference external" href="https://en.wikipedia.org/wiki/GIF">GIF</a> of COVID-19 cumulative cases and deaths in the <a class="reference external" href="https://en.wikipedia.org/wiki/Contiguous_United_States">CONUS</a>, as of 11 February 2021: nearly 27.1 million cases, and over 470k deaths.</span><a class="headerlink" href="#id11" title="Permalink to this image">¶</a></p>
+<p class="caption"><span class="caption-number">Fig. 2.3 </span><span class="caption-text">The animated <a class="reference external" href="https://en.wikipedia.org/wiki/GIF">GIF</a> of COVID-19 cumulative cases and deaths in the <a class="reference external" href="https://en.wikipedia.org/wiki/Contiguous_United_States">CONUS</a>, as of 11 February 2021: nearly 27.1 million cases, and over 470k deaths.</span><a class="headerlink" href="#id12" title="Permalink to this image">¶</a></p>
 </div>
 </div>
 <div class="section" id="convertimage-youtube">
@@ -332,9 +335,9 @@
 </pre></div>
 </div>
 <p>to generate a <code class="docutils literal notranslate"><span class="pre">highest</span></code> quality animated <a class="reference external" href="https://en.wikipedia.org/wiki/GIF">GIF</a>, scaled to <em>half</em> the original size of the <a class="reference external" href="https://www.youtube.com">YouTube</a> clip, into <a class="reference internal" href="#lucas-bros-gif"><span class="std std-numref">Fig. 2.4</span></a> (17M in size).</p>
-<div class="figure align-left" id="id12">
+<div class="figure align-left" id="id13">
 <span id="lucas-bros-gif"></span><a class="reference internal image-reference" href="_images/lucas_bros.gif"><img alt="_images/lucas_bros.gif" src="_images/lucas_bros.gif" style="width: 100%;" /></a>
-<p class="caption"><span class="caption-number">Fig. 2.4 </span><span class="caption-text">One of my favorite scenes from <a class="reference external" href="https://www.imdb.com/title/tt3472130/?ref_=ttep_ep3">Lucas Bros. Moving Co. S01E03: Before &amp; After Models</a>. I giggle each time I see it.</span><a class="headerlink" href="#id12" title="Permalink to this image">¶</a></p>
+<p class="caption"><span class="caption-number">Fig. 2.4 </span><span class="caption-text">One of my favorite scenes from <a class="reference external" href="https://www.imdb.com/title/tt3472130/?ref_=ttep_ep3">Lucas Bros. Moving Co. S01E03: Before &amp; After Models</a>. I giggle each time I see it.</span><a class="headerlink" href="#id13" title="Permalink to this image">¶</a></p>
 </div>
 </div>
 <div class="section" id="convertimage-square">
@@ -366,6 +369,31 @@
 <p>Converts <a class="reference download internal" download="" href="_downloads/fc3ee953c0c8283c9fe8fb269c531b62/covid19_california_LATEST.mp4"><code class="xref download docutils literal notranslate"><span class="pre">covid19_california_LATEST.mp4</span></code></a> into <a class="reference download internal" download="" href="_downloads/8aee3dccb7f129f83209dd77dd8b7886/covid19_california_LATEST_square.mp4"><code class="xref download docutils literal notranslate"><span class="pre">covid19_california_LATEST_square.mp4</span></code></a>, which has black letterboxes on its left and right.</p>
 </li>
 </ol>
+</div>
+<div class="section" id="convertimage-fromimages">
+<span id="id5"></span><h3><span class="section-number">2.2.5. </span>convertImage fromimages<a class="headerlink" href="#convertimage-fromimages" title="Permalink to this headline">¶</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">convertImatge</span> <span class="pre">fromuimages</span></code> creates an <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> movie file from a collection of <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> images as frames. Say the files live in a directory <code class="docutils literal notranslate"><span class="pre">dirname</span></code>, and the prefix of the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> files is <code class="docutils literal notranslate"><span class="pre">PREFIX</span></code>, so that the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> images are named, say, <code class="docutils literal notranslate"><span class="pre">PREFIX0000.png</span></code> sequentially to <code class="docutils literal notranslate"><span class="pre">PREFIX0401.png</span></code>. This command will create an <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> file, named <code class="docutils literal notranslate"><span class="pre">PREFIX.mp4</span></code>, in <code class="docutils literal notranslate"><span class="pre">dirname</span></code>.</p>
+<p>Its help screen, when running <code class="docutils literal notranslate"><span class="pre">convertImage</span> <span class="pre">fromimages</span> <span class="pre">-h</span></code>, is,</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">usage: convertImage fromimages [-h] [-d dirname] -p prefix [-f fps] [--autocrop]</span>
+
+<span class="go">optional arguments:</span>
+<span class="go">  -h, --help            show this help message and exit</span>
+<span class="go">  -d dirname, --dirname dirname</span>
+<span class="go">                        The name of the directory to look for a sequence of PNG images. Default is /usr/WS2/islam5/code_src/nprstuff.</span>
+<span class="go">  -p prefix, --prefix prefix</span>
+<span class="go">                        The prefix of PNG files through which to go.</span>
+<span class="go">  -f fps, --fps fps     The number of frames per second in the MP4 file. Default is 5.</span>
+<span class="go">  --autocrop            If chosen, then perform an autocrop, and then (where necessary) resize each image so that their widths and heights are multiples</span>
+<span class="go">                        of 2.</span>
+</pre></div>
+</div>
+<p>Here are the command line arguments.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-d</span></code> or <code class="docutils literal notranslate"><span class="pre">--dirname</span></code> specifies the directory where the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> files live. By default it is the current working directory.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-p</span></code> or <code class="docutils literal notranslate"><span class="pre">--prefix</span></code> is the prefix to the collection of <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> files as frames.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-f</span></code> or <code class="docutils literal notranslate"><span class="pre">--fps</span></code> is the frames per second for the output <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> file. The default is 5, but it must be <span class="math notranslate nohighlight">\(\ge 1\)</span>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--autocrop</span></code> specifies whether you want to automatically crop out white space from the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> images.</p></li>
+</ul>
 </div>
 </div>
 <div class="section" id="changedates">

@@ -63,13 +63,13 @@ You can generate :download:`cumulative_plot_emission_cropped.pdf <images/cumulat
 ================
 *Quite a long time ago*, ``convertImage`` used the `CloudConvert REST API`_ to *smoothly and without pain points* convert and resize SVG_ images to PNG_ images of the same base name. And no, I'm not going to `git bisect`_ my way to the commit when that last happened.
 
-Now ``convertImage`` does four things, as seen when running ``convertImage -h``.
+Now ``convertImage`` does five things, as seen when running ``convertImage -h``.
 
 .. code-block:: console
 
    usage: convertImage [-h] [--noverify] [--info] {image,movie,youtube,square} ...
 
-   Now does four different things, where only "image" operates on image files!
+   Now does five different things, where only "image" operates on image files!
 
    positional arguments:
      {image,movie,youtube,square}
@@ -78,6 +78,7 @@ Now ``convertImage`` does four things, as seen when running ``convertImage -h``.
        movie               If chosen, convert an MP4 into an animated GIF.
        youtube             If chosen, convert a YOUTUBE video with URL into an animated GIF.
        square              If chosen, create a square MP4 file from an input MP4 file.
+       fromimages          If chosen, then convert a sequence of PNG images into an MP4 file.
 
    optional arguments:
      -h, --help            show this help message and exit
@@ -92,7 +93,7 @@ There are two optional top-level flags.
 
 :ref:`convertImage image <convertImage_image>` *tries* to use the `CloudConvert REST API`_ to convert SVG_ or SVGZ_, PDF_, or PNG_ images to another PNG_ image. :ref:`convertImage movie <convertImage_movie>` creates an animated GIF_ file from an MP4_ file. :ref:`convertImage youtube <convertImage_youtube>` creates an animated GIF_ from a YouTube_ clip. Finally, :ref:`convertImage square <convertImage_square>` creates a *square* MP4_ file a non-square MP4_ file.
 
-Both :ref:`convertImage movie <convertImage_movie>` and :ref:`convertImage youtube <convertImage_youtube>` use FFmpeg_ underneath the hood, using a :py:mod:`subprocess <subprocess.Popen>` that implements this `tutorial on high quality movie to animated GIF conversion <movie_2_gif_>`_.
+:ref:`convertImage movie <convertImage_movie>`, :ref:`convertImage youtube <convertImage_youtube>`, and :ref:`convertImage fromimages <convertImage_fromimages>` use FFmpeg_ underneath the hood, using a :py:mod:`subprocess <subprocess.Popen>` that implements this `tutorial on high quality movie to animated GIF conversion <movie_2_gif_>`_.
 
 .. note::
 
@@ -260,7 +261,39 @@ Its help screen, when running ``convertImage square -h``, is,
       convertImage square -f covid19_california_LATEST.mp4 -o covid19_california_LATEST_square.mp4
 
    Converts :download:`covid19_california_LATEST.mp4 <images/covid19_california_LATEST.mp4>` into :download:`covid19_california_LATEST_square.mp4 <images/covid19_california_LATEST_square.mp4>`, which has black letterboxes on its left and right.
-      
+
+.. _convertImage_fromimages:
+
+convertImage fromimages
+------------------------
+``convertImatge fromuimages`` creates an MP4_ movie file from a collection of PNG_ images as frames. Say the files live in a directory ``dirname``, and the prefix of the PNG_ files is ``PREFIX``, so that the PNG_ images are named, say, ``PREFIX0000.png`` sequentially to ``PREFIX0401.png``. This command will create an MP4_ file, named ``PREFIX.mp4``, in ``dirname``.
+
+Its help screen, when running ``convertImage fromimages -h``, is,
+
+.. code-block:: console
+
+   usage: convertImage fromimages [-h] [-d dirname] -p prefix [-f fps] [--autocrop]
+
+   optional arguments:
+     -h, --help            show this help message and exit
+     -d dirname, --dirname dirname
+			   The name of the directory to look for a sequence of PNG images. Default is /usr/WS2/islam5/code_src/nprstuff.
+     -p prefix, --prefix prefix
+			   The prefix of PNG files through which to go.
+     -f fps, --fps fps     The number of frames per second in the MP4 file. Default is 5.
+     --autocrop            If chosen, then perform an autocrop, and then (where necessary) resize each image so that their widths and heights are multiples
+			   of 2.
+
+Here are the command line arguments.
+			   
+* ``-d`` or ``--dirname`` specifies the directory where the PNG_ files live. By default it is the current working directory.
+
+* ``-p`` or ``--prefix`` is the prefix to the collection of PNG_ files as frames.
+
+* ``-f`` or ``--fps`` is the frames per second for the output MP4_ file. The default is 5, but it must be :math:`\ge 1`.
+
+* ``--autocrop`` specifies whether you want to automatically crop out white space from the PNG_ images.
+			   
 .. _changedates_label:
 
 ``changedates``
