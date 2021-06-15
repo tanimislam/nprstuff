@@ -27,7 +27,7 @@ class MyHTMLTranslator( HTMLTranslator ):
        htmlwriter.translator_class = MyHTMLTranslator
        publish_cmdline(writer=htmlwriter)
 
-    I imagine I will have to modify the methods :py:meth:`check_valid_RST <nprstuff.email.check_valid_RST>` and :py:meth:`convert_string_RST <nprstuff.email.convert_string_RST>` to represent more *correct* functionality. There, I am following what I inferred from :py:meth:`publish_parts <docutils.core.publish_parts>` and the included code block in this object's description.
+    I imagine I will have to modify the methods :py:meth:`check_valid_RST <nprstuff.npremail.check_valid_RST>` and :py:meth:`convert_string_RST <nprstuff.npremail.convert_string_RST>` to represent more *correct* functionality. There, I am following what I inferred from :py:meth:`publish_parts <docutils.core.publish_parts>` and the included code block in this object's description.
 
         .. _`this GitHub gist`: https://gist.github.com/Matherunner/c0397ae11cc72f2f35ae
     """
@@ -105,9 +105,8 @@ def check_valid_RST( myString, use_mathjax = False ):
     :returns: ``True`` if valid, otherwise ``False``.
     :rtype: bool
 
-    .. seealso:: :py:meth:`convert_string_RST <nprstuff.email.convert_string_RST>`.
+    .. seealso:: :py:meth:`convert_string_RST <nprstuff.npremail.convert_string_RST>`.
 
-    .. _reStructuredText: https://en.wikipedia.org/wiki/ReStructuredText
     .. _MathJax: https://www.mathjax.org
     """
     overrides = {
@@ -137,7 +136,7 @@ def convert_string_RST( myString, use_mathjax = False ):
     :returns: If the input string is valid reStructuredText_, returns the rich HTML as a :py:class:`string <str>`. Otherwise emits a :py:meth:`logging error message <logging.error>` and returns ``None``.
     :rtype: str
 
-    .. seealso:: :py:meth:`check_valid_RST <nprstuff.email.check_valid_RST>`.
+    .. seealso:: :py:meth:`check_valid_RST <nprstuff.npremail.check_valid_RST>`.
     """
     if not check_valid_RST( myString ):
         logging.error( "Error, could not convert %s into RST." % myString )
@@ -178,10 +177,9 @@ def get_imgurl_credentials( ):
 
     .. seealso::
 
-       * :py:meth:`check_imgurl_credentials <nprstuff.email.check_imgurl_credentials>`.
-       * :py:meth:`store_imgurl_credentials <nprstuff.email.store_imgurl_credentials>`.
+       * :py:meth:`check_imgurl_credentials <nprstuff.npremail.check_imgurl_credentials>`.
+       * :py:meth:`store_imgurl_credentials <nprstuff.npremail.store_imgurl_credentials>`.
     
-    .. _Imgur: https://imgur.com/
     .. _SQLite3: https://en.wikipedia.org/wiki/SQLite
     """
     val = session.query( NPRStuffConfig ).filter( NPRStuffConfig.service == 'imgurl' ).first( )
@@ -206,8 +204,8 @@ def check_imgurl_credentials(
 
     .. seealso::
 
-       * :py:meth:`get_imgurl_credentials <nprstuff.email.get_imgurl_credentials>`.
-       * :py:meth:`store_imgurl_credentials <nprstuff.email.store_imgurl_credentials>`.
+       * :py:meth:`get_imgurl_credentials <nprstuff.npremail.get_imgurl_credentials>`.
+       * :py:meth:`store_imgurl_credentials <nprstuff.npremail.store_imgurl_credentials>`.
     """
     response = requests.post(
         'https://api.imgur.com/oauth2/token',
@@ -239,8 +237,8 @@ def store_imgurl_credentials(
 
     .. seealso::
 
-       * :py:meth:`check_imgurl_credentials <nprstuff.email.check_imgurl_credentials>`.
-       * :py:meth:`get_imgurl_credentials <nprstuff.email.get_imgurl_credentials>`.
+       * :py:meth:`check_imgurl_credentials <nprstuff.npremail.check_imgurl_credentials>`.
+       * :py:meth:`get_imgurl_credentials <nprstuff.npremail.get_imgurl_credentials>`.
     """
     isValid = check_imgurl_credentials(
         clientID, clientSECRET, clientREFRESHTOKEN, verify = verify )
@@ -275,9 +273,9 @@ def oauthGetGoogleCredentials( verify = True ):
     
     .. seealso::
 
-       * :py:meth:`oauthCheckGoogleCredentials <nprstuff.email.oauthCheckGoogleCredentials>`.
-       * :py:meth:`oauth_generate_google_permission_url <nprstuff.email.oauth_generate_google_permission_url>`.
-       * :py:meth:`oauth_store_google_credentials <nprstuff.email.oauth_store_google_credentials>`.
+       * :py:meth:`oauthCheckGoogleCredentials <nprstuff.npremail.oauthCheckGoogleCredentials>`.
+       * :py:meth:`oauth_generate_google_permission_url <nprstuff.npremail.oauth_generate_google_permission_url>`.
+       * :py:meth:`oauth_store_google_credentials <nprstuff.npremail.oauth_store_google_credentials>`.
 
     .. _NPRStuff: https://nprstuff.readthedocs.io
     """
@@ -299,9 +297,9 @@ def oauthGetGoogleCredentials( verify = True ):
     
 #     .. seealso::
 
-#        * :py:meth:`oauthCheckGoogleCredentials <nprstuff.email.oauthCheckGoogleCredentials>`.
-#        * :py:meth:`oauth_generate_google_permission_url <nprstuff.email.oauth_generate_google_permission_url>`.
-#        * :py:meth:`oauth_store_google_credentials <nprstuff.email.oauth_store_google_credentials>`.
+#        * :py:meth:`oauthCheckGoogleCredentials <nprstuff.npremail.oauthCheckGoogleCredentials>`.
+#        * :py:meth:`oauth_generate_google_permission_url <nprstuff.npremail.oauth_generate_google_permission_url>`.
+#        * :py:meth:`oauth_store_google_credentials <nprstuff.npremail.oauth_store_google_credentials>`.
 
 #     .. _NPRStuff: https://nprstuff.readthedocs.io
 #     """
@@ -314,7 +312,7 @@ def oauthGetGoogleCredentials( verify = True ):
 
 def oauth_generate_google_permission_url( ):
     """
-    Generates a `Google OAuth2`_ web-based flow for all the Google services used in NPRStuff_. The authentication process that uses this flow is described in :ref:`this subsection <Summary of Setting Up Google Credentials>`. Here are the programmatic steps to finally generate an :py:class:`Credentials <google.oauth2.credentials.Credentials>` object.
+    Generates a `Google OAuth2`_ web-based flow for all the Google services used in NPRStuff_. The authentication process that uses this flow is described in `this subsection <setting_up_google_credentials_>`_. Here are the programmatic steps to finally generate an :py:class:`Credentials <google.oauth2.credentials.Credentials>` object.
     
     1. Get the :py:class:`Flow <google_auth_oauthlib.flow.Flow>` and authentication URI.
 
@@ -336,9 +334,9 @@ def oauth_generate_google_permission_url( ):
     
     .. seealso::
 
-       * :py:meth:`oauthCheckGoogleCredentials <nprstuff.email.oauthCheckGoogleCredentials>`.
-       * :py:meth:`oauthGetGoogleCredentials <nprstuff.email.oauthGetGoogleCredentials>`.
-       * :py:meth:`oauth_store_google_credentials <nprstuff.email.oauth_store_google_credentials>`.
+       * :py:meth:`oauthCheckGoogleCredentials <nprstuff.npremail.oauthCheckGoogleCredentials>`.
+       * :py:meth:`oauthGetGoogleCredentials <nprstuff.npremail.oauthGetGoogleCredentials>`.
+       * :py:meth:`oauth_store_google_credentials <nprstuff.npremail.oauth_store_google_credentials>`.
 
     .. _Oauth2: https://oauth.net/2
     .. _`Google OAuth2`: https://developers.google.com/identity/protocols/oauth2
@@ -360,9 +358,9 @@ def oauth_store_google_credentials( credentials ):
 
     .. seealso::
 
-       * :py:meth:`oauthCheckGoogleCredentials <nprstuff.email.oauthCheckGoogleCredentials>`.
-       * :py:meth:`oauthGetGoogleCredentials <nprstuff.email.oauthGetGoogleCredentials>`.
-       * :py:meth:`oauth_generate_google_permission_url <nprstuff.email.oauth_generate_google_permission_url>`.
+       * :py:meth:`oauthCheckGoogleCredentials <nprstuff.npremail.oauthCheckGoogleCredentials>`.
+       * :py:meth:`oauthGetGoogleCredentials <nprstuff.npremail.oauthGetGoogleCredentials>`.
+       * :py:meth:`oauth_generate_google_permission_url <nprstuff.npremail.oauth_generate_google_permission_url>`.
     """
     val = session.query( NPRStuffConfig ).filter( NPRStuffConfig.service == 'google' ).first( )
     if val is not None:

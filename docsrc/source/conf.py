@@ -70,7 +70,7 @@ intersphinx_mapping = {
     'google-auth' : ( 'https://google-auth.readthedocs.io/en/latest', None ),
     'PyPDF2' : ( 'https://pythonhosted.org/PyPDF2', None ),
     'Pillow' : ( 'https://pillow.readthedocs.io/en/stable', None ),
-    'docutils' : ( 'https://docutils.readthedocs.io/en/sphinx-docs', None ),
+    'docutils' : ( 'https://docutils.readthedocs.io/en/master', None ),
 }
 
 

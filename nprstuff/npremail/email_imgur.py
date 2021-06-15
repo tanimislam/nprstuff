@@ -363,7 +363,7 @@ class NPRStuffIMGClient( object ):
     * The value is a four element :py:class:`tuple`: image name, image ID, the URL link to this image, and the :py:class:`datetime <datetime.datetime>` at which the image was uploaded.
 
     :param bool verify: optional argument, whether to verify SSL connections. Default is ``True``.
-    :param dict data_imgurl: optional argument. If defined, must have the following keys: ``clientID``, ``clientSECRET``, and ``clientREFRESHTOKEN``. Must be consistent with :py:class:`dict` returned by :py:meth:`get_imgurl_credentials <nprstuff.email.get_imgurl_credentials>`.
+    :param dict data_imgurl: optional argument. If defined, must have the following keys: ``clientID``, ``clientSECRET``, and ``clientREFRESHTOKEN``. Must be consistent with :py:class:`dict` returned by :py:meth:`get_imgurl_credentials <nprstuff.npremail.get_imgurl_credentials>`.
     
     :var bool verify: whether to verify SSL connections.
     :var str access_token: the persistent API access token to the user's Imgur_ account.
@@ -510,7 +510,7 @@ class NPRStuffIMGClient( object ):
 
         Once this album is set or created,
 
-        * sets the new Imgur_ credentials using :py:meth:`store_imgur_credentials <nprstuff.email.store_imgurl_credentials>`.
+        * sets the new Imgur_ credentials using :py:meth:`store_imgur_credentials <nprstuff.npremail.store_imgurl_credentials>`.
 
         * populates ``self.imghashes`` with all the images found in this library. If the album does not exist, then ``self.imghashes`` is an empty :py:class:`dict`.
         
@@ -685,9 +685,9 @@ class NPRStuffIMGClient( object ):
 
         .. seealso::
 
-           * :py:meth:`refreshImages <nprstuff.email.email_imgur.NPRStuffIMGClient.refreshImages>`.
-           * :py:meth:`delete_image <nprstuff.email.email_imgur.NPRStuffIMGClient.delete_image>`.
-           * :py:meth:`change_name <nprstuff.email.email_imgur.NPRStuffIMGClient.change_name>`.
+           * :py:meth:`refreshImages <nprstuff.npremail.email_imgur.NPRStuffIMGClient.refreshImages>`.
+           * :py:meth:`delete_image <nprstuff.npremail.email_imgur.NPRStuffIMGClient.delete_image>`.
+           * :py:meth:`change_name <nprstuff.npremail.email_imgur.NPRStuffIMGClient.change_name>`.
         
         .. _Base64: https://en.wikipedia.org/wiki/Base64
         """
@@ -728,8 +728,8 @@ class NPRStuffIMGClient( object ):
 
         .. seealso::
 
-           * :py:meth:`upload_image <nprstuff.email.email_imgur.NPRStuffIMGClient.upload_image>`.
-           * :py:meth:`change_name <nprstuff.email.email_imgur.NPRStuffIMGClient.change_name>`.
+           * :py:meth:`upload_image <nprstuff.npremail.email_imgur.NPRStuffIMGClient.upload_image>`.
+           * :py:meth:`change_name <nprstuff.npremail.email_imgur.NPRStuffIMGClient.change_name>`.
         """
         if imgMD5 is None:
             imgMD5 = hashlib.md5( b64img ).hexdigest( )
@@ -754,8 +754,8 @@ class NPRStuffIMGClient( object ):
 
         .. seealso::
 
-           * :py:meth:`upload_image <nprstuff.email.email_imgur.NPRStuffIMGClient.upload_image>`.
-           * :py:meth:`delete_image <nprstuff.email.email_imgur.NPRStuffIMGClient.delete_image>`.
+           * :py:meth:`upload_image <nprstuff.npremail.email_imgur.NPRStuffIMGClient.upload_image>`.
+           * :py:meth:`delete_image <nprstuff.npremail.email_imgur.NPRStuffIMGClient.delete_image>`.
         """
         assert( os.path.basename( new_name ).endswith('.png') )
         if imgMD5 not in self.imghashes:
@@ -808,7 +808,7 @@ class PNGPicLabel( QLabel ):
 
 class PNGPicObject( object ):
     """
-    This provides a GUI widget to the Imgur_ interface implemented in :py:class:`PlexIMGClient <nprstuff.email.email_imgur.NPRStuffIMGClient>`. Initializaton of the image can either upload this image to the Imgur_ account, or retrieve the image from the main Imgur_ album. This object can also launch a GUI dialog window through :py:meth:`getInfoGUI <nprstuff.email.PNGPicObject.getInfoGUI>`.
+    This provides a GUI widget to the Imgur_ interface implemented in :py:class:`PlexIMGClient <nprstuff.npremail.email_imgur.NPRStuffIMGClient>`. Initializaton of the image can either upload this image to the Imgur_ account, or retrieve the image from the main Imgur_ album. This object can also launch a GUI dialog window through :py:meth:`getInfoGUI <nprstuff.npremail.PNGPicObject.getInfoGUI>`.
 
     :param dict initdata: the low-level dictionary that contains important information on the image, located in a file, that will either be uploaded into the main Imgur_ album or merely kept in memory. The main key that determines operation is ``initialization``. It can be one of ``"FILE"`` or ``"SERVER"``.
 
@@ -828,7 +828,7 @@ class PNGPicObject( object ):
     
       * ``imgDateTime`` is the :py:class:`datetime <datetime.datetime>` at which the image was initially uploaded into the main Imgur_ album.
 
-    :param PlexIMGClient pImgClient: the :py:class:`PlexIMGClient <nprstuff.email.email_imgur.NPRStuffIMGClient>` used to access and manipulate (add, delete, rename) images in the main Imgur_ album.
+    :param PlexIMGClient pImgClient: the :py:class:`PlexIMGClient <nprstuff.npremail.email_imgur.NPRStuffIMGClient>` used to access and manipulate (add, delete, rename) images in the main Imgur_ album.
 
     :var str actName: the file name without full path, which must end in ``png``.
     :var QImage img: the :py:class:`QImage <PyQt4.QtGui.QImage>` representation of this image.
@@ -845,8 +845,8 @@ class PNGPicObject( object ):
     @classmethod
     def createPNGPicObjects( cls, pImgClient ):
         """
-        :param PlexIMGClient pImgClient: the :py:class:`PlexIMGClient <nprstuff.email.email_imgur.NPRStuffIMGClient>` used to access and manipulate (add, delete, rename) images in the main Imgur_ album.
-        :returns: a :py:class:`list` of :py:class:`PNGPicObject <nprstuff.email.PNGPicObject>` representing the images in the main Imgur_ album.
+        :param PlexIMGClient pImgClient: the :py:class:`PlexIMGClient <nprstuff.npremail.email_imgur.NPRStuffIMGClient>` used to access and manipulate (add, delete, rename) images in the main Imgur_ album.
+        :returns: a :py:class:`list` of :py:class:`PNGPicObject <nprstuff.npremail.PNGPicObject>` representing the images in the main Imgur_ album.
         :rtype: list
         """
         pngPICObjects = [ ]
@@ -966,7 +966,7 @@ class PNGPicObject( object ):
         changes the filename into a new name.
 
         :param str new_name: the new name of the image file to be changed in the main album on the Imgur_ account. This must end in ``png``.
-        :param NPRStuffIMGClient nImgClient: the :py:class:`NPRStuffIMGClient <nprstuff.email.email_imgur.NPRStuffIMGClient>` used to access and manipulate (add, delete, rename) images in the main Imgur_ album.
+        :param NPRStuffIMGClient nImgClient: the :py:class:`NPRStuffIMGClient <nprstuff.npremail.email_imgur.NPRStuffIMGClient>` used to access and manipulate (add, delete, rename) images in the main Imgur_ album.
         """
         assert( new_name.endswith( '.png' ) )
         status = nImgClient.change_name( self.imgMD5, os.path.basename( new_name ) )

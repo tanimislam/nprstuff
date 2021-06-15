@@ -27,3 +27,4 @@ youtube_dl
 beautifulsoup4
 pathos
 qtmodern
+sphinxcontrib-youtube @ git+https://github.com/sphinx-contrib/youtube.git@master
