@@ -46,7 +46,11 @@ def mp4frompngs( png2mp4dict ):
     ## thank instructions from https://hamelot.io/visualization/using-ffmpeg-to-convert-a-set-of-images-into-a-video/
     ## make MP4 movie, 5 fps, quality = 25
     time0 = time.time( )
-    movie_name = '%s.mp4' % '.'.join(png2mp4dict['prefix'].split('.')[:-1])
+    num_dots = len( png2mp4dict['prefix'].split('.')[:-1] ) - 1
+    if num_dots == 0:
+        movie_name = '%s.mp4' % png2mp4dict['prefix']
+    else:
+        movie_name = '%s.mp4' % '.'.join(png2mp4dict['prefix'].split('.')[:-1])
     stdout_val = subprocess.check_output(
         [ ffmpeg_exec, '-y', '-r', '%d' % png2mp4dict['fps'], '-f', 'image2',
          '-i', png2mp4dict['actual prefix'],
