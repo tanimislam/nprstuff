@@ -30,6 +30,10 @@
 .. _`Google OAuth2`: https://developers.google.com/identity/protocols/oauth2
 .. _`GMail API`: https://developers.google.com/gmail/api
 .. _Base64: https://en.wikipedia.org/wiki/Base64
+.. _reStructuredText: https://docutils.sourceforge.io/rst.html
+.. _Imgur: https://imgur.com
+.. _setting_up_google_credentials: https://tanimislam.github.io/howdy/howdy-config/howdy_services_config.html#summary-of-setting-up-google-credentials
+
 ..
 .. these are magazine URLS
 ..
