@@ -10,6 +10,15 @@ from PyQt5.QtCore import QByteArray
 from nprstuff.core import autocrop_image
 
 def mp4frompngs( png2mp4dict ):
+    """
+    Creates an MP4_ file from the low-level input specification :py:class:`dict` that :py:meth:`create_png2mp4dict <nprstuff.core.convert_image.create_png2mp4dict>` creates. Requires the existence of the ``ffmpeg`` executable, and ``status`` value in the :py:class:`dict` *must* be ``"SUCCESS"``. Otherwise, this method does not create a movie file.
+
+    If ``dirname`` is the directory in which the PNG_ files live, and ``PREFIX`` is the prefix of all the PNG_ files, the MP4_ file is named ``dirname/PREFIX.mp4``.
+
+    :param dict png2mp4dict: the dictionary specification for creating a specific MP4_ file from a collection of PNG_ files as frames.
+
+    .. seealso:: :py:meth:`create_png2mp4dict <nprstuff.core.convert_image.create_png2mp4dict>`.
+    """
     #
     ## barf out if cannot find ffmpeg
     ffmpeg_exec = find_executable( 'ffmpeg' )
@@ -46,7 +55,12 @@ def mp4frompngs( png2mp4dict ):
     ## thank instructions from https://hamelot.io/visualization/using-ffmpeg-to-convert-a-set-of-images-into-a-video/
     ## make MP4 movie, 5 fps, quality = 25
     time0 = time.time( )
-    movie_name = '%s.mp4' % '.'.join(png2mp4dict['prefix'].split('.')[:-1])
+    num_dots = len( png2mp4dict['prefix'].split('.')[:-1] )
+    logging.info('NUM DOTS mp4frompngs: %d.' % num_dots )
+    if num_dots == 0:
+        movie_name = '%s.mp4' % png2mp4dict['prefix']
+    else:
+        movie_name = '%s.mp4' % '.'.join(png2mp4dict['prefix'].split('.')[:-1])
     stdout_val = subprocess.check_output(
         [ ffmpeg_exec, '-y', '-r', '%d' % png2mp4dict['fps'], '-f', 'image2',
          '-i', png2mp4dict['actual prefix'],
@@ -56,6 +70,36 @@ def mp4frompngs( png2mp4dict ):
         movie_name, len( png2mp4dict['files'] ), time.time( ) - time0 ) )
     
 def create_png2mp4dict( prefix, dirname = os.getcwd( ), fps = 5, autocrop = False ):
+    """
+    This method creates a complicated and low-level :py:class:`dict` of set up, when creating an MP4_ file from a collection of PNG_\ s. Here are things needed to make this work. :py:meth:`mp4frompngs <nprstuff.core.convert_image.mp4frompngs>` uses this :py:class:`dict` to create the MP4_ file.
+
+    #. The collection of PNG_ files exist in a directory named ``dirname``.
+
+    #. The format of the PNG_ files as frames of a movie must have a name like ``PREFIX0000.png`` to ``PREFIX0401.png``.
+
+    #. The first PNG_ file must have a zero-padded value of zero. There must also be *no* number gaps in the sequence of PNG_ files as frames. For example, if there are PNG_ files ``PREFIX0200.png`` and ``PREFIX0202.png`` but *no* ``PREFIX0201.png``, this process will fail.
+    
+    In case of success, this method returns a :py:class:`dict` with these five keys and values.
+
+    * ``status``: the :py:class:`string <str>` ``"SUCCESS"``.
+    * ``files``: the sorted :py:class:`list` of PNG_ file names as movie frames.
+    * ``autocrop``: :py:class:`bool` on whether to autocrop the PNG_ files.
+    * ``fps``: the :py:class:`int` number of frames per second in the MP4_ file.
+    * ``actual prefix``: the input (``ffmpeg -i <arg>``) argument that goes into FFmpeg_ when creating the MP4_ from a collection of PNG_ files as frames.
+
+    In case of failure, the ``status`` key contains the reason for the failure. :py:meth:`mp4frompngs <nprstuff.core.convert_image.mp4frompngs>` returns this failure message and does nothing.
+
+    :param str prefix: the base name of each PNG_ file as frame, before the integer frame number and ``.png`` suffix.
+    :param str dirname: the directory in which these PNG_ files live. Default is the current working directory.
+    :param int fps: the number of frames per seconds for the movie. Must be :math:`\ge 1`.
+    :param bool autocrop: whether to automatically crop out white space in the PNG_ files as frames. Default is ``False``.
+    :returns: the :py:class:`dict` described above.
+    :rtype: dict
+
+    .. seealso:: :py:meth:`mp4frompngs <nprstuff.core.convert_image.mp4frompngs>`.
+
+    .. FFmpeg_: https://ffmpeg.org
+    """
     png2mp4dict = { }
     if fps < 1:
         png2mp4dict['status'] = 'Error, fps = %d is less than 1.' % fps
@@ -284,7 +328,6 @@ def mp4togif( input_mp4_file, gif_file = None, duration = None, scale = 1.0 ):
   
     .. seealso:: :py:meth:`make_square_mp4video <nprstuff.core.convert_image.make_square_mp4video>`.
     
-    .. _FFmpeg: https://ffmpeg.org
     .. _GIF: https://en.wikipedia.org/wiki/GIF
     .. _movie_2_gif: http://blog.pkh.me/p/21-high-quality-gif-with-ffmpeg.html
     """
