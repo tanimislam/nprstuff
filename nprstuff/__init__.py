@@ -61,6 +61,8 @@ nprstuff_logger = _get_nprstuff_logger( )
 _engine = create_engine( 'sqlite:///%s' % os.path.join( baseConfDir, 'app.db') )
 Base = declarative_base( )
 if not os.environ.get( 'READTHEDOCS' ):
+    if not os.path.isdir( baseConfDir ):
+        of.mkdir( baseConfDir )
     Base.metadata.bind = _engine
     session = sessionmaker( bind = _engine )( )
 else: session = sessionmaker( )
