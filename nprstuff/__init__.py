@@ -62,7 +62,7 @@ _engine = create_engine( 'sqlite:///%s' % os.path.join( baseConfDir, 'app.db') )
 Base = declarative_base( )
 if not os.environ.get( 'READTHEDOCS' ):
     if not os.path.isdir( baseConfDir ):
-        os.mkdir( baseConfDir )
+        os.makedirs( baseConfDir )
     Base.metadata.bind = _engine
     session = sessionmaker( bind = _engine )( )
 else: session = sessionmaker( )
