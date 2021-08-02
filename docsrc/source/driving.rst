@@ -120,9 +120,11 @@ The angle that is traversed as a function of time is,
 
 After more `Wolfram Alpha`_, one can then show that the angle is related to the scaled speed :math:`y = v/v_0` by this relation,
 
-.. _eq-theta-relation:
+.. math::
+   :label: eq-theta-relation
+   
 
-.. math:: \sin\theta = \frac{v^2}{2 v_0^2}.
+   \sin\theta = \frac{v^2}{2 v_0^2}.
 
 The speed :math:`v` versus scaled time :math:`\tau` is shown in `this illustrative figure <fig-turn-speed-accel_>`_.
 
