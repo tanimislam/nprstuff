@@ -71,6 +71,7 @@ intersphinx_mapping = {
     'PyPDF2' : ( 'https://pythonhosted.org/PyPDF2', None ),
     'Pillow' : ( 'https://pillow.readthedocs.io/en/stable', None ),
     'docutils' : ( 'https://docutils.readthedocs.io/en/master', None ),
+    'howdy' : ( 'https://tanimislam.github.io/howdy', None ),
 }
 
 
