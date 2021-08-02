@@ -13,6 +13,8 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
 
   
   
@@ -29,10 +31,11 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -102,6 +105,7 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="email_api.html">7. Email APIs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="driving.html">8. My Philosopy on Driving</a></li>
 </ul>
 
             
@@ -188,15 +192,15 @@
 <h2><span class="section-number">6.1. </span>npr_utils module<a class="headerlink" href="#npr-utils-module" title="Permalink to this headline">¶</a></h2>
 <p>This module contains common utilities to get the proper metadata for NPR programs, to name these media files in the proper date format, and to get the full paths to the <a class="reference external" href="https://libav.org">LibAV</a> or <a class="reference external" href="https://ffmpeg.org">FFMPEG</a> and <a class="reference external" href="https://handbrake.fr">HandBrakeCLI</a> tools used to create the NPR programs in <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">M4A</a> and <a class="reference external" href="https://en.wikipedia.org/wiki/MP3">MP3</a> formats (among other functionalities).</p>
 <span class="target" id="module-nprstuff.core.npr_utils"></span><dl class="py class">
-<dt id="nprstuff.core.npr_utils.MyPool">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></code><code class="sig-name descname"><span class="pre">MyPool</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initializer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxtasksperchild</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.MyPool" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.npr_utils.MyPool">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">MyPool</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initializer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxtasksperchild</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.MyPool" title="Permalink to this definition">¶</a></dt>
 <dd><p>A magic type of <a class="reference external" href="https://docs.python.org/3/library/multiprocessing.html#multiprocessing.pool.Pool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Pool</span></code></a> whose processes can spawn other processes. This allows one to create a pool of workers that can spawn other processes (by default, <a class="reference external" href="https://docs.python.org/3/library/multiprocessing.html#module-multiprocessing" title="(in Python v3.9)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">multiprocessing</span></code></a> does not allow this).</p>
 <p>I copied the code from <a class="reference external" href="https://stackoverflow.com/a/8963618/3362358">this website</a> and <a class="reference external" href="https://stackoverflow.com/questions/52948447/error-group-argument-must-be-none-for-now-in-multiprocessing-pool">a new website</a>, without any real understanding EXCEPT that I am extending a <code class="xref py py-class docutils literal notranslate"><span class="pre">Pool</span></code>.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.npr_utils.find_necessary_executables">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></code><code class="sig-name descname"><span class="pre">find_necessary_executables</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.find_necessary_executables" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.npr_utils.find_necessary_executables">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">find_necessary_executables</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.find_necessary_executables" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>this method searches first for the <a class="reference external" href="https://en.wikipedia.org/wiki/Libav">avconv</a>, then the <a class="reference external" href="https://ffmpeg.org">FFmpeg</a>, executable for audiovisual conversion. If it finds either executable, returns a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> that looks like <code class="docutils literal notranslate"><span class="pre">{</span> <span class="pre">'avconv'</span> <span class="pre">:</span> <span class="pre">&lt;EXEC_PATH&gt;</span> <span class="pre">}</span></code>, where <code class="docutils literal notranslate"><span class="pre">&lt;EXEC_PATH&gt;</span></code> is the executable’s path. If it does NOT find it, returns <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
@@ -205,8 +209,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.npr_utils.get_NPR_URL">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></code><code class="sig-name descname"><span class="pre">get_NPR_URL</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">program_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NPR_API_key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.get_NPR_URL" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.npr_utils.get_NPR_URL">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">get_NPR_URL</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">program_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NPR_API_key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.get_NPR_URL" title="Permalink to this definition">¶</a></dt>
 <dd><p>get the NPR API tag for a specific NPR program.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -225,13 +229,13 @@
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>no methods call this function any more, instead using the <a class="reference external" href="https://requests.kennethreitz.org/en/master/api/#module-requests" title="(in Requests v2.25.1)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">requests</span></code></a> module’s cleaner, higher-level functionality of REST API commands.</p>
+<p>no methods call this function any more, instead using the <a class="reference external" href="https://requests.kennethreitz.org/en/master/api/#module-requests" title="(in Requests v2.26.0)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">requests</span></code></a> module’s cleaner, higher-level functionality of REST API commands.</p>
 </div>
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.npr_utils.get_api_key">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></code><code class="sig-name descname"><span class="pre">get_api_key</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.get_api_key" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.npr_utils.get_api_key">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">get_api_key</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.get_api_key" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>the NPR API key, stored in <code class="docutils literal notranslate"><span class="pre">~/.config/nprstuff/nprstuff.conf</span></code>, under the <code class="docutils literal notranslate"><span class="pre">NPR_DATA</span></code> section and <code class="docutils literal notranslate"><span class="pre">apikey</span></code> key.</p>
@@ -247,8 +251,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.npr_utils.get_chrome_driver">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></code><code class="sig-name descname"><span class="pre">get_chrome_driver</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.get_chrome_driver" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.npr_utils.get_chrome_driver">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">get_chrome_driver</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.get_chrome_driver" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>a <a class="reference external" href="https://www.chromium.org/Home">Chromium</a> <a class="reference external" href="https://www.selenium.dev/documentation/en">Selenium</a> headless <a class="reference external" href="https://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver" title="(in Selenium Python Bindings v2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Webdriver</span></code></a>.</p>
@@ -261,8 +265,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.npr_utils.get_datestring">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></code><code class="sig-name descname"><span class="pre">get_datestring</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_act</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.get_datestring" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.npr_utils.get_datestring">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">get_datestring</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_act</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.get_datestring" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>date_act</strong> (<em>datetime</em>) – the candidate <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code></a> to format.</p>
@@ -281,8 +285,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.npr_utils.get_decdate">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></code><code class="sig-name descname"><span class="pre">get_decdate</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.get_decdate" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.npr_utils.get_decdate">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">get_decdate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.get_decdate" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>date_s</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – a <em>decoded</em> date string, of the format “DD.MM.YYYY”. This is a suffix attached to intermediate files that are created when downloading NPR shows.</p>
@@ -297,8 +301,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.npr_utils.get_firefox_driver">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></code><code class="sig-name descname"><span class="pre">get_firefox_driver</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.get_firefox_driver" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.npr_utils.get_firefox_driver">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">get_firefox_driver</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.get_firefox_driver" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>a <a class="reference external" href="https://www.mozilla.org/en-US/firefox/new">Firefox</a> <a class="reference external" href="https://www.selenium.dev/documentation/en">Selenium</a> headless <a class="reference external" href="https://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver" title="(in Selenium Python Bindings v2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Webdriver</span></code></a>.</p>
@@ -311,8 +315,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.npr_utils.get_freshair_downloaddir">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></code><code class="sig-name descname"><span class="pre">get_freshair_downloaddir</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.get_freshair_downloaddir" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.npr_utils.get_freshair_downloaddir">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">get_freshair_downloaddir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.get_freshair_downloaddir" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>the <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> default download directory, stored in <code class="docutils literal notranslate"><span class="pre">~/.config/nprstuff/nprstuff.conf</span></code>, under the <code class="docutils literal notranslate"><span class="pre">NPR_DATA</span></code> section and <code class="docutils literal notranslate"><span class="pre">freshair_downloaddir</span></code> key.</p>
@@ -328,8 +332,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.npr_utils.get_order_number_saturday_in_year">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></code><code class="sig-name descname"><span class="pre">get_order_number_saturday_in_year</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_act</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.get_order_number_saturday_in_year" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.npr_utils.get_order_number_saturday_in_year">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">get_order_number_saturday_in_year</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_act</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.get_order_number_saturday_in_year" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the <em>1-indexed</em> order of the Saturday associated with a given <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.date" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">date</span></code></a>. NOTE: this object MUST be a Saturday.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -353,8 +357,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.npr_utils.get_order_number_weekday_in_year">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></code><code class="sig-name descname"><span class="pre">get_order_number_weekday_in_year</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_act</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.get_order_number_weekday_in_year" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.npr_utils.get_order_number_weekday_in_year">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">get_order_number_weekday_in_year</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_act</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.get_order_number_weekday_in_year" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the <em>1-indexed</em> order of the weekday associated with a given <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.date" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">date</span></code></a>. NOTE: this object MUST be a weekday.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -378,8 +382,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.npr_utils.get_saturday_times_in_year">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></code><code class="sig-name descname"><span class="pre">get_saturday_times_in_year</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">getAll</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.get_saturday_times_in_year" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.npr_utils.get_saturday_times_in_year">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">get_saturday_times_in_year</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">getAll</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.get_saturday_times_in_year" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a sorted <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> of Saturdays, as <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.date" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">date</span></code></a> objects for a given year, either <em>all</em> the Saturdays or all the Saturdays before now.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -402,8 +406,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.npr_utils.get_time_from_datestring">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></code><code class="sig-name descname"><span class="pre">get_time_from_datestring</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datestring</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.get_time_from_datestring" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.npr_utils.get_time_from_datestring">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">get_time_from_datestring</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datestring</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.get_time_from_datestring" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>datestring</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – a formatted date string, which must be of the form “January 1, 2014”.</p>
@@ -418,8 +422,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.npr_utils.get_waitwait_downloaddir">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></code><code class="sig-name descname"><span class="pre">get_waitwait_downloaddir</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.get_waitwait_downloaddir" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.npr_utils.get_waitwait_downloaddir">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">get_waitwait_downloaddir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.get_waitwait_downloaddir" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>the <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> default download directory, stored in <code class="docutils literal notranslate"><span class="pre">~/.config/nprstuff/nprstuff.conf</span></code>, under the <code class="docutils literal notranslate"><span class="pre">NPR_DATA</span></code> section and <code class="docutils literal notranslate"><span class="pre">waitwait_downloaddir</span></code> key.</p>
@@ -435,8 +439,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.npr_utils.get_weekday_times_in_year">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></code><code class="sig-name descname"><span class="pre">get_weekday_times_in_year</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">getAll</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.get_weekday_times_in_year" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.npr_utils.get_weekday_times_in_year">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">get_weekday_times_in_year</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">getAll</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.get_weekday_times_in_year" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a sorted <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> of weekdays, as <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.date" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">date</span></code></a> objects for a given year, either <em>all</em> the weekdays or all the weekdays before now.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -459,8 +463,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.npr_utils.is_saturday">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></code><code class="sig-name descname"><span class="pre">is_saturday</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_act</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.is_saturday" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.npr_utils.is_saturday">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">is_saturday</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_act</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.is_saturday" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>date_act</strong> (<em>date</em>) – candidate date.</p>
@@ -475,8 +479,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.npr_utils.is_sunday">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></code><code class="sig-name descname"><span class="pre">is_sunday</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtime</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.is_sunday" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.npr_utils.is_sunday">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">is_sunday</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtime</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.is_sunday" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>date_act</strong> (<em>date</em>) – candidate date.</p>
@@ -491,8 +495,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.npr_utils.is_weekday">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></code><code class="sig-name descname"><span class="pre">is_weekday</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_act</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.is_weekday" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.npr_utils.is_weekday">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">is_weekday</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_act</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.is_weekday" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>date_act</strong> (<em>date</em>) – candidate date.</p>
@@ -507,8 +511,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.npr_utils.saturdays_of_month_of_year">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></code><code class="sig-name descname"><span class="pre">saturdays_of_month_of_year</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">month</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.saturdays_of_month_of_year" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.npr_utils.saturdays_of_month_of_year">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">saturdays_of_month_of_year</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">month</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.saturdays_of_month_of_year" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -530,8 +534,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.npr_utils.store_api_key">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></code><code class="sig-name descname"><span class="pre">store_api_key</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">npr_API_key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.store_api_key" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.npr_utils.store_api_key">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">store_api_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">npr_API_key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.store_api_key" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stores a candidate NPR API key into the configuration file, <code class="docutils literal notranslate"><span class="pre">~/.config/nprstuff/nprstuff.conf</span></code>, into the <code class="docutils literal notranslate"><span class="pre">NPR_DATA</span></code> section and <code class="docutils literal notranslate"><span class="pre">apikey</span></code> key.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -545,8 +549,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.npr_utils.store_freshair_downloaddir">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></code><code class="sig-name descname"><span class="pre">store_freshair_downloaddir</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freshair_downloaddir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.store_freshair_downloaddir" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.npr_utils.store_freshair_downloaddir">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">store_freshair_downloaddir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freshair_downloaddir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.store_freshair_downloaddir" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stores the default location of the <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episodes into the configuration file, <code class="docutils literal notranslate"><span class="pre">~/.config/nprstuff/nprstuff.com</span></code>, into the <code class="docutils literal notranslate"><span class="pre">NPR_DATA</span></code> section and <code class="docutils literal notranslate"><span class="pre">freshair_downloaddir</span></code> key.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -560,8 +564,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.npr_utils.store_waitwait_downloaddir">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></code><code class="sig-name descname"><span class="pre">store_waitwait_downloaddir</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">waitwait_downloaddir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.store_waitwait_downloaddir" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.npr_utils.store_waitwait_downloaddir">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">store_waitwait_downloaddir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">waitwait_downloaddir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.store_waitwait_downloaddir" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stores the default location of the <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episodes into the configuration file, <code class="docutils literal notranslate"><span class="pre">~/.config/nprstuff/nprstuff.com</span></code>, into the <code class="docutils literal notranslate"><span class="pre">NPR_DATA</span></code> section and <code class="docutils literal notranslate"><span class="pre">waitwait_downloaddir</span></code> key.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -575,8 +579,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.npr_utils.weekdays_of_month_of_year">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></code><code class="sig-name descname"><span class="pre">weekdays_of_month_of_year</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">month</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.weekdays_of_month_of_year" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.npr_utils.weekdays_of_month_of_year">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">weekdays_of_month_of_year</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">month</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.weekdays_of_month_of_year" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -605,8 +609,8 @@
 <a class="reference internal image-reference" href="https://upload.wikimedia.org/wikipedia/commons/2/2a/PDF_BOX_01.svg"><img alt="https://upload.wikimedia.org/wikipedia/commons/2/2a/PDF_BOX_01.svg" src="https://upload.wikimedia.org/wikipedia/commons/2/2a/PDF_BOX_01.svg" width="100%" /></a>
 <p>Three methods – <a class="reference internal" href="#nprstuff.core.autocrop_image.get_boundingbox" title="nprstuff.core.autocrop_image.get_boundingbox"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_boundingbox</span></code></a>, <a class="reference internal" href="#nprstuff.core.autocrop_image.crop_pdf" title="nprstuff.core.autocrop_image.crop_pdf"><code class="xref py py-meth docutils literal notranslate"><span class="pre">crop_pdf</span></code></a>, and  <a class="reference internal" href="#nprstuff.core.autocrop_image.crop_pdf_singlepage" title="nprstuff.core.autocrop_image.crop_pdf_singlepage"><code class="xref py py-meth docutils literal notranslate"><span class="pre">crop_pdf_singlepage</span></code></a> – are the higher level hooks to the <a class="reference external" href="https://en.wikipedia.org/wiki/PDF">PDF</a> autocropping functionality.</p>
 <span class="target" id="module-nprstuff.core.autocrop_image"></span><dl class="py function">
-<dt id="nprstuff.core.autocrop_image.autocrop_image">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.autocrop_image.</span></code><code class="sig-name descname"><span class="pre">autocrop_image</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputfilename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputfilename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'white'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">newWidth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">doShow</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trans</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixEven</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.autocrop_image.autocrop_image" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.autocrop_image.autocrop_image">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.autocrop_image.</span></span><span class="sig-name descname"><span class="pre">autocrop_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputfilename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputfilename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'white'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">newWidth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">doShow</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trans</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixEven</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.autocrop_image.autocrop_image" title="Permalink to this definition">¶</a></dt>
 <dd><p>performs an autocropping of lossy images, such as <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a>, <a class="reference external" href="https://en.wikipedia.org/wiki/JPEG">JPEG</a>, or <a class="reference external" href="https://en.wikipedia.org/wiki/TIFF">TIFF</a>,  with a defined background. The default background color is white. This then creates an automatically cropped image and stores into a new or the same file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -634,8 +638,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.autocrop_image.autocrop_perproc">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.autocrop_image.</span></code><code class="sig-name descname"><span class="pre">autocrop_perproc</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_tuple</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.autocrop_image.autocrop_perproc" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.autocrop_image.autocrop_perproc">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.autocrop_image.</span></span><span class="sig-name descname"><span class="pre">autocrop_perproc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_tuple</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.autocrop_image.autocrop_perproc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Designed to use Python’s multiprocessing design to autocrop lossy images per processor.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -652,8 +656,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.autocrop_image.crop_pdf">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.autocrop_image.</span></code><code class="sig-name descname"><span class="pre">crop_pdf</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputfile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.autocrop_image.crop_pdf" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.autocrop_image.crop_pdf">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.autocrop_image.</span></span><span class="sig-name descname"><span class="pre">crop_pdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputfile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.autocrop_image.crop_pdf" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a possible multi-page <a class="reference external" href="https://en.wikipedia.org/wiki/PDF">PDF</a> file that consists of <span class="math notranslate nohighlight">\(N \ge 1\)</span> pages, creates <span class="math notranslate nohighlight">\(N\)</span> separate single-page autocropped <a class="reference external" href="https://en.wikipedia.org/wiki/PDF">PDF</a> files for each page in the input <a class="reference external" href="https://en.wikipedia.org/wiki/PDF">PDF</a> file. Given a file with name <code class="docutils literal notranslate"><span class="pre">inputfile</span></code>, the collection of output files are named <code class="docutils literal notranslate"><span class="pre">outputfile&lt;idx&gt;</span></code>, where <code class="docutils literal notranslate"><span class="pre">&lt;idx&gt;</span></code> is the page number. This uses <a class="reference external" href="https://pythonhosted.org/PyPDF2/PdfFileReader.html#PyPDF2.PdfFileReader" title="(in PyPDF2 v1.26)"><code class="xref py py-class docutils literal notranslate"><span class="pre">PdfFileReader</span></code></a> to read in, and <a class="reference external" href="https://pythonhosted.org/PyPDF2/PdfFileWriter.html#PyPDF2.PdfFileWriter" title="(in PyPDF2 v1.26)"><code class="xref py py-class docutils literal notranslate"><span class="pre">PdfFileWriter</span></code></a> to write out, <a class="reference external" href="https://en.wikipedia.org/wiki/PDF">PDF</a> files.</p>
 <p>The Python functionality is a port of the <a class="reference external" href="https://github.com/ho-tex/pdfcrop">pdfcrop.pl</a> Perl script.</p>
 <dl class="field-list simple">
@@ -671,8 +675,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.autocrop_image.crop_pdf_singlepage">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.autocrop_image.</span></code><code class="sig-name descname"><span class="pre">crop_pdf_singlepage</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputfile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.autocrop_image.crop_pdf_singlepage" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.autocrop_image.crop_pdf_singlepage">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.autocrop_image.</span></span><span class="sig-name descname"><span class="pre">crop_pdf_singlepage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputfile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outputfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.autocrop_image.crop_pdf_singlepage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a <em>single-paged</em> <a class="reference external" href="https://en.wikipedia.org/wiki/PDF">PDF</a> file, creates an autocropped output <a class="reference external" href="https://en.wikipedia.org/wiki/PDF">PDF</a> file. This uses <a class="reference external" href="https://pythonhosted.org/PyPDF2/PdfFileReader.html#PyPDF2.PdfFileReader" title="(in PyPDF2 v1.26)"><code class="xref py py-class docutils literal notranslate"><span class="pre">PdfFileReader</span></code></a> to read in, and <a class="reference external" href="https://pythonhosted.org/PyPDF2/PdfFileWriter.html#PyPDF2.PdfFileWriter" title="(in PyPDF2 v1.26)"><code class="xref py py-class docutils literal notranslate"><span class="pre">PdfFileWriter</span></code></a> to write out, <a class="reference external" href="https://en.wikipedia.org/wiki/PDF">PDF</a> files.</p>
 <p>The Python functionality is a port of the <a class="reference external" href="https://github.com/ho-tex/pdfcrop">pdfcrop.pl</a> PERL script.</p>
 <dl class="field-list simple">
@@ -690,8 +694,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.autocrop_image.get_boundingbox">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.autocrop_image.</span></code><code class="sig-name descname"><span class="pre">get_boundingbox</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pdfpath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hiresbb</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.autocrop_image.get_boundingbox" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.autocrop_image.get_boundingbox">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.autocrop_image.</span></span><span class="sig-name descname"><span class="pre">get_boundingbox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pdfpath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hiresbb</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.autocrop_image.get_boundingbox" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given a <a class="reference external" href="https://en.wikipedia.org/wiki/PDF">PDF</a> file, returns its <a class="reference external" href="https://upload.wikimedia.org/wikipedia/commons/2/2a/PDF_BOX_01.svg">BoundingBox</a>. Requires working <a class="reference external" href="https://www.ghostscript.com">ghostscript</a> (<code class="docutils literal notranslate"><span class="pre">gs</span></code> executable) to calculate it.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">get_boundingbox</span><span class="p">(</span><span class="s1">&#39;/path/to/mypdf.pdf&#39;</span><span class="p">)</span>   <span class="c1"># doctest: +SKIP</span>
 <span class="p">[[</span><span class="mi">23</span><span class="p">,</span> <span class="mi">34</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">555</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">555</span><span class="p">]]</span>
@@ -726,8 +730,8 @@
 </div>
 <p>There may be similar installation instructions on other Linux, Windows and Mac OS X machines.</p>
 <span class="target" id="module-nprstuff.core.convert_image"></span><dl class="py function">
-<dt id="nprstuff.core.convert_image.create_png2mp4dict">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.convert_image.</span></code><code class="sig-name descname"><span class="pre">create_png2mp4dict</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dirname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/usr/WS2/islam5/code_src/nprstuff/docsrc'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">autocrop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.convert_image.create_png2mp4dict" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.convert_image.create_png2mp4dict">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.convert_image.</span></span><span class="sig-name descname"><span class="pre">create_png2mp4dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dirname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/mnt/software/sources/pythonics/nprstuff/docsrc'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">autocrop</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.convert_image.create_png2mp4dict" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method creates a complicated and low-level <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> of set up, when creating an <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> file from a collection of <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a>s. Here are things needed to make this work. <a class="reference internal" href="#nprstuff.core.convert_image.mp4frompngs" title="nprstuff.core.convert_image.mp4frompngs"><code class="xref py py-meth docutils literal notranslate"><span class="pre">mp4frompngs</span></code></a> uses this <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> to create the <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> file.</p>
 <ol class="arabic simple">
 <li><p>The collection of <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> files exist in a directory named <code class="docutils literal notranslate"><span class="pre">dirname</span></code>.</p></li>
@@ -766,8 +770,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.convert_image.get_cloudconvert_api_key">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.convert_image.</span></code><code class="sig-name descname"><span class="pre">get_cloudconvert_api_key</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.convert_image.get_cloudconvert_api_key" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.convert_image.get_cloudconvert_api_key">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.convert_image.</span></span><span class="sig-name descname"><span class="pre">get_cloudconvert_api_key</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.convert_image.get_cloudconvert_api_key" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>the <a class="reference external" href="https://cloudconvert.com">CloudConvert</a> API key, stored in <code class="docutils literal notranslate"><span class="pre">~/.config/nprstuff/nprstuff.conf</span></code>, under the <code class="docutils literal notranslate"><span class="pre">CLOUDCONVERT_DATA</span></code> section and <code class="docutils literal notranslate"><span class="pre">apikey</span></code> key.</p>
@@ -776,8 +780,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.convert_image.get_youtube_file">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.convert_image.</span></code><code class="sig-name descname"><span class="pre">get_youtube_file</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">youtube_URL</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quality</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'highest'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.convert_image.get_youtube_file" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.convert_image.get_youtube_file">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.convert_image.</span></span><span class="sig-name descname"><span class="pre">get_youtube_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">youtube_URL</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quality</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'highest'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.convert_image.get_youtube_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Uses <a class="reference external" href="https://ytdl-org.github.io/youtube-dl/index.html">youtube-dl</a> programmatically to download into an <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> or <a class="reference external" href="https://en.wikipedia.org/wiki/Matroska">MKV</a> file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -797,8 +801,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.convert_image.make_square_mp4video">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.convert_image.</span></code><code class="sig-name descname"><span class="pre">make_square_mp4video</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_mp4_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_mp4_file</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.convert_image.make_square_mp4video" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.convert_image.make_square_mp4video">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.convert_image.</span></span><span class="sig-name descname"><span class="pre">make_square_mp4video</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_mp4_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_mp4_file</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.convert_image.make_square_mp4video" title="Permalink to this definition">¶</a></dt>
 <dd><p>More <a class="reference external" href="https://ffmpeg.org">FFmpeg</a> voodoo, this time to create a square <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> file for upload into <a class="reference external" href="https://www.instagram.com">Instagram</a>.</p>
 <p>This requires a working <code class="docutils literal notranslate"><span class="pre">ffmpeg</span></code> and <code class="docutils literal notranslate"><span class="pre">ffprobe</span></code> executable to work. The input file must be <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a>.</p>
 <p>Here are resources that I used to get this working.</p>
@@ -821,8 +825,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.convert_image.mp4frompngs">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.convert_image.</span></code><code class="sig-name descname"><span class="pre">mp4frompngs</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">png2mp4dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.convert_image.mp4frompngs" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.convert_image.mp4frompngs">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.convert_image.</span></span><span class="sig-name descname"><span class="pre">mp4frompngs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">png2mp4dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.convert_image.mp4frompngs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates an <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> file from the low-level input specification <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> that <a class="reference internal" href="#nprstuff.core.convert_image.create_png2mp4dict" title="nprstuff.core.convert_image.create_png2mp4dict"><code class="xref py py-meth docutils literal notranslate"><span class="pre">create_png2mp4dict</span></code></a> creates. Requires the existence of the <code class="docutils literal notranslate"><span class="pre">ffmpeg</span></code> executable, and <code class="docutils literal notranslate"><span class="pre">status</span></code> value in the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> <em>must</em> be <code class="docutils literal notranslate"><span class="pre">&quot;SUCCESS&quot;</span></code>. Otherwise, this method does not create a movie file.</p>
 <p>If <code class="docutils literal notranslate"><span class="pre">dirname</span></code> is the directory in which the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> files live, and <code class="docutils literal notranslate"><span class="pre">PREFIX</span></code> is the prefix of all the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> files, the <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> file is named <code class="docutils literal notranslate"><span class="pre">dirname/PREFIX.mp4</span></code>.</p>
 <dl class="field-list simple">
@@ -837,8 +841,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.convert_image.mp4togif">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.convert_image.</span></code><code class="sig-name descname"><span class="pre">mp4togif</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_mp4_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gif_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.convert_image.mp4togif" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.convert_image.mp4togif">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.convert_image.</span></span><span class="sig-name descname"><span class="pre">mp4togif</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_mp4_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gif_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.convert_image.mp4togif" title="Permalink to this definition">¶</a></dt>
 <dd><p>This consists of voodoo <a class="reference external" href="https://ffmpeg.org">FFmpeg</a> magic that converts <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> to animated <a class="reference external" href="https://en.wikipedia.org/wiki/GIF">GIF</a> reasonably well. Don’t ask me how most of it works, just be on-your-knees-kissing-the-dirt grateful that MILLIONS of people hack onto and into <a class="reference external" href="https://ffmpeg.org">FFmpeg</a> so that this information is available, and the workflow works.</p>
 <p>This requires a working <code class="docutils literal notranslate"><span class="pre">ffmpeg</span></code> and <code class="docutils literal notranslate"><span class="pre">ffprobe</span></code> executable to work. If the input file is named <code class="docutils literal notranslate"><span class="pre">&lt;input&gt;.mp4</span></code>, the output animated GIF file is named <code class="docutils literal notranslate"><span class="pre">&lt;input&gt;.gif</span></code>.</p>
 <p>Here are resources that I used to get this working.</p>
@@ -863,9 +867,9 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.convert_image.pdf2png">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.convert_image.</span></code><code class="sig-name descname"><span class="pre">pdf2png</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_pdf_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">newWidth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.convert_image.pdf2png" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns an <a class="reference external" href="https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image" title="(in Pillow (PIL Fork) v8.2.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Image</span></code></a> object of the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file produced when the <a class="reference external" href="https://cloudconvert.com">CloudConvert</a> server uploaded an input <a class="reference external" href="https://en.wikipedia.org/wiki/PDF">PDF</a> image file. The output <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file has the same aspect ratio as the input file.</p>
+<dt class="sig sig-object py" id="nprstuff.core.convert_image.pdf2png">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.convert_image.</span></span><span class="sig-name descname"><span class="pre">pdf2png</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_pdf_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">newWidth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.convert_image.pdf2png" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an <a class="reference external" href="https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image" title="(in Pillow (PIL Fork) v8.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Image</span></code></a> object of the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file produced when the <a class="reference external" href="https://cloudconvert.com">CloudConvert</a> server uploaded an input <a class="reference external" href="https://en.wikipedia.org/wiki/PDF">PDF</a> image file. The output <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file has the same aspect ratio as the input file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -875,7 +879,7 @@
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the <a class="reference external" href="https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image" title="(in Pillow (PIL Fork) v8.2.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Image</span></code></a> object of the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file from the input <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file.</p>
+<dd class="field-even"><p>the <a class="reference external" href="https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image" title="(in Pillow (PIL Fork) v8.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Image</span></code></a> object of the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file from the input <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file.</p>
 </dd>
 </dl>
 <div class="admonition seealso">
@@ -888,9 +892,9 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.convert_image.png2png">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.convert_image.</span></code><code class="sig-name descname"><span class="pre">png2png</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_png_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">newWidth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.convert_image.png2png" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns an <a class="reference external" href="https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image" title="(in Pillow (PIL Fork) v8.2.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Image</span></code></a> object of the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file produced when the <a class="reference external" href="https://cloudconvert.com">CloudConvert</a> server uploaded an input <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file. The output <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file has the same aspect ratio as the input file.</p>
+<dt class="sig sig-object py" id="nprstuff.core.convert_image.png2png">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.convert_image.</span></span><span class="sig-name descname"><span class="pre">png2png</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_png_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">newWidth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.convert_image.png2png" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an <a class="reference external" href="https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image" title="(in Pillow (PIL Fork) v8.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Image</span></code></a> object of the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file produced when the <a class="reference external" href="https://cloudconvert.com">CloudConvert</a> server uploaded an input <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file. The output <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file has the same aspect ratio as the input file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -900,7 +904,7 @@
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the <a class="reference external" href="https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image" title="(in Pillow (PIL Fork) v8.2.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Image</span></code></a> object of the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file from the input <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file.</p>
+<dd class="field-even"><p>the <a class="reference external" href="https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image" title="(in Pillow (PIL Fork) v8.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Image</span></code></a> object of the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file from the input <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file.</p>
 </dd>
 </dl>
 <div class="admonition seealso">
@@ -913,9 +917,9 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.convert_image.svg2png">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.convert_image.</span></code><code class="sig-name descname"><span class="pre">svg2png</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_svg_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">newWidth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.convert_image.svg2png" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns an <a class="reference external" href="https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image" title="(in Pillow (PIL Fork) v8.2.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Image</span></code></a> object of the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file produced when the <a class="reference external" href="https://cloudconvert.com">CloudConvert</a> server uploaded an input <a class="reference external" href="https://en.wikipedia.org/wiki/Scalable_Vector_Graphics">SVG(Z)</a> file. The <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file has the same aspect ratio as the input file. Uses <a class="reference external" href="https://www.riverbankcomputing.com/static/Docs/PyQt5/api/qtsvg/qsvgrenderer.html" title="(in PyQt v5.14b1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">QSvgRenderer</span></code></a> to convert an <a class="reference external" href="https://en.wikipedia.org/wiki/Scalable_Vector_Graphics">SVG(Z)</a> into a <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a>.</p>
+<dt class="sig sig-object py" id="nprstuff.core.convert_image.svg2png">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.convert_image.</span></span><span class="sig-name descname"><span class="pre">svg2png</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_svg_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">newWidth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.convert_image.svg2png" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an <a class="reference external" href="https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image" title="(in Pillow (PIL Fork) v8.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Image</span></code></a> object of the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file produced when the <a class="reference external" href="https://cloudconvert.com">CloudConvert</a> server uploaded an input <a class="reference external" href="https://en.wikipedia.org/wiki/Scalable_Vector_Graphics">SVG(Z)</a> file. The <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file has the same aspect ratio as the input file. Uses <a class="reference external" href="https://www.riverbankcomputing.com/static/Docs/PyQt5/api/qtsvg/qsvgrenderer.html" title="(in PyQt v5.14b1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">QSvgRenderer</span></code></a> to convert an <a class="reference external" href="https://en.wikipedia.org/wiki/Scalable_Vector_Graphics">SVG(Z)</a> into a <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -925,7 +929,7 @@
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the <a class="reference external" href="https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image" title="(in Pillow (PIL Fork) v8.2.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Image</span></code></a> object of the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file from the input SVG or SVGZ file.</p>
+<dd class="field-even"><p>the <a class="reference external" href="https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image" title="(in Pillow (PIL Fork) v8.3.1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Image</span></code></a> object of the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file from the input SVG or SVGZ file.</p>
 </dd>
 </dl>
 <div class="admonition seealso">
@@ -938,8 +942,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.convert_image.youtube2gif">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.convert_image.</span></code><code class="sig-name descname"><span class="pre">youtube2gif</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_youtube_URL</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gif_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quality</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'highest'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.convert_image.youtube2gif" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.convert_image.youtube2gif">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.convert_image.</span></span><span class="sig-name descname"><span class="pre">youtube2gif</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_youtube_URL</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gif_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quality</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'highest'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.convert_image.youtube2gif" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts a <a class="reference external" href="https://www.youtube.com">YouTube</a> clip into an animated <a class="reference external" href="https://en.wikipedia.org/wiki/GIF">GIF</a> file. First, downloads the <a class="reference external" href="https://www.youtube.com">YouTube</a> clip into an intermediate <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> file; then converts the intermediate <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> file into the animated <a class="reference external" href="https://en.wikipedia.org/wiki/GIF">GIF</a>, and deletes the intermediate file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -966,8 +970,8 @@
 <h2><span class="section-number">6.4. </span>music_to_m4a module<a class="headerlink" href="#music-to-m4a-module" title="Permalink to this headline">¶</a></h2>
 <p>This module provides low-level functionality that converts other music formats (<a class="reference external" href="https://en.wikipedia.org/wiki/MP3">MP3</a>, <a class="reference external" href="https://en.wikipedia.org/wiki/Vorbis">OGG</a>, and <a class="reference external" href="https://en.wikipedia.org/wiki/FLAC">FLAC</a>) into <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">M4A</a>. It also contains functionality to fix <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">M4A</a> metadata.</p>
 <span class="target" id="module-nprstuff.core.music_to_m4a"></span><dl class="py function">
-<dt id="nprstuff.core.music_to_m4a.get_defaultname">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.music_to_m4a.</span></code><code class="sig-name descname"><span class="pre">get_defaultname</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m4afilename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showalbum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.music_to_m4a.get_defaultname" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.music_to_m4a.get_defaultname">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.music_to_m4a.</span></span><span class="sig-name descname"><span class="pre">get_defaultname</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m4afilename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showalbum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.music_to_m4a.get_defaultname" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a candidate default file name for an <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">M4A</a> file, given its metadata.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -986,8 +990,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.music_to_m4a.music_to_m4a">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.music_to_m4a.</span></code><code class="sig-name descname"><span class="pre">music_to_m4a</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tottracks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">album_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">toUpper</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.music_to_m4a.music_to_m4a" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.music_to_m4a.music_to_m4a">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.music_to_m4a.</span></span><span class="sig-name descname"><span class="pre">music_to_m4a</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tottracks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">album_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">toUpper</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.music_to_m4a.music_to_m4a" title="Permalink to this definition">¶</a></dt>
 <dd><p>Converts a non <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">M4A</a> file (<a class="reference external" href="https://en.wikipedia.org/wiki/MP3">MP3</a>, <a class="reference external" href="https://en.wikipedia.org/wiki/Vorbis">OGG</a>, or <a class="reference external" href="https://en.wikipedia.org/wiki/FLAC">FLAC</a>) into an <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">M4A</a> file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1004,8 +1008,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.music_to_m4a.rename_m4a">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.music_to_m4a.</span></code><code class="sig-name descname"><span class="pre">rename_m4a</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m4afilename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.music_to_m4a.rename_m4a" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.music_to_m4a.rename_m4a">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.music_to_m4a.</span></span><span class="sig-name descname"><span class="pre">rename_m4a</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m4afilename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.music_to_m4a.rename_m4a" title="Permalink to this definition">¶</a></dt>
 <dd><p>Renames an <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">M4A</a> music file to <code class="docutils literal notranslate"><span class="pre">&lt;artist&gt;.&lt;song&gt;.m4a</span></code>, where <code class="docutils literal notranslate"><span class="pre">&lt;artist&gt;</span></code> is the artist name and <code class="docutils literal notranslate"><span class="pre">&lt;song&gt;</span></code> is the song title.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1020,8 +1024,8 @@
 <p>These two modules provide the low level functionality to process and download <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episodes. Until a few months ago, the <a class="reference external" href="https://api.npr.org">older NPR API</a> existed and worked without issues, but because it was so successful it went away. I now try to fix functionality that is broken, but it is slow undocumented going – hence, diffusion.</p>
 <blockquote>
 <div><span class="target" id="module-nprstuff.core.freshair"></span><dl class="py function">
-<dt id="nprstuff.core.freshair.get_freshair">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.freshair.</span></code><code class="sig-name descname"><span class="pre">get_freshair</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order_totnum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_if_exist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mp3_exist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_file_debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">driver</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.freshair.get_freshair" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.freshair.get_freshair">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.freshair.</span></span><span class="sig-name descname"><span class="pre">get_freshair</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order_totnum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_if_exist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mp3_exist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_file_debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">driver</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.freshair.get_freshair" title="Permalink to this definition">¶</a></dt>
 <dd><p>The main driver method that downloads <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episodes for a given date into a specified output directory.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1046,8 +1050,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.freshair.get_freshair_date_from_name">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.freshair.</span></code><code class="sig-name descname"><span class="pre">get_freshair_date_from_name</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">candidateNPRFreshAirFile</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.freshair.get_freshair_date_from_name" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.freshair.get_freshair_date_from_name">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.freshair.</span></span><span class="sig-name descname"><span class="pre">get_freshair_date_from_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">candidateNPRFreshAirFile</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.freshair.get_freshair_date_from_name" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>candidateNPRFreshAirFile</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the name of the <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episode file name.</p>
@@ -1062,8 +1066,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.freshair.get_freshair_image">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.freshair.</span></code><code class="sig-name descname"><span class="pre">get_freshair_image</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.freshair.get_freshair_image" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.freshair.get_freshair_image">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.freshair.</span></span><span class="sig-name descname"><span class="pre">get_freshair_image</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.freshair.get_freshair_image" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> logo as binary data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -1074,8 +1078,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.freshair.get_freshair_valid_dates_remaining_tuples">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.freshair.</span></code><code class="sig-name descname"><span class="pre">get_freshair_valid_dates_remaining_tuples</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yearnum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputdir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.freshair.get_freshair_valid_dates_remaining_tuples" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.freshair.get_freshair_valid_dates_remaining_tuples">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.freshair.</span></span><span class="sig-name descname"><span class="pre">get_freshair_valid_dates_remaining_tuples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yearnum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputdir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.freshair.get_freshair_valid_dates_remaining_tuples" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1093,8 +1097,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.freshair.get_title_mp3_urls_attic">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.freshair.</span></code><code class="sig-name descname"><span class="pre">get_title_mp3_urls_attic</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_file_debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.freshair.get_title_mp3_urls_attic" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.freshair.get_title_mp3_urls_attic">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.freshair.</span></span><span class="sig-name descname"><span class="pre">get_title_mp3_urls_attic</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_file_debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.freshair.get_title_mp3_urls_attic" title="Permalink to this definition">¶</a></dt>
 <dd><p>older functionality that uses the <cite>old NPR API</cite> to get an ordered <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a> of stories for an <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episode. Here is an example operation,</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">date_s</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="s1">&#39;July 31, 2020&#39;</span><span class="p">,</span> <span class="s1">&#39;%B </span><span class="si">%d</span><span class="s1">, %Y&#39;</span> <span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">(</span> <span class="p">)</span>
 <span class="o">&gt;&gt;</span> <span class="n">title_mp3_urls</span> <span class="o">=</span> <span class="n">get_title_mp3_urls_attic</span><span class="p">(</span> <span class="n">date_s</span> <span class="p">)</span>
@@ -1136,8 +1140,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.freshair.get_title_mp3_urls_working">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.freshair.</span></code><code class="sig-name descname"><span class="pre">get_title_mp3_urls_working</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">driver</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_file_debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.freshair.get_title_mp3_urls_working" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.freshair.get_title_mp3_urls_working">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.freshair.</span></span><span class="sig-name descname"><span class="pre">get_title_mp3_urls_working</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">driver</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_file_debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.freshair.get_title_mp3_urls_working" title="Permalink to this definition">¶</a></dt>
 <dd><p>Using the new, non-API NPR functionality, get a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a> of stories for an <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episode. This uses a <a class="reference external" href="https://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver" title="(in Selenium Python Bindings v2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Webdriver</span></code></a> to get an episode. Here is an example operation,</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">date_s</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="s1">&#39;July 31, 2020&#39;</span><span class="p">,</span> <span class="s1">&#39;%B </span><span class="si">%d</span><span class="s1">, %Y&#39;</span> <span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">(</span> <span class="p">)</span>
 <span class="o">&gt;&gt;</span> <span class="n">title_mp3_urls</span> <span class="o">=</span> <span class="n">get_title_mp3_urls_working</span><span class="p">(</span> <span class="n">date_s</span><span class="p">,</span> <span class="n">driver</span> <span class="p">)</span>
@@ -1176,8 +1180,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.freshair.process_all_freshairs_by_year">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.freshair.</span></code><code class="sig-name descname"><span class="pre">process_all_freshairs_by_year</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yearnum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">justCoverage</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.freshair.process_all_freshairs_by_year" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.freshair.process_all_freshairs_by_year">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.freshair.</span></span><span class="sig-name descname"><span class="pre">process_all_freshairs_by_year</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yearnum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">justCoverage</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.freshair.process_all_freshairs_by_year" title="Permalink to this definition">¶</a></dt>
 <dd><p>Either downloads all missing <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episodes for a given year, or prints out a report of those missing episodes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1196,8 +1200,8 @@
 </dd></dl>
 
 <span class="target" id="module-nprstuff.core.freshair_by_year"></span><dl class="py function">
-<dt id="nprstuff.core.freshair_by_year.create_plot_year">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.freshair_by_year.</span></code><code class="sig-name descname"><span class="pre">create_plot_year</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2010</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'svgz'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dirname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/usr/WS2/islam5/code_src/nprstuff/docsrc'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.freshair_by_year.create_plot_year" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.freshair_by_year.create_plot_year">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.freshair_by_year.</span></span><span class="sig-name descname"><span class="pre">create_plot_year</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2010</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'svgz'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dirname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/mnt/software/sources/pythonics/nprstuff/docsrc'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.freshair_by_year.create_plot_year" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates an SVGZ (<a class="reference external" href="https://en.wikipedia.org/wiki/Gzip">GZIP</a> compressed <a class="reference external" href="https://en.wikipedia.org/wiki/Scalable_Vector_Graphics">SVG</a>) calendar plot that summarizes the <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episodes in a specified year. It is easier to show the figure with description than to describe without a figure, here for 2020 (created on 13 AUGUST 2020).</p>
 <a class="reference internal image-reference" href="_images/freshair.2020.svg"><img alt="_images/freshair.2020.svg" class="align-center" src="_images/freshair.2020.svg" width="100%" /></a>
 <p>The dark blue boxes are for <code class="docutils literal notranslate"><span class="pre">existing</span></code> episodes. The light yellow boxes are for episodes that have not yet aired. The light orange boxes are for <code class="docutils literal notranslate"><span class="pre">missing</span></code> episodes. And those boxes colored from light orange on the left to turquoise on the right are <code class="docutils literal notranslate"><span class="pre">underoccupied</span></code> episodes: I have downloaded them, but they are shorter than the published duration of that <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episode.</p>
@@ -1217,8 +1221,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.freshair_by_year.find_occupied_days">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.freshair_by_year.</span></code><code class="sig-name descname"><span class="pre">find_occupied_days</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2010</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.freshair_by_year.find_occupied_days" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.freshair_by_year.find_occupied_days">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.freshair_by_year.</span></span><span class="sig-name descname"><span class="pre">find_occupied_days</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2010</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.freshair_by_year.find_occupied_days" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1236,8 +1240,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.freshair_by_year.find_underoccupied_dates">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.freshair_by_year.</span></code><code class="sig-name descname"><span class="pre">find_underoccupied_dates</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2010</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.freshair_by_year.find_underoccupied_dates" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.freshair_by_year.find_underoccupied_dates">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.freshair_by_year.</span></span><span class="sig-name descname"><span class="pre">find_underoccupied_dates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2010</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.freshair_by_year.find_underoccupied_dates" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1255,8 +1259,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.freshair_by_year.get_color">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.freshair_by_year.</span></code><code class="sig-name descname"><span class="pre">get_color</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discrep</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.freshair_by_year.get_color" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.freshair_by_year.get_color">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.freshair_by_year.</span></span><span class="sig-name descname"><span class="pre">get_color</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discrep</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.freshair_by_year.get_color" title="Permalink to this definition">¶</a></dt>
 <dd><p>returns a hex color linearly interpolated between “#1f77b4” (value of 0.0) and “#ff7f0e” (value of 1.0) for a value <span class="math notranslate nohighlight">\(0 \le v \le 1\)</span>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1272,8 +1276,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.freshair_by_year.suncal">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.freshair_by_year.</span></code><code class="sig-name descname"><span class="pre">suncal</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2010</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.freshair_by_year.suncal" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.freshair_by_year.suncal">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.freshair_by_year.</span></span><span class="sig-name descname"><span class="pre">suncal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2010</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.freshair_by_year.suncal" title="Permalink to this definition">¶</a></dt>
 <dd><p>returns the calendar of day numbers for a given month and year, as numpy integer array of 7 columns (Sunday is the column 0, and Saturday is column 6). For example, for December 2019, here is the output.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">suncal</span><span class="p">(</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">2019</span> <span class="p">)</span>
 <span class="o">&gt;&gt;</span> <span class="n">array</span><span class="p">([[</span> <span class="mi">1</span><span class="p">,</span>  <span class="mi">2</span><span class="p">,</span>  <span class="mi">3</span><span class="p">,</span>  <span class="mi">4</span><span class="p">,</span>  <span class="mi">5</span><span class="p">,</span>  <span class="mi">6</span><span class="p">,</span>  <span class="mi">7</span><span class="p">],</span>
@@ -1310,8 +1314,8 @@
 <h2><span class="section-number">6.6. </span>thisamericanlife module<a class="headerlink" href="#thisamericanlife-module" title="Permalink to this headline">¶</a></h2>
 <p>This module provides the low level functionality to the <a class="reference internal" href="core_functionality.html#this-american-life-label"><span class="std std-ref">This American Life</span></a> CLI and some extra functionality.</p>
 <span class="target" id="module-nprstuff.core.thisamericanlife"></span><dl class="py function">
-<dt id="nprstuff.core.thisamericanlife.get_TAL_URL">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.thisamericanlife.</span></code><code class="sig-name descname"><span class="pre">get_TAL_URL</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epno</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.thisamericanlife.get_TAL_URL" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.thisamericanlife.get_TAL_URL">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.thisamericanlife.</span></span><span class="sig-name descname"><span class="pre">get_TAL_URL</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epno</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.thisamericanlife.get_TAL_URL" title="Permalink to this definition">¶</a></dt>
 <dd><p>returns the MP3 URL of the <a class="reference external" href="https://www.thisamericanlife.org">This American Life</a> episode.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1330,8 +1334,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.thisamericanlife.get_american_life">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.thisamericanlife.</span></code><code class="sig-name descname"><span class="pre">get_american_life</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epno</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/mnt/media/thisamericanlife'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extraStuff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dump</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hardURL</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.thisamericanlife.get_american_life" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.thisamericanlife.get_american_life">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.thisamericanlife.</span></span><span class="sig-name descname"><span class="pre">get_american_life</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epno</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/mnt/media/thisamericanlife'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extraStuff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dump</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hardURL</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.thisamericanlife.get_american_life" title="Permalink to this definition">¶</a></dt>
 <dd><p>Downloads an episode of <a class="reference external" href="https://www.thisamericanlife.org">This American Life</a> into a given directory.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1352,14 +1356,14 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.thisamericanlife.get_american_life_remaining">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.thisamericanlife.</span></code><code class="sig-name descname"><span class="pre">get_american_life_remaining</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.thisamericanlife.get_american_life_remaining" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.thisamericanlife.get_american_life_remaining">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.thisamericanlife.</span></span><span class="sig-name descname"><span class="pre">get_american_life_remaining</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.thisamericanlife.get_american_life_remaining" title="Permalink to this definition">¶</a></dt>
 <dd><p>This downloads <em>remaining</em> <a class="reference external" href="https://www.thisamericanlife.org">This American Life</a> episodes. To determine missing episodes, it first finds the maximum episode number that we have downloaded. It subtracts the episodes we have downloaded from the integer list that runs from 1 to the maximum episode number. Then it downloads these remaining episodes <em>in parallel</em>.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.thisamericanlife.get_americanlife_info">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.thisamericanlife.</span></code><code class="sig-name descname"><span class="pre">get_americanlife_info</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epno</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">throwException</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extraStuff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dump</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hardURL</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.thisamericanlife.get_americanlife_info" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.thisamericanlife.get_americanlife_info">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.thisamericanlife.</span></span><span class="sig-name descname"><span class="pre">get_americanlife_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epno</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">throwException</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extraStuff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dump</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hardURL</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.thisamericanlife.get_americanlife_info" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a tuple of title, year given the episode number for <a class="reference external" href="https://www.thisamericanlife.org">This American Life</a>. Sometimes <a class="reference external" href="https://www.thisamericanlife.org">This American Life</a> is extremely uncooperative; for example, on 25 OCTOBER 2020, <a class="reference external" href="https://www.thisamericanlife.org">This American Life</a> said episode 721 implied that it was “Small Worlds”, but in actuality it was <a class="reference external" href="https://www.thisamericanlife.org/720/the-moment-after-this-moment">The Moment After This Moment</a>. An extra optional argument, <code class="docutils literal notranslate"><span class="pre">hardURL</span></code>, is used to hard-encode this URL if the standard method of supplying an episode number through <code class="docutils literal notranslate"><span class="pre">epno</span></code> does not work.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1387,8 +1391,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.thisamericanlife.thisamericanlife_crontab">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.thisamericanlife.</span></code><code class="sig-name descname"><span class="pre">thisamericanlife_crontab</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.thisamericanlife.thisamericanlife_crontab" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.thisamericanlife.thisamericanlife_crontab">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.thisamericanlife.</span></span><span class="sig-name descname"><span class="pre">thisamericanlife_crontab</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.thisamericanlife.thisamericanlife_crontab" title="Permalink to this definition">¶</a></dt>
 <dd><p>Downloads a <a class="reference external" href="https://www.thisamericanlife.org">This American Life</a> episode every weekend. It looks at the <a class="reference external" href="https://www.thisamericanlife.org">This American Life</a> website to determine the latest episode.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -1405,8 +1409,8 @@
 <p>The functionality for downloading <a class="reference external" href="https://en.wikipedia.org/wiki/RealMedia">RealMedia</a> <a class="reference external" href="https://waitwait.npr.org">NPR Wait Wait</a> episodes, which lives in <a class="reference internal" href="#module-nprstuff.core.waitwait_realmedia" title="nprstuff.core.waitwait_realmedia"><code class="xref py py-mod docutils literal notranslate"><span class="pre">waitwait_realmedia</span></code></a>, has not been tested in <em>years</em>. This module is used to download Wait Wait episodes before 2006; it may no longer work!</p>
 </div>
 <span class="target" id="module-nprstuff.core.waitwait"></span><dl class="py function">
-<dt id="nprstuff.core.waitwait.get_all_waitwaits_year">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.waitwait.</span></code><code class="sig-name descname"><span class="pre">get_all_waitwaits_year</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yearnum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputdir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.waitwait.get_all_waitwaits_year" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.waitwait.get_all_waitwaits_year">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.waitwait.</span></span><span class="sig-name descname"><span class="pre">get_all_waitwaits_year</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yearnum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputdir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.waitwait.get_all_waitwaits_year" title="Permalink to this definition">¶</a></dt>
 <dd><p>Looks for missing <a class="reference external" href="https://waitwait.npr.org">NPR Wait Wait</a> episodes in a given year, then downloads them.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1419,8 +1423,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.waitwait.get_title_mp3_urls_working">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.waitwait.</span></code><code class="sig-name descname"><span class="pre">get_title_mp3_urls_working</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">driver</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dump</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.waitwait.get_title_mp3_urls_working" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.waitwait.get_title_mp3_urls_working">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.waitwait.</span></span><span class="sig-name descname"><span class="pre">get_title_mp3_urls_working</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">driver</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dump</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.waitwait.get_title_mp3_urls_working" title="Permalink to this definition">¶</a></dt>
 <dd><p>Using the new, non-API NPR functionality, get a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a> of stories for an <a class="reference external" href="https://waitwait.npr.org">NPR Wait Wait</a> episode. This uses a <a class="reference external" href="https://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver" title="(in Selenium Python Bindings v2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Webdriver</span></code></a> to get an episode. Here is an example operation,</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;&gt;</span> <span class="n">date_s</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="s1">&#39;August 8, 2020&#39;</span><span class="p">,</span> <span class="s1">&#39;%B </span><span class="si">%d</span><span class="s1">, %Y&#39;</span> <span class="p">)</span><span class="o">.</span><span class="n">date</span><span class="p">(</span> <span class="p">)</span>
 <span class="o">&gt;&gt;</span> <span class="n">title_list_mp3_urls</span> <span class="o">=</span> <span class="n">get_title_mp3_urls_working</span><span class="p">(</span> <span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">date_s</span><span class="p">,</span> <span class="n">driver</span> <span class="p">)</span>
@@ -1463,8 +1467,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.waitwait.get_waitwait">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.waitwait.</span></code><code class="sig-name descname"><span class="pre">get_waitwait</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order_totnum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dump</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">driver</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">justFix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.waitwait.get_waitwait" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.waitwait.get_waitwait">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.waitwait.</span></span><span class="sig-name descname"><span class="pre">get_waitwait</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order_totnum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dump</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">driver</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">justFix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.waitwait.get_waitwait" title="Permalink to this definition">¶</a></dt>
 <dd><p>The main driver method that downloads <a class="reference external" href="https://waitwait.npr.org">NPR Wait Wait</a> episodes for a given date into a specified output directory.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1487,8 +1491,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.waitwait.get_waitwait_date_from_name">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.waitwait.</span></code><code class="sig-name descname"><span class="pre">get_waitwait_date_from_name</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">candidateNPRWaitWaitFile</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.waitwait.get_waitwait_date_from_name" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.waitwait.get_waitwait_date_from_name">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.waitwait.</span></span><span class="sig-name descname"><span class="pre">get_waitwait_date_from_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">candidateNPRWaitWaitFile</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.waitwait.get_waitwait_date_from_name" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>candidateNPRWaitWaitFile</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the name of the <a class="reference external" href="https://waitwait.npr.org">NPR Wait Wait</a> episode file name.</p>
@@ -1503,8 +1507,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.waitwait.get_waitwait_image">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.waitwait.</span></code><code class="sig-name descname"><span class="pre">get_waitwait_image</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.waitwait.get_waitwait_image" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.waitwait.get_waitwait_image">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.waitwait.</span></span><span class="sig-name descname"><span class="pre">get_waitwait_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.waitwait.get_waitwait_image" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the <a class="reference external" href="https://waitwait.npr.org">NPR Wait Wait</a> logo as binary data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -1515,8 +1519,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.waitwait.get_waitwait_valid_dates_remaining_tuples">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.waitwait.</span></code><code class="sig-name descname"><span class="pre">get_waitwait_valid_dates_remaining_tuples</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yearnum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputdir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.waitwait.get_waitwait_valid_dates_remaining_tuples" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.waitwait.get_waitwait_valid_dates_remaining_tuples">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.waitwait.</span></span><span class="sig-name descname"><span class="pre">get_waitwait_valid_dates_remaining_tuples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yearnum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputdir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.waitwait.get_waitwait_valid_dates_remaining_tuples" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1534,20 +1538,20 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.waitwait.waitwait_crontab">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.waitwait.</span></code><code class="sig-name descname"><span class="pre">waitwait_crontab</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.waitwait.waitwait_crontab" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.waitwait.waitwait_crontab">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.waitwait.</span></span><span class="sig-name descname"><span class="pre">waitwait_crontab</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.waitwait.waitwait_crontab" title="Permalink to this definition">¶</a></dt>
 <dd><p>This python module downloads an <a class="reference external" href="https://waitwait.npr.org">NPR Wait Wait</a> episode on a particular Saturday.</p>
 </dd></dl>
 
 <span class="target" id="module-nprstuff.core.waitwait_realmedia"></span><dl class="py function">
-<dt id="nprstuff.core.waitwait_realmedia.rm_create_wav_file">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.waitwait_realmedia.</span></code><code class="sig-name descname"><span class="pre">rm_create_wav_file</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rm_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/usr/WS2/islam5/code_src/nprstuff/docsrc'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.waitwait_realmedia.rm_create_wav_file" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.waitwait_realmedia.rm_create_wav_file">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.waitwait_realmedia.</span></span><span class="sig-name descname"><span class="pre">rm_create_wav_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rm_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/mnt/software/sources/pythonics/nprstuff/docsrc'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.waitwait_realmedia.rm_create_wav_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Uses <a class="reference external" href="https://en.wikipedia.org/wiki/MPlayer">MPlayer</a> to convert the <a class="reference external" href="https://en.wikipedia.org/wiki/RealMedia">RealMedia</a> <a class="reference external" href="https://waitwait.npr.org">NPR Wait Wait</a> file into <a class="reference external" href="https://en.wikipedia.org/wiki/WAV">WAV</a> format.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.waitwait_realmedia.rm_download_file">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.waitwait_realmedia.</span></code><code class="sig-name descname"><span class="pre">rm_download_file</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/usr/WS2/islam5/code_src/nprstuff/docsrc'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.waitwait_realmedia.rm_download_file" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.waitwait_realmedia.rm_download_file">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.waitwait_realmedia.</span></span><span class="sig-name descname"><span class="pre">rm_download_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/mnt/software/sources/pythonics/nprstuff/docsrc'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.waitwait_realmedia.rm_download_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>downloads the <a class="reference external" href="https://en.wikipedia.org/wiki/RealMedia">RealMedia</a> <a class="reference external" href="https://waitwait.npr.org">NPR Wait Wait</a> episode into a specified directory.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1566,8 +1570,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.waitwait_realmedia.rm_get_main_url">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.waitwait_realmedia.</span></code><code class="sig-name descname"><span class="pre">rm_get_main_url</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.waitwait_realmedia.rm_get_main_url" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.waitwait_realmedia.rm_get_main_url">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.waitwait_realmedia.</span></span><span class="sig-name descname"><span class="pre">rm_get_main_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.waitwait_realmedia.rm_get_main_url" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>date_s</strong> – the <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.date" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">date</span></code></a> for this episode, which must be a Saturday.</p>
@@ -1582,8 +1586,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="nprstuff.core.waitwait_realmedia.rm_get_title_from_url">
-<code class="sig-prename descclassname"><span class="pre">nprstuff.core.waitwait_realmedia.</span></code><code class="sig-name descname"><span class="pre">rm_get_title_from_url</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.waitwait_realmedia.rm_get_title_from_url" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="nprstuff.core.waitwait_realmedia.rm_get_title_from_url">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.waitwait_realmedia.</span></span><span class="sig-name descname"><span class="pre">rm_get_title_from_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.waitwait_realmedia.rm_get_title_from_url" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>date_s</strong> – the <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.date" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">date</span></code></a> for this episode, which must be a Saturday.</p>
