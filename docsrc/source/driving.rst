@@ -158,7 +158,7 @@ Here are the properties of this car’s motion, in general and specific to my de
 
   In my case, this is approximately 1 second later.
 
-* It reaches this maximum speed at an angle of 30 degrees along its motion, :math:`\theta_{\text{max}} = \pi/6`, see the `theta relation <eq-theta-relation_>`_, or in my case approximately 16 feet into the circle.
+* It reaches this maximum speed at an angle of 30 degrees along its motion, :math:`\theta_{\text{max}} = \pi/6`, see :numref:`eq-theta-relation_>`, or in my case approximately 16 feet into the circle.
 
 * In my case, start accelerating at 0.5 g, or when looking at the speedometer, a change in speed of :math:`\approx 11` MPH/second.
 
