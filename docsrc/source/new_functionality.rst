@@ -67,17 +67,17 @@ Now ``convertImage`` does five things, as seen when running ``convertImage -h``.
 
 .. code-block:: console
 
-   usage: convertImage [-h] [--noverify] [--info] {image,movie,youtube,square} ...
+   usage: convertImage [-h] [--noverify] [--info] {image,movie,youtube,aspected,fromimages} ...
 
    Now does five different things, where only "image" operates on image files!
 
    positional arguments:
-     {image,movie,youtube,square}
+     {image,movie,youtube,aspected,fromimages}
 			   Choose whether to convert a video or an image
        image               If chosen, convert an SVG(Z), PDF, or PNG into PNG.
        movie               If chosen, convert an MP4 into an animated GIF.
        youtube             If chosen, convert a YOUTUBE video with URL into an animated GIF.
-       square              If chosen, create a square MP4 file from an input MP4 file.
+       aspected            If chosen, create an aspected MP4 file from an input MP4 file.
        fromimages          If chosen, then convert a sequence of PNG images into an MP4 file.
 
    optional arguments:
@@ -91,7 +91,7 @@ There are two optional top-level flags.
 
 * ``--noverify`` ignores verification of SSL transactions. It is optional and defaults to ``False``.
 
-:ref:`convertImage image <convertImage_image>` *tries* to use the `CloudConvert REST API`_ to convert SVG_ or SVGZ_, PDF_, or PNG_ images to another PNG_ image. :ref:`convertImage movie <convertImage_movie>` creates an animated GIF_ file from an MP4_ file. :ref:`convertImage youtube <convertImage_youtube>` creates an animated GIF_ from a YouTube_ clip. Finally, :ref:`convertImage square <convertImage_square>` creates a *square* MP4_ file a non-square MP4_ file.
+:ref:`convertImage image <convertImage_image>` *tries* to use the `CloudConvert REST API`_ to convert SVG_ or SVGZ_, PDF_, or PNG_ images to another PNG_ image. :ref:`convertImage movie <convertImage_movie>` creates an animated GIF_ file from an MP4_ file. :ref:`convertImage youtube <convertImage_youtube>` creates an animated GIF_ from a YouTube_ clip. Finally, :ref:`convertImage aspected <convertImage_aspected>` creates an *aspected* MP4_ file from an input MP4_ file.
 
 :ref:`convertImage movie <convertImage_movie>`, :ref:`convertImage youtube <convertImage_youtube>`, and :ref:`convertImage fromimages <convertImage_fromimages>` use FFmpeg_ underneath the hood, using a :py:mod:`subprocess <subprocess.Popen>` that implements this `tutorial on high quality movie to animated GIF conversion <movie_2_gif_>`_.
 
@@ -225,17 +225,17 @@ to generate a ``highest`` quality animated GIF_, scaled to *half* the original s
 
    One of my favorite scenes from `Lucas Bros. Moving Co. S01E03: Before & After Models <https://www.imdb.com/title/tt3472130/?ref_=ttep_ep3>`_. I giggle each time I see it.
 
-.. _convertImage_square:
+.. _convertImage_aspected:
 
-convertImage square
---------------------
-``convertImage square`` *symmetrically letterboxes* a non-square input MP4_ file, so that the output MP4_ file is square. If the input MP4_ file's *width is greater than its height*, the output MP4_ file will have equal height *black* on the top and bottom so its height matches the input MP4_ file's width. If the input MP4_ file's *height is greater than its width*, the output MP4_ file will have equal width *black* on the left and right so its width matches the input MP4_ file's height.
+convertImage aspected
+-----------------------
+``convertImage aspected`` *symmetrically letterboxes* a non-square input MP4_ file, so that the output MP4_ file is either *square*, or *9/16* aspect ratio (9 width units and 16 height units), or *16/9* aspect ratio (16 width units and 9 height units). This letterboxing color can be either *black* or *white*. If the input MP4_ file's *width is greater than the aspect ratio times height*, the output MP4_ file will have equal width padding on the top and bottom to get the correct aspect ratio. If the input MP4_ file's *width is smaller than the aspect ratio times height*, the output MP4_ file will have equal width padding on the left and right to get the correct aspect ratio.
 
-Its help screen, when running ``convertImage square -h``, is,
+Its help screen, when running ``convertImage aspected -h``, is,
 
 .. code-block:: console
 
-   usage: convertImage square [-h] -f filename -o OUTPUTFILENAME
+   usage: convertImage aspected [-h] -f filename -o OUTPUTFILENAME [-a {square,916,169}] [-b]
 
    optional arguments:
      -h, --help            show this help message and exit
@@ -243,14 +243,24 @@ Its help screen, when running ``convertImage square -h``, is,
 			   Name of the input video (MP4) file.
      -o OUTPUTFILENAME, --output OUTPUTFILENAME
 			   Name of the output MP4 video that will be square.
+     -a {square,916,169}, --aspect {square,916,169}
+			   The aspect ratio to choose for the final video. Can be one of three: "square" is 1:1, "916" is 9/16 (width 9 units, height 16 units), and
+			   "169" is 16/9 (width 16 units, height 9 units). Default is "square".
+     -b, --black           If chosen, then pad the sides OR the top and bottom with BLACK instead of WHITE. Default is to do WHITE.
 
-``-f`` or ``--filename`` specifies the input MP4_ file. ``-o`` or ``--output`` specifies the output file name. Here are two examples.
+``-f`` or ``--filename`` specifies the input MP4_ file. ``-o`` or ``--output`` specifies the output file name.
+
+The aspect ratio is specified with the ``-a`` or ``--aspect`` flag. It can be either ``square`` (equal width and height), ``916`` (final width is 9/16 of height), or ``169`` (final width is 16/9 of height). The default aspect ratio is ``square``.
+
+The letterboxing color is by default ``white``. However, the ``-b`` or ``--black`` flag sets the letterboxing color to be ``black``.
+
+Here are two examples, for the default *square* aspect ratio and *white* letterboxing.
 
 1. For an MP4_ file wider than it is high, this command,
 
    .. code-block:: console
 
-      convertImage square -f covid19_conus_LATEST.mp4 -o covid19_conus_LATEST_square.mp4
+      convertImage aspected -f covid19_conus_LATEST.mp4 -o covid19_conus_LATEST_square.mp4
 
    Converts :download:`covid19_conus_LATEST.mp4 <images/covid19_conus_LATEST.mp4>` into :download:`covid19_conus_LATEST_square.mp4 <images/covid19_conus_LATEST_square.mp4>`, which has black letterboxes on its top and bottom.
 
@@ -258,7 +268,7 @@ Its help screen, when running ``convertImage square -h``, is,
 
    .. code-block:: console
 
-      convertImage square -f covid19_california_LATEST.mp4 -o covid19_california_LATEST_square.mp4
+      convertImage aspected -f covid19_california_LATEST.mp4 -o covid19_california_LATEST_square.mp4
 
    Converts :download:`covid19_california_LATEST.mp4 <images/covid19_california_LATEST.mp4>` into :download:`covid19_california_LATEST_square.mp4 <images/covid19_california_LATEST_square.mp4>`, which has black letterboxes on its left and right.
 
