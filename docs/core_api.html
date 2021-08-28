@@ -801,9 +801,9 @@
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="nprstuff.core.convert_image.make_square_mp4video">
-<span class="sig-prename descclassname"><span class="pre">nprstuff.core.convert_image.</span></span><span class="sig-name descname"><span class="pre">make_square_mp4video</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_mp4_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_mp4_file</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.convert_image.make_square_mp4video" title="Permalink to this definition">¶</a></dt>
-<dd><p>More <a class="reference external" href="https://ffmpeg.org">FFmpeg</a> voodoo, this time to create a square <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> file for upload into <a class="reference external" href="https://www.instagram.com">Instagram</a>.</p>
+<dt class="sig sig-object py" id="nprstuff.core.convert_image.make_aspected_mp4video">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.convert_image.</span></span><span class="sig-name descname"><span class="pre">make_aspected_mp4video</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_mp4_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_mp4_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">aspect</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'square'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'white'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.convert_image.make_aspected_mp4video" title="Permalink to this definition">¶</a></dt>
+<dd><p>More <a class="reference external" href="https://ffmpeg.org">FFmpeg</a> voodoo, this time to create a square (or 9/16 aspect or 16/9 aspect) <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> file for upload into <a class="reference external" href="https://www.instagram.com">Instagram</a>.</p>
 <p>This requires a working <code class="docutils literal notranslate"><span class="pre">ffmpeg</span></code> and <code class="docutils literal notranslate"><span class="pre">ffprobe</span></code> executable to work. The input file must be <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a>.</p>
 <p>Here are resources that I used to get this working.</p>
 <ul class="simple">
@@ -815,6 +815,8 @@
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>input_mp4_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the name of the valid input <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> file.</p></li>
 <li><p><strong>output_mp4_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the name of the valid output <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> file.</p></li>
+<li><p><strong>aspect</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the aspect ratio to choose. Must be one of “square”, “916” is 9/16 (width 9 units, height 16 units), and “169” is 16/9 (width 16 units, height 9 units). Default is “square”.</p></li>
+<li><p><strong>background</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the background color to use for padding. Must be either “white” or “black”. Default is “white”.</p></li>
 </ul>
 </dd>
 </dl>
@@ -862,7 +864,7 @@
 </dl>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="#nprstuff.core.convert_image.make_square_mp4video" title="nprstuff.core.convert_image.make_square_mp4video"><code class="xref py py-meth docutils literal notranslate"><span class="pre">make_square_mp4video</span></code></a>.</p>
+<p><code class="xref py py-meth docutils literal notranslate"><span class="pre">make_square_mp4video</span></code>.</p>
 </div>
 </dd></dl>
 

@@ -332,7 +332,7 @@
 <li><p><code class="docutils literal notranslate"><span class="pre">-s</span></code> or <code class="docutils literal notranslate"><span class="pre">--scale</span></code> resizes the width and height of the intermediate <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> file by some number. Its default is 1.0, and it must be greater than zero.</p></li>
 </ul>
 <p>So for example, we take this <a class="reference external" href="https://www.youtube.com/watch?v=R-pmYwr8zbU">fun clip from the Lucas Bros. Moving Co.</a>, which we show below,</p>
-<div class="youtube_wrapper" style="padding-bottom: 56.250000%; padding-top: 30px; position: relative; width: 100%">
+<div class="video_wrapper" style="padding-bottom: 56.250000%; padding-top: 30px; position: relative; width: 100%">
 <iframe allowfullscreen="true" src="https://www.youtube.com/embed/R-pmYwr8zbU" style="border: 0; height: 100%; left: 0; position: absolute; top: 0; width: 100%">
 </iframe></div><p>And run this command,</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">convertImage youtube -u &quot;https://www.youtube.com/watch?v=R-pmYwr8zbU&quot; -o &quot;lucas_bros.gif&quot; -q highest -s 0.5</span>
