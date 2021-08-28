@@ -176,9 +176,9 @@ def get_cloudconvert_api_key( ):
     cloudconvert_api_key = cparser.get( "CLOUDCONVERT_DATA", "apikey" )
     return cloudconvert_api_key
 
-def make_square_mp4video( input_mp4_file, output_mp4_file ):
+def make_aspected_mp4video( input_mp4_file, output_mp4_file, aspect = 'square', background = 'white' ):
     """
-    More FFmpeg_ voodoo, this time to create a square MP4_ file for upload into Instagram_.
+    More FFmpeg_ voodoo, this time to create a square (or 9/16 aspect or 16/9 aspect) MP4_ file for upload into Instagram_.
 
     This requires a working ``ffmpeg`` and ``ffprobe`` executable to work. The input file must be MP4_.
 
@@ -190,6 +190,8 @@ def make_square_mp4video( input_mp4_file, output_mp4_file ):
 
     :param str input_mp4_file: the name of the valid input MP4_ file.
     :param str output_mp4_file: the name of the valid output MP4_ file.
+    :param str aspect: the aspect ratio to choose. Must be one of "square", "916" is 9/16 (width 9 units, height 16 units), and "169" is 16/9 (width 16 units, height 9 units). Default is "square".
+    :param str background: the background color to use for padding. Must be either "white" or "black". Default is "white".
 
     .. seealso:: :py:meth:`get_gif_video <nprstuff.core.convert_image.get_gif_video>`.
 
@@ -207,42 +209,50 @@ def make_square_mp4video( input_mp4_file, output_mp4_file ):
     assert(all(map(lambda tok: tok is not None, ( ffmpeg_exec, ffprobe_exec ))))
     assert( os.path.basename( input_mp4_file ).endswith( '.mp4' ) )
     assert( os.path.isfile( input_mp4_file ) )
+    assert( aspect in ('square', '916', '169') )
+    assert( background in ('black', 'white') )
+    #
+    ## first dictionary of multiplication of width to height
+    aspect_dict = { 'square' : 1, '916' : 9.0 / 16, '169' : 16.0 / 9 }
     #
     ## assert this is an MP4 file, and output ends in .mp4
     assert( 'ISO Media,' in magic.from_file( input_mp4_file ) )
     assert( os.path.basename( output_mp4_file ).endswith( '.mp4' ) )
     ## get info JSON to get width, fps
-    proc = subprocess.Popen(
+    stdout_val = subprocess.check_output(
         [ ffprobe_exec, '-v', 'quiet', '-show_streams',
          '-show_format', '-print_format', 'json', input_mp4_file ],
-        stdout = subprocess.PIPE, stderr = subprocess.STDOUT )
-    stdout_val, stderr_val = proc.communicate( )
+        stderr = subprocess.STDOUT )
     mp4file_info = json.loads( stdout_val )
     # from dictionary, get width and height
     width_of_mp4 = int( mp4file_info[ 'streams' ][ 0 ][ 'width' ] )
     height_of_mp4 = int( mp4file_info[ 'streams' ][ 0 ][ 'height' ] )
+    asp = aspect_dict[ aspect ]
     #
-    ## if input video already square, copy to output mp4 file
-    if width_of_mp4 == height_of_mp4:
+    ## if input video already correctly aspected, copy to output mp4 file
+    if int( width_of_mp4 ) == int( asp * height_of_mp4 ):
         shutil.copyfile( input_mp4_file, output_mp4_file )
         return
     #
-    ## case #1: height_of_mp4 > width_of_mp4, pad width
-    filter_string = 'pad=w=%d:h=0:x=%d:y=0:color=white' % (
-        height_of_mp4, ( height_of_mp4 - width_of_mp4 ) // 2 )
+    ## case #1: asp * height_of_mp4 > width_of_mp4, pad width
+    elif asp * height_of_mp4 > width_of_mp4:
+        filter_string = 'pad=w=%d:h=%d:x=%d:y=0:color=%s' % (
+            width_of_mp4 + int( asp * height_of_mp4 - width_of_mp4 ),
+            height_of_mp4, ( asp * height_of_mp4 - width_of_mp4 ) // 2, background )
     #
-    ## case #2: height_of_mp4 < width_of_mp4, pad height
-    filter_string = 'pad=w=0:h=%d:x=0:y=%d:color=white' % (
-        width_of_mp4, ( width_of_mp4 - height_of_mp4 ) // 2 )
+    ## case #2: asp * height_of_mp4 < width_of_mp4, pad height
+    else:
+        filter_string = 'pad=w=%d:h=%d:x=0:y=%d:color=%s' % (
+            width_of_mp4, height_of_mp4 + int( width_of_mp4 / asp - height_of_mp4 ),
+            ( width_of_mp4 / asp - height_of_mp4 ) // 2, background )
     #
     ## now voodoo magic do do
     exec_cmd = [
         ffmpeg_exec, '-y', '-v', 'warning', '-i', input_mp4_file,
         '-vf', filter_string, output_mp4_file ]
-    proc = subprocess.Popen(
-        exec_cmd, stdout = subprocess.PIPE,
-        stderr = subprocess.STDOUT )
-    stdout_val, stderr = proc.communicate( )
+    logging.info( 'CMD: %s' % ' '.join( exec_cmd ) )
+    stdout_val = subprocess.check_output(
+        exec_cmd, stderr = subprocess.STDOUT )
 
 def get_youtube_file( youtube_URL, output_file, quality = 'highest' ):
     """

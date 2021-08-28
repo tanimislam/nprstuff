@@ -19,7 +19,7 @@ def _main( ):
     parser_image  = subparsers.add_parser( 'image',   help = 'If chosen, convert an SVG(Z), PDF, or PNG into PNG.' )
     parser_movie  = subparsers.add_parser( 'movie',   help = 'If chosen, convert an MP4 into an animated GIF.' )
     parser_youtube= subparsers.add_parser( 'youtube', help = 'If chosen, convert a YOUTUBE video with URL into an animated GIF.' )
-    parser_square = subparsers.add_parser( 'square',  help = 'If chosen, create a square MP4 file from an input MP4 file.' )
+    parser_aspected = subparsers.add_parser( 'aspected',  help = 'If chosen, create an aspected MP4 file from an input MP4 file.' )
     parser_fromimages = subparsers.add_parser( 'fromimages', help = 'If chosen, then convert a sequence of PNG images into an MP4 file.' )
     #
     ## convert image
@@ -33,11 +33,16 @@ def _main( ):
         choices = ( 'svg', 'pdf', 'png' ), help = 'Format of input file. Must be one of SVG/SVGZ, PDF, or PNG.' )
     #
     ## square video
-    parser_square.add_argument(
-        '-f', '--filename', dest='parser_square_filename', type=str, action='store', metavar = 'filename',
+    parser_aspected.add_argument(
+        '-f', '--filename', dest='parser_aspected_filename', type=str, action='store', metavar = 'filename',
         help = 'Name of the input video (MP4) file.', required = True )
-    parser_square.add_argument( '-o', '--output', dest='outputfilename', type=str, action='store',
+    parser_aspected.add_argument( '-o', '--output', dest='outputfilename', type=str, action='store',
                                required = True, help = 'Name of the output MP4 video that will be square.' )
+    parser_aspected.add_argument( '-a', '--aspect', dest='aspect', type=str, action='store', default = 'square',
+                               choices = [ 'square', '916', '169' ],
+                               help = 'The aspect ratio to choose for the final video. Can be one of three: "square" is 1:1, "916" is 9/16 (width 9 units, height 16 units), and "169" is 16/9 (width 16 units, height 9 units). Default is "square".')
+    parser_aspected.add_argument( '-b', '--black', dest='do_black', action='store_true', default = False,
+                               help = 'If chosen, then pad the sides OR the top and bottom with BLACK instead of WHITE. Default is to do WHITE.' )
     #
     ## animated gif
     parser_movie.add_argument(
@@ -119,10 +124,13 @@ def _main( ):
         return
     #
     ## make square movie
-    if args.choose_option == 'square':
+    if args.choose_option == 'aspected':
         assert( os.path.basename( args.outputfilename ).endswith( '.mp4' ) )
-        convert_image.make_square_mp4video(
-            args.parser_square_filename, args.outputfilename )
+        background = 'white'
+        if args.do_black: background = 'black'
+        convert_image.make_aspected_mp4video(
+            args.parser_aspected_filename, args.outputfilename,
+            aspect = args.aspect, background = background )
         return
     #
     ## animated gif from youtube video
