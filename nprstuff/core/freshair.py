@@ -446,7 +446,9 @@ def get_title_mp3_urls_working( outputdir, date_s, driver, debug = False, to_fil
         mp3_url = urljoin( 'https://%s' % mp3_url_split.netloc, mp3_url_split.path )
         #
         ## now get order
-        bname = re.sub('_$', '', os.path.basename( mp3_url ).split('.')[0].strip( ) ).strip( )
+        mp3_url_sub = re.sub('_rev\.mp3$', '', mp3_url).strip( )
+        logging.debug( 'MP3 URL = %s.' % mp3_url_sub )
+        bname = re.sub('_$', '', os.path.basename( mp3_url_sub ).split('.')[0].strip( ) ).strip( )
         order = int( bname.split('_')[-1] )
         #
         ## return tuple of order, title, URL
