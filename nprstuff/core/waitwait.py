@@ -1,7 +1,6 @@
-import os, sys, glob, re, requests, mutagen.mp4
+import os, sys, glob, re, requests, mutagen.mp4, json
 import subprocess, logging, datetime, time, titlecase, tempfile, shutil
 import pathos.multiprocessing as multiprocessing
-from dateutil.relativedelta import relativedelta
 from urllib.parse import urljoin, urlsplit
 from bs4 import BeautifulSoup
 from urllib.parse import parse_qs
@@ -217,6 +216,60 @@ def get_title_mp3_urls_working( outputdir, date_s, driver, dump = False ):
     episode_elems = html.find_all( 'h2', { 'class' : 'title' } )
     episode_urls = list(map(lambda elem: urljoin( 'https://www.npr.org', elem.find_all('a')[0]['href'] ),
                             episode_elems ) )
+    logging.info( 'date_s = %s, episode_urls = %s.' % ( date_s, episode_urls ) )
+
+    #
+    ## getting the waitwait mp3_url default #1
+    def _get_mp3_url_one( html_ep ):
+        mp3_elems = list(filter(lambda elem: 'href' in elem.attrs and 'mp3' in elem['href'], html_ep.find_all('a')))
+        if len( mp3_elems ) == 0: return None
+        mp3_elem = mp3_elems[0]
+        mp3_url_split = urlsplit( mp3_elem['href'] )
+        mp3_url = urljoin( 'https://%s' % mp3_url_split.netloc, mp3_url_split.path )
+        return mp3_url
+
+    #
+    ## getting the more complicated URL, option #2
+    def _get_mp3_url_two( episode_URL, html_ep ):
+        cand_story_elems = html_ep.find_all('div', { 'class' : 'program-block' } )
+        if len( cand_story_elems ) != 1: return None
+        cand_story_elem = cand_story_elems[0]
+        #
+        url_elems = list(filter(lambda elem: 'href' in elem.attrs, cand_story_elem.find_all('a')))
+        if len( url_elems ) != 1: return None
+        episode_URL2 = url_elems[0].attrs['href']
+        if episode_URL == episode_URL2: return None
+        #
+        response = requests.get( episode_URL2 )
+        if not response.ok: return None
+        html_ep2 = BeautifulSoup( response.content, 'lxml' )
+        full_show_elems = html_ep2.find_all('div', { 'id' : 'full-show' } )
+        if len( full_show_elems ) != 1: return None
+        full_show_elem = full_show_elems[0]
+        mp3_elems = list(filter(lambda elem: 'data-play-all' in elem.attrs, full_show_elem.find_all('b')))
+        if len( mp3_elems ) != 1: return None
+        mp3_elem = mp3_elems[0]
+        try:
+            json_data = json.loads( mp3_elem.attrs['data-play-all'] )
+        except: return None
+        if 'audioData' not in json_data: return None
+        if 'audioUrl' not in json_data['audioData'][0]: return None
+        #
+        ## bless me ultima finally (count the None's?) getting to an URL that I can use...
+        audioURL = json_data[ 'audioData' ][0][ 'audioUrl' ]
+        mp3_url_split = urlsplit( json_data[ 'audioData' ][0][ 'audioUrl' ] )
+        mp3_url = urljoin( 'https://%s' % mp3_url_split.netloc, mp3_url_split.path )
+        return mp3_url
+
+    #
+    ## now get the MP3 URL
+    def get_mp3_url( episode_URL, html_ep ):
+        mp3_url = _get_mp3_url_one( html_ep )
+        if mp3_url is not None: return mp3_url
+        #
+        return _get_mp3_url_two( episode_URL, html_ep )
+        
+    
     def get_npr_waitwait_story( episode_URL, date_s ):
         response = requests.get( episode_URL )
         assert( response.ok )
@@ -235,18 +288,23 @@ def get_title_mp3_urls_working( outputdir, date_s, driver, dump = False ):
         title = titlecase.titlecase( ' '.join(map(lambda tok: tok.strip(), title_elems[0].text.split(':')[:-1])) )
         #
         ## now get the MP3 URL
-        mp3_elems = list(filter(lambda elem: 'href' in elem.attrs and 'mp3' in elem['href'], html_ep.find_all('a')))
-        if len( mp3_elems ) == 0: return None
-        mp3_elem = mp3_elems[0]
-        mp3_url_split = urlsplit( mp3_elem['href'] )
-        mp3_url = urljoin( 'https://%s' % mp3_url_split.netloc, mp3_url_split.path )
+        mp3_url = get_mp3_url( episode_URL, html_ep )
+        print( episode_URL, date_s, mp3_url )
+        if mp3_url is None: return None
         #
         ## now get order
         bname = re.sub('_$', '', os.path.basename( mp3_url ).split('.')[0].strip( ) ).strip( )
-        order = int( bname.split('_')[-1] )
-        #
-        ## return tuple of order, title, URL
-        return order, title, mp3_url
+        logging.info('INFO get_npr_waitwait_story(%s,%s).bname = %s.' % (
+            episode_URL, date_s, bname ) )
+        try:
+            order = int( bname.split('_')[-1] )
+            #
+            ## return tuple of order, title, URL
+            logging.info('info: %d, %s, %s' % ( 1, title, mp3_url ) )
+            return order, title, mp3_url
+        except:
+            logging.debug('info: %d, %s, %s' % ( 1, title, mp3_url ) )
+            return 1, title, mp3_url
 
     #
     ## get the tuples in order
@@ -254,6 +312,7 @@ def get_title_mp3_urls_working( outputdir, date_s, driver, dump = False ):
         filter(None, map(lambda episode_URL: get_npr_waitwait_story( episode_URL, date_s ), episode_urls ) ),
         key = lambda tup: tup[0] )
     assert( len( ordered_npr_waitwait ) == len( episode_urls ) )
+    print( ordered_npr_waitwait )
     logging.info("finished getting list of stories for NPR Wait Wait episode: %s. Story list: %s." % (
         date_s, '\n'.join(map(lambda tup: '%s' % list(tup), ordered_npr_waitwait ) ) ) )
     return list(map(lambda tup: ( tup[1], tup[2] ), ordered_npr_waitwait ) )
@@ -300,6 +359,7 @@ def get_waitwait(
     year = date_s.year
     decdate = npr_utils.get_decdate( date_s )
     m4afile = os.path.join(outputdir, 'NPR.WaitWait.%s.m4a' % decdate )
+    logging.info( 'INFO TO GET FIGURE OUT get_title_mp3s_url_working: %s, %s, %s, %s' % ( m4afile, date_s, driver, dump ) )
     if year >= 2006:
         data = get_title_mp3_urls_working( '.', date_s, driver, dump = dump )
         if dump: return data
@@ -387,25 +447,3 @@ def get_waitwait(
     shutil.copy( m4afile_temp, m4afile )
     shutil.rmtree( tmpdir )
     return m4afile
-
-def waitwait_crontab( ):
-    """
-    This python module downloads an `NPR Wait Wait <waitwait_>`_ episode on a particular Saturday.
-    """
-    #
-    ## get current date
-    current_date = datetime.date.fromtimestamp( time.time() )
-    current_year = current_date.year
-    #
-    ## if not on a saturday, go first saturday back
-    if not npr_utils.is_saturday( current_date ):
-        day_of_week = current_date.weekday( )
-        if day_of_week >= 5: days_back = day_of_week - 5
-        else: days_back = days_back = day_of_week + 2
-        days_back = relativedelta( days = days_back )
-        current_date = current_date - days_back
-        if current_date.year != current_year: return
-    
-    #
-    ## now download the episode into the correct directory
-    get_waitwait(_default_inputdir, current_date)

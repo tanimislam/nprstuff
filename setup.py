@@ -59,11 +59,15 @@ setup(
             "download_surahs = nprstuff.cli.download_surahs:_main",
             "myrst2html = nprstuff.cli.myrst2html:_main",
             "imageFromURL = nprstuff.cli.imageFromURL:_main",
+            #
+            ## thisamericanlife CLI stuff
             "thisamericanlife = nprstuff.cli.thisamericanlife:_main",
             "thisamericanlife_crontab = nprstuff.core.thisamericanlife:thisamericanlife_crontab",
             "thisamericanlife_remaining = nprstuff.core.thisamericanlife:get_american_life_remaining",
+            #
+            ## waitwait CLI stuff
             "waitwait = nprstuff.cli.waitwait:_waitwait",
-            "waitwait_crontab = nprstuff.core.waitwait:waitwait_crontab",
+            "waitwait_crontab = nprstuff.cli.waitwait:_waitwait_crontab",
             "waitwait_by_year = nprstuff.cli.waitwait:_waitwait_by_year",
             #
             ## now gui stuff
@@ -75,7 +79,7 @@ setup(
             "nprstuff_gui_vqronline = nprstuff.cli.gui:_vqronline",
             "rest_email = nprstuff.cli.rest_email:main",
             #
-            ## gui2 stuff, superseded by what's in plexstuff project
+            ## gui2 stuff, superseded by what's in howdy project
             "nprstuff_gui2_loginwindow = nprstuff.cli.gui2:_loginwindow",
             "nprstuff_gui2_mainapp = nprstuff.cli.gui2:_mainapp",
         ]

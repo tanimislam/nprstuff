@@ -1,10 +1,11 @@
 from nprstuff import signal_handler
-import logging, datetime, signal, os
+import logging, datetime, signal, os, time
 signal.signal( signal.SIGINT, signal_handler )
+from dateutil.relativedelta import relativedelta
 from argparse import ArgumentParser
 from nprstuff import logging_dict, nprstuff_logger as logger
 from nprstuff.core.waitwait import get_waitwait, get_all_waitwaits_year
-from nprstuff.core.npr_utils import get_datestring, get_time_from_datestring, get_waitwait_downloaddir
+from nprstuff.core.npr_utils import get_datestring, get_time_from_datestring, get_waitwait_downloaddir, is_saturday
 
 _default_inputdir = os.getcwd( )
 try:
@@ -61,3 +62,30 @@ def _waitwait_by_year( ):
     args = parser.parse_args( )
     logger.setLevel( logging_dict[ args.level ] )
     get_all_waitwaits_year( args.year, args.inputdir )
+
+def _waitwait_crontab( ):
+    parser = ArgumentParser( )
+    parser.add_argument(
+        '--level', dest='level', action='store', type=str, default = 'NONE',
+        choices = sorted( logging_dict ),
+        help = 'choose the debug level for downloading NPR Wait Wait episodes or their XML representation of episode info. Can be one of %s. Default is NONE.' % sorted( logging_dict ) )
+    args = parser.parse_args( )
+    logger.setLevel( logging_dict[ args.level ] )
+    
+    #
+    ## get current date
+    current_date = datetime.date.fromtimestamp( time.time() )
+    current_year = current_date.year
+    #
+    ## if not on a saturday, go first saturday back
+    if not is_saturday( current_date ):
+        day_of_week = current_date.weekday( )
+        if day_of_week >= 5: days_back = day_of_week - 5
+        else: days_back = days_back = day_of_week + 2
+        days_back = relativedelta( days = days_back )
+        current_date = current_date - days_back
+        if current_date.year != current_year: return
+    
+    #
+    ## now download the episode into the correct directory
+    get_waitwait(_default_inputdir, current_date)
