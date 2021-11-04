@@ -1,74 +1,34 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8" />
-  
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>5. Top Level API &mdash; nprstuff 1.0 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
         <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
+    <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="6. Core APIs" href="core_api.html" />
     <link rel="prev" title="4. Oldstuff" href="oldstuff.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="index.html" class="icon icon-home"> nprstuff
-          
-
-          
           </a>
-
-          
-            
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -76,18 +36,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="core_functionality.html">1. Core Functionality</a></li>
 <li class="toctree-l1"><a class="reference internal" href="new_functionality.html">2. New Functionality</a></li>
@@ -99,73 +48,32 @@
 <li class="toctree-l1"><a class="reference internal" href="driving.html">8. My Philosopy on Driving</a></li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">nprstuff</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-        
       <li><span class="section-number">5. </span>Top Level API</li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="_sources/top_level_api.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <div class="section" id="top-level-api">
-<h1><span class="section-number">5. </span>Top Level API<a class="headerlink" href="#top-level-api" title="Permalink to this headline">¶</a></h1>
+<h1><span class="section-number">5. </span>Top Level API<a class="headerlink" href="#top-level-api" title="Permalink to this headline"></a></h1>
 <p>This document describes the lower level NPRStuff API, upon which all the command line and GUI tools are based. It lives in <code class="docutils literal notranslate"><span class="pre">nprstuff</span></code>.</p>
 <p>This module implements the lower-level functionality that does or has the following:</p>
 <ul class="simple">
@@ -176,7 +84,7 @@
 </ul>
 <span class="target" id="module-nprstuff"></span><dl class="py class">
 <dt class="sig sig-object py" id="nprstuff.NPRStuffConfig">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">nprstuff.</span></span><span class="sig-name descname"><span class="pre">NPRStuffConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.NPRStuffConfig" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">nprstuff.</span></span><span class="sig-name descname"><span class="pre">NPRStuffConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.NPRStuffConfig" title="Permalink to this definition"></a></dt>
 <dd><p>This <a class="reference external" href="https://www.sqlalchemy.org">SQLAlchemy</a> ORM class contains the configuration data used for running all the NPRStuff tools. Stored into the <code class="docutils literal notranslate"><span class="pre">nprconfig</span></code> table in the <a class="reference external" href="https://en.wikipedia.org/wiki/SQLite">SQLite3</a> configuration database.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Variables</dt>
@@ -196,7 +104,7 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="nprstuff.ProgressDialog">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">nprstuff.</span></span><span class="sig-name descname"><span class="pre">ProgressDialog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">windowTitle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">doQuit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.ProgressDialog" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">nprstuff.</span></span><span class="sig-name descname"><span class="pre">ProgressDialog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">windowTitle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">doQuit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.ProgressDialog" title="Permalink to this definition"></a></dt>
 <dd><p>A convenient <a class="reference external" href="https://www.riverbankcomputing.com/static/Docs/PyQt5">PyQt5</a> widget, inheriting from <a class="reference internal" href="#nprstuff.QDialogWithPrinting" title="nprstuff.QDialogWithPrinting"><code class="xref py py-class docutils literal notranslate"><span class="pre">QDialogWithPrinting</span></code></a>, that acts as a GUI blocking progress window for longer lasting operations. Like its parent class, this dialog widget is also resizable. This shows the passage of the underlying slow process in 5 second increments.</p>
 <p>This progress dialog exposes three methods – <a class="reference internal" href="#nprstuff.ProgressDialog.addText" title="nprstuff.ProgressDialog.addText"><code class="xref py py-meth docutils literal notranslate"><span class="pre">addText</span></code></a>, <a class="reference internal" href="#nprstuff.ProgressDialog.stopDialog" title="nprstuff.ProgressDialog.stopDialog"><code class="xref py py-meth docutils literal notranslate"><span class="pre">stopDialog</span></code></a>, and <a class="reference internal" href="#nprstuff.ProgressDialog.startDialog" title="nprstuff.ProgressDialog.startDialog"><code class="xref py py-meth docutils literal notranslate"><span class="pre">startDialog</span></code></a> – to which a custom <a class="reference external" href="https://www.riverbankcomputing.com/static/Docs/PyQt5/api/qtcore/qthread.html" title="(in PyQt v5.14b1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">QThread</span></code></a> object can connect.</p>
 <ul class="simple">
@@ -208,8 +116,8 @@
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>parent</strong> (<a class="reference external" href="https://www.riverbankcomputing.com/static/Docs/PyQt5/api/qtwidgets/qwidget.html" title="(in PyQt v5.14b1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></a>) – the parent <a class="reference external" href="https://www.riverbankcomputing.com/static/Docs/PyQt5/api/qtwidgets/qwidget.html" title="(in PyQt v5.14b1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></a> on which this dialog widget blocks.</p></li>
-<li><p><strong>windowTitle</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the label to put on this progress dialog in an internal <a class="reference external" href="https://www.riverbankcomputing.com/static/Docs/PyQt5/api/qtwidgets/qlabel.html" title="(in PyQt v5.14b1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">QLabel</span></code></a>.</p></li>
-<li><p><strong>doQuit</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – if <code class="docutils literal notranslate"><span class="pre">True</span></code>, then using the quit shortcuts (<code class="docutils literal notranslate"><span class="pre">Esc</span></code> or <code class="docutils literal notranslate"><span class="pre">Ctrl+Shift+Q</span></code>) will cause the underlying program to exit. Otherwise, hide the progress dialog.</p></li>
+<li><p><strong>windowTitle</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – the label to put on this progress dialog in an internal <a class="reference external" href="https://www.riverbankcomputing.com/static/Docs/PyQt5/api/qtwidgets/qlabel.html" title="(in PyQt v5.14b1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">QLabel</span></code></a>.</p></li>
+<li><p><strong>doQuit</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – if <code class="docutils literal notranslate"><span class="pre">True</span></code>, then using the quit shortcuts (<code class="docutils literal notranslate"><span class="pre">Esc</span></code> or <code class="docutils literal notranslate"><span class="pre">Ctrl+Shift+Q</span></code>) will cause the underlying program to exit. Otherwise, hide the progress dialog.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Variables</dt>
@@ -218,41 +126,41 @@
 <li><p><strong>parsedHTML</strong> (<a class="reference external" href="https://www.crummy.com/software/BeautifulSoup/bs4/doc/index.html#beautifulsoup" title="(in Beautiful Soup v4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BeautifulSoup</span></code></a>) – the <a class="reference external" href="https://www.crummy.com/software/BeautifulSoup/bs4/doc/index.html#beautifulsoup" title="(in Beautiful Soup v4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BeautifulSoup</span></code></a> structure that contains the indexable tree of progress dialogs.</p></li>
 <li><p><strong>elapsedTime</strong> (<a class="reference external" href="https://www.riverbankcomputing.com/static/Docs/PyQt5/api/qtwidgets/qlabel.html" title="(in PyQt v5.14b1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">QLabel</span></code></a>) – the bottom <a class="reference external" href="https://www.riverbankcomputing.com/static/Docs/PyQt5/api/qtwidgets/qlabel.html" title="(in PyQt v5.14b1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">QLabel</span></code></a> widget that displays how much time (in seconds) has passed.</p></li>
 <li><p><strong>timer</strong> (<a class="reference external" href="https://www.riverbankcomputing.com/static/Docs/PyQt5/api/qtcore/qtimer.html" title="(in PyQt v5.14b1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">QTimer</span></code></a>) – the <a class="reference external" href="https://www.riverbankcomputing.com/static/Docs/PyQt5/api/qtcore/qtimer.html" title="(in PyQt v5.14b1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">QTimer</span></code></a> sub-thread that listens every 5 seconds before emitting a signal.</p></li>
-<li><p><strong>t0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><em>float</em></a>) – the UNIX time, in seconds with resolution of microseconds.</p></li>
+<li><p><strong>t0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.10)"><em>float</em></a>) – the UNIX time, in seconds with resolution of microseconds.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="nprstuff.ProgressDialog.addText">
-<span class="sig-name descname"><span class="pre">addText</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.ProgressDialog.addText" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">addText</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.ProgressDialog.addText" title="Permalink to this definition"></a></dt>
 <dd><p>adds some text to this progress dialog window.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>text</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the text to add.</p>
+<dd class="field-odd"><p><strong>text</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – the text to add.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nprstuff.ProgressDialog.showTime">
-<span class="sig-name descname"><span class="pre">showTime</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.ProgressDialog.showTime" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">showTime</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.ProgressDialog.showTime" title="Permalink to this definition"></a></dt>
 <dd><p>method connected to the internal <code class="xref py py-attr docutils literal notranslate"><span class="pre">timer</span></code> that prints out how many seconds have passed, on the underlying <code class="xref py py-attr docutils literal notranslate"><span class="pre">elapsedTime</span></code> <a class="reference external" href="https://www.riverbankcomputing.com/static/Docs/PyQt5/api/qtwidgets/qlabel.html" title="(in PyQt v5.14b1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">QLabel</span></code></a>.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nprstuff.ProgressDialog.startDialog">
-<span class="sig-name descname"><span class="pre">startDialog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initString</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.ProgressDialog.startDialog" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">startDialog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initString</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.ProgressDialog.startDialog" title="Permalink to this definition"></a></dt>
 <dd><p>starts running the progress dialog, with an optional labeling string, and starts the timer.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>initString</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – optional internal labeling string.</p>
+<dd class="field-odd"><p><strong>initString</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – optional internal labeling string.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nprstuff.ProgressDialog.stopDialog">
-<span class="sig-name descname"><span class="pre">stopDialog</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.ProgressDialog.stopDialog" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">stopDialog</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.ProgressDialog.stopDialog" title="Permalink to this definition"></a></dt>
 <dd><p>stops running, and hides, this progress dialog.</p>
 </dd></dl>
 
@@ -260,7 +168,7 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="nprstuff.ProgressDialogThread">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">nprstuff.</span></span><span class="sig-name descname"><span class="pre">ProgressDialogThread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.ProgressDialogThread" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">nprstuff.</span></span><span class="sig-name descname"><span class="pre">ProgressDialogThread</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.ProgressDialogThread" title="Permalink to this definition"></a></dt>
 <dd><p>This subclassing of <a class="reference external" href="https://www.riverbankcomputing.com/static/Docs/PyQt5/api/qtcore/qthread.html" title="(in PyQt v5.14b1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">QThread</span></code></a> provides a convenient scaffolding to run, in a non-blocking fashion, some long-running processes with an asssociated <a class="reference internal" href="#nprstuff.ProgressDialog" title="nprstuff.ProgressDialog"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProgressDialog</span></code></a> widget.</p>
 <p>Subclasses of this object need to have a particular structure for their <code class="docutils literal notranslate"><span class="pre">__init__</span></code> method. The first three arguments MUST be <code class="docutils literal notranslate"><span class="pre">self</span></code>, <code class="docutils literal notranslate"><span class="pre">parent</span></code>, <code class="docutils literal notranslate"><span class="pre">self</span></code> is a reference to this object. <code class="docutils literal notranslate"><span class="pre">parent</span></code> is the parent <a class="reference external" href="https://www.riverbankcomputing.com/static/Docs/PyQt5/api/qtwidgets/qwidget.html" title="(in PyQt v5.14b1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></a> to which the <a class="reference internal" href="#nprstuff.ProgressDialog" title="nprstuff.ProgressDialog"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProgressDialog</span></code></a> attribute, named <code class="docutils literal notranslate"><span class="pre">progress_dialog</span></code>, is the child. <code class="docutils literal notranslate"><span class="pre">title</span></code> is the title of <code class="docutils literal notranslate"><span class="pre">progress_dialog</span></code>. Here is an example, where an example class named <code class="docutils literal notranslate"><span class="pre">ProgressDialogThreadChildClass</span></code> inherits from  <a class="reference internal" href="#nprstuff.ProgressDialogThread" title="nprstuff.ProgressDialogThread"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProgressDialogThread</span></code></a>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span> <span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span> <span class="p">):</span>
@@ -281,21 +189,21 @@
     <span class="bp">self</span><span class="o">.</span><span class="n">stopDialog</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span> <span class="p">)</span>
 </pre></div>
 </div>
-<p>In the <code class="xref py py-meth docutils literal notranslate"><span class="pre">run</span></code> method, if one wants to print out something into <code class="docutils literal notranslate"><span class="pre">progess_dialog</span></code>, then there should be these types of commands in <code class="docutils literal notranslate"><span class="pre">run</span></code>: <code class="docutils literal notranslate"><span class="pre">self.emitString.emit(</span> <span class="pre">mystr</span> <span class="pre">)</span></code>, where <code class="docutils literal notranslate"><span class="pre">mystr</span></code> is a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> message to show in <code class="docutils literal notranslate"><span class="pre">progress_dialog</span></code>, and <code class="docutils literal notranslate"><span class="pre">emitString</span></code> is a <a class="reference external" href="https://www.riverbankcomputing.com/static/Docs/PyQt5/signals_slots.html?highlight=pyqtsignal#PyQt5.QtCore.pyqtSignal" title="(in PyQt v5.14b1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyqtsignal</span></code></a> connected to the <code class="docutils literal notranslate"><span class="pre">progress_dialog</span></code> object’s <a class="reference internal" href="#nprstuff.ProgressDialog.addText" title="nprstuff.ProgressDialog.addText"><code class="xref py py-meth docutils literal notranslate"><span class="pre">addText(</span> <span class="pre">)</span></code></a>.</p>
+<p>In the <code class="xref py py-meth docutils literal notranslate"><span class="pre">run</span></code> method, if one wants to print out something into <code class="docutils literal notranslate"><span class="pre">progess_dialog</span></code>, then there should be these types of commands in <code class="docutils literal notranslate"><span class="pre">run</span></code>: <code class="docutils literal notranslate"><span class="pre">self.emitString.emit(</span> <span class="pre">mystr</span> <span class="pre">)</span></code>, where <code class="docutils literal notranslate"><span class="pre">mystr</span></code> is a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> message to show in <code class="docutils literal notranslate"><span class="pre">progress_dialog</span></code>, and <code class="docutils literal notranslate"><span class="pre">emitString</span></code> is a <a class="reference external" href="https://www.riverbankcomputing.com/static/Docs/PyQt5/signals_slots.html?highlight=pyqtsignal#PyQt5.QtCore.pyqtSignal" title="(in PyQt v5.14b1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyqtsignal</span></code></a> connected to the <code class="docutils literal notranslate"><span class="pre">progress_dialog</span></code> object’s <a class="reference internal" href="#nprstuff.ProgressDialog.addText" title="nprstuff.ProgressDialog.addText"><code class="xref py py-meth docutils literal notranslate"><span class="pre">addText(</span> <span class="pre">)</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>parent</strong> (<a class="reference external" href="https://www.riverbankcomputing.com/static/Docs/PyQt5/api/qtwidgets/qwidget.html" title="(in PyQt v5.14b1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></a>) – the parent widget for which this long-lasting process will pop up a progress dialog.</p></li>
-<li><p><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – the title for the <code class="docutils literal notranslate"><span class="pre">progress_dialog</span></code> widget.</p></li>
+<li><p><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – the title for the <code class="docutils literal notranslate"><span class="pre">progress_dialog</span></code> widget.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Variables</dt>
 <dd class="field-even"><ul class="simple">
-<li><p><strong>emitString</strong> – the signal, with <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> signature, that is triggered to send progress messages into <code class="docutils literal notranslate"><span class="pre">progress_dialog</span></code>.</p></li>
+<li><p><strong>emitString</strong> – the signal, with <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> signature, that is triggered to send progress messages into <code class="docutils literal notranslate"><span class="pre">progress_dialog</span></code>.</p></li>
 <li><p><strong>stopDialog</strong> – the signal that is triggered to stop the <code class="docutils literal notranslate"><span class="pre">progress_dialog</span></code>, calling <a class="reference internal" href="#nprstuff.ProgressDialog.stopDialog" title="nprstuff.ProgressDialog.stopDialog"><code class="xref py py-meth docutils literal notranslate"><span class="pre">stopDialog</span></code></a>.</p></li>
-<li><p><strong>startDialog</strong> – the signal, with <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> signature, that is triggered to restart the <code class="docutils literal notranslate"><span class="pre">progress_dialog</span></code> widget, calling <a class="reference internal" href="#nprstuff.ProgressDialog.startDialog" title="nprstuff.ProgressDialog.startDialog"><code class="xref py py-class docutils literal notranslate"><span class="pre">startDialog</span></code></a>.</p></li>
+<li><p><strong>startDialog</strong> – the signal, with <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> signature, that is triggered to restart the <code class="docutils literal notranslate"><span class="pre">progress_dialog</span></code> widget, calling <a class="reference internal" href="#nprstuff.ProgressDialog.startDialog" title="nprstuff.ProgressDialog.startDialog"><code class="xref py py-class docutils literal notranslate"><span class="pre">startDialog</span></code></a>.</p></li>
 <li><p><strong>progress_dialog</strong> – the GUI that shows, in a non-blocking fashion, the progress on some longer-running method.</p></li>
-<li><p><strong>time0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – a convenience attribute, the UTC time at which the <code class="docutils literal notranslate"><span class="pre">progress_dialog</span></code> object was first instantiated. Can be used to determine the time each submethod takes (for example, <code class="docutils literal notranslate"><span class="pre">time.time(</span> <span class="pre">)</span> <span class="pre">-</span> <span class="pre">self.time0</span></code>).</p></li>
+<li><p><strong>time0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – a convenience attribute, the UTC time at which the <code class="docutils literal notranslate"><span class="pre">progress_dialog</span></code> object was first instantiated. Can be used to determine the time each submethod takes (for example, <code class="docutils literal notranslate"><span class="pre">time.time(</span> <span class="pre">)</span> <span class="pre">-</span> <span class="pre">self.time0</span></code>).</p></li>
 </ul>
 </dd>
 </dl>
@@ -307,51 +215,51 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="nprstuff.QDialogWithPrinting">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">nprstuff.</span></span><span class="sig-name descname"><span class="pre">QDialogWithPrinting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isIsolated</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">doQuit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.QDialogWithPrinting" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">nprstuff.</span></span><span class="sig-name descname"><span class="pre">QDialogWithPrinting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">isIsolated</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">doQuit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.QDialogWithPrinting" title="Permalink to this definition"></a></dt>
 <dd><p>A convenient <a class="reference external" href="https://www.riverbankcomputing.com/static/Docs/PyQt5">PyQt5</a> widget, inheriting from <a class="reference external" href="https://www.riverbankcomputing.com/static/Docs/PyQt5/api/qtwidgets/qdialog.html" title="(in PyQt v5.14b1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">QDialog</span></code></a>, that allows for screen grabs and keyboard shortcuts to either hide this dialog window or quit the underlying program. This <a class="reference external" href="https://www.riverbankcomputing.com/static/Docs/PyQt5">PyQt5</a> widget is also resizable, in relative increments of 5% larger or smaller, to a maximum of <span class="math notranslate nohighlight">\(1.05^5\)</span> times the initial size, and to a minimum of <span class="math notranslate nohighlight">\(1.05^{-5}\)</span> times the initial size.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>parent</strong> (<a class="reference external" href="https://www.riverbankcomputing.com/static/Docs/PyQt5/api/qtwidgets/qwidget.html" title="(in PyQt v5.14b1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></a>) – the parent <a class="reference external" href="https://www.riverbankcomputing.com/static/Docs/PyQt5/api/qtwidgets/qwidget.html" title="(in PyQt v5.14b1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">QWidget</span></code></a> to this dialog widget.</p></li>
-<li><p><strong>isIsolated</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, then this widget is detached from its parent. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, then this widget is embedded into a layout in the parent widget.</p></li>
-<li><p><strong>doQuit</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – if <code class="docutils literal notranslate"><span class="pre">True</span></code>, then using the quit shortcuts (<code class="docutils literal notranslate"><span class="pre">Esc</span></code> or <code class="docutils literal notranslate"><span class="pre">Ctrl+Shift+Q</span></code>) will cause the underlying program to exit. Otherwise, hide the progress dialog.</p></li>
+<li><p><strong>isIsolated</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, then this widget is detached from its parent. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, then this widget is embedded into a layout in the parent widget.</p></li>
+<li><p><strong>doQuit</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – if <code class="docutils literal notranslate"><span class="pre">True</span></code>, then using the quit shortcuts (<code class="docutils literal notranslate"><span class="pre">Esc</span></code> or <code class="docutils literal notranslate"><span class="pre">Ctrl+Shift+Q</span></code>) will cause the underlying program to exit. Otherwise, hide the progress dialog.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Variables</dt>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>indexScalingSignal</strong> – a <a class="reference external" href="https://www.riverbankcomputing.com/static/Docs/PyQt5/signals_slots.html?highlight=pyqtsignal#PyQt5.QtCore.pyqtSignal" title="(in PyQt v5.14b1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyqtSignal</span></code></a> that can be connected to other <a class="reference external" href="https://www.riverbankcomputing.com/static/Docs/PyQt5">PyQt5</a> events or methods, if resize events want to be recorded.</p></li>
-<li><p><strong>initWidth</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – the initial width of the GUI in pixels.</p></li>
-<li><p><strong>initHeight</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – the initial heigth of the GUI in pixels.</p></li>
+<li><p><strong>initWidth</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – the initial width of the GUI in pixels.</p></li>
+<li><p><strong>initHeight</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – the initial heigth of the GUI in pixels.</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="nprstuff.QDialogWithPrinting.makeBigger">
-<span class="sig-name descname"><span class="pre">makeBigger</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.QDialogWithPrinting.makeBigger" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">makeBigger</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.QDialogWithPrinting.makeBigger" title="Permalink to this definition"></a></dt>
 <dd><p>makes the widget incrementally 5% larger, for a maximum of <span class="math notranslate nohighlight">\(1.05^5\)</span>, or approximately 28% larger than, the initial size.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nprstuff.QDialogWithPrinting.makeSmaller">
-<span class="sig-name descname"><span class="pre">makeSmaller</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.QDialogWithPrinting.makeSmaller" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">makeSmaller</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.QDialogWithPrinting.makeSmaller" title="Permalink to this definition"></a></dt>
 <dd><p>makes the widget incrementally 5% smaller, for a minimum of <span class="math notranslate nohighlight">\(1.05^{-5}\)</span>, or approximately 28% smaller than, the initial size.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nprstuff.QDialogWithPrinting.resetSize">
-<span class="sig-name descname"><span class="pre">resetSize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.QDialogWithPrinting.resetSize" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">resetSize</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.QDialogWithPrinting.resetSize" title="Permalink to this definition"></a></dt>
 <dd><p>reset the widget size to the initial size.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nprstuff.QDialogWithPrinting.reset_sizes">
-<span class="sig-name descname"><span class="pre">reset_sizes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.QDialogWithPrinting.reset_sizes" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">reset_sizes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.QDialogWithPrinting.reset_sizes" title="Permalink to this definition"></a></dt>
 <dd><p>Sets the default widget size to the current size.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nprstuff.QDialogWithPrinting.screenGrab">
-<span class="sig-name descname"><span class="pre">screenGrab</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.QDialogWithPrinting.screenGrab" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">screenGrab</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.QDialogWithPrinting.screenGrab" title="Permalink to this definition"></a></dt>
 <dd><p>take a screen shot of itself and saver to a PNG file through a <code class="xref py py-class docutils literal notranslate"><span class="pre">QFileDialog</span></code> widget.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -363,11 +271,11 @@
 
 <dl class="py class">
 <dt class="sig sig-object py" id="nprstuff.QLabelWithSave">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">nprstuff.</span></span><span class="sig-name descname"><span class="pre">QLabelWithSave</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.QLabelWithSave" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">nprstuff.</span></span><span class="sig-name descname"><span class="pre">QLabelWithSave</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.QLabelWithSave" title="Permalink to this definition"></a></dt>
 <dd><p>A convenient <a class="reference external" href="https://www.riverbankcomputing.com/static/Docs/PyQt5">PyQt5</a> widget that inherits from <a class="reference external" href="https://www.riverbankcomputing.com/static/Docs/PyQt5/api/qtwidgets/qlabel.html" title="(in PyQt v5.14b1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">QLabel</span></code></a>, but allows screen shots.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="nprstuff.QLabelWithSave.contextMenuEvent">
-<span class="sig-name descname"><span class="pre">contextMenuEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.QLabelWithSave.contextMenuEvent" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">contextMenuEvent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.QLabelWithSave.contextMenuEvent" title="Permalink to this definition"></a></dt>
 <dd><p>Constructs a <a class="reference external" href="https://en.wikipedia.org/wiki/Context_menu">context menu</a> with a single action, <em>Save Pixmap</em>, that takes a screen shot of this widget, using <a class="reference internal" href="#nprstuff.QLabelWithSave.screenGrab" title="nprstuff.QLabelWithSave.screenGrab"><code class="xref py py-meth docutils literal notranslate"><span class="pre">screenGrab</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -378,7 +286,7 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="nprstuff.QLabelWithSave.screenGrab">
-<span class="sig-name descname"><span class="pre">screenGrab</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.QLabelWithSave.screenGrab" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">screenGrab</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.QLabelWithSave.screenGrab" title="Permalink to this definition"></a></dt>
 <dd><p>take a screen shot of itself and save to a PNG file through a <a class="reference external" href="https://www.riverbankcomputing.com/static/Docs/PyQt5/api/qtwidgets/qfiledialog.html" title="(in PyQt v5.14b1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">QFileDialog</span></code></a> widget.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -390,13 +298,13 @@
 
 <dl class="py data">
 <dt class="sig sig-object py" id="nprstuff.baseConfDir">
-<span class="sig-prename descclassname"><span class="pre">nprstuff.</span></span><span class="sig-name descname"><span class="pre">baseConfDir</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'/home/tanim/.config/nprstuff'</span></em><a class="headerlink" href="#nprstuff.baseConfDir" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">nprstuff.</span></span><span class="sig-name descname"><span class="pre">baseConfDir</span></span><em class="property"> <span class="pre">=</span> <span class="pre">'/home/tanim/.config/nprstuff'</span></em><a class="headerlink" href="#nprstuff.baseConfDir" title="Permalink to this definition"></a></dt>
 <dd><p>the directory where NPRStuff user data is stored – <code class="docutils literal notranslate"><span class="pre">~/.config/nprstuff</span></code>.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="nprstuff.create_all">
-<span class="sig-prename descclassname"><span class="pre">nprstuff.</span></span><span class="sig-name descname"><span class="pre">create_all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.create_all" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">nprstuff.</span></span><span class="sig-name descname"><span class="pre">create_all</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.create_all" title="Permalink to this definition"></a></dt>
 <dd><p>creates the necessary <a class="reference external" href="https://en.wikipedia.org/wiki/SQLite">SQLite3</a> tables into the database file <code class="docutils literal notranslate"><span class="pre">~/.config/nprstuff/app.db</span></code> if they don’t already exist, but only if not building documentation in <a class="reference external" href="https://www.readthedocs.io">Read the docs</a>.</p>
 </dd></dl>
 
@@ -404,50 +312,33 @@
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="core_api.html" class="btn btn-neutral float-right" title="6. Core APIs" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="oldstuff.html" class="btn btn-neutral float-left" title="4. Oldstuff" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="core_api.html" class="btn btn-neutral float-right" title="6. Core APIs" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright 2020, Tanim Islam.
-
-    </p>
+    <p>&#169; Copyright 2020, Tanim Islam.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>
