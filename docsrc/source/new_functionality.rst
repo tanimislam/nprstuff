@@ -78,7 +78,7 @@ Now ``convertImage`` does five things, as seen when running ``convertImage -h``.
        movie               If chosen, convert an MP4 into an animated GIF.
        youtube             If chosen, convert a YOUTUBE video with URL into an animated GIF.
        aspected            If chosen, create an aspected MP4 file from an input MP4 file.
-       fromimages          If chosen, then convert a sequence of PNG images into an MP4 file.
+       fromimages          If chosen, then convert a sequence of PNG/JPEG/TIF images into an MP4 file.
 
    optional arguments:
      -h, --help            show this help message and exit
@@ -276,33 +276,38 @@ Here are two examples, for the default *square* aspect ratio and *white* letterb
 
 convertImage fromimages
 ------------------------
-``convertImatge fromuimages`` creates an MP4_ movie file from a collection of PNG_ images as frames. Say the files live in a directory ``dirname``, and the prefix of the PNG_ files is ``PREFIX``, so that the PNG_ images are named, say, ``PREFIX0000.png`` sequentially to ``PREFIX0401.png``. This command will create an MP4_ file, named ``PREFIX.mp4``, in ``dirname``.
+``convertImatge fromuimages`` creates an MP4_ movie file from a collection of image files as frames. Say the files live in a directory ``dirname``, the prefix of the image files is ``PREFIX``, and the suffix of the image files is ``png`` so that the PNG_ images are named, say, ``PREFIX0000.png`` sequentially to ``PREFIX0401.png``. This command will create an MP4_ file, named ``PREFIX.mp4``, in ``dirname``.
 
 Its help screen, when running ``convertImage fromimages -h``, is,
 
 .. code-block:: console
 
-   usage: convertImage fromimages [-h] [-d dirname] -p prefix [-f fps] [--autocrop]
+   usage: convertImage fromimages [-h] [-d dirname] -p prefix [-s suffix] [-f fps] [--autocrop]
 
    optional arguments:
      -h, --help            show this help message and exit
      -d dirname, --dirname dirname
-			   The name of the directory to look for a sequence of PNG images. Default is /usr/WS2/islam5/code_src/nprstuff.
+			   The name of the directory to look for a sequence of PNG/JPEG/TIF images. Default is <CURRENT_DIRECTORY>.
      -p prefix, --prefix prefix
-			   The prefix of PNG files through which to go.
+			   The prefix of PNG/JPEG/TIF files through which to go.
+     -s suffix, --imagesuffix suffix
+			   The suffix of the image files. Default is png.
      -f fps, --fps fps     The number of frames per second in the MP4 file. Default is 5.
-     --autocrop            If chosen, then perform an autocrop, and then (where necessary) resize each image so that their widths and heights are multiples
-			   of 2.
+     --autocrop            If chosen, then perform an autocrop, and then (where necessary) resize each image so that their widths and heights are multiples of 2.
 
 Here are the command line arguments.
 			   
-* ``-d`` or ``--dirname`` specifies the directory where the PNG_ files live. By default it is the current working directory.
+* ``-d`` or ``--dirname`` specifies the directory where the image files live. By default it is the current working directory.
 
-* ``-p`` or ``--prefix`` is the prefix to the collection of PNG_ files as frames.
+* ``-p`` or ``--prefix`` is the prefix to the collection of image files as frames.
+  
+* ``-s`` or ``--imagesuffix`` is the suffix of the image files. By default it is ``png``, but could be anything that ffmpeg_ can read.
 
 * ``-f`` or ``--fps`` is the frames per second for the output MP4_ file. The default is 5, but it must be :math:`\ge 1`.
 
-* ``--autocrop`` specifies whether you want to automatically crop out white space from the PNG_ images.
+* ``--autocrop`` specifies whether you want to automatically crop out white space from the image files.
+
+``<CURRENT_DIRECTORY>`` refers to the current working directory in which ``convertImage fromImages`` has been launched.
 			   
 .. _changedates_label:
 

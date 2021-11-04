@@ -20,7 +20,7 @@ def _main( ):
     parser_movie  = subparsers.add_parser( 'movie',   help = 'If chosen, convert an MP4 into an animated GIF.' )
     parser_youtube= subparsers.add_parser( 'youtube', help = 'If chosen, convert a YOUTUBE video with URL into an animated GIF.' )
     parser_aspected = subparsers.add_parser( 'aspected',  help = 'If chosen, create an aspected MP4 file from an input MP4 file.' )
-    parser_fromimages = subparsers.add_parser( 'fromimages', help = 'If chosen, then convert a sequence of PNG images into an MP4 file.' )
+    parser_fromimages = subparsers.add_parser( 'fromimages', help = 'If chosen, then convert a sequence of PNG/JPEG/TIF images into an MP4 file.' )
     #
     ## convert image
     parser_image.add_argument(
@@ -75,9 +75,11 @@ def _main( ):
     #
     ## create an MP4 file from a sequence of images
     parser_fromimages.add_argument( '-d', '--dirname', dest='parser_fromimages_dirname', type=str, action='store', metavar='dirname', default = os.getcwd( ),
-                                   help = 'The name of the directory to look for a sequence of PNG images. Default is %s.' % os.getcwd( ) )
+                                   help = 'The name of the directory to look for a sequence of PNG/JPEG/TIF images. Default is %s.' % os.getcwd( ) )
     parser_fromimages.add_argument( '-p', '--prefix', dest='parser_fromimages_prefix', type=str, action='store', metavar='prefix', required=True,
-                                   help = 'The prefix of PNG files through which to go.' )
+                                   help = 'The prefix of PNG/JPEG/TIF files through which to go.' )
+    parser_fromimages.add_argument( '-s', '--imagesuffix', dest='parser_fromimages_suffix', type=str, action='store', metavar='suffix', default = 'png',
+                                   help = 'The suffix of the image files. Default is png.' )
     parser_fromimages.add_argument( '-f', '--fps', dest='parser_fromimages_fps', type=int, action='store', metavar='fps', default = 5,
                                    help = 'The number of frames per second in the MP4 file. Default is 5.' )
     parser_fromimages.add_argument( '--autocrop', dest='parser_fromimages_do_autocrop', action='store_true', default = False,
@@ -146,15 +148,16 @@ def _main( ):
     ## create an MP4 file from a collection of images
     if args.choose_option == 'fromimages':
         assert( os.path.isdir( args.parser_fromimages_dirname ) )
-        png2mp4dict = convert_image.create_png2mp4dict(
+        images2mp4dict = convert_image.create_images2mp4dict(
             args.parser_fromimages_prefix,
+            image_suffix = args.parser_fromimages_suffix,
             dirname = args.parser_fromimages_dirname,
             fps = args.parser_fromimages_fps,
             autocrop = args.parser_fromimages_do_autocrop )
-        if png2mp4dict['status'] != 'SUCCESS':
-            print( png2mp4dict['status'] )
+        if images2mp4dict['status'] != 'SUCCESS':
+            print( images2mp4dict['status'] )
             return
         #
         ## now perform the operation to autocrop those images
-        convert_image.mp4frompngs( png2mp4dict )
+        convert_image.mp4fromimages( images2mp4dict )
 

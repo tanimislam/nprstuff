@@ -47,10 +47,14 @@ setup(
         'console_scripts' : [
             "music_to_m4a = nprstuff.cli.music_to_m4a:_main",
             "nprconfig = nprstuff.cli.nprconfig:main",
+            #
+            ## freshair CLI stuff
             "freshair = nprstuff.cli.freshair:_freshair",
             "freshair_crontab = nprstuff.cli.freshair:_freshair_crontab",
             "freshair_by_year = nprstuff.cli.freshair:_freshair_by_year",
             "freshair_fix_crontab = nprstuff.cli.freshair:_freshair_fix_crontab",
+            #
+            ## extra CLI stuff (new functionality)
             "github_md_2_html = nprstuff.cli.github_md_2_html:_main",
             "autoCropImage = nprstuff.cli.autoCropImage:_main",
             "convertImage = nprstuff.cli.convertImage:_main",

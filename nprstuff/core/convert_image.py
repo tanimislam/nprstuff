@@ -9,22 +9,22 @@ from configparser import ConfigParser, RawConfigParser
 from PyQt5.QtCore import QByteArray
 from nprstuff.core import autocrop_image
 
-def mp4frompngs( png2mp4dict ):
+def mp4fromimages( images2mp4dict ):
     """
     Creates an MP4_ file from the low-level input specification :py:class:`dict` that :py:meth:`create_png2mp4dict <nprstuff.core.convert_image.create_png2mp4dict>` creates. Requires the existence of the ``ffmpeg`` executable, and ``status`` value in the :py:class:`dict` *must* be ``"SUCCESS"``. Otherwise, this method does not create a movie file.
 
-    If ``dirname`` is the directory in which the PNG_ files live, and ``PREFIX`` is the prefix of all the PNG_ files, the MP4_ file is named ``dirname/PREFIX.mp4``.
+    If ``dirname`` is the directory in which the image files live, and ``PREFIX`` is the prefix of all the image files, the MP4_ file is named ``dirname/PREFIX.mp4``.
 
-    :param dict png2mp4dict: the dictionary specification for creating a specific MP4_ file from a collection of PNG_ files as frames.
+    :param dict images2mp4dict: the dictionary specification for creating a specific MP4_ file from a collection of image files as frames.
 
-    .. seealso:: :py:meth:`create_png2mp4dict <nprstuff.core.convert_image.create_png2mp4dict>`.
+    .. seealso:: :py:meth:`create_images2mp4dict <nprstuff.core.convert_image.create_images2mp4dict>`.
     """
     #
     ## barf out if cannot find ffmpeg
     ffmpeg_exec = find_executable( 'ffmpeg' )
     if ffmpeg_exec is None:
         raise ValueError("Error, ffmpeg could not be found." )
-    assert( png2mp4dict['status'] == 'SUCCESS' )
+    assert( images2mp4dict['status'] == 'SUCCESS' )
     def _resize_image( fname ):
         im = Image.open( fname )
         sizeChanged = False
@@ -42,117 +42,121 @@ def mp4frompngs( png2mp4dict ):
     ## now ensure that these files are of even-width-and-height
     with Pool( processes = cpu_count( ) ) as pool:
         time0 = time.time( )
-        autocrop = png2mp4dict[ 'autocrop' ]
+        autocrop = images2mp4dict[ 'autocrop' ]
         if not autocrop:
-            _ = list(pool.map(_resize_image, png2mp4dict['files'] ) )
+            _ = list(pool.map(_resize_image, images2mp4dict['files'] ) )
         else:
             _ = list(pool.map(lambda fname: autocrop_image.autocrop_image( fname, fixEven = True ),
-                              png2mp4dict['files']))
+                              images2mp4dict['files']))
         logging.info('fixed widths and heights of %d images in %0.3f seconds.' % (
-            len( png2mp4dict['files'] ), time.time( ) - time0 ) )
+            len( images2mp4dict['files'] ), time.time( ) - time0 ) )
     #
     ## now create the FFMPEG movie file
     ## thank instructions from https://hamelot.io/visualization/using-ffmpeg-to-convert-a-set-of-images-into-a-video/
     ## make MP4 movie, 5 fps, quality = 25
     time0 = time.time( )
-    num_dots = len( png2mp4dict['prefix'].split('.')[:-1] )
-    logging.info('NUM DOTS mp4frompngs: %d.' % num_dots )
+    num_dots = len( images2mp4dict['prefix'].split('.')[:-1] )
+    logging.info('NUM DOTS mp4fromimages: %d.' % num_dots )
     if num_dots == 0:
-        movie_name = '%s.mp4' % png2mp4dict['prefix']
+        movie_name = '%s.mp4' % images2mp4dict['prefix']
     else:
-        movie_name = '%s.mp4' % '.'.join(png2mp4dict['prefix'].split('.')[:-1])
+        movie_name = '%s.mp4' % '.'.join(images2mp4dict['prefix'].split('.')[:-1])
     stdout_val = subprocess.check_output(
-        [ ffmpeg_exec, '-y', '-r', '%d' % png2mp4dict['fps'], '-f', 'image2',
-         '-i', png2mp4dict['actual prefix'],
+        [ ffmpeg_exec, '-y', '-r', '%d' % images2mp4dict['fps'], '-f', 'image2',
+         '-i', images2mp4dict['actual prefix'],
          '-vcodec', 'libx264', '-crf', '25', '-pix_fmt', 'yuv420p', movie_name ],
         stderr = subprocess.STDOUT )        
-    logging.info('created movie = %s from %d PNG frame images in %0.3f seconds.' % (
-        movie_name, len( png2mp4dict['files'] ), time.time( ) - time0 ) )
+    logging.info('created movie = %s from %d image frame images in %0.3f seconds.' % (
+        movie_name, len( images2mp4dict['files'] ), time.time( ) - time0 ) )
     
-def create_png2mp4dict( prefix, dirname = os.getcwd( ), fps = 5, autocrop = False ):
+def create_images2mp4dict( prefix, image_suffix = 'png', dirname = os.getcwd( ), fps = 5, autocrop = False ):
     """
-    This method creates a complicated and low-level :py:class:`dict` of set up, when creating an MP4_ file from a collection of PNG_\ s. Here are things needed to make this work. :py:meth:`mp4frompngs <nprstuff.core.convert_image.mp4frompngs>` uses this :py:class:`dict` to create the MP4_ file.
+    This method creates a complicated and low-level :py:class:`dict` of set up, when creating an MP4_ file from a collection of images. Here are things needed to make this work. :py:meth:`mp4frompngs <nprstuff.core.convert_image.mp4frompngs>` uses this :py:class:`dict` to create the MP4_ file.
 
-    #. The collection of PNG_ files exist in a directory named ``dirname``.
+    #. The collection of image files exist in a directory named ``dirname``.
 
-    #. The format of the PNG_ files as frames of a movie must have a name like ``PREFIX0000.png`` to ``PREFIX0401.png``.
+    #. The format of the image files as frames of a movie must have a name like ``PREFIX0000.<image_suffix>`` to ``PREFIX0401.<image_suffix>``.
 
-    #. The first PNG_ file must have a zero-padded value of zero. There must also be *no* number gaps in the sequence of PNG_ files as frames. For example, if there are PNG_ files ``PREFIX0200.png`` and ``PREFIX0202.png`` but *no* ``PREFIX0201.png``, this process will fail.
+    #. The first image file must have a zero-padded value of zero. There must also be *no* number gaps in the sequence of image files as frames. For example, if there are image files ``PREFIX0200.<image_suffix>`` and ``PREFIX0202.<image_suffix>`` but *no* ``PREFIX0201.<image_suffix>``, this process will fail.
     
     In case of success, this method returns a :py:class:`dict` with these five keys and values.
 
     * ``status``: the :py:class:`string <str>` ``"SUCCESS"``.
-    * ``files``: the sorted :py:class:`list` of PNG_ file names as movie frames.
-    * ``autocrop``: :py:class:`bool` on whether to autocrop the PNG_ files.
+    * ``files``: the sorted :py:class:`list` of image file names as movie frames.
+    * ``autocrop``: :py:class:`bool` on whether to autocrop the image files.
     * ``fps``: the :py:class:`int` number of frames per second in the MP4_ file.
-    * ``actual prefix``: the input (``ffmpeg -i <arg>``) argument that goes into FFmpeg_ when creating the MP4_ from a collection of PNG_ files as frames.
+    * ``actual prefix``: the input (``ffmpeg -i <arg>``) argument that goes into FFmpeg_ when creating the MP4_ from a collection of image files as frames.
 
-    In case of failure, the ``status`` key contains the reason for the failure. :py:meth:`mp4frompngs <nprstuff.core.convert_image.mp4frompngs>` returns this failure message and does nothing.
+    In case of failure, the ``status`` key contains the reason for the failure. :py:meth:`mp4fromimages <nprstuff.core.convert_image.mp4fromimages>` returns this failure message and does nothing.
 
-    :param str prefix: the base name of each PNG_ file as frame, before the integer frame number and ``.png`` suffix.
-    :param str dirname: the directory in which these PNG_ files live. Default is the current working directory.
+    :param str prefix: the base name of each image file as frame, before the integer frame number and ``.<image_suffix>`` suffix.
+    :param str image_suffix: the image suffix through which to look. Default is ``png``.
+    :param str dirname: the directory in which these image files live. Default is the current working directory.
     :param int fps: the number of frames per seconds for the movie. Must be :math:`\ge 1`.
-    :param bool autocrop: whether to automatically crop out white space in the PNG_ files as frames. Default is ``False``.
+    :param bool autocrop: whether to automatically crop out white space in the image files as frames. Default is ``False``.
     :returns: the :py:class:`dict` described above.
     :rtype: dict
 
-    .. seealso:: :py:meth:`mp4frompngs <nprstuff.core.convert_image.mp4frompngs>`.
+    .. seealso:: :py:meth:`mp4fromimages <nprstuff.core.convert_image.mp4fromimages>`.
 
     .. FFmpeg_: https://ffmpeg.org
     """
-    png2mp4dict = { }
+    images2mp4dict = { }
     if fps < 1:
-        png2mp4dict['status'] = 'Error, fps = %d is less than 1.' % fps
-        return png2mp4dict
-    png2mp4dict['fps'] = fps
-    png2mp4dict['autocrop'] = autocrop
+        images2mp4dict['status'] = 'Error, fps = %d is less than 1.' % fps
+        return images2mp4dict
+    images2mp4dict['fps'] = fps
+    images2mp4dict['autocrop'] = autocrop
     #
     ## check that it is a dirname
     if not os.path.isdir( dirname ):
-        png2mp4dict['status'] = 'Error, %s is not a directory.' % dirname
-        return png2mp4dict
+        images2mp4dict['status'] = 'Error, %s is not a directory.' % dirname
+        return images2mp4dict
     #
-    ## now see if PNG files with prefix
-    collection_of_png_files = list(filter(os.path.isfile, glob.glob( os.path.join( dirname, '%s*.png' % prefix ) ) ) )
-    if not collection_of_png_files:
-        png2mp4dict['status'] = 'Error, no PNG files with prefix = %s found in %s.' % (
-            prefix, dirname )
-        return mpg2mp4dict
+    ## now see if IMAGE files with prefix
+    isuffix_lower = image_suffix.strip( ).lower( )
+    collection_of_image_files = list(filter(os.path.isfile, glob.glob( os.path.join( dirname, '%s*.%s' % (
+        prefix, isuffix_lower ) ) ) ) )
+    if not collection_of_image_files:
+        images2mp4dict['status'] = 'Error, no %s files with prefix = %s found in %s.' % (
+            isuffix_lower.upper( ), prefix, dirname )
+        return images2mp4dict
     #
     ## now only those collection of png files that have number suffix
     def _is_numbered_prop( fname ):
         bname = os.path.basename( fname )
         bname = bname.replace( prefix, '' ).strip( )
-        bname = re.sub('\.png$', '', bname ).strip( )
+        bname = re.sub('\.%s$' % isuffix_lower, '', bname ).strip( )
         try:
             val = int( bname )
             return True, val, bname
         except:
             return False, None, bname
-    collection_files_valid = sorted(filter(lambda fname: _is_numbered_prop(fname)[0], collection_of_png_files ) )
+    collection_files_valid = sorted(filter(lambda fname: _is_numbered_prop(fname)[0], collection_of_image_files ) )
     sorted_numbers_dict = dict(map(lambda fname: ( _is_numbered_prop( fname )[1], fname ), collection_files_valid ) )
     zero_padded_nums = set(map(lambda fname: _is_numbered_prop( fname )[2], collection_files_valid))
     min_zero_padding = min(map(lambda zpn: len(zpn) - len(zpn.lstrip('0')), zero_padded_nums))
     if not sorted_numbers_dict:
-        png2mp4dict['status'] = 'Error, no PNG files with prefix = %s AND PROPER NUMBERING found in %s.' % (
+        images2mp4dict['status'] = 'Error, no PNG files with prefix = %s AND PROPER NUMBERING found in %s.' % (
             prefix, dirname )
-        return png2mp4dict
+        return images2mp4dict
     #
     ## now check that the numbers are all ordered from 0 to SOME MAX NUMBER
     set_numbers = set(sorted_numbers_dict)
     should_be_sorted = set(range(len(sorted_numbers_dict)))
     if should_be_sorted != set_numbers:
         numbers_missing = sorted((set_numbers - should_be_sorted) | (should_be_sorted - set_numbers))
-        png2mp4dict['status'] = 'Error, XOR operations found these %d numbers mismatched between what SHOULD be there, and what is: %s.' % ( len( numbers_missing ), numbers_missing )
-        return png2mp4dict
+        images2mp4dict['status'] = 'Error, XOR operations found these %d numbers mismatched between what SHOULD be there, and what is: %s.' % ( len( numbers_missing ), numbers_missing )
+        return images2mp4dict
     #
     ## success?
-    png2mp4dict['prefix'] = prefix
-    png2mp4dict['files'] = sorted( sorted_numbers_dict.values( ) )
+    images2mp4dict['prefix'] = prefix
+    images2mp4dict['files'] = sorted( sorted_numbers_dict.values( ) )
     num_digits = int(numpy.log10(len(set_numbers)-1)) + 1 + min_zero_padding
-    png2mp4dict['actual prefix'] = os.path.join( dirname, '%s%%0%dd.png' % ( prefix, num_digits ) ) # prefix to ffmpeg for images
-    png2mp4dict['status'] = 'SUCCESS'
-    return png2mp4dict
+    images2mp4dict['actual prefix'] = os.path.join( dirname, '%s%%0%dd.%s' % (
+        prefix, num_digits, isuffix_lower ) ) # prefix to ffmpeg for images
+    images2mp4dict['status'] = 'SUCCESS'
+    return images2mp4dict
 
 def get_cloudconvert_api_key( ):
     """
