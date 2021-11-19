@@ -63,6 +63,7 @@ setup(
             "download_surahs = nprstuff.cli.download_surahs:_main",
             "myrst2html = nprstuff.cli.myrst2html:_main",
             "imageFromURL = nprstuff.cli.imageFromURL:_main",
+            "inline_images = nprstuff.cli.inline_images:_main",
             #
             ## thisamericanlife CLI stuff
             "thisamericanlife = nprstuff.cli.thisamericanlife:_main",
