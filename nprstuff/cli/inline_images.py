@@ -1,4 +1,4 @@
-import os, sys, numpy
+import os, sys, numpy, base64
 from io import BytesIO
 from bs4 import BeautifulSoup
 from PIL import Image
