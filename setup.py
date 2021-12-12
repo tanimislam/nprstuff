@@ -64,6 +64,7 @@ setup(
             "myrst2html = nprstuff.cli.myrst2html:_main",
             "imageFromURL = nprstuff.cli.imageFromURL:_main",
             "inline_images = nprstuff.cli.inline_images:_main",
+            "titleit = nprstuff.cli.titleit:_main",
             #
             ## thisamericanlife CLI stuff
             "thisamericanlife = nprstuff.cli.thisamericanlife:_main",
