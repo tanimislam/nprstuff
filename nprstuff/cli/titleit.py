@@ -8,7 +8,8 @@ def _main( ):
         '--title', dest='title', type=str, action='store', default='',
         help = 'This is title title. Default is blank.')
     args = parser.parse_args( )
-    if len(opts.title.strip()) == 0:
+    if len(args.title.strip()) == 0:
         print( '' )
-    else:
-        print( titlecase.titlecase( args.title.strip( ) ) )
+        return
+    #
+    print( titlecase.titlecase( args.title.strip( ) ) )
