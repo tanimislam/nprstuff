@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>1. Core Functionality &mdash; nprstuff 1.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -88,10 +89,10 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="core-functionality">
+  <section id="core-functionality">
 <h1><span class="section-number">1. </span>Core Functionality<a class="headerlink" href="#core-functionality" title="Permalink to this headline"></a></h1>
 <p>This consists of functionality to grab episodes from <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a>, <a class="reference external" href="https://waitwait.npr.org">NPR Wait Wait..Don’t Tell Me</a>, and <a class="reference external" href="https://www.thisamericanlife.org">This American Life</a>.</p>
-<div class="section" id="configuration">
+<section id="configuration">
 <h2><span class="section-number">1.1. </span>CONFIGURATION<a class="headerlink" href="#configuration" title="Permalink to this headline"></a></h2>
 <p>The command line tool <code class="docutils literal notranslate"><span class="pre">nprconfig</span></code> shows the following core functionality configuration settings.</p>
 <ul class="simple">
@@ -133,11 +134,11 @@
 <span class="go">  --api API            Sets the NPR API key.</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="npr-freshair-label">
+</section>
+<section id="npr-freshair-label">
 <span id="id1"></span><h2><span class="section-number">1.2. </span>NPR Fresh Air<a class="headerlink" href="#npr-freshair-label" title="Permalink to this headline"></a></h2>
 <p>These four executables handle <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> downloads: <a class="reference internal" href="#freshair-label"><span class="std std-ref">freshair</span></a>, <a class="reference internal" href="#freshair-crontab-label"><span class="std std-ref">freshair_crontab</span></a>, <a class="reference internal" href="#freshair-fix-crontab-label"><span class="std std-ref">freshair_fix_crontab</span></a>, and <a class="reference internal" href="#freshair-by-year-label"><span class="std std-ref">freshair_by_year</span></a>.</p>
-<div class="section" id="freshair">
+<section id="freshair">
 <span id="freshair-label"></span><h3><span class="section-number">1.2.1. </span><code class="docutils literal notranslate"><span class="pre">freshair</span></code><a class="headerlink" href="#freshair" title="Permalink to this headline"></a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">freshair</span></code> is the main executable that downloads <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episodes, converts them to <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">M4A</a> format, and then applies correct metadata. The help screen for this command line tool is here,</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">usage: freshair [-h] [--dirname DIRNAME] [--date DATE] [--mp3exist] [--debug] [--level {DEBUG,ERROR,INFO,NONE}]</span>
@@ -153,16 +154,16 @@
 <span class="go">                        [&#39;DEBUG&#39;, &#39;ERROR&#39;, &#39;INFO&#39;, &#39;NONE&#39;]. Default is NONE.</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="freshair-crontab">
+</section>
+<section id="freshair-crontab">
 <span id="freshair-crontab-label"></span><h3><span class="section-number">1.2.2. </span><code class="docutils literal notranslate"><span class="pre">freshair_crontab</span></code><a class="headerlink" href="#freshair-crontab" title="Permalink to this headline"></a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">freshair_crontab</span></code> downloads an <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episode on a given weekday. It should be called by a cron job or a systemd service that runs every weekday.</p>
-</div>
-<div class="section" id="freshair-fix-crontab">
+</section>
+<section id="freshair-fix-crontab">
 <span id="freshair-fix-crontab-label"></span><h3><span class="section-number">1.2.3. </span><code class="docutils literal notranslate"><span class="pre">freshair_fix_crontab</span></code><a class="headerlink" href="#freshair-fix-crontab" title="Permalink to this headline"></a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">freshair_fix_crontab</span></code> tries to re-download <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episodes that may be incomplete – defined as shorter than 30 minutes – and which are 90 days or older. This executable searches through the library of all NPR Fresh Air episodes, and tries to re-download older, possibly incomplete episodes.</p>
-</div>
-<div class="section" id="freshair-by-year">
+</section>
+<section id="freshair-by-year">
 <span id="freshair-by-year-label"></span><h3><span class="section-number">1.2.4. </span><code class="docutils literal notranslate"><span class="pre">freshair_by_year</span></code><a class="headerlink" href="#freshair-by-year" title="Permalink to this headline"></a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">freshair_by_year</span></code> downloads all the NPR Fresh Air episodes in a given year. The help screen for this command line tool is here,</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">usage: freshair_by_year [-h] [--year YEAR] [--inputdir INPUTDIR] [--quiet] [--coverage] [--audit] [--level {DEBUG,ERROR,INFO,NONE}]</span>
@@ -179,12 +180,12 @@
 <span class="go">                        [&#39;DEBUG&#39;, &#39;ERROR&#39;, &#39;INFO&#39;, &#39;NONE&#39;]. Default is NONE.</span>
 </pre></div>
 </div>
-</div>
-</div>
-<div class="section" id="npr-wait-wait">
+</section>
+</section>
+<section id="npr-wait-wait">
 <span id="npr-waitwait-label"></span><h2><span class="section-number">1.3. </span>NPR Wait Wait<a class="headerlink" href="#npr-wait-wait" title="Permalink to this headline"></a></h2>
 <p>These three executables handle <a class="reference external" href="https://waitwait.npr.org">NPR Wait Wait</a> downloads: <a class="reference internal" href="#waitwait-label"><span class="std std-ref">waitwait</span></a>, <a class="reference internal" href="#waitwait-crontab-label"><span class="std std-ref">waitwait_crontab</span></a>, and <a class="reference internal" href="#waitwait-by-year-label"><span class="std std-ref">waitwait_by_year</span></a>.</p>
-<div class="section" id="waitwait-label">
+<section id="waitwait-label">
 <span id="id2"></span><h3><span class="section-number">1.3.1. </span><code class="docutils literal notranslate"><span class="pre">waitwait</span></code><a class="headerlink" href="#waitwait-label" title="Permalink to this headline"></a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">waitwait</span></code> is the main executable that downloads NPR Wait Wait episodes, converts them to <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">M4A</a> format, and then applies correct metadata. <a class="reference internal" href="core_api.html#module-nprstuff.core.waitwait_realmedia" title="nprstuff.core.waitwait_realmedia"><code class="xref py py-mod docutils literal notranslate"><span class="pre">waitwait_realmedia</span></code></a> is a Python module that allows one to download <a class="reference external" href="https://waitwait.npr.org">NPR Wait Wait</a> episodes older than 2004, which are in <a class="reference external" href="https://en.wikipedia.org/wiki/RealMedia">RealMedia</a> format. The help screen for this command line tool is here,</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">usage: waitwait [-h] [--dirname DIRNAME] [--date DATE] [--dump] [--level {DEBUG,ERROR,INFO,NONE}] [--justfix]</span>
@@ -200,12 +201,12 @@
 <span class="go">  --justfix             If chosen, just fix the title of an existing NPR Wait Wait episode&#39;s file.</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="waitwait-crontab">
+</section>
+<section id="waitwait-crontab">
 <span id="waitwait-crontab-label"></span><h3><span class="section-number">1.3.2. </span><code class="docutils literal notranslate"><span class="pre">waitwait_crontab</span></code><a class="headerlink" href="#waitwait-crontab" title="Permalink to this headline"></a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">waitwait_crontab</span></code> downloads an NPR Wait Wait episode on a given Saturday. It should be called by a cron job or systemd service that is run every Saturday.</p>
-</div>
-<div class="section" id="waitwait-by-year">
+</section>
+<section id="waitwait-by-year">
 <span id="waitwait-by-year-label"></span><h3><span class="section-number">1.3.3. </span><code class="docutils literal notranslate"><span class="pre">waitwait_by_year</span></code><a class="headerlink" href="#waitwait-by-year" title="Permalink to this headline"></a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">waitwait_by_year</span></code> downloads all the NPR Wait Wait episodes in a given year. The help screen for this command line tool is here,</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">usage: waitwait_by_year [-h] [--year YEAR] [--inputdir INPUTDIR] [--quiet] [--level {DEBUG,ERROR,INFO,NONE}]</span>
@@ -220,28 +221,32 @@
 <span class="go">                        [&#39;DEBUG&#39;, &#39;ERROR&#39;, &#39;INFO&#39;, &#39;NONE&#39;]. Default is NONE.</span>
 </pre></div>
 </div>
-</div>
-</div>
-<div class="section" id="this-american-life-label">
+</section>
+</section>
+<section id="this-american-life-label">
 <span id="id3"></span><h2><span class="section-number">1.4. </span>This American Life<a class="headerlink" href="#this-american-life-label" title="Permalink to this headline"></a></h2>
 <p>The executable <code class="docutils literal notranslate"><span class="pre">thisamericanlife</span></code> <em>manually</em> downloads a given episode number of <a class="reference external" href="https://www.thisamericanlife.org">This American Life</a>. The help screen for this command line tool is here,</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">usage: thisamericanlife [-h] [--episode EPISODE] [--directory DIRECTORY] [--extra EXTRASTUFF] [--noverify] [--dump] [--level {DEBUG,ERROR,INFO,NONE}]</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">usage: thisamericanlife [-h] [-e EPISODE] [-d DIRECTORY] [-E EXTRASTUFF] [--noverify] [--dump]</span>
+<span class="go">                        [--level {DEBUG,ERROR,INFO,NONE}]</span>
 
 <span class="go">optional arguments:</span>
 <span class="go">  -h, --help            show this help message and exit</span>
-<span class="go">  --episode EPISODE     Episode number of This American Life to download. Default is 150.</span>
-<span class="go">  --directory DIRECTORY</span>
-<span class="go">                        Directory into which to download This American Life episodes. Default is /mnt/media/thisamericanlife.</span>
-<span class="go">  --extra EXTRASTUFF    If defined, some extra stuff in the URL to get a This American Life episode.</span>
+<span class="go">  -e EPISODE, --episode EPISODE</span>
+<span class="go">                        Episode number of This American Life to download. Default is 150.</span>
+<span class="go">  -d DIRECTORY, --directory DIRECTORY</span>
+<span class="go">                        Directory into which to download This American Life episodes. Default is</span>
+<span class="go">                        /mnt/media/thisamericanlife.</span>
+<span class="go">  -E EXTRASTUFF, --extra EXTRASTUFF</span>
+<span class="go">                        If defined, some extra stuff in the URL to get a This American Life episode.</span>
 <span class="go">  --noverify            If chosen, then do not verify the SSL connection.</span>
 <span class="go">  --dump                If chosen, just download the TAL episode XML into a file into the specified directory.</span>
 <span class="go">  --level {DEBUG,ERROR,INFO,NONE}</span>
-<span class="go">                        choose the debug level for downloading NPR Fresh Air episodes or their XML representation of episode info. Can be one of</span>
-<span class="go">                        [&#39;DEBUG&#39;, &#39;ERROR&#39;, &#39;INFO&#39;, &#39;NONE&#39;]. Default is NONE.</span>
+<span class="go">                        choose the debug level for downloading NPR Fresh Air episodes or their XML representation</span>
+<span class="go">                        of episode info. Can be one of [&#39;DEBUG&#39;, &#39;ERROR&#39;, &#39;INFO&#39;, &#39;NONE&#39;]. Default is NONE.</span>
 </pre></div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

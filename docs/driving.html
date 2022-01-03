@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>8. My Philosopy on Driving &mdash; nprstuff 1.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -74,7 +75,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="my-philosopy-on-driving">
+  <section id="my-philosopy-on-driving">
 <h1><span class="section-number">8. </span>My Philosopy on Driving<a class="headerlink" href="#my-philosopy-on-driving" title="Permalink to this headline"></a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -106,7 +107,7 @@
 <li><p>Let gravity and friction do the work for you!</p></li>
 </ul>
 <p>And before you just say no, see if you can answer this: you’re trying this out, some driver goes in front of you, and there’s that red light. If they end up the same place you did, except they hurried to get there, why not keep on keeping on? Or at least until you get shot.</p>
-<div class="section" id="the-math">
+<section id="the-math">
 <h2><span class="section-number">8.1. </span>THE MATH<a class="headerlink" href="#the-math" title="Permalink to this headline"></a></h2>
 <p>These notes come from the 10-minute-long Washington Society literary presentation I gave on 24 April 2020, colloquially titled, “Off the highway, you should drive 5-10 MPH below the speed limit.”</p>
 <p>One of the main points in my talk was that you should aim for speeds of about 13 MPH when turning left or right onto a road at 90 degrees from yours, in order to get the maximum acceleration that will keep your tires from wear. I soon realized that the turning radius is approximately 30 feet. If we round up to 15 MPH <a class="footnote-reference brackets" href="#id2" id="id1">1</a>, then the acceleration here is,</p>
@@ -114,11 +115,13 @@
 \[a_{\text{canonical}} = \frac{ v_0^2}{r_0} \approx 4.92\text{ m/s$^2$} \approx 0.5\text{ g}.\]</div>
 <p>Here, <span class="math notranslate nohighlight">\(v_0 = 15\text{ mph} \approx 6.71\text{ m/s}\)</span>, and <span class="math notranslate nohighlight">\(r_0 = 30\text{ ft} \approx 9.1\text{ m}\)</span>. One can then make this canonical acceleration and deceleration when controlling your car: acceleration from stop, deceleration to stop sign or turning road, and so on.</p>
 <p>I want to explore accelerating from rest, into a 90 degree turn, over the 30 foot turning radius, such that the total acceleration stays at <span class="math notranslate nohighlight">\(a_0\)</span>. Geometry is below in <a class="reference internal" href="#fig-turn-cartoon">problem depiction</a>,</p>
-<div class="figure align-left" id="id3">
+<figure class="align-left" id="id3">
 <span id="fig-turn-cartoon"></span><a class="reference internal image-reference" href="https://tanimislam.gitlab.io/blog/2020/09/driving/turn_cartoon.png"><img alt="https://tanimislam.gitlab.io/blog/2020/09/driving/turn_cartoon.png" src="https://tanimislam.gitlab.io/blog/2020/09/driving/turn_cartoon.png" style="width: 100%;" /></a>
-<p class="caption"><span class="caption-number">Fig. 8.1 </span><span class="caption-text">Cartoon showing the geometry of the car’s motion along the circle from a stop, through a turn of radius <span class="math notranslate nohighlight">\(r_0\)</span>, and a constant
+<figcaption>
+<p><span class="caption-number">Fig. 8.1 </span><span class="caption-text">Cartoon showing the geometry of the car’s motion along the circle from a stop, through a turn of radius <span class="math notranslate nohighlight">\(r_0\)</span>, and a constant
 total acceleration of <span class="math notranslate nohighlight">\(a_0\)</span>.</span><a class="headerlink" href="#id3" title="Permalink to this image"></a></p>
-</div>
+</figcaption>
+</figure>
 <p>Since the car starts from rest, at <span class="math notranslate nohighlight">\(\theta = 0\)</span>, the angular velocity <span class="math notranslate nohighlight">\(\dot{\theta} = 0\)</span>.</p>
 <p>The canonical equation of acceleration is,</p>
 <div class="math notranslate nohighlight" id="eq-canonical-accel-relation">
@@ -147,15 +150,19 @@ total acceleration of <span class="math notranslate nohighlight">\(a_0\)</span>.
 <div class="math notranslate nohighlight" id="eq-theta-relation">
 \[\sin\theta = \frac{v^2}{2 v_0^2}.\]</div>
 <p>The speed <span class="math notranslate nohighlight">\(v\)</span> versus scaled time <span class="math notranslate nohighlight">\(\tau\)</span> is shown in <a class="reference internal" href="#fig-turn-speed-accel">this illustrative figure</a>.</p>
-<div class="figure align-left" id="id4">
+<figure class="align-left" id="id4">
 <span id="fig-turn-speed-accel"></span><a class="reference internal image-reference" href="https://tanimislam.gitlab.io/blog/2020/09/driving/turn_speed_accel.png"><img alt="https://tanimislam.gitlab.io/blog/2020/09/driving/turn_speed_accel.png" src="https://tanimislam.gitlab.io/blog/2020/09/driving/turn_speed_accel.png" style="width: 100%;" /></a>
-<p class="caption"><span class="caption-number">Fig. 8.2 </span><span class="caption-text">On the left is scaled speed versus scaled time, and on the right is scaled <em>transverse</em> acceleration versus scaled time.</span><a class="headerlink" href="#id4" title="Permalink to this image"></a></p>
-</div>
+<figcaption>
+<p><span class="caption-number">Fig. 8.2 </span><span class="caption-text">On the left is scaled speed versus scaled time, and on the right is scaled <em>transverse</em> acceleration versus scaled time.</span><a class="headerlink" href="#id4" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
 <p>The angle, in degrees, along its motion as a function of time is shown in <a class="reference internal" href="#fig-turn-angle">another illustrative figure</a>.</p>
-<div class="figure align-left" id="id5">
+<figure class="align-left" id="id5">
 <span id="fig-turn-angle"></span><a class="reference internal image-reference" href="https://tanimislam.gitlab.io/blog/2020/09/driving/turn_angle.png"><img alt="https://tanimislam.gitlab.io/blog/2020/09/driving/turn_angle.png" src="https://tanimislam.gitlab.io/blog/2020/09/driving/turn_angle.png" style="width: 100%;" /></a>
-<p class="caption"><span class="caption-number">Fig. 8.3 </span><span class="caption-text">Position, in degrees, along the curve as a function of scaled time, <span class="math notranslate nohighlight">\(\approx 1.311\)</span> (see <a class="reference internal" href="#eq-tmax">the relation on scaled maximum time</a>).</span><a class="headerlink" href="#id5" title="Permalink to this image"></a></p>
-</div>
+<figcaption>
+<p><span class="caption-number">Fig. 8.3 </span><span class="caption-text">Position, in degrees, along the curve as a function of scaled time, <span class="math notranslate nohighlight">\(\approx 1.311\)</span> (see <a class="reference internal" href="#eq-tmax">the relation on scaled maximum time</a>).</span><a class="headerlink" href="#id5" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
 <p>Here are the properties of this car’s motion, in general and specific to my definition of “safe driving” (constant speed of 15 MPH through a 30 FT turning radius).</p>
 <ul>
 <li><p>Its maximum speed, <span class="math notranslate nohighlight">\(v_{\text{max}} = v_0\)</span>; in my case, 15 MPH.</p></li>
@@ -173,8 +180,8 @@ total acceleration of <span class="math notranslate nohighlight">\(a_0\)</span>.
 <dd><p>I move at 15 MPH because it is easier to gauge this speed on my odometer.</p>
 </dd>
 </dl>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

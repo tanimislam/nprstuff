@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>3. Graphics Functionality &mdash; nprstuff 1.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -75,55 +76,69 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="graphics-functionality">
+  <section id="graphics-functionality">
 <h1><span class="section-number">3. </span>Graphics Functionality<a class="headerlink" href="#graphics-functionality" title="Permalink to this headline"></a></h1>
 <p>This section describes the two graphical tools I have developed: <a class="reference internal" href="#gui-section-label"><span class="std std-numref">Section 3.1</span></a> matches a small subset of functionality that the <a class="reference external" href="https://www.readability.com">Readability</a> tool handles excellently; <a class="reference internal" href="#gui2-section-label"><span class="std std-numref">Section 3.2</span></a> is a <a class="reference external" href="https://www.riverbankcomputing.com/software/pyqt/download">PyQt4</a> GUI front-end to the <a class="reference external" href="https://www.readability.com">Readability</a> API.</p>
-<div class="section" id="gui-media-website-text-formatter">
+<section id="gui-media-website-text-formatter">
 <span id="gui-section-label"></span><h2><span class="section-number">3.1. </span>GUI: Media Website Text Formatter<a class="headerlink" href="#gui-media-website-text-formatter" title="Permalink to this headline"></a></h2>
 <p>This GUI can read from the following media websites: <a class="reference external" href="http://www.lightspeedmagazine.com">Lightspeed Magazine</a>, <a class="reference external" href="https://medium.com/&gt;">Medium</a>, <a class="reference external" href="https://www.newyorker.com">The New Yorker</a>, <a class="reference external" href="https://www.nytimes.com">The New York Times</a>, and the <a class="reference external" href="https://www.vqronline.org">Virginia Quarterly Review</a>. Here is a screenshot!</p>
-<div class="figure align-left" id="id1">
+<figure class="align-left" id="id1">
 <a class="reference internal image-reference" href="_images/gui_screenshot.png"><img alt="_images/gui_screenshot.png" src="_images/gui_screenshot.png" style="width: 100%;" /></a>
-<p class="caption"><span class="caption-number">Fig. 3.1 </span><span class="caption-text">A screenshot of the GUI reader, converting the URL for the <a class="reference external" href="https://www.nytimes.com">The New York Times</a> into text. Note the separate icons above for the five media websites from which this GUI can read.</span><a class="headerlink" href="#id1" title="Permalink to this image"></a></p>
-</div>
+<figcaption>
+<p><span class="caption-number">Fig. 3.1 </span><span class="caption-text">A screenshot of the GUI reader, converting the URL for the <a class="reference external" href="https://www.nytimes.com">The New York Times</a> into text. Note the separate icons above for the five media websites from which this GUI can read.</span><a class="headerlink" href="#id1" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
 <p>The screenshots of the save file dialog and the print preview dialog are shown below.</p>
-<div class="figure align-left" id="id2">
+<figure class="align-left" id="id2">
 <a class="reference internal image-reference" href="_images/gui_screenshot_save.png"><img alt="_images/gui_screenshot_save.png" src="_images/gui_screenshot_save.png" style="width: 100%;" /></a>
-<p class="caption"><span class="caption-number">Fig. 3.2 </span><span class="caption-text">The GUI screenshot of the save dialog.</span><a class="headerlink" href="#id2" title="Permalink to this image"></a></p>
-</div>
-<div class="figure align-left" id="id3">
+<figcaption>
+<p><span class="caption-number">Fig. 3.2 </span><span class="caption-text">The GUI screenshot of the save dialog.</span><a class="headerlink" href="#id2" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<figure class="align-left" id="id3">
 <a class="reference internal image-reference" href="_images/gui_screenshot_printpreview.png"><img alt="_images/gui_screenshot_printpreview.png" src="_images/gui_screenshot_printpreview.png" style="width: 100%;" /></a>
-<p class="caption"><span class="caption-number">Fig. 3.3 </span><span class="caption-text">The GUI screenshot of the print preview dialog.</span><a class="headerlink" href="#id3" title="Permalink to this image"></a></p>
-</div>
+<figcaption>
+<p><span class="caption-number">Fig. 3.3 </span><span class="caption-text">The GUI screenshot of the print preview dialog.</span><a class="headerlink" href="#id3" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
 <p>I do not support or maintain this tool after I found out about <a class="reference external" href="https://www.readability.com">Readability</a>.</p>
 <p><strong>Furthermore</strong>, Readability is long gone and its developers and maintainers have scattered to the four winds. None of its functionalities work anymore.</p>
-</div>
-<div class="section" id="gui2-readability-gui-front-end">
+</section>
+<section id="gui2-readability-gui-front-end">
 <span id="gui2-section-label"></span><h2><span class="section-number">3.2. </span>GUI2: Readability GUI Front-End<a class="headerlink" href="#gui2-readability-gui-front-end" title="Permalink to this headline"></a></h2>
 <p>This is the <a class="reference external" href="https://www.riverbankcomputing.com/software/pyqt/download">PyQt4</a> GUI front-end to <a class="reference external" href="https://www.readability.com">Readability</a>.</p>
-<div class="figure align-left" id="id4">
+<figure class="align-left" id="id4">
 <a class="reference internal image-reference" href="_images/gui2_screenshot_articlelist.png"><img alt="_images/gui2_screenshot_articlelist.png" src="_images/gui2_screenshot_articlelist.png" style="width: 100%;" /></a>
-<p class="caption"><span class="caption-number">Fig. 3.4 </span><span class="caption-text">The list form of the article’s content, with working dialogs for <code class="docutils literal notranslate"><span class="pre">Font</span></code> and <code class="docutils literal notranslate"><span class="pre">Print</span> <span class="pre">Preview</span></code>. Coloration helps with readability.</span><a class="headerlink" href="#id4" title="Permalink to this image"></a></p>
-</div>
-<div class="figure align-left" id="id5">
+<figcaption>
+<p><span class="caption-number">Fig. 3.4 </span><span class="caption-text">The list form of the article’s content, with working dialogs for <code class="docutils literal notranslate"><span class="pre">Font</span></code> and <code class="docutils literal notranslate"><span class="pre">Print</span> <span class="pre">Preview</span></code>. Coloration helps with readability.</span><a class="headerlink" href="#id4" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<figure class="align-left" id="id5">
 <a class="reference internal image-reference" href="_images/gui2_screenshot_articletext.png"><img alt="_images/gui2_screenshot_articletext.png" src="_images/gui2_screenshot_articletext.png" style="width: 100%;" /></a>
-<p class="caption"><span class="caption-number">Fig. 3.5 </span><span class="caption-text">The text form of the article’s content, with working dialogs for <code class="docutils literal notranslate"><span class="pre">Font</span></code> and <code class="docutils literal notranslate"><span class="pre">Print</span> <span class="pre">Preview</span></code>. The behavior of the buttons are shown in the subsequent figures.</span><a class="headerlink" href="#id5" title="Permalink to this image"></a></p>
-</div>
+<figcaption>
+<p><span class="caption-number">Fig. 3.5 </span><span class="caption-text">The text form of the article’s content, with working dialogs for <code class="docutils literal notranslate"><span class="pre">Font</span></code> and <code class="docutils literal notranslate"><span class="pre">Print</span> <span class="pre">Preview</span></code>. The behavior of the buttons are shown in the subsequent figures.</span><a class="headerlink" href="#id5" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
 <p>A screenshot of the font changing dialog, the <code class="docutils literal notranslate"><span class="pre">Font</span></code> button, and a screenshot of the print preview dialog, the <code class="docutils literal notranslate"><span class="pre">Print</span></code> button, are shown below.</p>
-<div class="figure align-left" id="id6">
+<figure class="align-left" id="id6">
 <a class="reference internal image-reference" href="_images/gui2_screenshot_fontdialog.png"><img alt="_images/gui2_screenshot_fontdialog.png" src="_images/gui2_screenshot_fontdialog.png" style="width: 100%;" /></a>
-<p class="caption"><span class="caption-number">Fig. 3.6 </span><span class="caption-text">The <code class="docutils literal notranslate"><span class="pre">Font</span></code> button dialog. This lets the user select through the fonts that currently exist in the system.</span><a class="headerlink" href="#id6" title="Permalink to this image"></a></p>
-</div>
-<div class="figure align-left" id="id7">
+<figcaption>
+<p><span class="caption-number">Fig. 3.6 </span><span class="caption-text">The <code class="docutils literal notranslate"><span class="pre">Font</span></code> button dialog. This lets the user select through the fonts that currently exist in the system.</span><a class="headerlink" href="#id6" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<figure class="align-left" id="id7">
 <a class="reference internal image-reference" href="_images/gui2_screenshot_printpreviewdialog.png"><img alt="_images/gui2_screenshot_printpreviewdialog.png" src="_images/gui2_screenshot_printpreviewdialog.png" style="width: 100%;" /></a>
-<p class="caption"><span class="caption-number">Fig. 3.7 </span><span class="caption-text">The print preview dialog launched by the <code class="docutils literal notranslate"><span class="pre">Print</span></code> button in the article text widget.</span><a class="headerlink" href="#id7" title="Permalink to this image"></a></p>
-</div>
+<figcaption>
+<p><span class="caption-number">Fig. 3.7 </span><span class="caption-text">The print preview dialog launched by the <code class="docutils literal notranslate"><span class="pre">Print</span></code> button in the article text widget.</span><a class="headerlink" href="#id7" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
 <p>In the immediate future, I plan on at least implementing the following, all using the <a class="reference external" href="https://www.readability.com">Readability</a> API.</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">EPUB</span></code> button, to create the article in <a class="reference external" href="https://en.wikipedia.org/wiki/EPUB">EPUB</a> format.</p></li>
 <li><p>Adding and deleting articles through the article list widget.</p></li>
 </ul>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

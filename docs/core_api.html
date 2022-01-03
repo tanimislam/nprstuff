@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>6. Core APIs &mdash; nprstuff 1.0 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -81,7 +82,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <div class="section" id="core-apis">
+  <section id="core-apis">
 <h1><span class="section-number">6. </span>Core APIs<a class="headerlink" href="#core-apis" title="Permalink to this headline"></a></h1>
 <p>This document describes the nprstuff core API, which provides the low-level back-end for the CLI front ends described in <a class="reference internal" href="core_functionality.html#core-functionality"><span class="std std-ref">Core Functionality</span></a> and <a class="reference internal" href="new_functionality.html#new-functionality"><span class="std std-ref">New Functionality</span></a>. These modules live under <code class="docutils literal notranslate"><span class="pre">nprstuff.core</span></code>.</p>
 <p>The most fundamental change, from the <cite>older NPR API</cite>, is the usage of webscraping (through <a class="reference external" href="https://www.selenium.dev/documentation/en">Selenium</a>) and inference to craft responses that return stories for <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> and <a class="reference external" href="https://waitwait.npr.org">NPR Wait Wait</a> episodes. Here is a screenshot.</p>
@@ -96,12 +97,12 @@
 <li><p>custom format of the logging output, formatted as <code class="docutils literal notranslate"><span class="pre">'%(levelname)s</span> <span class="pre">%(module)s.%(funcName)s</span> <span class="pre">(%(lineno)d):</span> <span class="pre">%(message)s'</span></code>. See the <a class="reference external" href="https://docs.python.org/3/howto/logging-cookbook.html">logging cookbook</a> for more information on what this format means.</p></li>
 <li><p>the <a class="reference internal" href="core_functionality.html#core-functionality"><span class="std std-ref">Core Functionality</span></a> command line tools have an extra argument flag, <code class="docutils literal notranslate"><span class="pre">--level</span></code>, that specifies whether to print out logging output and the following debug levels: <code class="docutils literal notranslate"><span class="pre">DEBUG</span></code>, <code class="docutils literal notranslate"><span class="pre">INFO</span></code>, or <code class="docutils literal notranslate"><span class="pre">ERROR</span></code>.</p></li>
 </ul>
-<div class="section" id="npr-utils-module">
+<section id="npr-utils-module">
 <h2><span class="section-number">6.1. </span>npr_utils module<a class="headerlink" href="#npr-utils-module" title="Permalink to this headline"></a></h2>
 <p>This module contains common utilities to get the proper metadata for NPR programs, to name these media files in the proper date format, and to get the full paths to the <a class="reference external" href="https://libav.org">LibAV</a> or <a class="reference external" href="https://ffmpeg.org">FFMPEG</a> and <a class="reference external" href="https://handbrake.fr">HandBrakeCLI</a> tools used to create the NPR programs in <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">M4A</a> and <a class="reference external" href="https://en.wikipedia.org/wiki/MP3">MP3</a> formats (among other functionalities).</p>
 <span class="target" id="module-nprstuff.core.npr_utils"></span><dl class="py class">
 <dt class="sig sig-object py" id="nprstuff.core.npr_utils.MyPool">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">MyPool</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initializer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxtasksperchild</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.MyPool" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">MyPool</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">processes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initializer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxtasksperchild</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.MyPool" title="Permalink to this definition"></a></dt>
 <dd><p>A magic type of <a class="reference external" href="https://docs.python.org/3/library/multiprocessing.html#multiprocessing.pool.Pool" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Pool</span></code></a> whose processes can spawn other processes. This allows one to create a pool of workers that can spawn other processes (by default, <a class="reference external" href="https://docs.python.org/3/library/multiprocessing.html#module-multiprocessing" title="(in Python v3.10)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">multiprocessing</span></code></a> does not allow this).</p>
 <p>I copied the code from <a class="reference external" href="https://stackoverflow.com/a/8963618/3362358">this website</a> and <a class="reference external" href="https://stackoverflow.com/questions/52948447/error-group-argument-must-be-none-for-now-in-multiprocessing-pool">a new website</a>, without any real understanding EXCEPT that I am extending a <code class="xref py py-class docutils literal notranslate"><span class="pre">Pool</span></code>.</p>
 </dd></dl>
@@ -509,8 +510,8 @@
 </div>
 </dd></dl>
 
-</div>
-<div class="section" id="autocrop-image-module">
+</section>
+<section id="autocrop-image-module">
 <h2><span class="section-number">6.2. </span>autocrop_image module<a class="headerlink" href="#autocrop-image-module" title="Permalink to this headline"></a></h2>
 <p>This module provides low-level functionality that implements automatic cropping of lossy (<a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a>, <a class="reference external" href="https://en.wikipedia.org/wiki/JPEG">JPEG</a>, <a class="reference external" href="https://en.wikipedia.org/wiki/TIFF">TIFF</a>) and <a class="reference external" href="https://en.wikipedia.org/wiki/PDF">PDF</a> images.</p>
 <p>This <a class="reference external" href="https://en.wikipedia.org/wiki/PDF">PDF</a> autocropping functionality is copied over from <a class="reference external" href="https://gist.github.com/jpscaletti/7321281">this repo</a>. That repository is based off <a class="reference external" href="https://github.com/ho-tex/pdfcrop">pdfcrop.pl</a> to calculate the <a class="reference external" href="https://upload.wikimedia.org/wikipedia/commons/2/2a/PDF_BOX_01.svg">BoundingBox</a>. This functionality requires a working <a class="reference external" href="https://www.ghostscript.com">ghostscript</a> (using the <code class="docutils literal notranslate"><span class="pre">gs</span></code> executable) to calculate the bounding box, and the <a class="reference external" href="https://mstamy2.github.io/PyPDF2">PyPDF2</a> module to read and manipulate <a class="reference external" href="https://en.wikipedia.org/wiki/PDF">PDF</a> files.</p>
@@ -628,8 +629,8 @@
 </dl>
 </dd></dl>
 
-</div>
-<div class="section" id="convert-image-module">
+</section>
+<section id="convert-image-module">
 <h2><span class="section-number">6.3. </span>convert_image module<a class="headerlink" href="#convert-image-module" title="Permalink to this headline"></a></h2>
 <p>This module provides the low-level functionality to use the <a class="reference external" href="https://cloudconvert.com">CloudConvert</a> API to convert <a class="reference external" href="https://en.wikipedia.org/wiki/PDF">PDF</a>, <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a>, and <a class="reference external" href="https://en.wikipedia.org/wiki/Scalable_Vector_Graphics">SVG</a> images into a final <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> image, utility functions to create <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> movies from a sequence of images, and to create animated <a class="reference external" href="https://en.wikipedia.org/wiki/GIF">GIF</a> files, and created square movies (useful for upload to <a class="reference external" href="https://www.instagram.com">Instagram</a>).</p>
 <p>This module also requires <a class="reference external" href="https://www.riverbankcomputing.com/static/Docs/PyQt5/api/qtsvg/qsvgrenderer.html" title="(in PyQt v5.14b1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">QSvgRenderer</span></code></a> for some of its functionality. However, <a class="reference external" href="https://pypi.org">PyPI</a> does not have Python bindings to <a class="reference external" href="https://doc.qt.io/qt-5/qtsvg-index.html">QtSVG</a>. To install on an <a class="reference external" href="https://ubuntu.com">Ubuntu</a> machine, you can <em>thoughts and prayers</em> these instructions</p>
@@ -780,7 +781,7 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="nprstuff.core.convert_image.pdf2png">
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.convert_image.</span></span><span class="sig-name descname"><span class="pre">pdf2png</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_pdf_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">newWidth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.convert_image.pdf2png" title="Permalink to this definition"></a></dt>
-<dd><p>Returns an <a class="reference external" href="https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image" title="(in Pillow (PIL Fork) v8.4.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Image</span></code></a> object of the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file produced when the <a class="reference external" href="https://cloudconvert.com">CloudConvert</a> server uploaded an input <a class="reference external" href="https://en.wikipedia.org/wiki/PDF">PDF</a> image file. The output <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file has the same aspect ratio as the input file.</p>
+<dd><p>Returns an <a class="reference external" href="https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image" title="(in Pillow (PIL Fork) v9.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Image</span></code></a> object of the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file produced when the <a class="reference external" href="https://cloudconvert.com">CloudConvert</a> server uploaded an input <a class="reference external" href="https://en.wikipedia.org/wiki/PDF">PDF</a> image file. The output <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file has the same aspect ratio as the input file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -790,7 +791,7 @@
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the <a class="reference external" href="https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image" title="(in Pillow (PIL Fork) v8.4.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Image</span></code></a> object of the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file from the input <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file.</p>
+<dd class="field-even"><p>the <a class="reference external" href="https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image" title="(in Pillow (PIL Fork) v9.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Image</span></code></a> object of the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file from the input <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file.</p>
 </dd>
 </dl>
 <div class="admonition seealso">
@@ -805,7 +806,7 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="nprstuff.core.convert_image.png2png">
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.convert_image.</span></span><span class="sig-name descname"><span class="pre">png2png</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_png_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">newWidth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.convert_image.png2png" title="Permalink to this definition"></a></dt>
-<dd><p>Returns an <a class="reference external" href="https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image" title="(in Pillow (PIL Fork) v8.4.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Image</span></code></a> object of the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file produced when the <a class="reference external" href="https://cloudconvert.com">CloudConvert</a> server uploaded an input <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file. The output <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file has the same aspect ratio as the input file.</p>
+<dd><p>Returns an <a class="reference external" href="https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image" title="(in Pillow (PIL Fork) v9.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Image</span></code></a> object of the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file produced when the <a class="reference external" href="https://cloudconvert.com">CloudConvert</a> server uploaded an input <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file. The output <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file has the same aspect ratio as the input file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -815,7 +816,7 @@
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the <a class="reference external" href="https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image" title="(in Pillow (PIL Fork) v8.4.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Image</span></code></a> object of the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file from the input <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file.</p>
+<dd class="field-even"><p>the <a class="reference external" href="https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image" title="(in Pillow (PIL Fork) v9.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Image</span></code></a> object of the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file from the input <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file.</p>
 </dd>
 </dl>
 <div class="admonition seealso">
@@ -830,7 +831,7 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="nprstuff.core.convert_image.svg2png">
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.convert_image.</span></span><span class="sig-name descname"><span class="pre">svg2png</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_svg_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">newWidth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.convert_image.svg2png" title="Permalink to this definition"></a></dt>
-<dd><p>Returns an <a class="reference external" href="https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image" title="(in Pillow (PIL Fork) v8.4.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Image</span></code></a> object of the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file produced when the <a class="reference external" href="https://cloudconvert.com">CloudConvert</a> server uploaded an input <a class="reference external" href="https://en.wikipedia.org/wiki/Scalable_Vector_Graphics">SVG(Z)</a> file. The <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file has the same aspect ratio as the input file. Uses <a class="reference external" href="https://www.riverbankcomputing.com/static/Docs/PyQt5/api/qtsvg/qsvgrenderer.html" title="(in PyQt v5.14b1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">QSvgRenderer</span></code></a> to convert an <a class="reference external" href="https://en.wikipedia.org/wiki/Scalable_Vector_Graphics">SVG(Z)</a> into a <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a>.</p>
+<dd><p>Returns an <a class="reference external" href="https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image" title="(in Pillow (PIL Fork) v9.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Image</span></code></a> object of the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file produced when the <a class="reference external" href="https://cloudconvert.com">CloudConvert</a> server uploaded an input <a class="reference external" href="https://en.wikipedia.org/wiki/Scalable_Vector_Graphics">SVG(Z)</a> file. The <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file has the same aspect ratio as the input file. Uses <a class="reference external" href="https://www.riverbankcomputing.com/static/Docs/PyQt5/api/qtsvg/qsvgrenderer.html" title="(in PyQt v5.14b1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">QSvgRenderer</span></code></a> to convert an <a class="reference external" href="https://en.wikipedia.org/wiki/Scalable_Vector_Graphics">SVG(Z)</a> into a <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -840,7 +841,7 @@
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the <a class="reference external" href="https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image" title="(in Pillow (PIL Fork) v8.4.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Image</span></code></a> object of the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file from the input SVG or SVGZ file.</p>
+<dd class="field-even"><p>the <a class="reference external" href="https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image" title="(in Pillow (PIL Fork) v9.0.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Image</span></code></a> object of the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file from the input SVG or SVGZ file.</p>
 </dd>
 </dl>
 <div class="admonition seealso">
@@ -876,8 +877,8 @@
 </div>
 </dd></dl>
 
-</div>
-<div class="section" id="music-to-m4a-module">
+</section>
+<section id="music-to-m4a-module">
 <h2><span class="section-number">6.4. </span>music_to_m4a module<a class="headerlink" href="#music-to-m4a-module" title="Permalink to this headline"></a></h2>
 <p>This module provides low-level functionality that converts other music formats (<a class="reference external" href="https://en.wikipedia.org/wiki/MP3">MP3</a>, <a class="reference external" href="https://en.wikipedia.org/wiki/Vorbis">OGG</a>, and <a class="reference external" href="https://en.wikipedia.org/wiki/FLAC">FLAC</a>) into <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">M4A</a>. It also contains functionality to fix <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">M4A</a> metadata.</p>
 <span class="target" id="module-nprstuff.core.music_to_m4a"></span><dl class="py function">
@@ -929,8 +930,8 @@
 </dl>
 </dd></dl>
 
-</div>
-<div class="section" id="freshair-and-freshair-by-year-modules">
+</section>
+<section id="freshair-and-freshair-by-year-modules">
 <h2><span class="section-number">6.5. </span>freshair and freshair_by_year modules<a class="headerlink" href="#freshair-and-freshair-by-year-modules" title="Permalink to this headline"></a></h2>
 <p>These two modules provide the low level functionality to process and download <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episodes. Until a few months ago, the <a class="reference external" href="https://api.npr.org">older NPR API</a> existed and worked without issues, but because it was so successful it went away. I now try to fix functionality that is broken, but it is slow undocumented going – hence, diffusion.</p>
 <blockquote>
@@ -1220,8 +1221,8 @@
 </dd></dl>
 
 </div></blockquote>
-</div>
-<div class="section" id="thisamericanlife-module">
+</section>
+<section id="thisamericanlife-module">
 <h2><span class="section-number">6.6. </span>thisamericanlife module<a class="headerlink" href="#thisamericanlife-module" title="Permalink to this headline"></a></h2>
 <p>This module provides the low level functionality to the <a class="reference internal" href="core_functionality.html#this-american-life-label"><span class="std std-ref">This American Life</span></a> CLI and some extra functionality.</p>
 <span class="target" id="module-nprstuff.core.thisamericanlife"></span><dl class="py function">
@@ -1285,7 +1286,6 @@
 <li><p><strong>verify</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – optional argument, whether to verify SSL connections. Default is <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
 <li><p><strong>dump</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.10)"><em>bool</em></a>) – optional argument, if <code class="docutils literal notranslate"><span class="pre">True</span></code> then instead of downloading first <a class="reference external" href="https://www.thisamericanlife.org">This American Life</a>, downloads the XML info as a file, named <code class="docutils literal notranslate"><span class="pre">PRI.ThisAmericanLife.&lt;NUM&gt;.xml</span></code>. Default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
 <li><p><strong>directory</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – the directory into which to download a <a class="reference external" href="https://www.thisamericanlife.org">This American Life</a> episode. Default is the current working directory.</p></li>
-<li><p><strong>hardURL</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><em>str</em></a>) – optional argument, the hard-coded URL for a given TAL episode, if <code class="docutils literal notranslate"><span class="pre">epno</span></code> does not work.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1302,6 +1302,23 @@
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="nprstuff.core.thisamericanlife.give_up_ytdlp_thisamericanlife">
+<span class="sig-prename descclassname"><span class="pre">nprstuff.core.thisamericanlife.</span></span><span class="sig-name descname"><span class="pre">give_up_ytdlp_thisamericanlife</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epno</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.thisamericanlife.give_up_ytdlp_thisamericanlife" title="Permalink to this definition"></a></dt>
+<dd><p>This is one of those, “I completely give up on trying to figure out why the <code class="docutils literal notranslate"><span class="pre">This</span> <span class="pre">American</span> <span class="pre">Life</span></code> website is barfing out with 403 error messages”, kinds of messages. <em>Instead</em>, I use the <code class="docutils literal notranslate"><span class="pre">This</span> <span class="pre">American</span> <span class="pre">Life</span></code> InfoExtractor from yt-dlp to get at the TAL episode’s URL-that-works.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>epno</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.10)"><em>int</em></a>) – the episode number of <a class="reference external" href="https://www.thisamericanlife.org">This American Life</a>.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>the URL as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> that <a class="reference internal" href="#nprstuff.core.thisamericanlife.get_americanlife_info" title="nprstuff.core.thisamericanlife.get_americanlife_info"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_americanlife_info</span></code></a> uses.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.10)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="nprstuff.core.thisamericanlife.thisamericanlife_crontab">
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.thisamericanlife.</span></span><span class="sig-name descname"><span class="pre">thisamericanlife_crontab</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.thisamericanlife.thisamericanlife_crontab" title="Permalink to this definition"></a></dt>
 <dd><p>Downloads a <a class="reference external" href="https://www.thisamericanlife.org">This American Life</a> episode every weekend. It looks at the <a class="reference external" href="https://www.thisamericanlife.org">This American Life</a> website to determine the latest episode.</p>
@@ -1311,8 +1328,8 @@
 </div>
 </dd></dl>
 
-</div>
-<div class="section" id="waitwait-and-waitwait-realmedia-modules">
+</section>
+<section id="waitwait-and-waitwait-realmedia-modules">
 <h2><span class="section-number">6.7. </span>waitwait and waitwait_realmedia modules<a class="headerlink" href="#waitwait-and-waitwait-realmedia-modules" title="Permalink to this headline"></a></h2>
 <p>These two modules provide the low level functionality to process and download <a class="reference external" href="https://waitwait.npr.org">NPR Wait Wait…Don’t Tell Me</a> episodes.Until a few months ago, the <a class="reference external" href="https://api.npr.org">older NPR API</a> existed and worked without issues, but because it was so successful it went away. I now try to fix functionality that is broken, but it is slow undocumented going – hence, diffusion. This is just like my experience with the <a class="reference internal" href="#freshair-and-freshair-by-year-modules"><span class="std std-ref">freshair and freshair_by_year modules</span></a>.</p>
 <div class="admonition note">
@@ -1506,8 +1523,8 @@
 </dl>
 </dd></dl>
 
-</div>
-</div>
+</section>
+</section>
 
 
            </div>

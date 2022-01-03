@@ -172,16 +172,20 @@ The executable ``thisamericanlife`` *manually* downloads a given episode number 
 
 .. code-block:: console
 
-   usage: thisamericanlife [-h] [--episode EPISODE] [--directory DIRECTORY] [--extra EXTRASTUFF] [--noverify] [--dump] [--level {DEBUG,ERROR,INFO,NONE}]
+   usage: thisamericanlife [-h] [-e EPISODE] [-d DIRECTORY] [-E EXTRASTUFF] [--noverify] [--dump]
+			   [--level {DEBUG,ERROR,INFO,NONE}]
 
    optional arguments:
      -h, --help            show this help message and exit
-     --episode EPISODE     Episode number of This American Life to download. Default is 150.
-     --directory DIRECTORY
-			   Directory into which to download This American Life episodes. Default is /mnt/media/thisamericanlife.
-     --extra EXTRASTUFF    If defined, some extra stuff in the URL to get a This American Life episode.
+     -e EPISODE, --episode EPISODE
+			   Episode number of This American Life to download. Default is 150.
+     -d DIRECTORY, --directory DIRECTORY
+			   Directory into which to download This American Life episodes. Default is
+			   /mnt/media/thisamericanlife.
+     -E EXTRASTUFF, --extra EXTRASTUFF
+			   If defined, some extra stuff in the URL to get a This American Life episode.
      --noverify            If chosen, then do not verify the SSL connection.
      --dump                If chosen, just download the TAL episode XML into a file into the specified directory.
      --level {DEBUG,ERROR,INFO,NONE}
-			   choose the debug level for downloading NPR Fresh Air episodes or their XML representation of episode info. Can be one of
-			   ['DEBUG', 'ERROR', 'INFO', 'NONE']. Default is NONE.
+			   choose the debug level for downloading NPR Fresh Air episodes or their XML representation
+			   of episode info. Can be one of ['DEBUG', 'ERROR', 'INFO', 'NONE']. Default is NONE.
