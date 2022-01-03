@@ -59,7 +59,6 @@ def get_americanlife_info(
     :param bool verify: optional argument, whether to verify SSL connections. Default is ``True``.
     :param bool dump: optional argument, if ``True`` then instead of downloading first `This American Life`_, downloads the XML info as a file, named ``PRI.ThisAmericanLife.<NUM>.xml``. Default is ``False``.
     :param str directory: the directory into which to download a `This American Life`_ episode. Default is the current working directory.
-    :param str hardURL: optional argument, the hard-coded URL for a given TAL episode, if ``epno`` does not work.
     :returns: a :py:class:`tuple` of ``title``, ``year``, and ``html`` in which this episode was aired. Otherwise, if ``throwException`` is ``False`` and title is not found, returns ``None``. ``html`` is the :py:class:`BeautifulSoup <bs4.BeautifulSoup>` tree of the XML data for this `This American Life`_ episode.
     :rtype: tuple
 
@@ -76,30 +75,9 @@ def get_americanlife_info(
         if extraStuff is None:
             logging.info('GOING TO https://www.thisamericanlife.org/radio-archives/episode/%d.' % epno )
             html = give_up_ytdlp_thisamericanlife( epno )
-            elems = list(filter(lambda elem: 'href' in elem.attrs and '757' in elem['href'],
+            elems = list(filter(lambda elem: 'href' in elem.attrs and '%03d' % epno in elem['href'],
                             html.find_all('link', { 'rel' : 'canonical'})))
-            if len( elems ) == 0:
-                print( 'NUMBER OF ELEMS = 0' )
-                return None
-            elem = elems[ 0 ]
-            return requests.get( elem['href'], verify = verify )
-            #return requests.get( 'https://www.thisamericanlife.org/radio-archives/episode/%d' % epno, verify = verify )
-        logging.info('GOING TO https://www.thisamericanlife.org/radio-archives/episode/%d/%s.' % ( epno, extraStuff ) )
-        return requests.get(
-            'https://www.thisamericanlife.org/radio-archives/episode/%d/%s' % ( epno, extraStuff ),
-            verify = verify )
-    #
-    ## hackathon, I give up and instead use whatever yt-dlp emits, because TAL = 403 with raw CURL or WGET or GET commands.    
-    # resp = _get_response( )
-    # if resp.status_code != 200:
-    #     raise ValueError("Error, could not find This American Life episode %d, because could not open webpage." % epno)
-    # #
-    # enc = resp.headers['content-type'].split(';')[-1].split('=')[-1].strip().upper()
-    # if enc not in ( 'UTF-8', ):
-    #     html = BeautifulSoup( resp.text.encode(encoding=enc ), 'lxml' )
-    # else:
-    #    html = BeautifulSoup( resp.text, 'lxml' )
-    html = give_up_ytdlp_thisamericanlife( epno )
+            if len( elems ) == 0:give_up_ytdlp_thisamericanlife( epno )
     if dump:
         assert( os.path.isdir( directory ) )
         with open( os.path.join( directory, 'PRI.ThisAmericanLife.%03d.xml' % epno ), 'w') as openfile:
