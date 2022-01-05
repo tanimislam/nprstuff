@@ -67,17 +67,18 @@ These four executables handle `NPR Fresh Air`_ downloads: :ref:`freshair_label`,
 
 .. code-block::  console
 
-   usage: freshair [-h] [--dirname DIRNAME] [--date DATE] [--mp3exist] [--debug] [--level {DEBUG,ERROR,INFO,NONE}]
+   usage: freshair [-h] [--dirname DIRNAME] [-d DATE] [--mp3exist] [-D] [-L {DEBUG,ERROR,INFO,NONE}] [-r]
 
    optional arguments:
      -h, --help            show this help message and exit
      --dirname DIRNAME     Name of the directory to store the file. Default is /mnt/media/freshair.
-     --date DATE           The date, in the form of "January 1, 2014." The default is today's date, August 18, 2020.
+     -d DATE, --date DATE  The date, in the form of "January 1, 2014." The default is today's date, January 05, 2022.
      --mp3exist            If chosen, then do not download the transitional mp3 files. Use the ones that already exist.
-     --debug               If chosen, run freshair in debug mode. Useful for debugging :)
-     --level {DEBUG,ERROR,INFO,NONE}
-			   choose the debug level for downloading NPR Fresh Air episodes or their XML representation of episode info. Can be one of
-			   ['DEBUG', 'ERROR', 'INFO', 'NONE']. Default is NONE.
+     -D, --debug           If chosen, dump out NPR Freshair webpage as XML.
+     -L {DEBUG,ERROR,INFO,NONE}, --level {DEBUG,ERROR,INFO,NONE}
+			   choose the debug level for downloading NPR Fresh Air episodes or their XML representation of episode info. Can be one of ['DEBUG', 'ERROR', 'INFO', 'NONE'].
+			   Default is NONE.
+     -r, --relax           If chosen, then do NOT do a date check validation of NPR URL articles.
 
 .. _freshair_crontab_label:
 			   
