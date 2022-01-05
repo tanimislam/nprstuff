@@ -360,7 +360,7 @@ def get_title_mp3_urls_attic( outputdir, date_s, debug = False, to_file_debug = 
         return None
     return title_mp3_urls
 
-def get_title_mp3_urls_working( outputdir, date_s, driver, debug = False, to_file_debug = True ):
+def get_title_mp3_urls_working( outputdir, date_s, driver, debug = False, to_file_debug = True, relax_date_check = False ):
     """
     Using the new, non-API NPR functionality, get a :py:class:`list` of :py:class:`tuple` of stories for an `NPR Fresh Air`_ episode. This uses a :py:class:`Webdriver <selenium.webdriver.remote.webdriver.WebDriver>` to get an episode. Here is an example operation,
 
@@ -383,6 +383,7 @@ def get_title_mp3_urls_working( outputdir, date_s, driver, debug = False, to_fil
     :param driver: the :py:class:`Webdriver <selenium.webdriver.remote.webdriver.WebDriver>` used for webscraping and querying (instead of using a functional API) for `NPR Fresh Air`_ episodes.
     :param bool debug: optional argument, if ``True`` returns the :py:class:`BeautifulSoup <bs4.BeautifulSoup>` XML tree for the `NPR Fresh Air`_ episode, or its file representation. Default is ``False``.
     :param bool to_file_debug: optional argument, if ``True`` dumps out the file representation of the :py:class:`BeautifulSoup <bs4.BeautifulSoup>` XML tree for the `NPR Fresh Air`_ episode. Default is ``False``.
+    :param bool relax_date_check: optional argument, if ``True`` then do NOT check for article date in NPR stories. Default is ``False``.
 
     :returns: the :py:class:`list` of stories, by order, for the `NPR Fresh Air`_ episode. The first element of each :py:class:`tuple` is the story title, and th second is the MP3_ URL for the story. *However*, if ``debug`` is ``True``, returns the :py:class:`BeautifulSoup <bs4.BeautifulSoup>` XML tree for this `NPR Fresh Air`_ episode.
 
@@ -421,15 +422,16 @@ def get_title_mp3_urls_working( outputdir, date_s, driver, debug = False, to_fil
     episode_elems = html.find_all('h2', { 'class' : 'title' } )
     episode_urls = list(map(lambda elem: urljoin( 'https://www.npr.org', elem.find_all('a')[0]['href'] ), episode_elems ) )
     #
-    def get_npr_freshair_story( episode_URL, candidate_date ):
+    def _get_npr_freshair_story( episode_URL, candidate_date, relax_date_check = False ):
         response = requests.get( episode_URL )
         assert( response.ok )
         html_ep = BeautifulSoup( response.content, 'lxml' )
-        date_f = candidate_date.strftime( '%Y-%m-%d' )
-        date_elems = list(html_ep.find_all('meta', { 'name' : 'date', 'content' : date_f } ) )
-        if len( date_elems ) != 1:
-            logging.error( 'could not find date elem for %s.' % episode_URL )
-            return None
+        if not relax_date_check:
+            date_f = candidate_date.strftime( '%Y-%m-%d' )
+            date_elems = list(html_ep.find_all('meta', { 'name' : 'date', 'content' : date_f } ) )
+            if len( date_elems ) != 1:
+                logging.error( 'could not find date elem for %s, candidate date = %s' % ( episode_URL, date_f ) )
+                return None
         #
         ## keep going, get the title    
         title_elems = list(html_ep.find_all('title'))
@@ -455,7 +457,7 @@ def get_title_mp3_urls_working( outputdir, date_s, driver, debug = False, to_fil
         return order, title, mp3_url
     #
     ## get the tuples in order
-    ordered_npr_freshair = sorted(filter(None, map(lambda episode_URL: get_npr_freshair_story( episode_URL, date_s ), episode_urls ) ),
+    ordered_npr_freshair = sorted(filter(None, map(lambda episode_URL: _get_npr_freshair_story( episode_URL, date_s, relax_date_check ), episode_urls ) ),
                                   key = lambda tup: tup[0] )
     assert( len( ordered_npr_freshair ) == len( episode_urls ) )
     return list(map(lambda tup: ( tup[1], tup[2] ), ordered_npr_freshair ) )
@@ -463,7 +465,8 @@ def get_title_mp3_urls_working( outputdir, date_s, driver, debug = False, to_fil
 def get_freshair(
     outputdir, date_s, order_totnum = None,
     debug = False, check_if_exist = False,
-    mp3_exist = False, to_file_debug = True, driver = None ):
+    mp3_exist = False, to_file_debug = True, driver = None,
+    relax_date_check = False ):
     """
     The main driver method that downloads `NPR Fresh Air`_ episodes for a given date into a specified output directory.
     
@@ -475,6 +478,7 @@ def get_freshair(
     :param bool mp3_exist: optional argument, if ``True`` then check whether the transitional MP3_ files for the stories in the `NPR Fresh Air`_ episode has been downloaded and use the fully downloaded stories to compose an episode. Otherwise, ignore existing downloaded MP3_ stories for download.
     :param bool to_file_debug: optional argument, if ``True`` then just download the XML file of date for that `NPR Fresh Air`_ episode, instead of the episode itself.
     :param driver: optional argument, the :py:class:`Webdriver <selenium.webdriver.remote.webdriver.WebDriver>` used for webscraping and querying (instead of using a functional API) for `NPR Fresh Air`_ episodes. If ``None``, then a new :py:class:`Webdriver <selenium.webdriver.remote.webdriver.WebDriver>` will be defined and used within this method's scope.
+    :param bool relax_date_check: optional argument, if ``True`` then do NOT check for article date in NPR stories. Default is ``False``.
 
     :returns: the name of the `NPR Fresh Air`_ episode file.
     :rtype: str
@@ -509,7 +513,9 @@ def get_freshair(
     
     year = date_s.year
     
-    data = get_title_mp3_urls_working( outputdir, date_s, driver, debug = debug, to_file_debug = to_file_debug )
+    data = get_title_mp3_urls_working(
+        outputdir, date_s, driver, debug = debug, to_file_debug = to_file_debug,
+        relax_date_check = relax_date_check )
     if debug: return data
     title_mp3_urls = data
     if title_mp3_urls is None or len( title_mp3_urls ) == 0: return None

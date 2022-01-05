@@ -35,7 +35,7 @@ def _freshair( ):
     parser.add_argument('--dirname', dest='dirname', type=str,
                         action = 'store', default = _default_inputdir,
                         help = 'Name of the directory to store the file. Default is %s.' % _default_inputdir )
-    parser.add_argument('--date', dest='date', type=str,
+    parser.add_argument('-d', '--date', dest='date', type=str,
                         action = 'store', default = npr_utils.get_datestring( datetime.datetime.now()),
                         help = 'The date, in the form of "January 1, 2014." The default is today\'s date, %s.' %
                         npr_utils.get_datestring( datetime.datetime.now() ) )
@@ -43,18 +43,21 @@ def _freshair( ):
                         help = ' '.join([
                             'If chosen, then do not download the transitional mp3 files.',
                             'Use the ones that already exist.' ]) )
-    parser.add_argument('--debug', dest='debug', action='store_true',
-                        help = 'If chosen, run freshair in debug mode. Useful for debugging :)',
+    parser.add_argument('-D', '--debug', dest='debug', action='store_true',
+                        help = 'If chosen, dump out NPR Freshair webpage as XML.',
                         default = False)
-    parser.add_argument('--level', dest='level', action='store', type=str, default = 'NONE',
+    parser.add_argument('-L', '--level', dest='level', action='store', type=str, default = 'NONE',
                         choices = sorted( logging_dict ),
                         help = 'choose the debug level for downloading NPR Fresh Air episodes or their XML representation of episode info. Can be one of %s. Default is NONE.' % sorted( logging_dict ) )
+    parser.add_argument('-r', '--relax', dest='relax_date_check', action='store_true', default = False,
+                        help = 'If chosen, then do NOT do a date check validation of NPR URL articles.' )
     args = parser.parse_args( )
     dirname = os.path.expanduser( args.dirname )
     logger.setLevel( logging_dict[ args.level ] )
     fname = freshair.get_freshair(
         dirname, npr_utils.get_time_from_datestring( args.date ),
-        debug = args.debug, mp3_exist = args.mp3_exist )
+        debug = args.debug, mp3_exist = args.mp3_exist,
+        relax_date_check = args.relax_date_check )
 
 def _freshair_by_year( ):
     default_year = datetime.datetime.now( ).year
