@@ -190,3 +190,5 @@ The executable ``thisamericanlife`` *manually* downloads a given episode number 
      --level {DEBUG,ERROR,INFO,NONE}
 			   choose the debug level for downloading NPR Fresh Air episodes or their XML representation
 			   of episode info. Can be one of ['DEBUG', 'ERROR', 'INFO', 'NONE']. Default is NONE.
+
+Running with the ``--dump`` flag helps the user or *myself* debug any broken functionality that ``thisamericanlife`` experiences.
