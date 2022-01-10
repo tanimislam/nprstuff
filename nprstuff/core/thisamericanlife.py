@@ -37,14 +37,14 @@ def give_up_ytdlp_thisamericanlife( epno ):
         'http://www.thisamericanlife.org/radio-archives/episode/%03d' % epno, '%03d' % epno )
     html = BeautifulSoup( webpage, 'lxml' )
     return html
-    elems = list(filter(lambda elem: 'href' in elem.attrs and '757' in elem['href'],
-                        html.find_all('link', { 'rel' : 'canonical'})))
-    if len( elems ) == 0:
-        print( 'NUMBER OF ELEMS = 0' )
-        return None
-    elem = elems[ 0 ]
-    print( elem['href'] )
-    return elem['href']
+    # elems = list(filter(lambda elem: 'href' in elem.attrs and '757' in elem['href'],
+    #                     html.find_all('link', { 'rel' : 'canonical'})))
+    # if len( elems ) == 0:
+    #     print( 'NUMBER OF ELEMS = 0' )
+    #     return None
+    # elem = elems[ 0 ]
+    # print( elem['href'] )
+    # return elem['href']
 
     
 def get_americanlife_info(
@@ -77,7 +77,10 @@ def get_americanlife_info(
             html = give_up_ytdlp_thisamericanlife( epno )
             elems = list(filter(lambda elem: 'href' in elem.attrs and '%03d' % epno in elem['href'],
                             html.find_all('link', { 'rel' : 'canonical'})))
-            if len( elems ) == 0:give_up_ytdlp_thisamericanlife( epno )
+            if len( elems ) == 0: give_up_ytdlp_thisamericanlife( epno )
+
+    html = give_up_ytdlp_thisamericanlife( epno )
+    
     if dump:
         assert( os.path.isdir( directory ) )
         with open( os.path.join( directory, 'PRI.ThisAmericanLife.%03d.xml' % epno ), 'w') as openfile:
