@@ -32,26 +32,12 @@ This module contains common utilities to get the proper metadata for NPR program
 
 .. automodule:: nprstuff.core.npr_utils
    :members:
-		
-autocrop_image module
-------------------------------------
-This module provides low-level functionality that implements automatic cropping of lossy (PNG_, JPEG_, TIFF_) and PDF_ images.
 
-This PDF_ autocropping functionality is copied over from `this repo`_. That repository is based off `pdfcrop.pl`_ to calculate the BoundingBox_. This functionality requires a working ghostscript_ (using the ``gs`` executable) to calculate the bounding box, and the PyPDF2_ module to read and manipulate PDF_ files.
-
-.. image:: https://upload.wikimedia.org/wikipedia/commons/2/2a/PDF_BOX_01.svg
-   :width: 100%
-
-Three methods -- :py:meth:`get_boundingbox <nprstuff.core.autocrop_image.get_boundingbox>`, :py:meth:`crop_pdf <nprstuff.core.autocrop_image.crop_pdf>`, and  :py:meth:`crop_pdf_singlepage <nprstuff.core.autocrop_image.crop_pdf_singlepage>` -- are the higher level hooks to the PDF_ autocropping functionality.
-
-.. automodule:: nprstuff.core.autocrop_image
-   :members:
-
-convert_image module
+convert_image_youtube module
 -----------------------------------
-This module provides the low-level functionality to use the CloudConvert_ API to convert PDF_, PNG_, and SVG_ images into a final PNG_ image, utility functions to create MP4_ movies from a sequence of images, and to create animated GIF_ files, and created square movies (useful for upload to Instagram_).
+This module provides (for now) the low-level functionality to use the CloudConvert_ API to convert PDF_, PNG_, and SVG_ images into a final PNG_ image, and to create animated GIF_ files from YouTube_ clips.
 
-This module also requires :py:class:`QSvgRenderer <PyQt5.QtSvg.QSvgRenderer>` for some of its functionality. However, PyPI_ does not have Python bindings to QtSVG_. To install on an Ubuntu_ machine, you can *thoughts and prayers* these instructions
+This module also requires :py:class:`QSvgRenderer <PyQt5.QtSvg.QSvgRenderer>` and :py:class:`QByteArray <PyQt5.QtCore.QByteArray>` for some of its functionality. However, PyPI_ does not have Python bindings to QtSVG_. To install on an Ubuntu_ machine, you can *thoughts and prayers* these instructions
 
 .. code-block:: console
 
@@ -59,8 +45,7 @@ This module also requires :py:class:`QSvgRenderer <PyQt5.QtSvg.QSvgRenderer>` fo
 
 There may be similar installation instructions on other Linux, Windows and Mac OS X machines.
 
-
-.. automodule:: nprstuff.core.convert_image
+.. automodule:: nprstuff.core.convert_image_youtube
    :members:
 
 music_to_m4a module
@@ -69,7 +54,6 @@ This module provides low-level functionality that converts other music formats (
 
 .. automodule:: nprstuff.core.music_to_m4a
    :members:
-
 
 freshair and freshair_by_year modules
 --------------------------------------
