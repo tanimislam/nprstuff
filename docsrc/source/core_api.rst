@@ -37,7 +37,7 @@ convert_image_youtube module
 -----------------------------------
 This module provides (for now) the low-level functionality to use the CloudConvert_ API to convert PDF_, PNG_, and SVG_ images into a final PNG_ image, and to create animated GIF_ files from YouTube_ clips.
 
-This module also requires :py:class:`QSvgRenderer <PyQt5.QtSvg.QSvgRenderer>` for some of its functionality. However, PyPI_ does not have Python bindings to QtSVG_. To install on an Ubuntu_ machine, you can *thoughts and prayers* these instructions
+This module also requires :py:class:`QSvgRenderer <PyQt5.QtSvg.QSvgRenderer>` and :py:class:`QByteArray <PyQt5.QtCore.QByteArray>` for some of its functionality. However, PyPI_ does not have Python bindings to QtSVG_. To install on an Ubuntu_ machine, you can *thoughts and prayers* these instructions
 
 .. code-block:: console
 
