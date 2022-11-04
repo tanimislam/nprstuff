@@ -61,14 +61,14 @@ extensions = [
 ## following instructions here (https://github.com/svenevs/exhale/tree/master/docs/_intersphinx) to fix beautifulsoup doc.
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
-    'requests': ( 'https://requests.kennethreitz.org/en/master/', None),
+    'requests': ( 'https://requests.kennethreitz.org/en/latest/', None),
     'beautifulsoup' : ( 'https://www.crummy.com/software/BeautifulSoup/bs4/doc/', '_intersphinx/bs4_objects.inv' ),
     'selenium' : ( 'https://selenium-python.readthedocs.io', None ),
     'pyqt5' : ( 'https://www.riverbankcomputing.com/static/Docs/PyQt5', "_intersphinx/pyqt5_objects.inv" ),
     'requests_oauthlib' : ( 'https://requests-oauthlib.readthedocs.io/en/latest', None ),
     'google-auth-oauthlib' : ( 'https://google-auth-oauthlib.readthedocs.io/en/latest', None ),
     'google-auth' : ( 'https://google-auth.readthedocs.io/en/latest', None ),
-    'PyPDF2' : ( 'https://pythonhosted.org/PyPDF2', None ),
+    'PyPDF2' : ( 'https://pypdf2.readthedocs.io/en/latest/', None ),
     'Pillow' : ( 'https://pillow.readthedocs.io/en/stable', None ),
     'docutils' : ( 'https://docutils.readthedocs.io/en/master', None ),
     'howdy' : ( 'https://tanimislam.github.io/howdy', None ),

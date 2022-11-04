@@ -1,16 +1,13 @@
 .. image:: https://badges.gitter.im/nprstuff-tanimislam/Lobby.svg
    :target: https://gitter.im/nprstuff-tanimislam/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=body_badge
 
-.. image: https://readthedocs.org/projects/nprstuff/badge/?version=latest
-..   :target: https://nprstuff.readthedocs.io/en/latest
-
 ###################################################################
 Nprstuff - Utility Functionality for NPR Programs and Other Things
 ###################################################################
 I like NPR, so I made some scripts to download my favorite programs from NPR. For now, I have something that downloads `NPR Fresh Air`_, `Wait Wait...Don't Tell
 Me <waitwait_>`_, and `This American Life`_. This package can probably, straightforwardly be extended to other NPR and PRI programs (although I haven't yet done so).
 
-Although this project started off as a way to download these three programs, I have expanded it to include a grab bag of altogether different types of functionalities. What remains the same? This distribution consists mainly of executable Python scripts. Detailed documentation lives in the Sphinx repository
+Although this project started off as a way to download these three programs, I have expanded it to include a grab bag of altogether different types of functionalities. What remains the same? This distribution consists mainly of executable Python scripts. Detailed documentation lives in the Sphinx repository.
 
 NPR changed their API, which means that old functionality does not work. NPR has discontinued the `older NPR API`_, that powers much of this repository's functionality. I quote,
 
@@ -18,7 +15,7 @@ NPR changed their API, which means that old functionality does not work. NPR has
 
 Furthermore, the newer `NPR One API`_ does not appear to have the necessary functionality to make my magic happen. The rest of the functionality lives in the
 
-The comprehensive documentation lives in HTML created with `Sphinx <https://www.sphinx-doc.org/en/master/>`_, and now in the `NPRStuff Github Page <nprstuff_>`_ for this project. To generate the documentation, go to the ``docs`` subdirectory. In that directory, run ``make html``. Load ``docs/build/html/index.html`` into a browser to see the documentation.
+The comprehensive documentation lives in HTML created with `Sphinx <https://www.sphinx-doc.org/en/master/>`_, and now in the `NPRStuff Github Page <nprstuff_>`_ for this project. To generate the documentation, go to the ``docsrc`` subdirectory. In that directory, run ``make html``. Load ``docsrc/build/html/index.html`` into a browser to see the documentation.
 
 Installation Instructions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^

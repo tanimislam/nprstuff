@@ -2,7 +2,7 @@ google-api-python-client
 google-auth-oauthlib
 google-auth-httplib2
 google-auth
-docutils
+docutils==0.17
 feedparser
 oauth2client
 pyexiv2
@@ -23,7 +23,7 @@ lxml
 tabulate
 titlecase
 matplotlib
-youtube_dl
+yt_dlp
 beautifulsoup4
 pathos
 qtmodern

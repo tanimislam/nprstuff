@@ -55,15 +55,9 @@ setup(
             "freshair_fix_crontab = nprstuff.cli.freshair:_freshair_fix_crontab",
             #
             ## extra CLI stuff (new functionality)
-            "github_md_2_html = nprstuff.cli.github_md_2_html:_main",
-            "autoCropImage = nprstuff.cli.autoCropImage:_main",
-            "convertImage = nprstuff.cli.convertImage:_main",
-            "changedates = nprstuff.cli.changedates:_main",
+            "convertImage_youtube = nprstuff.cli.convertImage_youtube:_main",
             "display = nprstuff.cli.display:_main",
             "download_surahs = nprstuff.cli.download_surahs:_main",
-            "myrst2html = nprstuff.cli.myrst2html:_main",
-            "imageFromURL = nprstuff.cli.imageFromURL:_main",
-            "inline_images = nprstuff.cli.inline_images:_main",
             "titleit = nprstuff.cli.titleit:_main",
             #
             ## thisamericanlife CLI stuff
