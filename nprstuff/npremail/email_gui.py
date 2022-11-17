@@ -1,14 +1,14 @@
 import glob, os, sys, textwrap, logging, time, magic, uuid
 from email.utils import parseaddr, formataddr
 from itertools import chain
-from bs4 import BeautifulSoup
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 #
+from iv_tanim.core import check_valid_RST, convert_string_RST
 from nprstuff import QDialogWithPrinting
 from nprstuff.npremail import (
-    HtmlView, check_valid_RST, convert_string_RST, format_size, md5sum, oauthGetGoogleCredentials )
+    HtmlView, format_size, md5sum, oauthGetGoogleCredentials )
 from nprstuff.npremail.email_imgur import PNGWidget
 from nprstuff.npremail import npremail as nprstuff_email
 #from howdy.email.email import get_all_email_contacts_dict

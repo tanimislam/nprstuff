@@ -15,9 +15,10 @@ def _freshair_crontab( ):
     """
     This python method downloads a Fresh Air episode on a particular weekday.
     """
+    logger.setLevel( logging_dict[ 'INFO' ] )
     #
     ## get current time
-    current_date = datetime.date.fromtimestamp(time.time())
+    current_date = datetime.datetime.now( ).date( )
     if not npr_utils.is_weekday( current_date ):
         print("Error, today is not a weekday. Instead, today is %s." %
             current_date.strftime('%A') )

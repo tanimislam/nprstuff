@@ -334,7 +334,7 @@ def get_title_mp3_urls_attic( outputdir, date_s, debug = False, to_file_debug = 
     html = BeautifulSoup( resp.content, 'lxml' )
     #
     if debug:
-        # print 'URL = %s' % nprURL
+        print( 'URL = %s' % nprURL )
         if to_file_debug:
             decdate = date_s.strftime('%d.%m.%Y')
             with open(os.path.join(outputdir, 'NPR.FreshAir.tree.%s.xml' % decdate), 'w') as openfile:
@@ -408,11 +408,11 @@ def get_title_mp3_urls_working( outputdir, date_s, driver, debug = False, to_fil
     ## now get using the driver, go to the URL defined there
     mainURL =  'https://www.npr.org/search?query=*&page=1&refinementList[shows]=Fresh Air&range[lastModifiedDate][min]=%d&range[lastModifiedDate][max]=%d&sortType=byDateAsc' % ( t_end - 86400, t_end )
     driver.get( mainURL )
-    time.sleep( 1.5 ) # is 1.5 seconds enough?
-    #WebDriverWait(driver, 10).until( condition )
+    #time.sleep( 1.5 ) # is 1.5 seconds enough?
+    WebDriverWait(driver, 10).until( condition )
     html = BeautifulSoup( driver.page_source, 'lxml' )
     if debug:
-        # print 'URL = %s' % nprURL
+        print( 'URL = %s' % mainURL )
         if to_file_debug:
             decdate = date_s.strftime('%d.%m.%Y')
             with open(os.path.join(outputdir, 'NPR.FreshAir.tree.%s.xml' % decdate), 'w') as openfile:
