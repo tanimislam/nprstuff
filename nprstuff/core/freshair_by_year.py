@@ -7,7 +7,7 @@ from mutagen.easymp4 import EasyMP4
 from distutils.spawn import find_executable
 from PyQt5.QtGui import QColor
 from nprstuff.core import freshair, npr_utils
-from iv_tanim.core import autocrop_image
+from ive_tanim.core import autocrop_image
 
 _default_inputdir = '/mnt/media/freshair'
 _default_year = 2010
