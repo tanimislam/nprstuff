@@ -3,7 +3,7 @@ import subprocess, json, yt_dlp, logging, re, numpy
 from PIL import Image
 from io import BytesIO
 from PyPDF2 import PdfFileReader
-from iv_tanim.core.convert_image import mp4togif
+from ive_tanim.core.convert_image import mp4togif
 
 def get_cloudconvert_api_key( ):
     """
@@ -77,7 +77,7 @@ def youtube2gif( input_youtube_URL, gif_file, quality = 'highest', duration = No
 
     .. seealso::
 
-       * :py:meth:`mp4togif <iv_tanim.core.convert_image.mp4togif>`.
+       * :py:meth:`mp4togif <ive_tanim.core.convert_image.mp4togif>`.
        * :py:meth:`get_youtube_file <nprstuff.core.convert_image_youtube.get_youtube_file>`.
     """
     intermediate_file = '%s.mp4' % str( uuid.uuid4( ) )

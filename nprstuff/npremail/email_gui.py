@@ -5,7 +5,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 #
-from iv_tanim.core import check_valid_RST, convert_string_RST
+from ive_tanim.core import check_valid_RST, convert_string_RST
 from nprstuff import QDialogWithPrinting
 from nprstuff.npremail import (
     HtmlView, format_size, md5sum, oauthGetGoogleCredentials )
