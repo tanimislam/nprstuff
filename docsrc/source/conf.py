@@ -72,7 +72,7 @@ intersphinx_mapping = {
     'Pillow' : ( 'https://pillow.readthedocs.io/en/stable', None ),
     'docutils' : ( 'https://docutils.readthedocs.io/en/master', None ),
     'howdy' : ( 'https://tanimislam.github.io/howdy', None ),
-    'iv_tanim' : ( 'https://tanimislam.github.io/iv_tanim/', None ),
+    'ive_tanim' : ( 'https://tanimislam.github.io/ive_tanim/', None ),
 }
 
 
