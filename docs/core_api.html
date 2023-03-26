@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>6. Core APIs &mdash; nprstuff 1.0 documentation</title>
@@ -11,10 +11,8 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
         <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -30,11 +28,15 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> nprstuff
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            nprstuff
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -128,7 +130,6 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="email_api.html">7. Email APIs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="driving.html">8. My Philosopy on Driving</a></li>
 </ul>
 
         </div>
@@ -144,7 +145,7 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a></li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
       <li class="breadcrumb-item active"><span class="section-number">6. </span>Core APIs</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/core_api.rst.txt" rel="nofollow"> View page source</a>
@@ -184,7 +185,7 @@
 <dt class="sig sig-object py" id="nprstuff.core.npr_utils.find_necessary_executables">
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">find_necessary_executables</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.find_necessary_executables" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>this method searches first for the <a class="reference external" href="https://en.wikipedia.org/wiki/Libav">avconv</a>, then the <a class="reference external" href="https://ffmpeg.org">FFmpeg</a>, executable for audiovisual conversion. If it finds either executable, returns a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> that looks like <code class="docutils literal notranslate"><span class="pre">{</span> <span class="pre">'avconv'</span> <span class="pre">:</span> <span class="pre">&lt;EXEC_PATH&gt;</span> <span class="pre">}</span></code>, where <code class="docutils literal notranslate"><span class="pre">&lt;EXEC_PATH&gt;</span></code> is the executable’s path. If it does NOT find it, returns <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
 </dd>
 </dl>
@@ -195,23 +196,23 @@
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">get_NPR_URL</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">program_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">NPR_API_key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.get_NPR_URL" title="Permalink to this definition"></a></dt>
 <dd><p>get the NPR API tag for a specific NPR program.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>date_s</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – a date string formatted as “YYYY-MM-DD”.</p></li>
 <li><p><strong>program_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – the NPR program’s integer ID.</p></li>
 <li><p><strong>NPR_API_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – the NPR API key.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> of the exploded URL for REST API calls to the NPR API server.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)">str</a></p>
 </dd>
 </dl>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>no methods call this function any more, instead using the <a class="reference external" href="https://requests.kennethreitz.org/en/latest/api/#module-requests" title="(in Requests v2.28.1)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">requests</span></code></a> module’s cleaner, higher-level functionality of REST API commands.</p>
+<p>no methods call this function any more, instead using the <a class="reference external" href="https://requests.kennethreitz.org/en/latest/api/#module-requests" title="(in Requests v2.28.2)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">requests</span></code></a> module’s cleaner, higher-level functionality of REST API commands.</p>
 </div>
 </dd></dl>
 
@@ -219,10 +220,10 @@
 <dt class="sig sig-object py" id="nprstuff.core.npr_utils.get_api_key">
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">get_api_key</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.get_api_key" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>the NPR API key, stored in <code class="docutils literal notranslate"><span class="pre">~/.config/nprstuff/nprstuff.conf</span></code>, under the <code class="docutils literal notranslate"><span class="pre">NPR_DATA</span></code> section and <code class="docutils literal notranslate"><span class="pre">apikey</span></code> key.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)">str</a></p>
 </dd>
 </dl>
@@ -236,7 +237,7 @@
 <dt class="sig sig-object py" id="nprstuff.core.npr_utils.get_chrome_driver">
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">get_chrome_driver</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.get_chrome_driver" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>a <a class="reference external" href="https://www.chromium.org/Home">Chromium</a> <a class="reference external" href="https://www.selenium.dev/documentation/en">Selenium</a> headless <a class="reference external" href="https://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver" title="(in Selenium Python Bindings v2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Webdriver</span></code></a>.</p>
 </dd>
 </dl>
@@ -250,13 +251,13 @@
 <dt class="sig sig-object py" id="nprstuff.core.npr_utils.get_datestring">
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">get_datestring</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_act</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.get_datestring" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>date_act</strong> (<em>datetime</em>) – the candidate <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code></a> to format.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, with the format like “January 1, 2014”, of this <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code></a>.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)">str</a></p>
 </dd>
 </dl>
@@ -270,13 +271,13 @@
 <dt class="sig sig-object py" id="nprstuff.core.npr_utils.get_decdate">
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">get_decdate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.get_decdate" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>date_s</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – a <em>decoded</em> date string, of the format “DD.MM.YYYY”. This is a suffix attached to intermediate files that are created when downloading NPR shows.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code></a> object associated with this date string.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.datetime" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code></a></p>
 </dd>
 </dl>
@@ -286,7 +287,7 @@
 <dt class="sig sig-object py" id="nprstuff.core.npr_utils.get_firefox_driver">
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">get_firefox_driver</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.get_firefox_driver" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>a <a class="reference external" href="https://www.mozilla.org/en-US/firefox/new">Firefox</a> <a class="reference external" href="https://www.selenium.dev/documentation/en">Selenium</a> headless <a class="reference external" href="https://selenium-python.readthedocs.io/api.html#selenium.webdriver.remote.webdriver.WebDriver" title="(in Selenium Python Bindings v2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Webdriver</span></code></a>.</p>
 </dd>
 </dl>
@@ -300,10 +301,10 @@
 <dt class="sig sig-object py" id="nprstuff.core.npr_utils.get_freshair_downloaddir">
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">get_freshair_downloaddir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.get_freshair_downloaddir" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>the <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> default download directory, stored in <code class="docutils literal notranslate"><span class="pre">~/.config/nprstuff/nprstuff.conf</span></code>, under the <code class="docutils literal notranslate"><span class="pre">NPR_DATA</span></code> section and <code class="docutils literal notranslate"><span class="pre">freshair_downloaddir</span></code> key.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)">str</a></p>
 </dd>
 </dl>
@@ -318,13 +319,13 @@
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">get_order_number_saturday_in_year</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_act</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.get_order_number_saturday_in_year" title="Permalink to this definition"></a></dt>
 <dd><p>Returns the <em>1-indexed</em> order of the Saturday associated with a given <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.date" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">date</span></code></a>. NOTE: this object MUST be a Saturday.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>date_act</strong> (<em>date</em>) – the candidate Saturday.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a> of <em>1-indexed</em> order, and total number of Saturdays, in the year in which this Saturday exists.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.11)">tuple</a></p>
 </dd>
 </dl>
@@ -343,13 +344,13 @@
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">get_order_number_weekday_in_year</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_act</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.get_order_number_weekday_in_year" title="Permalink to this definition"></a></dt>
 <dd><p>Returns the <em>1-indexed</em> order of the weekday associated with a given <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.date" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">date</span></code></a>. NOTE: this object MUST be a weekday.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>date_act</strong> (<em>date</em>) – the candidate weekday.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a> of <em>1-indexed</em> order of the weekday, and total number of weekdays, in the year in which this date exists.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.11)">tuple</a></p>
 </dd>
 </dl>
@@ -368,16 +369,16 @@
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">get_saturday_times_in_year</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">getAll</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.get_saturday_times_in_year" title="Permalink to this definition"></a></dt>
 <dd><p>Returns a sorted <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> of Saturdays, as <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.date" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">date</span></code></a> objects for a given year, either <em>all</em> the Saturdays or all the Saturdays before now.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>year</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – the year over which to find the weekdays.</p></li>
 <li><p><strong>getAll</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – if <code class="docutils literal notranslate"><span class="pre">True</span></code>, then return <em>all</em> the Saturdays. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, return those Saturdays before today.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a sorted <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> of Saturdays as a <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.date" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">date</span></code></a> objects.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)">list</a></p>
 </dd>
 </dl>
@@ -391,13 +392,13 @@
 <dt class="sig sig-object py" id="nprstuff.core.npr_utils.get_time_from_datestring">
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">get_time_from_datestring</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datestring</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.get_time_from_datestring" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>datestring</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – a formatted date string, which must be of the form “January 1, 2014”.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.date" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">date</span></code></a> object represented by that formatted date string.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.date" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">date</span></code></a></p>
 </dd>
 </dl>
@@ -407,10 +408,10 @@
 <dt class="sig sig-object py" id="nprstuff.core.npr_utils.get_waitwait_downloaddir">
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">get_waitwait_downloaddir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.get_waitwait_downloaddir" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>the <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> default download directory, stored in <code class="docutils literal notranslate"><span class="pre">~/.config/nprstuff/nprstuff.conf</span></code>, under the <code class="docutils literal notranslate"><span class="pre">NPR_DATA</span></code> section and <code class="docutils literal notranslate"><span class="pre">waitwait_downloaddir</span></code> key.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)">str</a></p>
 </dd>
 </dl>
@@ -425,16 +426,16 @@
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">get_weekday_times_in_year</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">getAll</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.get_weekday_times_in_year" title="Permalink to this definition"></a></dt>
 <dd><p>Returns a sorted <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> of weekdays, as <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.date" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">date</span></code></a> objects for a given year, either <em>all</em> the weekdays or all the weekdays before now.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>year</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – the year over which to find the weekdays.</p></li>
 <li><p><strong>getAll</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – if <code class="docutils literal notranslate"><span class="pre">True</span></code>, then return <em>all</em> the weekdays. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, return those weekdays before today.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a sorted <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> of weekdays as a <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.date" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">date</span></code></a> objects.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)">list</a></p>
 </dd>
 </dl>
@@ -448,13 +449,13 @@
 <dt class="sig sig-object py" id="nprstuff.core.npr_utils.is_saturday">
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">is_saturday</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_act</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.is_saturday" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>date_act</strong> (<em>date</em>) – candidate date.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>whether the <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.date" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">date</span></code></a> is a Saturday.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)">bool</a></p>
 </dd>
 </dl>
@@ -464,13 +465,13 @@
 <dt class="sig sig-object py" id="nprstuff.core.npr_utils.is_sunday">
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">is_sunday</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dtime</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.is_sunday" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>date_act</strong> (<em>date</em>) – candidate date.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>whether the <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.date" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">date</span></code></a> is a Sunday.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)">bool</a></p>
 </dd>
 </dl>
@@ -480,13 +481,13 @@
 <dt class="sig sig-object py" id="nprstuff.core.npr_utils.is_weekday">
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">is_weekday</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_act</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.is_weekday" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>date_act</strong> (<em>date</em>) – candidate date.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>whether the <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.date" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">date</span></code></a> is a weekday.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)">bool</a></p>
 </dd>
 </dl>
@@ -496,16 +497,16 @@
 <dt class="sig sig-object py" id="nprstuff.core.npr_utils.saturdays_of_month_of_year">
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">saturdays_of_month_of_year</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">month</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.saturdays_of_month_of_year" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>year</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – input year.</p></li>
 <li><p><strong>month</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – input month as an integer from 1 (January) through 12 (December).</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a sorted <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> of days in a calendar month that are Saturdays, each of which ranges from first (1) to last day of month. Each day is an integer <span class="math notranslate nohighlight">\(\ge 1\)</span>.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)">list</a></p>
 </dd>
 </dl>
@@ -520,7 +521,7 @@
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">store_api_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">npr_API_key</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.store_api_key" title="Permalink to this definition"></a></dt>
 <dd><p>Stores a candidate NPR API key into the configuration file, <code class="docutils literal notranslate"><span class="pre">~/.config/nprstuff/nprstuff.conf</span></code>, into the <code class="docutils literal notranslate"><span class="pre">NPR_DATA</span></code> section and <code class="docutils literal notranslate"><span class="pre">apikey</span></code> key.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>npr_API_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – candidate NPR API key.</p>
 </dd>
 </dl>
@@ -535,7 +536,7 @@
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">store_freshair_downloaddir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freshair_downloaddir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.store_freshair_downloaddir" title="Permalink to this definition"></a></dt>
 <dd><p>Stores the default location of the <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episodes into the configuration file, <code class="docutils literal notranslate"><span class="pre">~/.config/nprstuff/nprstuff.com</span></code>, into the <code class="docutils literal notranslate"><span class="pre">NPR_DATA</span></code> section and <code class="docutils literal notranslate"><span class="pre">freshair_downloaddir</span></code> key.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>freshair_downloaddir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – the default directory to download <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episodes.</p>
 </dd>
 </dl>
@@ -550,7 +551,7 @@
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">store_waitwait_downloaddir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">waitwait_downloaddir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.store_waitwait_downloaddir" title="Permalink to this definition"></a></dt>
 <dd><p>Stores the default location of the <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episodes into the configuration file, <code class="docutils literal notranslate"><span class="pre">~/.config/nprstuff/nprstuff.com</span></code>, into the <code class="docutils literal notranslate"><span class="pre">NPR_DATA</span></code> section and <code class="docutils literal notranslate"><span class="pre">waitwait_downloaddir</span></code> key.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>waitwait_downloaddir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – the default directory to download <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episodes.</p>
 </dd>
 </dl>
@@ -564,16 +565,16 @@
 <dt class="sig sig-object py" id="nprstuff.core.npr_utils.weekdays_of_month_of_year">
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.npr_utils.</span></span><span class="sig-name descname"><span class="pre">weekdays_of_month_of_year</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">month</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.npr_utils.weekdays_of_month_of_year" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>year</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – input year.</p></li>
 <li><p><strong>month</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – input month as an integer from 1 (January) through 12 (December).</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a sorted <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> of days in a calendar month that are weekdays, each of which ranges from first (1) to last day of month. Each day is an integer <span class="math notranslate nohighlight">\(\ge 1\)</span>.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)">list</a></p>
 </dd>
 </dl>
@@ -596,7 +597,7 @@
 <dt class="sig sig-object py" id="nprstuff.core.convert_image_youtube.get_cloudconvert_api_key">
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.convert_image_youtube.</span></span><span class="sig-name descname"><span class="pre">get_cloudconvert_api_key</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.convert_image_youtube.get_cloudconvert_api_key" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>the <a class="reference external" href="https://cloudconvert.com">CloudConvert</a> API key, stored in <code class="docutils literal notranslate"><span class="pre">~/.config/nprstuff/nprstuff.conf</span></code>, under the <code class="docutils literal notranslate"><span class="pre">CLOUDCONVERT_DATA</span></code> section and <code class="docutils literal notranslate"><span class="pre">apikey</span></code> key.</p>
 </dd>
 </dl>
@@ -607,7 +608,7 @@
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.convert_image_youtube.</span></span><span class="sig-name descname"><span class="pre">get_youtube_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">youtube_URL</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quality</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'highest'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.convert_image_youtube.get_youtube_file" title="Permalink to this definition"></a></dt>
 <dd><p>Uses <a class="reference external" href="https://github.com/yt-dlp/yt-dlp">yt-dlp</a> programmatically to download into an <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> or <a class="reference external" href="//en.wikipedia.org/wiki/Matroska">MKV</a> file.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>youtube_URL</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – a valid <a class="reference external" href="https://www.youtube.com">YouTube</a> URL for the song clip.</p></li>
 <li><p><strong>output_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – the <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> or <a class="reference external" href="//en.wikipedia.org/wiki/Matroska">MKV</a> video file name.</p></li>
@@ -615,10 +616,10 @@
 <li><p><strong>verify</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – if <code class="docutils literal notranslate"><span class="pre">False</span></code>, then do not verify the SSL connection to <a class="reference external" href="https://www.youtube.com">YouTube</a>. Default is <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">True</span></code> if successful, otherwise <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)">bool</a></p>
 </dd>
 </dl>
@@ -627,17 +628,17 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="nprstuff.core.convert_image_youtube.pdf2png">
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.convert_image_youtube.</span></span><span class="sig-name descname"><span class="pre">pdf2png</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_pdf_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">newWidth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.convert_image_youtube.pdf2png" title="Permalink to this definition"></a></dt>
-<dd><p>Returns an <a class="reference external" href="https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image" title="(in Pillow (PIL Fork) v9.3.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Image</span></code></a> object of the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file produced when the <a class="reference external" href="https://cloudconvert.com">CloudConvert</a> server uploaded an input <a class="reference external" href="https://en.wikipedia.org/wiki/PDF">PDF</a> image file. The output <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file has the same aspect ratio as the input file.</p>
+<dd><p>Returns an <a class="reference external" href="https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image" title="(in Pillow (PIL Fork) v9.4.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Image</span></code></a> object of the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file produced when the <a class="reference external" href="https://cloudconvert.com">CloudConvert</a> server uploaded an input <a class="reference external" href="https://en.wikipedia.org/wiki/PDF">PDF</a> image file. The output <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file has the same aspect ratio as the input file.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>input_png_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – the input <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file. Filename must end in <code class="docutils literal notranslate"><span class="pre">.png</span></code>.</p></li>
 <li><p><strong>newWidth</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – optional argument. If specified, the pixel width of the output image.</p></li>
 <li><p><strong>verify</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – optional argument, whether to verify SSL connections. Default is <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the <a class="reference external" href="https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image" title="(in Pillow (PIL Fork) v9.3.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Image</span></code></a> object of the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file from the input <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the <a class="reference external" href="https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image" title="(in Pillow (PIL Fork) v9.4.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Image</span></code></a> object of the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file from the input <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file.</p>
 </dd>
 </dl>
 <div class="admonition seealso">
@@ -652,17 +653,17 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="nprstuff.core.convert_image_youtube.png2png">
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.convert_image_youtube.</span></span><span class="sig-name descname"><span class="pre">png2png</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_png_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">newWidth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.convert_image_youtube.png2png" title="Permalink to this definition"></a></dt>
-<dd><p>Returns an <a class="reference external" href="https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image" title="(in Pillow (PIL Fork) v9.3.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Image</span></code></a> object of the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file produced when the <a class="reference external" href="https://cloudconvert.com">CloudConvert</a> server uploaded an input <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file. The output <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file has the same aspect ratio as the input file.</p>
+<dd><p>Returns an <a class="reference external" href="https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image" title="(in Pillow (PIL Fork) v9.4.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Image</span></code></a> object of the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file produced when the <a class="reference external" href="https://cloudconvert.com">CloudConvert</a> server uploaded an input <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file. The output <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file has the same aspect ratio as the input file.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>input_png_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – the input <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file. Filename must end in <code class="docutils literal notranslate"><span class="pre">.png</span></code>.</p></li>
 <li><p><strong>newWidth</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – optional argument. If specified, the pixel width of the output image.</p></li>
 <li><p><strong>verify</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – optional argument, whether to verify SSL connections. Default is <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the <a class="reference external" href="https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image" title="(in Pillow (PIL Fork) v9.3.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Image</span></code></a> object of the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file from the input <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the <a class="reference external" href="https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image" title="(in Pillow (PIL Fork) v9.4.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Image</span></code></a> object of the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file from the input <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file.</p>
 </dd>
 </dl>
 <div class="admonition seealso">
@@ -677,17 +678,17 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="nprstuff.core.convert_image_youtube.svg2png">
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.convert_image_youtube.</span></span><span class="sig-name descname"><span class="pre">svg2png</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_svg_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">newWidth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.convert_image_youtube.svg2png" title="Permalink to this definition"></a></dt>
-<dd><p>Returns an <a class="reference external" href="https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image" title="(in Pillow (PIL Fork) v9.3.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Image</span></code></a> object of the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file produced when the <a class="reference external" href="https://cloudconvert.com">CloudConvert</a> server uploaded an input <a class="reference external" href="https://en.wikipedia.org/wiki/Scalable_Vector_Graphics">SVG(Z)</a> file. The <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file has the same aspect ratio as the input file. Uses <a class="reference external" href="https://www.riverbankcomputing.com/static/Docs/PyQt5/api/qtsvg/qsvgrenderer.html" title="(in PyQt v5.14b1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">QSvgRenderer</span></code></a> to convert an <a class="reference external" href="https://en.wikipedia.org/wiki/Scalable_Vector_Graphics">SVG(Z)</a> into a <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a>.</p>
+<dd><p>Returns an <a class="reference external" href="https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image" title="(in Pillow (PIL Fork) v9.4.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Image</span></code></a> object of the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file produced when the <a class="reference external" href="https://cloudconvert.com">CloudConvert</a> server uploaded an input <a class="reference external" href="https://en.wikipedia.org/wiki/Scalable_Vector_Graphics">SVG(Z)</a> file. The <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file has the same aspect ratio as the input file. Uses <a class="reference external" href="https://www.riverbankcomputing.com/static/Docs/PyQt5/api/qtsvg/qsvgrenderer.html" title="(in PyQt v5.14b1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">QSvgRenderer</span></code></a> to convert an <a class="reference external" href="https://en.wikipedia.org/wiki/Scalable_Vector_Graphics">SVG(Z)</a> into a <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>input_svg_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – the input SVG or SVGZ file. Filename must end in <code class="docutils literal notranslate"><span class="pre">.svg</span></code> or <code class="docutils literal notranslate"><span class="pre">.svgz</span></code>.</p></li>
 <li><p><strong>newWidth</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – optional argument. If specified, the pixel width of the output image.</p></li>
 <li><p><strong>verify</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – optional argument, whether to verify SSL connections. Default is <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the <a class="reference external" href="https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image" title="(in Pillow (PIL Fork) v9.3.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Image</span></code></a> object of the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file from the input SVG or SVGZ file.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>the <a class="reference external" href="https://pillow.readthedocs.io/en/stable/reference/Image.html#PIL.Image.Image" title="(in Pillow (PIL Fork) v9.4.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Image</span></code></a> object of the <a class="reference external" href="https://en.wikipedia.org/wiki/Portable_Network_Graphics">PNG</a> file from the input SVG or SVGZ file.</p>
 </dd>
 </dl>
 <div class="admonition seealso">
@@ -704,7 +705,7 @@
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.convert_image_youtube.</span></span><span class="sig-name descname"><span class="pre">youtube2gif</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_youtube_URL</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gif_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quality</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'highest'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">duration</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.convert_image_youtube.youtube2gif" title="Permalink to this definition"></a></dt>
 <dd><p>Converts a <a class="reference external" href="https://www.youtube.com">YouTube</a> clip into an animated <a class="reference external" href="https://en.wikipedia.org/wiki/GIF">GIF</a> file. First, downloads the <a class="reference external" href="https://www.youtube.com">YouTube</a> clip into an intermediate <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> file; then converts the intermediate <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">MP4</a> file into the animated <a class="reference external" href="https://en.wikipedia.org/wiki/GIF">GIF</a>, and deletes the intermediate file.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>input_youtube_URL</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – the input valid YouTube clip’s URL.</p></li>
 <li><p><strong>gif_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – the output <a class="reference external" href="https://en.wikipedia.org/wiki/GIF">GIF</a> file.</p></li>
@@ -733,16 +734,16 @@
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.music_to_m4a.</span></span><span class="sig-name descname"><span class="pre">get_defaultname</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m4afilename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">showalbum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.music_to_m4a.get_defaultname" title="Permalink to this definition"></a></dt>
 <dd><p>Returns a candidate default file name for an <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">M4A</a> file, given its metadata.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>m4afilename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – the input <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">M4A</a> file name.</p></li>
 <li><p><strong>showalbum</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – optional argument. If <code class="docutils literal notranslate"><span class="pre">True</span></code>, then file name will include the song’s album. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, only the artist and song title.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>the candidate file name for the <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">M4A</a> file. If <code class="docutils literal notranslate"><span class="pre">showalbum</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>, name is <code class="docutils literal notranslate"><span class="pre">&lt;artist&gt;.&lt;album&gt;.&lt;song&gt;.m4a</span></code>. If <code class="docutils literal notranslate"><span class="pre">False</span></code>, name is  <code class="docutils literal notranslate"><span class="pre">&lt;artist&gt;.&lt;song&gt;.m4a</span></code>.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)">str</a></p>
 </dd>
 </dl>
@@ -753,7 +754,7 @@
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.music_to_m4a.</span></span><span class="sig-name descname"><span class="pre">music_to_m4a</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tottracks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">album_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">toUpper</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.music_to_m4a.music_to_m4a" title="Permalink to this definition"></a></dt>
 <dd><p>Converts a non <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">M4A</a> file (<a class="reference external" href="https://en.wikipedia.org/wiki/MP3">MP3</a>, <a class="reference external" href="https://en.wikipedia.org/wiki/Vorbis">OGG</a>, or <a class="reference external" href="https://en.wikipedia.org/wiki/FLAC">FLAC</a>) into an <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">M4A</a> file.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – the input filename.</p></li>
 <li><p><strong>tottracks</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – optional argument, the total number of tracks for the song in its album. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, then the total number of tracks won’t explicitly be defined. Must be <span class="math notranslate nohighlight">\(\ge 1\)</span>.</p></li>
@@ -771,7 +772,7 @@
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.music_to_m4a.</span></span><span class="sig-name descname"><span class="pre">rename_m4a</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m4afilename</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.music_to_m4a.rename_m4a" title="Permalink to this definition"></a></dt>
 <dd><p>Renames an <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">M4A</a> music file to <code class="docutils literal notranslate"><span class="pre">&lt;artist&gt;.&lt;song&gt;.m4a</span></code>, where <code class="docutils literal notranslate"><span class="pre">&lt;artist&gt;</span></code> is the artist name and <code class="docutils literal notranslate"><span class="pre">&lt;song&gt;</span></code> is the song title.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>m4filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – the input <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">M4A</a> file name.</p>
 </dd>
 </dl>
@@ -787,7 +788,7 @@
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.freshair.</span></span><span class="sig-name descname"><span class="pre">get_freshair</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order_totnum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">check_if_exist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mp3_exist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">to_file_debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">driver</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relax_date_check</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.freshair.get_freshair" title="Permalink to this definition"></a></dt>
 <dd><p>The main driver method that downloads <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episodes for a given date into a specified output directory.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>outputdir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – the directory into which one downloads the <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episodes.</p></li>
 <li><p><strong>date_s</strong> – the <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.date" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">date</span></code></a> for this episode, which must be a weekday.</p></li>
@@ -800,10 +801,10 @@
 <li><p><strong>relax_date_check</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – optional argument, if <code class="docutils literal notranslate"><span class="pre">True</span></code> then do NOT check for article date in NPR stories. Default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>the name of the <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episode file.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)">str</a></p>
 </dd>
 </dl>
@@ -813,13 +814,13 @@
 <dt class="sig sig-object py" id="nprstuff.core.freshair.get_freshair_date_from_name">
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.freshair.</span></span><span class="sig-name descname"><span class="pre">get_freshair_date_from_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">candidateNPRFreshAirFile</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.freshair.get_freshair_date_from_name" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>candidateNPRFreshAirFile</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – the name of the <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episode file name.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>the <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.date" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">date</span></code></a> object from the <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episode file name.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.date" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">date</span></code></a></p>
 </dd>
 </dl>
@@ -830,7 +831,7 @@
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.freshair.</span></span><span class="sig-name descname"><span class="pre">get_freshair_image</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.freshair.get_freshair_image" title="Permalink to this definition"></a></dt>
 <dd><p>Get the <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> logo as binary data.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>the <a class="reference external" href="https://media.npr.org/images/podcasts/2013/primary/fresh_air.png">NPR Fresh Air logo</a> as binary data, see below.</p>
 </dd>
 </dl>
@@ -841,16 +842,16 @@
 <dt class="sig sig-object py" id="nprstuff.core.freshair.get_freshair_valid_dates_remaining_tuples">
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.freshair.</span></span><span class="sig-name descname"><span class="pre">get_freshair_valid_dates_remaining_tuples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yearnum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputdir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.freshair.get_freshair_valid_dates_remaining_tuples" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>yearnum</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – the year for which to search for missing <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episodes.</p></li>
 <li><p><strong>inputfdir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – the directory in which the <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episodes live.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a sorted <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>, ordered by candidate track number of the <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episode. The <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a> has three elements: the track number of <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episodes that year, the total number of <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episodes that year, and the <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.date" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">date</span></code></a> for that episode.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)">list</a></p>
 </dd>
 </dl>
@@ -878,7 +879,7 @@
 <p>I was able to get this to work by replacing the <code class="docutils literal notranslate"><span class="pre">https://</span></code> in the API URL query with <code class="docutils literal notranslate"><span class="pre">http://</span></code>.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>outputdir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – the directory into which one downloads the <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episodes.</p></li>
 <li><p><strong>date_s</strong> – the <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.date" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">date</span></code></a> for this episode, which must be a weekday.</p></li>
@@ -886,7 +887,7 @@
 <li><p><strong>to_file_debug</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – optional argument, if <code class="docutils literal notranslate"><span class="pre">True</span></code> dumps out the file representation of the <a class="reference external" href="https://www.crummy.com/software/BeautifulSoup/bs4/doc/index.html#beautifulsoup" title="(in Beautiful Soup v4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BeautifulSoup</span></code></a> XML tree for the <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episode. Default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> of stories, by order, for the <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episode. The first element of each <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a> is the story title, and th second is the <a class="reference external" href="https://en.wikipedia.org/wiki/MP3">MP3</a> URL for the story. <em>However</em>, if <code class="docutils literal notranslate"><span class="pre">debug</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code> and <code class="docutils literal notranslate"><span class="pre">to_file_debug</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>, returns the <a class="reference external" href="https://www.crummy.com/software/BeautifulSoup/bs4/doc/index.html#beautifulsoup" title="(in Beautiful Soup v4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BeautifulSoup</span></code></a> XML tree for this <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episode.</p>
 </dd>
 </dl>
@@ -917,7 +918,7 @@
 </pre></div>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>outputdir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – the directory into which one downloads the <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episodes.</p></li>
 <li><p><strong>date_s</strong> – the <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.date" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">date</span></code></a> for this episode, which must be a weekday.</p></li>
@@ -927,7 +928,7 @@
 <li><p><strong>relax_date_check</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – optional argument, if <code class="docutils literal notranslate"><span class="pre">True</span></code> then do NOT check for article date in NPR stories. Default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> of stories, by order, for the <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episode. The first element of each <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a> is the story title, and th second is the <a class="reference external" href="https://en.wikipedia.org/wiki/MP3">MP3</a> URL for the story. <em>However</em>, if <code class="docutils literal notranslate"><span class="pre">debug</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>, returns the <a class="reference external" href="https://www.crummy.com/software/BeautifulSoup/bs4/doc/index.html#beautifulsoup" title="(in Beautiful Soup v4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BeautifulSoup</span></code></a> XML tree for this <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episode.</p>
 </dd>
 </dl>
@@ -945,7 +946,7 @@
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.freshair.</span></span><span class="sig-name descname"><span class="pre">process_all_freshairs_by_year</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yearnum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">justCoverage</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.freshair.process_all_freshairs_by_year" title="Permalink to this definition"></a></dt>
 <dd><p>Either downloads all missing <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episodes for a given year, or prints out a report of those missing episodes.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>yearnum</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – the year for which to search for missing <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episodes.</p></li>
 <li><p><strong>inputdir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – the directory in which the <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episodes live.</p></li>
@@ -967,7 +968,7 @@
 <a class="reference internal image-reference" href="_images/freshair.2020.svg"><img alt="_images/freshair.2020.svg" class="align-center" src="_images/freshair.2020.svg" width="100%" /></a>
 <p>The dark blue boxes are for <code class="docutils literal notranslate"><span class="pre">existing</span></code> episodes. The light yellow boxes are for episodes that have not yet aired. The light orange boxes are for <code class="docutils literal notranslate"><span class="pre">missing</span></code> episodes. And those boxes colored from light orange on the left to turquoise on the right are <code class="docutils literal notranslate"><span class="pre">underoccupied</span></code> episodes: I have downloaded them, but they are shorter than the published duration of that <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episode.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>year</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – the calendar year.</p></li>
 <li><p><strong>format</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – the format of the figure to create. Must be one of <code class="docutils literal notranslate"><span class="pre">svgz</span></code>, <code class="docutils literal notranslate"><span class="pre">svg</span></code>, or <code class="docutils literal notranslate"><span class="pre">png</span></code>. Default is <code class="docutils literal notranslate"><span class="pre">svgz</span></code>.</p></li>
@@ -985,16 +986,16 @@
 <dt class="sig sig-object py" id="nprstuff.core.freshair_by_year.find_occupied_days">
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.freshair_by_year.</span></span><span class="sig-name descname"><span class="pre">find_occupied_days</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2010</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.freshair_by_year.find_occupied_days" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>mon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – the calendar month. <code class="docutils literal notranslate"><span class="pre">January</span></code> is 1, <code class="docutils literal notranslate"><span class="pre">December</span></code> is 12.</p></li>
 <li><p><strong>year</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – the calendar year.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">set</span></code></a> of calendar weekdays of <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episodes for that calendar month and year.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.11)">set</a></p>
 </dd>
 </dl>
@@ -1004,16 +1005,16 @@
 <dt class="sig sig-object py" id="nprstuff.core.freshair_by_year.find_underoccupied_dates">
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.freshair_by_year.</span></span><span class="sig-name descname"><span class="pre">find_underoccupied_dates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2010</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.freshair_by_year.find_underoccupied_dates" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>mon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – the calendar month. <code class="docutils literal notranslate"><span class="pre">January</span></code> is 1, <code class="docutils literal notranslate"><span class="pre">December</span></code> is 12.</p></li>
 <li><p><strong>year</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – the calendar year.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>: key is the day of the month and year, and value is the (candidate, too short) length of the <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episode on file, in seconds.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)">dict</a></p>
 </dd>
 </dl>
@@ -1024,13 +1025,13 @@
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.freshair_by_year.</span></span><span class="sig-name descname"><span class="pre">get_color</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">discrep</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.freshair_by_year.get_color" title="Permalink to this definition"></a></dt>
 <dd><p>returns a hex color linearly interpolated between “#1f77b4” (value of 0.0) and “#ff7f0e” (value of 1.0) for a value <span class="math notranslate nohighlight">\(0 \le v \le 1\)</span>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>discrep</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.11)"><em>float</em></a>) – the value over which to interpolate to return a hex color.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a hex color linearly interpolated between “#1f77b4” (value of 0.0) and “#ff7f0e” (value of 1.0).</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)">str</a></p>
 </dd>
 </dl>
@@ -1050,16 +1051,16 @@
 </div>
 <p>Here, December 1, 2019, is a Sunday, and December 7, 2019, is a Saturday. Zero array values are <em>not</em> in December 2019 (December 31, 2019, is a Tuesday).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>mon</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – the calendar month. <code class="docutils literal notranslate"><span class="pre">January</span></code> is 1, <code class="docutils literal notranslate"><span class="pre">December</span></code> is 12.</p></li>
 <li><p><strong>year</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – the calendar year.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>an integer <code class="xref py py-class docutils literal notranslate"><span class="pre">numpy</span> <span class="pre">array</span></code> of calendar days for that month and year.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy</span> <span class="pre">array</span></code></p>
 </dd>
 </dl>
@@ -1079,16 +1080,16 @@
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.thisamericanlife.</span></span><span class="sig-name descname"><span class="pre">get_TAL_URL</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epno</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.thisamericanlife.get_TAL_URL" title="Permalink to this definition"></a></dt>
 <dd><p>returns the MP3 URL of the <a class="reference external" href="https://www.thisamericanlife.org">This American Life</a> episode.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>epno</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – the episode number of <a class="reference external" href="https://www.thisamericanlife.org">This American Life</a>.</p></li>
 <li><p><strong>verify</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – optional argument, whether to verify SSL connections. Default is <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>the URL for <a class="reference external" href="https://www.thisamericanlife.org">This American Life</a> episode. If URL could not be found, returns <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)">str</a></p>
 </dd>
 </dl>
@@ -1099,7 +1100,7 @@
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.thisamericanlife.</span></span><span class="sig-name descname"><span class="pre">get_american_life</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epno</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/mnt/media/thisamericanlife'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extraStuff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dump</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hardURL</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.thisamericanlife.get_american_life" title="Permalink to this definition"></a></dt>
 <dd><p>Downloads an episode of <a class="reference external" href="https://www.thisamericanlife.org">This American Life</a> into a given directory.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>epno</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – the episode number of <a class="reference external" href="https://www.thisamericanlife.org">This American Life</a>.</p></li>
 <li><p><strong>directory</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – the directory into which to download a <a class="reference external" href="https://www.thisamericanlife.org">This American Life</a> episode. Default is <code class="docutils literal notranslate"><span class="pre">/mnt/media/thisamericanlife</span></code>.</p></li>
@@ -1127,7 +1128,7 @@
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.thisamericanlife.</span></span><span class="sig-name descname"><span class="pre">get_americanlife_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epno</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">throwException</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extraStuff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dump</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">directory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hardURL</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.thisamericanlife.get_americanlife_info" title="Permalink to this definition"></a></dt>
 <dd><p>Returns a tuple of title, year given the episode number for <a class="reference external" href="https://www.thisamericanlife.org">This American Life</a>. Sometimes <a class="reference external" href="https://www.thisamericanlife.org">This American Life</a> is extremely uncooperative; for example, on 25 OCTOBER 2020, <a class="reference external" href="https://www.thisamericanlife.org">This American Life</a> said episode 721 implied that it was “Small Worlds”, but in actuality it was <a class="reference external" href="https://www.thisamericanlife.org/720/the-moment-after-this-moment">The Moment After This Moment</a>. An extra optional argument, <code class="docutils literal notranslate"><span class="pre">hardURL</span></code>, is used to hard-encode this URL if the standard method of supplying an episode number through <code class="docutils literal notranslate"><span class="pre">epno</span></code> does not work.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>epno</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – the episode number of <a class="reference external" href="https://www.thisamericanlife.org">This American Life</a>.</p></li>
 <li><p><strong>throwException</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – optional argument, whether to throw a <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></a> exception if <em>cannot</em> find the title of this candidate <a class="reference external" href="https://www.thisamericanlife.org">This American Life</a> episode. Default is <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
@@ -1137,10 +1138,10 @@
 <li><p><strong>directory</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – the directory into which to download a <a class="reference external" href="https://www.thisamericanlife.org">This American Life</a> episode. Default is the current working directory.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a> of <code class="docutils literal notranslate"><span class="pre">title</span></code>, <code class="docutils literal notranslate"><span class="pre">year</span></code>, and <code class="docutils literal notranslate"><span class="pre">html</span></code> in which this episode was aired. Otherwise, if <code class="docutils literal notranslate"><span class="pre">throwException</span></code> is <code class="docutils literal notranslate"><span class="pre">False</span></code> and title is not found, returns <code class="docutils literal notranslate"><span class="pre">None</span></code>. <code class="docutils literal notranslate"><span class="pre">html</span></code> is the <a class="reference external" href="https://www.crummy.com/software/BeautifulSoup/bs4/doc/index.html#beautifulsoup" title="(in Beautiful Soup v4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BeautifulSoup</span></code></a> tree of the XML data for this <a class="reference external" href="https://www.thisamericanlife.org">This American Life</a> episode.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.11)">tuple</a></p>
 </dd>
 </dl>
@@ -1155,13 +1156,13 @@
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.thisamericanlife.</span></span><span class="sig-name descname"><span class="pre">give_up_ytdlp_thisamericanlife</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">epno</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.thisamericanlife.give_up_ytdlp_thisamericanlife" title="Permalink to this definition"></a></dt>
 <dd><p>This is one of those, “I completely give up on trying to figure out why the <code class="docutils literal notranslate"><span class="pre">This</span> <span class="pre">American</span> <span class="pre">Life</span></code> website is barfing out with 403 error messages”, kinds of messages. <em>Instead</em>, I use the <code class="docutils literal notranslate"><span class="pre">This</span> <span class="pre">American</span> <span class="pre">Life</span></code> InfoExtractor from yt-dlp to get at the TAL episode’s URL-that-works.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>epno</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – the episode number of <a class="reference external" href="https://www.thisamericanlife.org">This American Life</a>.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>the URL as a <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> that <a class="reference internal" href="#nprstuff.core.thisamericanlife.get_americanlife_info" title="nprstuff.core.thisamericanlife.get_americanlife_info"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_americanlife_info</span></code></a> uses.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)">str</a></p>
 </dd>
 </dl>
@@ -1190,7 +1191,7 @@
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.waitwait.</span></span><span class="sig-name descname"><span class="pre">get_all_waitwaits_year</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yearnum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputdir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.waitwait.get_all_waitwaits_year" title="Permalink to this definition"></a></dt>
 <dd><p>Looks for missing <a class="reference external" href="https://waitwait.npr.org">NPR Wait Wait</a> episodes in a given year, then downloads them.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>yearnum</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – the year for which to search for missing <a class="reference external" href="https://waitwait.npr.org">NPR Wait Wait</a> episodes.</p></li>
 <li><p><strong>inputdir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – the directory into which the <a class="reference external" href="https://waitwait.npr.org">NPR Wait Wait</a> episodes are downloaded.</p></li>
@@ -1225,7 +1226,7 @@
 </pre></div>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>outputdir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – the directory into which one downloads the <a class="reference external" href="https://waitwait.npr.org">NPR Wait Wait</a> episodes.</p></li>
 <li><p><strong>date_s</strong> – the <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.date" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">date</span></code></a> for this episode, which must be a Saturday.</p></li>
@@ -1233,7 +1234,7 @@
 <li><p><strong>dump</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – optional argument, if <code class="docutils literal notranslate"><span class="pre">True</span></code> returns the <a class="reference external" href="https://www.crummy.com/software/BeautifulSoup/bs4/doc/index.html#beautifulsoup" title="(in Beautiful Soup v4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BeautifulSoup</span></code></a> XML tree for the <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episode, or its file representation, and dumps the XML data into an XML file. Default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>the <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> of stories, by order, for the <a class="reference external" href="https://waitwait.npr.org">NPR Wait Wait</a> episode. The first element of each <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a> is the story title, and th second is the <a class="reference external" href="https://en.wikipedia.org/wiki/MP3">MP3</a> URL for the story. <em>However</em>, if <code class="docutils literal notranslate"><span class="pre">debug</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>, returns the <a class="reference external" href="https://www.crummy.com/software/BeautifulSoup/bs4/doc/index.html#beautifulsoup" title="(in Beautiful Soup v4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">BeautifulSoup</span></code></a> XML tree for this <a class="reference external" href="https://waitwait.npr.org">NPR Wait Wait</a> episode.</p>
 </dd>
 </dl>
@@ -1248,7 +1249,7 @@
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.waitwait.</span></span><span class="sig-name descname"><span class="pre">get_waitwait</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">outputdir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order_totnum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dump</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">driver</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">justFix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.waitwait.get_waitwait" title="Permalink to this definition"></a></dt>
 <dd><p>The main driver method that downloads <a class="reference external" href="https://waitwait.npr.org">NPR Wait Wait</a> episodes for a given date into a specified output directory.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>outputdir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – the directory into which one downloads the <a class="reference external" href="https://waitwait.npr.org">NPR Wait Wait</a> episodes.</p></li>
 <li><p><strong>date_s</strong> – the <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.date" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">date</span></code></a> for this episode, which must be a weekday.</p></li>
@@ -1258,10 +1259,10 @@
 <li><p><strong>justFix</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.11)"><em>bool</em></a>) – optional argument, if <code class="docutils literal notranslate"><span class="pre">True</span></code> and if <a class="reference external" href="https://waitwait.npr.org">NPR Wait Wait</a> file exists, then just change the title of the <a class="reference external" href="https://en.wikipedia.org/wiki/MPEG-4_Part_14">M4A</a> file. Default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>the name of the <a class="reference external" href="https://waitwait.npr.org">NPR Wait Wait</a> episode file.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)">str</a></p>
 </dd>
 </dl>
@@ -1271,13 +1272,13 @@
 <dt class="sig sig-object py" id="nprstuff.core.waitwait.get_waitwait_date_from_name">
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.waitwait.</span></span><span class="sig-name descname"><span class="pre">get_waitwait_date_from_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">candidateNPRWaitWaitFile</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.waitwait.get_waitwait_date_from_name" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>candidateNPRWaitWaitFile</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – the name of the <a class="reference external" href="https://waitwait.npr.org">NPR Wait Wait</a> episode file name.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>the <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.date" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">date</span></code></a> object from the <a class="reference external" href="https://waitwait.npr.org">NPR Wait Wait</a> episode file name.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.date" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">date</span></code></a></p>
 </dd>
 </dl>
@@ -1288,7 +1289,7 @@
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.waitwait.</span></span><span class="sig-name descname"><span class="pre">get_waitwait_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">verify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.waitwait.get_waitwait_image" title="Permalink to this definition"></a></dt>
 <dd><p>Get the <a class="reference external" href="https://waitwait.npr.org">NPR Wait Wait</a> logo as binary data.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>the <a class="reference external" href="https://mediaapi.whro.org/images/59d53b5ec76ad8.94499837.jpg">NPR Wait Wait logo</a> as binary data, see below.</p>
 </dd>
 </dl>
@@ -1299,16 +1300,16 @@
 <dt class="sig sig-object py" id="nprstuff.core.waitwait.get_waitwait_valid_dates_remaining_tuples">
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.waitwait.</span></span><span class="sig-name descname"><span class="pre">get_waitwait_valid_dates_remaining_tuples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yearnum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inputdir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.waitwait.get_waitwait_valid_dates_remaining_tuples" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>yearnum</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a>) – the year for which to search for missing <a class="reference external" href="https://waitwait.npr.org">NPR Wait Wait</a> episodes.</p></li>
 <li><p><strong>inputdir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – the directory in which the <a class="reference external" href="https://waitwait.npr.org">NPR Wait Wait</a> episodes live.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a sorted <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>, ordered by candidate track number of the <a class="reference external" href="https://waitwait.npr.org">NPR Wait Wait</a> episode. The <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a> has three elements: the track number of <a class="reference external" href="https://waitwait.npr.org">NPR Wait Wait</a> episodes that year, the total number of <a class="reference external" href="https://waitwait.npr.org">NPR Wait Wait</a> episodes that year, and the <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.date" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">date</span></code></a> for that episode.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)">list</a></p>
 </dd>
 </dl>
@@ -1325,16 +1326,16 @@
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.waitwait_realmedia.</span></span><span class="sig-name descname"><span class="pre">rm_download_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/mnt/software/sources/pythonics/nprstuff/docsrc'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.waitwait_realmedia.rm_download_file" title="Permalink to this definition"></a></dt>
 <dd><p>downloads the <a class="reference external" href="https://en.wikipedia.org/wiki/RealMedia">RealMedia</a> <a class="reference external" href="https://waitwait.npr.org">NPR Wait Wait</a> episode into a specified directory.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>date_s</strong> – the <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.date" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">date</span></code></a> for this episode, which must be a Saturday.</p></li>
 <li><p><strong>outdir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – the directory into which one downloads the <a class="reference external" href="https://freshair.npr.org">NPR Fresh Air</a> episodes.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>the <a class="reference external" href="https://en.wikipedia.org/wiki/RealMedia">RealMedia</a> output file.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)">str</a></p>
 </dd>
 </dl>
@@ -1344,13 +1345,13 @@
 <dt class="sig sig-object py" id="nprstuff.core.waitwait_realmedia.rm_get_main_url">
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.waitwait_realmedia.</span></span><span class="sig-name descname"><span class="pre">rm_get_main_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.waitwait_realmedia.rm_get_main_url" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>date_s</strong> – the <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.date" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">date</span></code></a> for this episode, which must be a Saturday.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>the full <a class="reference external" href="https://en.wikipedia.org/wiki/RealMedia">RealMedia</a> URL for this older <a class="reference external" href="https://waitwait.npr.org">NPR Wait Wait</a> episode.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)">str</a></p>
 </dd>
 </dl>
@@ -1360,13 +1361,13 @@
 <dt class="sig sig-object py" id="nprstuff.core.waitwait_realmedia.rm_get_title_from_url">
 <span class="sig-prename descclassname"><span class="pre">nprstuff.core.waitwait_realmedia.</span></span><span class="sig-name descname"><span class="pre">rm_get_title_from_url</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date_s</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#nprstuff.core.waitwait_realmedia.rm_get_title_from_url" title="Permalink to this definition"></a></dt>
 <dd><dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>date_s</strong> – the <a class="reference external" href="https://docs.python.org/3/library/datetime.html#datetime.date" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">date</span></code></a> for this episode, which must be a Saturday.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>a full title for the <a class="reference external" href="https://waitwait.npr.org">NPR Wait Wait</a> <a class="reference external" href="https://en.wikipedia.org/wiki/RealMedia">RealMedia</a> episode.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)">str</a></p>
 </dd>
 </dl>
