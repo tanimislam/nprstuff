@@ -1,9 +1,11 @@
 import os, sys, datetime, titlecase, requests
-import codecs, feedparser, glob, time, logging
+import codecs, feedparser, glob, time
 from mutagen.id3 import APIC, TDRC, TALB, COMM, TRCK, TPE2, TPE1, TIT2, TCON, ID3
+from nprstuff import nprstuff_logger, logging_dict
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 from pathos.multiprocessing import ThreadPool, cpu_count
+from argparse import ArgumentParser
 
 _talPICURL = 'https://upload.wikimedia.org/wikipedia/commons/8/8a/Thisamericanlife-wbez.png'
 _talurl = 'http://feed.thisamericanlife.org/talpodcast'
@@ -35,7 +37,7 @@ def give_up_ytdlp_thisamericanlife( epno ):
     tale = ThisAmericanLifeIE( YoutubeDL( ) )
     webpage = tale._download_webpage(
         'http://www.thisamericanlife.org/radio-archives/episode/%03d' % epno, '%03d' % epno )
-    html = BeautifulSoup( webpage, 'lxml' )
+    html = BeautifulSoup( webpage, 'html.parser' )
     return html
     # elems = list(filter(lambda elem: 'href' in elem.attrs and '757' in elem['href'],
     #                     html.find_all('link', { 'rel' : 'canonical'})))
@@ -151,15 +153,23 @@ def get_american_life_remaining( ):
     episodes_here = set(filter(None, map(
         _get_tal_track, glob.glob( os.path.join(
         _default_inputdir, 'PRI.ThisAmericanLife.*.mp3' ) ) ) ) )
+    def _get_last_episode( ):
+        try:
+            html = BeautifulSoup( requests.get( "https://thisamericanlife.org" ).content, 'html.parser' )
+            elem = list(filter(lambda elem: "this week" in elem.text.lower(), html.find_all("a")))[0]
+            
+        except Exception as e:
+            logging.info("ERROR WHEN TRYING TO LOOK FOR LAST TAL EPISODE: %s." % str( e ) )
+            return max( episodes_here )
     episodes_remaining = set(range(1, max( episodes_here ) + 1 ) ) - episodes_here
     if len( episodes_remaining ) == 0:
         return
     with ThreadPool( processes = max(1, cpu_count( ) // 2 ) ) as pool:
-        time0 = time.time( )
+        time0 = time.perf_counter( )
         _ = list( pool.map( get_american_life, episodes_remaining ) )
-        logging.debug( 'was able to download %d missing TAL episodes (%s) in %0.3f seconds.' % (
+        logging.info( 'was able to download %d missing TAL episodes (%s) in %0.3f seconds.' % (
             len( episodes_remaining ), ', '.join(sorted(episodes_remaining)),
-            time.time( ) - time0 ) )
+            time.perf_counter( ) - time0 ) )
     
 def get_american_life(
     epno, directory = '/mnt/media/thisamericanlife', extraStuff = None, verify = True,
@@ -244,12 +254,17 @@ def thisamericanlife_crontab( ):
 
     .. _Feedparser: https://feedparser.readthedocs.io
     """
+    parser = ArgumentParser( )
+    parser.add_argument( '-i', '--info', dest = 'do_info', action = 'store_true', default = False,
+                        help = 'If chosen, then turn on INFO logging.' )
+    args = parser.parse_args( )
+    if args.do_info: nprstuff_logger.setLevel( logging_dict[ 'INFO' ] )
 
     def _get_latest_epno_from_website( ):
         response = requests.get( 'https://www.thisamericanlife.org' )
         if response.status_code != 200:
             return 'ERROR, could not reach www.thisamericanlife.org. Status code = %d.' % response.status_code, None
-        html = BeautifulSoup( response.content, 'lxml' )
+        html = BeautifulSoup( response.content, 'html.parser' )
         episode_elements = list(filter(lambda elem: 'data-episode' in elem.attrs and 'class' in elem.attrs, html.find_all('a', { 'data-type' : 'episode' } ) ) )
         if len( episode_elements ) == 0:
             return 'Error, could not determine latest episode number from www.thisamericanlife.org.', None
@@ -276,11 +291,11 @@ def thisamericanlife_crontab( ):
         print( "Already have This American Life episode #%03d" % epno )
         return
     #
-    time0 = time.time( )
-    logging.debug('downloading This American Life episode #%03d' % epno )
+    time0 = time.perf_counter( )
+    logging.info('downloading This American Life episode #%03d' % epno )
     try:
         thisamericanlife.get_american_life( epno )
-        logging.debug("finished downloading This American Life episode #%03d in %0.3f seconds" % (
+        logging.info( "finished downloading This American Life episode #%03d in %0.3f seconds" % (
             epno, time.time( ) - time0 ) )
     except:
         print( "Could not download This American Life episode #%03d" % epno )
