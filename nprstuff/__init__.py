@@ -383,7 +383,7 @@ class ProgressDialog( QDialogWithPrinting ):
         <html>
         <body>
         </body>
-        </html>""", 'lxml' )
+        </html>""", 'html.parser' )
         self.mainDialog.setHtml( self.parsedHTML.prettify( ) )
         self.mainDialog.setReadOnly( True )
         self.mainDialog.setStyleSheet("""
@@ -446,7 +446,7 @@ class ProgressDialog( QDialogWithPrinting ):
         <html>
         <body>
         </body>
-        </html>""", 'lxml' )
+        </html>""", 'html.parser' )
         self.mainDialog.setHtml( self.parsedHTML.prettify( ) )
         if len( initString ) != 0:
             self.addText( initString )

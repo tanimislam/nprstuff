@@ -65,7 +65,7 @@ class MainApp(QApplication):
     def pushContent(self, articleId ):
         assert(articleId in self.articles )
         self.aw.articlePanel.setHtml( BeautifulSoup(
-            self.articles[ articleId ]['content'], 'lxml' ).prettify() )
+            self.articles[ articleId ]['content'], 'html.parser' ).prettify() )
         self.aw.titleLabel.setText(
             titlecase.titlecase( self.articles[ articleId ]['title' ] ) )
         s_dt = self.articles[ articleId ]['date_published' ]

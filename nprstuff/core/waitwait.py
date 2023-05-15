@@ -126,7 +126,7 @@ def _get_mp3_chapter_tuple_sorted( html, verify, npr_api_key ):
     if resp.status_code != 200:
       logging.debug('ERROR GETTING STORY ELEM %d' % idx )
       return None
-    h2 = BeautifulSoup( resp.content, 'lxml' )
+    h2 = BeautifulSoup( resp.content, 'html.parser' )
     img_elem = max( h2.find_all( 'img' ) )
     img_src_url = img_elem['src'].strip( )
     title_dict = parse_qs( img_src_url )
@@ -203,7 +203,7 @@ def get_title_mp3_urls_working( outputdir, date_s, driver, dump = False ):
     logging.info("mainURL: %s." % mainURL )
     driver.get( mainURL )
     time.sleep( 1.5 ) # is 1.5 seconds enough?
-    html = BeautifulSoup( driver.page_source, 'lxml' )
+    html = BeautifulSoup( driver.page_source, 'html.parser' )
     #
     if dump:
         decdate = npr_utils.get_decdate( date_s )
@@ -242,7 +242,7 @@ def get_title_mp3_urls_working( outputdir, date_s, driver, dump = False ):
         #
         response = requests.get( episode_URL2 )
         if not response.ok: return None
-        html_ep2 = BeautifulSoup( response.content, 'lxml' )
+        html_ep2 = BeautifulSoup( response.content, 'html.parser' )
         full_show_elems = html_ep2.find_all('div', { 'id' : 'full-show' } )
         if len( full_show_elems ) != 1: return None
         full_show_elem = full_show_elems[0]
@@ -273,7 +273,7 @@ def get_title_mp3_urls_working( outputdir, date_s, driver, dump = False ):
     def get_npr_waitwait_story( episode_URL, date_s ):
         response = requests.get( episode_URL )
         assert( response.ok )
-        html_ep = BeautifulSoup( response.content, 'lxml' )
+        html_ep = BeautifulSoup( response.content, 'html.parser' )
         date_f = date_s.strftime( '%Y-%m-%d' )
         date_elems = list(html_ep.find_all('meta', { 'name' : 'date', 'content' : date_f } ) )
         if len( date_elems ) != 1:

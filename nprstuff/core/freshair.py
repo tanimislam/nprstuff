@@ -138,7 +138,7 @@ def _process_freshair_titlemp3_tuples( html ):
                        line.strip().startswith('https'),
                        story_elem.text.split('\n') ) ) )
         story_line_url = all_http_lines[ 0 ]
-        h2 = BeautifulSoup( requests.get( story_line_url ).content, 'lxml' )
+        h2 = BeautifulSoup( requests.get( story_line_url ).content, 'html.parser' )
         title_elems = h2.find_all('title')
         if len( title_elems ) == 0: return None
         title = titlecase.titlecase(
@@ -331,7 +331,7 @@ def get_title_mp3_urls_attic( outputdir, date_s, debug = False, to_file_debug = 
             'ERROR GETTING FRESH AIR STORY FOR %s' %
             date_s.strftime('%d %B %Y' ) )
         return None
-    html = BeautifulSoup( resp.content, 'lxml' )
+    html = BeautifulSoup( resp.content, 'html.parser' )
     #
     if debug:
         print( 'URL = %s' % nprURL )
@@ -410,7 +410,7 @@ def get_title_mp3_urls_working( outputdir, date_s, driver, debug = False, to_fil
     driver.get( mainURL )
     #time.sleep( 1.5 ) # is 1.5 seconds enough?
     WebDriverWait(driver, 10).until( condition )
-    html = BeautifulSoup( driver.page_source, 'lxml' )
+    html = BeautifulSoup( driver.page_source, 'html.parser' )
     if debug:
         print( 'URL = %s' % mainURL )
         if to_file_debug:
@@ -425,7 +425,7 @@ def get_title_mp3_urls_working( outputdir, date_s, driver, debug = False, to_fil
     def _get_npr_freshair_story( episode_URL, candidate_date, relax_date_check = False ):
         response = requests.get( episode_URL )
         assert( response.ok )
-        html_ep = BeautifulSoup( response.content, 'lxml' )
+        html_ep = BeautifulSoup( response.content, 'html.parser' )
         if not relax_date_check:
             date_f = candidate_date.strftime( '%Y-%m-%d' )
             date_elems = list(html_ep.find_all('meta', { 'name' : 'date', 'content' : date_f } ) )

@@ -20,7 +20,7 @@ def _inline_images( input_html_file, output_html_file = None ):
         ofile = output_html_file
     #
     ## first load in the input html file
-    html = BeautifulSoup( open( input_html_file, 'r' ), 'lxml' )
+    html = BeautifulSoup( open( input_html_file, 'r' ), 'html.parser' )
     #
     ## now look for all the elems that have a src in them and exist on disk
     img_elems = list(
