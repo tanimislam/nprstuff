@@ -124,7 +124,7 @@ def get_TAL_URL( epno, verify = True ):
     if not response.ok:
         logging.info( 'ERROR, %s not accessible' % url_epelem )
         return None
-    html = BeautifulSoup( response.content, 'lxml' )
+    html = BeautifulSoup( response.content, 'html.parser' )
     #
     ## now find podcast URL from the enclosing A element whose class has text Download
     def is_download_href( href_elem ):
@@ -277,12 +277,9 @@ def thisamericanlife_crontab( ):
     episodes_here = set(filter(None, map(
         _get_tal_track, glob.glob( os.path.join(
         _default_inputdir, 'PRI.ThisAmericanLife.*mp3' ) ) ) ) )
-    #episodes_left = set( range( 1, max( episodes_here ) + 1 ) ) - episodes_here
     
     #
     ## from website, find latest episode number  
-    #d = feedparser.parse( 'http://feed.thisamericanlife.org/talpodcast' )
-    #epno = _get_tal_epno( max(d['entries'], key = lambda ent: _get_epno( ent ) ) )
     status, epno = _get_latest_epno_from_website( )
     if status != 'SUCCESS':
         print( status )
