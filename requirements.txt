@@ -2,14 +2,14 @@ google-api-python-client
 google-auth-oauthlib
 google-auth-httplib2
 google-auth
-docutils==0.17
+docutils
 feedparser
 oauth2client
 pyexiv2
 Pillow
 PyQt5
 PyQtWebEngine
-PyPDF2
+pypdf
 webcolors
 python-magic
 requests
@@ -27,4 +27,4 @@ yt_dlp
 beautifulsoup4
 pathos
 qtmodern
-sphinxcontrib-youtube @ git+https://github.com/sphinx-contrib/youtube.git@master
+sphinxcontrib-youtube
