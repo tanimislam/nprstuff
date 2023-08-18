@@ -429,7 +429,9 @@ def get_title_mp3_urls_working_2023( date_s, debug = False ):
         story_list_elems = myhtml.find_all( 'div', { 'class' : 'story-list' } )
         assert( len( story_list_elems ) == 1 )
         story_list_elem = story_list_elems[ 0 ]
-        article_infos_in_order = list(map(_get_title_url_here, story_list_elem.find_all( 'article', { 'class' : 'rundown-segment' } ) ) )
+        article_infos_in_order = sorted(
+            map(_get_title_url_here, story_list_elem.find_all( 'article', { 'class' : 'rundown-segment' } ) ),
+            key = lambda entry: entry[ 'url' ] )
         return list(map(lambda entry: ( entry['title'], entry['url'] ), article_infos_in_order))
     except Exception as e:
         logging.info( str( e ) )
