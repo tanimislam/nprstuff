@@ -1,7 +1,7 @@
 import os, glob, datetime
 import time, re, titlecase, tempfile, logging
 import mutagen.mp4, subprocess, requests, shutil
-import pathos.multiprocessing as multiprocessing
+from pathos.multiprocessing import Pool, cpu_count, ThreadPool
 from urllib.parse import urljoin, urlsplit
 from bs4 import BeautifulSoup
 from nprstuff.core import npr_utils
@@ -87,10 +87,10 @@ def _process_freshairs_by_year_tuple( input_tuple ):
     outputdir, totnum, verbose, datetimes_order_tuples = input_tuple
     driver = npr_utils.get_chrome_driver( )
     for date_s, order in datetimes_order_tuples:
-        time0 = time.time()
+        time0 = time.perf_counter( )
         try:
             fname = get_freshair(outputdir, date_s, order_totnum = ( order, totnum ), driver = driver )
-            logging.info( 'processed %s in %0.3f seconds.' % ( os.path.basename(fname), time.time() - time0 ) )
+            logging.info( 'processed %s in %0.3f seconds.' % ( os.path.basename(fname), time.perf_counter( ) - time0 ) )
         except Exception as e:
             logging.error( str( e ) )
             logging.error('Could not create Fresh Air episode for date %s for some reason' %
@@ -110,15 +110,15 @@ def process_all_freshairs_by_year(yearnum, inputdir, verbose = True, justCoverag
     order_dates_remain = get_freshair_valid_dates_remaining_tuples( yearnum, inputdir )
     if len(order_dates_remain) == 0: return
     totnum = order_dates_remain[0][1]
-    nprocs = multiprocessing.cpu_count() 
+    nprocs = cpu_count( )
     input_tuples = list(filter(
         lambda tup: len( tup[-1] ) != 0, [ ( inputdir, totnum, verbose, 
                       [ ( date_s, order ) for ( order, totnum, date_s) in 
                        order_dates_remain if (order - 1) % nprocs == procno ] ) for
                     procno in range(nprocs) ] ) )
-    time0 = time.time()
+    time0 = time.perf_counter( )
     if not justCoverage:
-        with npr_utils.MyPool(processes = min( multiprocessing.cpu_count(), len( input_tuples ) ) ) as pool:
+        with npr_utils.MyPool(processes = min( cpu_count( ), len( input_tuples ) ) ) as pool:
             list( pool.map(_process_freshairs_by_year_tuple, input_tuples) )
     else:
         print( 'Missing %d episodes for %04d.' % ( len(order_dates_remain), yearnum ) )
@@ -128,7 +128,7 @@ def process_all_freshairs_by_year(yearnum, inputdir, verbose = True, justCoverag
     #
     if verbose:
         print( 'processed all Fresh Air downloads for %04d in %0.3f seconds.' %
-              ( yearnum, time.time() - time0 )  )
+              ( yearnum, time.perf_counter( ) - time0 )  )
 
 def _process_freshair_titlemp3_tuples( html ):
     def _get_title( story_elem ):
@@ -188,7 +188,7 @@ def _find_missing_dates(
         '%d.%m.%Y').date( ), days_remain ) )
     logging.info( 'list of input_tuples: %s.' % input_tuples )
     # pool = multiprocessing.Pool( processes = multiprocessing.cpu_count( ) )
-    with multiprocessing.ThreadPool( processes = min( multiprocessing.cpu_count( ), len( input_tuples ) ) ) as pool:
+    with ThreadPool( processes = min( cpu_count( ), len( input_tuples ) ) ) as pool:
         successes = list(
             filter(None, pool.map( _process_freshair_perproc, input_tuples ) ) )
     print( 'successes (%d/%d): %s' % ( len(successes), len(input_tuples), successes ) )
@@ -234,13 +234,13 @@ def _get_freshair_lowlevel( outputdir, date_s, titles ):
                    (num, titl) in enumerate(titles) ]) )
     #
     ## download those files
-    time0 = time.time()
-    with multiprocessing.Pool(
-        processes = min( multiprocessing.cpu_count( ), len( songurls ) ) ) as pool:
+    time0 = time.perf_counter( )
+    with Pool(
+        processes = min( cpu_count( ), len( songurls ) ) ) as pool:
         outfiles = list( filter(None, pool.map(_download_file, zip( songurls, outfiles ) ) ) )
 
     # create m4a file
-    time0 = time.time()
+    time0 = time.perf_counter( )
     fnames = [ filename.replace(' ', '\ ') for filename in outfiles ]
     avconv_concat_cmd = 'concat:%s' % '|'.join(fnames)
     split_cmd = [ avconv_exec, '-y', '-i', avconv_concat_cmd, '-ar', '44100', '-ac', '2',
@@ -360,6 +360,78 @@ def get_title_mp3_urls_attic( outputdir, date_s, debug = False, to_file_debug = 
         return None
     return title_mp3_urls
 
+def get_title_mp3_urls_working_2023( date_s ):
+    """
+    Maybe this works? Trying out on ``2023-08-18`` (day after my 45th birthday). Same format as :py:meth:`get_title_mp3_urls_working <nprstuff.core.freshair.get_title_mp3_urls_working>`. Example code block below:
+
+    .. code-block:: python
+
+       >> date_s = datetime.datetime.strptime('August 17, 2023', '%B %d, %Y' ).date( )
+       >> title_mp3_urls = get_title_mp3_urls_working_2023( date_s )
+       >> title_mp3_urls
+       >> [("James McBride's 'Heaven & Earth' is an all-American mix of prejudice and hope",
+         'https://ondemand.npr.org/anon.npr-mp3/npr/fa/2023/08/20230814_fa_16b06b61-ea8e-474b-bc59-f607b3538dad.mp3'),
+        ("'Like it or not, we live in Oppenheimer's world,' says director Christopher Nolan",
+         'https://ondemand.npr.org/anon.npr-mp3/npr/fa/2023/08/20230814_fa_66749637-ab88-4420-948c-0b1866bb239b.mp3')]
+
+    :param date_s: the :py:class:`date <datetime.date>` for this episode, which must be a weekday.
+    :type date_s: :py:class:`date <datetime.date>`
+    :returns: the :py:class:`list` of stories, by order, for the `NPR Fresh Air`_ episode. The first element of each :py:class:`tuple` is the story title, and the second is the MP3_ URL for the story. Otherwise returns ``None``.
+    :rtype: list
+    """
+    def _get_title_url_here( article_elem ):
+        #
+        ## first find candidate title
+        candidate_title_elem = list(filter(lambda elem: 'class' in elem.attrs and 'audio-module-title' in elem['class'], article_elem.find_all( )))
+        assert( len( candidate_title_elem ) != 0 )
+        candidate_title_elem = candidate_title_elem[ 0 ]
+        candidate_title = titlecase.titlecase( candidate_title_elem.text.strip( ) )
+        #
+        ## now get episode URL
+        candidate_url_elem = list(filter(lambda elem: 'href' in elem.attrs and 'ondemand' in elem['href'], article_elem.find_all('a')))
+        assert( len( candidate_url_elem ) != 0 )
+        candidate_url_elem = candidate_url_elem[ 0 ]
+        candidate_url = candidate_url_elem['href'].strip( ).split('?')[ 0 ]
+        #
+        ## now return the crap
+        return { 'title' : candidate_title, 'url' : candidate_url }        
+    
+    try:
+        #
+        ## STEP #1: do an archive search
+        resp = requests.get(
+            'https://www.npr.org/programs/fresh-air/archive',
+            params = { 'date' : date_s.strftime('%m-%d-%Y') } )
+        assert( resp.ok )
+        assert( resp.status_code == 200 )
+        myhtml = BeautifulSoup( resp.content, 'html.parser' )
+        archive_elem = list(filter(lambda elem: 'data-episode-date' in elem.attrs and date_s.strftime('%Y-%m-%d') in elem['data-episode-date'], myhtml.find_all('article' )))
+        assert( len( archive_elem ) != 0 )
+        archive_elem = archive_elem[ 0 ]
+        article_url_elem = list(filter(lambda elem: 'href' in elem.attrs and 'fresh-air' in elem['href'], archive_elem.find_all('a')))
+        assert( len( article_url_elem ) != 0 )
+        article_url_elem = article_url_elem[ 0 ]
+        article_url_split = urlsplit( article_url_elem['href'].strip( ) )
+        article_url = '%s://%s%s' % ( article_url_split.scheme, article_url_split.netloc, article_url_split.path )
+        logging.debug( 'URL TO GET = %s.' % article_url )
+        #
+        ## first get the info
+        resp = requests.get( article_url )
+        assert( resp.ok )
+        assert( resp.status_code == 200 )
+        #
+        ## now find all the elems that have story-list, assert ONLY single story-list elem
+        myhtml = BeautifulSoup( resp.content, 'html.parser' )
+        story_list_elems = myhtml.find_all( 'div', { 'class' : 'story-list' } )
+        assert( len( story_list_elems ) == 1 )
+        story_list_elem = story_list_elems[ 0 ]
+        article_infos_in_order = list(map(_get_title_url_here, story_list_elem.find_all( 'article', { 'class' : 'rundown-segment' } ) ) )
+        return list(map(lambda entry: ( entry['title'], entry['url'] ), article_infos_in_order))
+    except Exception as e:
+        logging.info( str( e ) )
+        return None
+    
+
 def get_title_mp3_urls_working( outputdir, date_s, driver, debug = False, to_file_debug = True, relax_date_check = False ):
     """
     Using the new, non-API NPR functionality, get a :py:class:`list` of :py:class:`tuple` of stories for an `NPR Fresh Air`_ episode. This uses a :py:class:`Webdriver <selenium.webdriver.remote.webdriver.WebDriver>` to get an episode. Here is an example operation,
@@ -378,7 +450,6 @@ def get_title_mp3_urls_working( outputdir, date_s, driver, debug = False, to_fil
         ("'Muppets Now' Proves It's Not Easy to Capture the Old Muppet Magic",
          'https://ondemand.npr.org/anon.npr-mp3/npr/fa/2020/07/20200731_fa_04.mp3')]
 
-    :param str outputdir: the directory into which one downloads the `NPR Fresh Air`_ episodes.
     :param date_s: the :py:class:`date <datetime.date>` for this episode, which must be a weekday.
     :param driver: the :py:class:`Webdriver <selenium.webdriver.remote.webdriver.WebDriver>` used for webscraping and querying (instead of using a functional API) for `NPR Fresh Air`_ episodes.
     :param bool debug: optional argument, if ``True`` returns the :py:class:`BeautifulSoup <bs4.BeautifulSoup>` XML tree for the `NPR Fresh Air`_ episode, or its file representation. Default is ``False``.
@@ -401,7 +472,7 @@ def get_title_mp3_urls_working( outputdir, date_s, driver, debug = False, to_fil
     condition = EC.title_contains( 'NPR' )
     #
     ## must be the end datetime
-    time0 = time.time( )
+    time0 = time.perf_counter( )
     dt_end = datetime.datetime( date_s.year, date_s.month, date_s.day )
     t_end = int( datetime.datetime.timestamp( dt_end ) )
     #
@@ -465,19 +536,19 @@ def get_title_mp3_urls_working( outputdir, date_s, driver, debug = False, to_fil
 def get_freshair(
     outputdir, date_s, order_totnum = None,
     debug = False, check_if_exist = False,
-    mp3_exist = False, to_file_debug = True, driver = None,
+    mp3_exist = False, to_file_debug = True,
     relax_date_check = False ):
     """
     The main driver method that downloads `NPR Fresh Air`_ episodes for a given date into a specified output directory.
     
     :param str outputdir: the directory into which one downloads the `NPR Fresh Air`_ episodes.
     :param date_s: the :py:class:`date <datetime.date>` for this episode, which must be a weekday.
+    :type date_s: :py:class:`date <datetime.date>`
     :param tuple order_totnum: optional argument, the :py:class:`tuple` of track number and total number of tracks of `NPR Fresh Air`_ episodes for that year. If ``None``, then this information is gathered from :py:meth:`get_order_num_weekday_in_year <nprstuff.core.npr_utils.get_order_num_weekday_in_year>`.
     :param bool debug: optional argument, if ``True`` returns the :py:class:`BeautifulSoup <bs4.BeautifulSoup>` XML tree for the `NPR Fresh Air`_ episode, or its file representation. Default is ``False``.
     :param bool check_if_exist: optional argument, if ``True`` and if the correct file name for the `NPR Fresh Air`_ episode exists, then won't overwrite it. Default is ``False``.
     :param bool mp3_exist: optional argument, if ``True`` then check whether the transitional MP3_ files for the stories in the `NPR Fresh Air`_ episode has been downloaded and use the fully downloaded stories to compose an episode. Otherwise, ignore existing downloaded MP3_ stories for download.
     :param bool to_file_debug: optional argument, if ``True`` then just download the XML file of date for that `NPR Fresh Air`_ episode, instead of the episode itself.
-    :param driver: optional argument, the :py:class:`Webdriver <selenium.webdriver.remote.webdriver.WebDriver>` used for webscraping and querying (instead of using a functional API) for `NPR Fresh Air`_ episodes. If ``None``, then a new :py:class:`Webdriver <selenium.webdriver.remote.webdriver.WebDriver>` will be defined and used within this method's scope.
     :param bool relax_date_check: optional argument, if ``True`` then do NOT check for article date in NPR stories. Default is ``False``.
 
     :returns: the name of the `NPR Fresh Air`_ episode file.
@@ -491,10 +562,6 @@ def get_freshair(
   
     # check if actually a weekday
     assert( npr_utils.is_weekday(date_s) )
-    
-    #
-    ## if driver is None
-    if driver is None: driver = npr_utils.get_chrome_driver( )
     
     # check if we have found avconv
     exec_dict = npr_utils.find_necessary_executables()
@@ -513,11 +580,11 @@ def get_freshair(
     
     year = date_s.year
     
-    data = get_title_mp3_urls_working(
-        outputdir, date_s, driver, debug = debug, to_file_debug = to_file_debug,
-        relax_date_check = relax_date_check )
-    if debug: return data
-    title_mp3_urls = data
+    #data = get_title_mp3_urls_working(
+    #    outputdir, date_s, driver, debug = debug, to_file_debug = to_file_debug,
+    #    relax_date_check = relax_date_check )
+    #if debug: return data
+    title_mp3_urls = get_title_mp3_urls_working_2023( date_s )
     if title_mp3_urls is None or len( title_mp3_urls ) == 0: return None
 
     # temporary directory
@@ -538,19 +605,19 @@ def get_freshair(
                                     (num, titl) in enumerate(titles) ]) )    
     
     # download those files
-    time0 = time.time()
+    time0 = time.perf_counter( )
     if not mp3_exist:
-        with multiprocessing.Pool(processes = len(songurls) ) as pool:
+        with Pool(processes = len(songurls) ) as pool:
             outfiles = list( filter(None, pool.map(_download_file, zip( songurls, outfiles ) ) ) )
 
     # now convert to m4a file
     # /usr/bin/avconv -y -i freshair$wgdate.wav -ar 44100 -ac 2 -aq 400 -acodec libfaac NPR.FreshAir."$decdate".m4a ;
-    time0 = time.time()
+    time0 = time.perf_counter( )
     fnames = [ filename.replace(' ', '\ ') for filename in outfiles ]
     avconv_concat_cmd = 'concat:%s' % '|'.join(fnames)
     split_cmd = [
         avconv_exec, '-y', '-i', avconv_concat_cmd, '-ar', '44100', '-ac', '2',
-        '-threads', '%d' % multiprocessing.cpu_count(),
+        '-threads', '%d' % cpu_count( ),
         '-strict', 'experimental', '-acodec', 'aac', m4afile_temp ]
     proc = subprocess.Popen(split_cmd, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
     stdout_val, stderr_val = proc.communicate()

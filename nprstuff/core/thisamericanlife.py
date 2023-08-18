@@ -1,4 +1,4 @@
-import os, sys, datetime, titlecase, requests
+import os, sys, datetime, titlecase, requests,  logging
 import codecs, feedparser, glob, time
 from mutagen.id3 import APIC, TDRC, TALB, COMM, TRCK, TPE2, TPE1, TIT2, TCON, ID3
 from nprstuff import nprstuff_logger, logging_dict
