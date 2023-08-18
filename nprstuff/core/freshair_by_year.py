@@ -71,8 +71,9 @@ def find_occupied_days( mon, year = _default_year ):
     """
     days = set(map(lambda fname: int( os.path.basename( fname ).split('.')[2] ),
                    glob.glob( os.path.join(
-                    _default_inputdir,
-                    'NPR.FreshAir.*.%02d.%d.m4a' % ( mon, year ) ) ) ) )
+                       _default_inputdir,
+                       '%04d' % year,
+                       'NPR.FreshAir.*.%02d.%d.m4a' % ( mon, year ) ) ) ) )
     return days
 
 def find_underoccupied_dates( mon, year = _default_year ):
@@ -90,6 +91,7 @@ def find_underoccupied_dates( mon, year = _default_year ):
     daydict = dict(map(lambda day: (
         day, os.path.join(
             _default_inputdir,
+            '%04d' % year,
             'NPR.FreshAir.%02d.%02d.%d.m4a' % ( day, mon, year ) ) ),
         find_occupied_days( mon, year = year ) ) )
     actdict = dict(map(lambda day: ( day, EasyMP4( daydict[day] ).info.length ),
@@ -103,10 +105,10 @@ def find_underoccupied_dates( mon, year = _default_year ):
         duration = 0.0
         with open( tmpfile, 'wb' ) as openfile:
             openfile.write( requests.get( mp3_url ).content )
-            proc = subprocess.Popen([ ffprobe_exec, '-v', 'quiet', '-show_streams',
-                                     '-show_format', '-print_format', 'json', tmpfile ],
-                                    stdout=subprocess.PIPE, stderr=subprocess.STDOUT )
-            stdout_val, stderr_val = proc.communicate( )
+            stdout_val = subprocess.check_output(
+                [ ffprobe_exec, '-v', 'quiet', '-show_streams',
+                 '-show_format', '-print_format', 'json', tmpfile ],
+                stderr=subprocess.STDOUT ).decode('utf8')
             data = json.loads( stdout_val )
             duration = float( data['format']['duration'] )
         os.remove( tmpfile )

@@ -33,7 +33,7 @@ def _freshair_crontab( ):
 
 def _freshair( ):
     parser = ArgumentParser( )
-    parser.add_argument('--dirname', dest='dirname', type=str,
+    parser.add_argument('-X', '--dirname', dest='dirname', type=str,
                         action = 'store', default = _default_inputdir,
                         help = 'Name of the directory to store the file. Default is %s.' % _default_inputdir )
     parser.add_argument('-d', '--date', dest='date', type=str,
@@ -52,11 +52,16 @@ def _freshair( ):
                         help = 'choose the debug level for downloading NPR Fresh Air episodes or their XML representation of episode info. Can be one of %s. Default is NONE.' % sorted( logging_dict ) )
     parser.add_argument('-r', '--relax', dest='relax_date_check', action='store_true', default = False,
                         help = 'If chosen, then do NOT do a date check validation of NPR URL articles.' )
+    parser.add_argument('-A', '--addyear', dest = 'do_add_year', action = 'store_true', default = False,
+                        help = 'If chosen, then ADD the year to the directory name in which to store.' )
     args = parser.parse_args( )
+    date_s = npr_utils.get_time_from_datestring( args.date )
     dirname = os.path.expanduser( args.dirname )
+    if args.do_add_year: dirname = os.path.join( dirname, '%04d' % date_s.year )
+    #
     logger.setLevel( logging_dict[ args.level ] )
     fname = freshair.get_freshair(
-        dirname, npr_utils.get_time_from_datestring( args.date ),
+        dirname, date_s,
         debug = args.debug, mp3_exist = args.mp3_exist,
         relax_date_check = args.relax_date_check )
 
