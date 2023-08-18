@@ -360,7 +360,7 @@ def get_title_mp3_urls_attic( outputdir, date_s, debug = False, to_file_debug = 
         return None
     return title_mp3_urls
 
-def get_title_mp3_urls_working_2023( date_s ):
+def get_title_mp3_urls_working_2023( date_s, debug = False ):
     """
     Maybe this works? Trying out on ``2023-08-18`` (day after my 45th birthday). Same format as :py:meth:`get_title_mp3_urls_working <nprstuff.core.freshair.get_title_mp3_urls_working>`. Example code block below:
 
@@ -376,6 +376,7 @@ def get_title_mp3_urls_working_2023( date_s ):
 
     :param date_s: the :py:class:`date <datetime.date>` for this episode, which must be a weekday.
     :type date_s: :py:class:`date <datetime.date>`
+    :param bool debug: optional argument, if ``True`` returns the :py:class:`BeautifulSoup <bs4.BeautifulSoup>` HTML tree for the `NPR Fresh Air`_ episode, or its file representation. Default is ``False``.
     :returns: the :py:class:`list` of stories, by order, for the `NPR Fresh Air`_ episode. The first element of each :py:class:`tuple` is the story title, and the second is the MP3_ URL for the story. Otherwise returns ``None``.
     :rtype: list
     """
@@ -422,6 +423,9 @@ def get_title_mp3_urls_working_2023( date_s ):
         #
         ## now find all the elems that have story-list, assert ONLY single story-list elem
         myhtml = BeautifulSoup( resp.content, 'html.parser' )
+        if debug:
+            print( 'URL = %s' % article_url )
+            return myhtml
         story_list_elems = myhtml.find_all( 'div', { 'class' : 'story-list' } )
         assert( len( story_list_elems ) == 1 )
         story_list_elem = story_list_elems[ 0 ]
@@ -536,8 +540,7 @@ def get_title_mp3_urls_working( outputdir, date_s, driver, debug = False, to_fil
 def get_freshair(
     outputdir, date_s, order_totnum = None,
     debug = False, check_if_exist = False,
-    mp3_exist = False, to_file_debug = True,
-    relax_date_check = False ):
+    mp3_exist = False, relax_date_check = False ):
     """
     The main driver method that downloads `NPR Fresh Air`_ episodes for a given date into a specified output directory.
     
@@ -545,10 +548,9 @@ def get_freshair(
     :param date_s: the :py:class:`date <datetime.date>` for this episode, which must be a weekday.
     :type date_s: :py:class:`date <datetime.date>`
     :param tuple order_totnum: optional argument, the :py:class:`tuple` of track number and total number of tracks of `NPR Fresh Air`_ episodes for that year. If ``None``, then this information is gathered from :py:meth:`get_order_num_weekday_in_year <nprstuff.core.npr_utils.get_order_num_weekday_in_year>`.
-    :param bool debug: optional argument, if ``True`` returns the :py:class:`BeautifulSoup <bs4.BeautifulSoup>` XML tree for the `NPR Fresh Air`_ episode, or its file representation. Default is ``False``.
+    :param bool debug: optional argument, if ``True`` returns the :py:class:`BeautifulSoup <bs4.BeautifulSoup>` HTML tree for the `NPR Fresh Air`_ episode, or its file representation. Default is ``False``.
     :param bool check_if_exist: optional argument, if ``True`` and if the correct file name for the `NPR Fresh Air`_ episode exists, then won't overwrite it. Default is ``False``.
     :param bool mp3_exist: optional argument, if ``True`` then check whether the transitional MP3_ files for the stories in the `NPR Fresh Air`_ episode has been downloaded and use the fully downloaded stories to compose an episode. Otherwise, ignore existing downloaded MP3_ stories for download.
-    :param bool to_file_debug: optional argument, if ``True`` then just download the XML file of date for that `NPR Fresh Air`_ episode, instead of the episode itself.
     :param bool relax_date_check: optional argument, if ``True`` then do NOT check for article date in NPR stories. Default is ``False``.
 
     :returns: the name of the `NPR Fresh Air`_ episode file.
@@ -584,7 +586,14 @@ def get_freshair(
     #    outputdir, date_s, driver, debug = debug, to_file_debug = to_file_debug,
     #    relax_date_check = relax_date_check )
     #if debug: return data
-    title_mp3_urls = get_title_mp3_urls_working_2023( date_s )
+    if debug:
+        myhtml = get_title_mp3_urls_working_2023( date_s, debug = True )
+        decdate = date_s.strftime('%d.%m.%Y')
+        outputfile = os.path.join(outputdir, 'NPR.FreshAir.tree.%s.html' % decdate)
+        with open( outputfile, 'w') as openfile:
+            openfile.write( '%s\n' % myhtml.prettify( ) )
+        return outputfile
+    title_mp3_urls = get_title_mp3_urls_working_2023( date_s, debug = False )
     if title_mp3_urls is None or len( title_mp3_urls ) == 0: return None
 
     # temporary directory
