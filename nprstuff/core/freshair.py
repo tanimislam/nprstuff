@@ -405,7 +405,32 @@ def get_title_mp3_urls_working_2023( date_s, debug = False ):
       candidate_url_split = urlsplit( elem[ 'audioUrl' ] )
       candidate_url = '%s://%s%s' % ( candidate_url_split.scheme, candidate_url_split.netloc, candidate_url_split.path )
       return { 'title' : candidate_title, 'url' : candidate_url }
-    
+
+    def _plan_C_get_title_url_here( elem ):
+      data_here = json.loads( elem[ 'data-metrics-ga4' ] )
+      assert( 'title' in data_here )
+      candidate_title = titlecase.titlecase( data_here[ 'title' ].strip( ) )
+      #
+      ## now get the episode URL
+      embed_url = elem['data-embed-url']
+      resp = requests.get( embed_url )
+      assert( resp.ok )
+      assert( resp.status_code == 200 )
+      myhtml2 = BeautifulSoup( resp.content, 'html.parser' )
+      #
+      ## now look through those codes that are unempty
+      valid_script_elems = list(filter(lambda elem: len( elem.text.strip( ) ) != 0 and 'audioModel' in elem.text,
+                                       myhtml2.find_all( 'script', { 'type' : 'text/javascript' } ) ) )
+      assert( len( valid_script_elems ) == 1 )
+      valid_script_elem = valid_script_elems[ 0 ]
+      valid_json_text = '='.join( valid_script_elem.text.strip( ).split('=')[1:] ).strip( )
+      valid_json_text = re.sub(';$', '', valid_json_text ).strip( )
+      data_json = json.loads( valid_json_text )
+      assert( 'audioSrc' in data_json )
+      candidate_url_split = urlsplit( data_json[ 'audioSrc' ] )
+      candidate_url = '%s://%s%s' % ( candidate_url_split.scheme, candidate_url_split.netloc, candidate_url_split.path )
+      return { 'title' : candidate_title, 'url' : candidate_url }
+      
     try:
         #
         ## STEP #1: do an archive search
@@ -435,25 +460,40 @@ def get_title_mp3_urls_working_2023( date_s, debug = False ):
         if debug:
             print( 'URL = %s' % article_url )
             return myhtml
-        story_list_elems = myhtml.find_all( 'div', { 'class' : 'story-list' } )
-        assert( len( story_list_elems ) == 1 )
-        story_list_elem = story_list_elems[ 0 ]
-        article_infos_in_order = sorted(
-          map(_get_title_url_here, story_list_elem.find_all( 'article', { 'class' : 'rundown-segment' } ) ),
-          key = lambda entry: entry[ 'url' ] )
-        if len( article_infos_in_order ) != 0:
-          return list(map(lambda entry: ( entry['title'], entry['url'] ), article_infos_in_order))
-        #
-        actual_elems = list(filter(lambda elem: 'data-play-all' in elem.attrs, myhtml.find_all('b')))
-        assert( len( actual_elems ) != 0 )
-        actual_elem = actual_elems[ 0 ]
-        data = json.loads( actual_elem['data-play-all'] )
-        assert( 'audioData' in data )
-        data_audio = data[ 'audioData' ]
+        try:
+          story_list_elems = myhtml.find_all( 'div', { 'class' : 'story-list' } )
+          assert( len( story_list_elems ) == 1 )
+          story_list_elem = story_list_elems[ 0 ]
+          article_infos_in_order = sorted(
+            map(_get_title_url_here, story_list_elem.find_all( 'article', { 'class' : 'rundown-segment' } ) ),
+            key = lambda entry: entry[ 'url' ] )
+          if len( article_infos_in_order ) != 0:
+            return list(map(lambda entry: ( entry['title'], entry['url'] ), article_infos_in_order))
+          raise ValueError("FAILED PLAN A")
+        except: pass
         #
         ## otherwise PLAN B do the needful, see if this works...
+        try:
+          actual_elems = list(filter(lambda elem: 'data-play-all' in elem.attrs, myhtml.find_all('b')))
+          assert( len( actual_elems ) != 0 )
+          actual_elem = actual_elems[ 0 ]
+          data = json.loads( actual_elem['data-play-all'] )
+          assert( 'audioData' in data )
+          data_audio = data[ 'audioData' ]
+          #
+          article_infos_in_order = sorted(
+            map(_get_title_url_here_something, data_audio ),
+            key = lambda entry: entry[ 'url' ] )
+          if len( article_infos_in_order ) != 0:
+            return list(map(lambda entry: ( entry['title'], entry['url'] ), article_infos_in_order))
+          raise ValueError("FAILED PLAN B")
+        except: pass
+        #
+        ## otherwise PLAN C what the fuck??
+        actual_elems = list(filter(lambda elem: 'data-embed-url' in elem.attrs and 'data-metrics-ga4' in elem.attrs, myhtml.find_all()))
+        assert( len( actual_elems ) != 0 )
         article_infos_in_order = sorted(
-          map(_get_title_url_here_something, data_audio ),
+          map(_plan_C_get_title_url_here, actual_elems ),
           key = lambda entry: entry[ 'url' ] )
         return list(map(lambda entry: ( entry['title'], entry['url'] ), article_infos_in_order))
         
