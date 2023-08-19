@@ -1,4 +1,4 @@
-import os, glob, datetime
+import os, glob, datetime, json
 import time, re, titlecase, tempfile, logging
 import mutagen.mp4, subprocess, requests, shutil
 from pathos.multiprocessing import Pool, cpu_count, ThreadPool
@@ -395,7 +395,16 @@ def get_title_mp3_urls_working_2023( date_s, debug = False ):
         candidate_url = candidate_url_elem['href'].strip( ).split('?')[ 0 ]
         #
         ## now return the crap
-        return { 'title' : candidate_title, 'url' : candidate_url }        
+        return { 'title' : candidate_title, 'url' : candidate_url }
+
+    def _get_title_url_here_something( elem ):
+      assert( 'title' in elem )
+      candidate_title = titlecase.titlecase( elem[ 'title' ].split(':')[1].strip( ) )
+      #
+      assert( 'audioUrl' in elem )
+      candidate_url_split = urlsplit( elem[ 'audioUrl' ] )
+      candidate_url = '%s://%s%s' % ( candidate_url_split.scheme, candidate_url_split.netloc, candidate_url_split.path )
+      return { 'title' : candidate_title, 'url' : candidate_url }
     
     try:
         #
@@ -430,9 +439,24 @@ def get_title_mp3_urls_working_2023( date_s, debug = False ):
         assert( len( story_list_elems ) == 1 )
         story_list_elem = story_list_elems[ 0 ]
         article_infos_in_order = sorted(
-            map(_get_title_url_here, story_list_elem.find_all( 'article', { 'class' : 'rundown-segment' } ) ),
-            key = lambda entry: entry[ 'url' ] )
+          map(_get_title_url_here, story_list_elem.find_all( 'article', { 'class' : 'rundown-segment' } ) ),
+          key = lambda entry: entry[ 'url' ] )
+        if len( article_infos_in_order ) != 0:
+          return list(map(lambda entry: ( entry['title'], entry['url'] ), article_infos_in_order))
+        #
+        actual_elems = list(filter(lambda elem: 'data-play-all' in elem.attrs, myhtml.find_all('b')))
+        assert( len( actual_elems ) != 0 )
+        actual_elem = actual_elems[ 0 ]
+        data = json.loads( actual_elem['data-play-all'] )
+        assert( 'audioData' in data )
+        data_audio = data[ 'audioData' ]
+        #
+        ## otherwise PLAN B do the needful, see if this works...
+        article_infos_in_order = sorted(
+          map(_get_title_url_here_something, data_audio ),
+          key = lambda entry: entry[ 'url' ] )
         return list(map(lambda entry: ( entry['title'], entry['url'] ), article_infos_in_order))
+        
     except Exception as e:
         logging.info( str( e ) )
         return None
