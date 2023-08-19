@@ -21,12 +21,13 @@ def _freshair_crontab( ):
     ## get current time
     current_date = datetime.datetime.now( ).date( )
     if not npr_utils.is_weekday( current_date ):
-        print("Error, today is not a weekday. Instead, today is %s." %
-            current_date.strftime('%A') )
-        return
+      logger.error(
+        "Error, today is not a weekday. Instead, today is %s." %
+        current_date.strftime('%A') )
+      return
     #
     ## now download the episode into the correct directory
-    dirname = os.path.join( _default_inputdir, '%04d' % date_s.year )
+    dirname = os.path.join( _default_inputdir, '%04d' % current_date.year )
     try:
       if not os.path.isdir( dirname ): os.mkdir( dirname )
       freshair.get_freshair(
