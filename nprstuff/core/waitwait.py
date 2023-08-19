@@ -149,7 +149,77 @@ def _get_mp3_chapter_tuple_sorted( html, verify, npr_api_key ):
     key = lambda url_chap: int( re.sub('[a-zA-Z]', '', os.path.basename(
       url_chap[0] ).split('.')[0].split('_')[-1] ) ) )
   return mp3_chapter_tuples
+
+def get_title_mp3_urls_working_2023( date_s, debug = False ):
+    """
+    Maybe this works? Trying out on ``2023-08-18`` (day after my 45th birthday). Same format as :py:meth:`get_title_mp3_urls_working <nprstuff.core.waitwait.get_title_mp3_urls_working>`. Example code block below:
     
+    .. code-block:: python
+
+       >> date_s = datetime.datetime.strptime('August 8, 2020', '%B %d, %Y' ).date( )
+       >> title_list_mp3_urls = get_title_mp3_urls_working_2023( date_s )
+       >> title_list_mp3_urls
+       >> [("Who's Bill This Time?",
+         'https://ondemand.npr.org/anon.npr-mp3/npr/waitwait/2020/08/20200808_waitwait_01.mp3'),
+        ('Panel Questions',
+         'https://ondemand.npr.org/anon.npr-mp3/npr/waitwait/2020/08/20200808_waitwait_02.mp3'),
+        ('Bluff the Listener',
+         'https://ondemand.npr.org/anon.npr-mp3/npr/waitwait/2020/08/20200808_waitwait_03.mp3'),
+        ("Bryan Cranston Plays 'Not My Job' on 'Wait Wait... Don't Tell Me!'",
+         'https://ondemand.npr.org/anon.npr-mp3/npr/waitwait/2020/08/20200808_waitwait_04.mp3'),
+        ('Panel Questions',
+         'https://ondemand.npr.org/anon.npr-mp3/npr/waitwait/2020/08/20200808_waitwait_05.mp3'),
+        ('Limericks',
+         'https://ondemand.npr.org/anon.npr-mp3/npr/waitwait/2020/08/20200808_waitwait_06.mp3'),
+        ('Lightning Fill in the Blank',
+         'https://ondemand.npr.org/anon.npr-mp3/npr/waitwait/2020/08/20200808_waitwait_07.mp3'),
+        ('Predictions',
+         'https://ondemand.npr.org/anon.npr-mp3/npr/waitwait/2020/08/20200808_waitwait_08.mp3')]
+
+    :param date_s: the :py:class:`date <datetime.date>` for this episode, which must be a weekday.
+    :type date_s: :py:class:`date <datetime.date>`
+    :param bool debug: optional argument, if ``True`` returns the :py:class:`BeautifulSoup <bs4.BeautifulSoup>` HTML tree for the `NPR Wait Wait <waitwait_>`_ episode. Default is ``False``.
+    :returns: the :py:class:`list` of stories, by order, for the `NPR Wait Wait <waitwait_>`_ episode. The first element of each :py:class:`tuple` is the story title, and the second is the MP3_ URL for the story. Otherwise returns ``None``.
+    :rtype: list
+    """
+    def _get_title_url_here( article_elem ):
+        #
+        ## first find candidate title
+        data_here = json.loads( article_elem[ 'data-metrics-ga4' ] )
+        assert( 'title' in data_here )
+        candidate_title = titlecase.titlecase( re.sub( "&#39;", "'", data_here['title'] ).strip( ) )
+        #
+        ## now get episode URL
+        article_url_split = urlsplit( article_elem['href'].strip( ) )
+        article_url = '%s://%s%s' % ( article_url_split.scheme, article_url_split.netloc, article_url_split.path )
+        #
+        ## now return the crap
+        return { 'title' : candidate_title, 'url' : article_url }        
+    
+    try:
+        resp = requests.get(
+            'https://www.npr.org/programs/wait-wait-dont-tell-me/archive',
+            params = { 'date' : date_s.strftime('%m-%d-%Y') } )
+        assert( resp.ok )
+        assert( resp.status_code == 200 )
+        myhtml = BeautifulSoup( resp.content, 'html.parser' )
+        if debug: return myhtml
+        archive_elem = list(filter(lambda elem: 'data-episode-date' in elem.attrs and date_s.strftime('%Y-%m-%d') in elem['data-episode-date'], myhtml.find_all('article' )))
+        assert( len( archive_elem ) != 0 )
+        archive_elem = archive_elem[ 0 ]
+        article_elems = list(filter(lambda elem: 'href' in elem.attrs and 'waitwait' in elem['href'] and 'data-metrics-ga4' in elem.attrs, archive_elem.find_all('a')))
+        assert( len( article_elems ) != 0 )
+        #
+        ## now find all the elems that have story-list, assert ONLY single story-list elem
+        article_infos_in_order = sorted(
+            map(_get_title_url_here, article_elems ),
+            key = lambda entry: entry[ 'url' ] )
+        return list(map(lambda entry: ( entry['title'], entry['url'] ), article_infos_in_order))
+    except Exception as e:
+        print( str( e ) )
+        logging.info( str( e ) )
+        return None
+
 def get_title_mp3_urls_working( outputdir, date_s, driver, dump = False ):
     """
     Using the new, non-API NPR functionality, get a :py:class:`list` of :py:class:`tuple` of stories for an `NPR Wait Wait <waitwait_>`_ episode. This uses a :py:class:`Webdriver <selenium.webdriver.remote.webdriver.WebDriver>` to get an episode. Here is an example operation,
@@ -318,7 +388,7 @@ def get_title_mp3_urls_working( outputdir, date_s, driver, dump = False ):
     return list(map(lambda tup: ( tup[1], tup[2] ), ordered_npr_waitwait ) )
 
 def get_waitwait(
-    outputdir, date_s, order_totnum = None, dump = False, driver = None, justFix = False ):
+    outputdir, date_s, order_totnum = None, dump = False, justFix = False ):
     """
     The main driver method that downloads `NPR Wait Wait <waitwait_>`_ episodes for a given date into a specified output directory.
     
@@ -326,7 +396,6 @@ def get_waitwait(
     :param date_s: the :py:class:`date <datetime.date>` for this episode, which must be a weekday.
     :param tuple order_totnum: optional argument, the :py:class:`tuple` of track number and total number of tracks of `NPR Wait Wait <waitwait_>`_ episodes for that year. If ``None``, then this information is gathered from :py:meth:`get_order_num_saturday_in_year <nprstuff.core.npr_utils.get_order_num_saturday_in_year>`.
     :param bool dump: optional argument, if ``True`` returns the :py:class:`BeautifulSoup <bs4.BeautifulSoup>` XML tree for the `NPR Wait Wait <waitwait_>`_ episode (and downloads the XML tree into a file). Default is ``False``.
-    :param driver: optional argument, the :py:class:`Webdriver <selenium.webdriver.remote.webdriver.WebDriver>` used for webscraping and querying (instead of using a functional API) for `NPR Wait Wait <waitwait_>`_ episodes. If ``None``, then a new :py:class:`Webdriver <selenium.webdriver.remote.webdriver.WebDriver>` will be defined and used within this method's scope.
     :param bool justFix: optional argument, if ``True`` and if `NPR Wait Wait <waitwait_>`_ file exists, then just change the title of the M4A_ file. Default is ``False``.
 
     :returns: the name of the `NPR Wait Wait <waitwait_>`_ episode file.
@@ -340,10 +409,6 @@ def get_waitwait(
     if not npr_utils.is_saturday(date_s):
         raise ValueError(
             "Error, date = %s not a Saturday." % npr_utils.get_datestring(date_s) )
-
-    #
-    ## if driver is None
-    if driver is None: driver = npr_utils.get_chrome_driver( )
 
     exec_dict = npr_utils.find_necessary_executables()
     assert( exec_dict is not None )
@@ -361,9 +426,14 @@ def get_waitwait(
     m4afile = os.path.join(outputdir, 'NPR.WaitWait.%s.m4a' % decdate )
     logging.info( 'INFO TO GET FIGURE OUT get_title_mp3s_url_working: %s, %s, %s, %s' % ( m4afile, date_s, driver, dump ) )
     if year >= 2006:
-        data = get_title_mp3_urls_working( '.', date_s, driver, dump = dump )
-        if dump: return data
-        title_mp3_urls = data
+        if dump:
+            html = get_title_mp3_urls_working_2023( date_s, debug = True )
+            openfile = os.path.join(
+                outputdir, 'NPR.WaitWait.%s.html' % decdate )
+            with open( openfile, 'w') as outfile:
+                outfile.write( '%s\n' % html.prettify( ) )
+            return openfile
+        title_mp3_urls = get_title_mp3_urls_working_2023( date_s, driver, debug = False )
         if title_mp3_urls is None or len( title_mp3_urls ) == 0: return None
         titles, songurls = list(zip(*title_mp3_urls))
         title = date_s.strftime('%B %d, %Y')
@@ -401,11 +471,8 @@ def get_waitwait(
                      '%d' % multiprocessing.cpu_count(), '-strict', 'experimental', '-acodec', 'aac',
                      m4afile_temp ]
         logging.info("here is the split command: %s." % split_cmd )
-        proc = subprocess.Popen(split_cmd, stdout = subprocess.PIPE,
-                                stderr = subprocess.PIPE)
-        stdout_val, stderr_val = proc.communicate( )
+        stdout_val = subprocess.check_output(split_cmd, stderr = subprocess.PIPE).decode( 'utf8' )
         logging.debug("stdout_val: %s." % stdout_val )
-        logging.debug("stderr_val: %s." % stderr_val )
         #
         ## remove mp3 files
         for filename in outfiles: os.remove(filename)
