@@ -380,13 +380,17 @@ def get_title_mp3_urls_working_2023( date_s, debug = False ):
     :returns: the :py:class:`list` of stories, by order, for the `NPR Fresh Air`_ episode. The first element of each :py:class:`tuple` is the story title, and the second is the MP3_ URL for the story. Otherwise returns ``None``.
     :rtype: list
     """
+
+    def _fix_title( my_string ):
+      return titlecase.titlecase( re.sub( '&#39;', "'", my_string ).strip( ) )
+    
     def _get_title_url_here( article_elem ):
         #
         ## first find candidate title
         candidate_title_elem = list(filter(lambda elem: 'class' in elem.attrs and 'audio-module-title' in elem['class'], article_elem.find_all( )))
         assert( len( candidate_title_elem ) != 0 )
         candidate_title_elem = candidate_title_elem[ 0 ]
-        candidate_title = titlecase.titlecase( candidate_title_elem.text.strip( ) )
+        candidate_title = _fix_title( candidate_title_elem.text.strip( ) )
         #
         ## now get episode URL
         candidate_url_elem = list(filter(lambda elem: 'href' in elem.attrs and 'ondemand' in elem['href'], article_elem.find_all('a')))
@@ -399,7 +403,7 @@ def get_title_mp3_urls_working_2023( date_s, debug = False ):
 
     def _get_title_url_here_something( elem ):
       assert( 'title' in elem )
-      candidate_title = titlecase.titlecase( elem[ 'title' ].split(':')[1].strip( ) )
+      candidate_title = _fix_title( elem[ 'title' ].split(':')[1].strip( ) )
       #
       assert( 'audioUrl' in elem )
       candidate_url_split = urlsplit( elem[ 'audioUrl' ] )
@@ -409,7 +413,7 @@ def get_title_mp3_urls_working_2023( date_s, debug = False ):
     def _plan_C_get_title_url_here( elem ):
       data_here = json.loads( elem[ 'data-metrics-ga4' ] )
       assert( 'title' in data_here )
-      candidate_title = titlecase.titlecase( data_here[ 'title' ].strip( ) )
+      candidate_title = _fix_title( data_here[ 'title' ].strip( ) )
       #
       ## now get the episode URL
       embed_url = elem['data-embed-url']
