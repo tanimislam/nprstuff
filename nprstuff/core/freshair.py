@@ -1,11 +1,11 @@
 import os, glob, datetime, json
-import time, re, titlecase, tempfile, logging
+import time, re, titlecase, tempfile
 import mutagen.mp4, subprocess, requests, shutil
 from pathos.multiprocessing import Pool, cpu_count, ThreadPool
 from urllib.parse import urljoin, urlsplit
 from bs4 import BeautifulSoup
 from nprstuff.core import npr_utils
-from nprstuff import resourceDir
+from nprstuff import resourceDir, nprstuff_logger as logger
 
 _npr_FreshAir_progid = 13
 
@@ -36,7 +36,7 @@ def _download_file( input_tuple ):
     mp3URL, filename = input_tuple
     resp = requests.get( mp3URL, stream = True )
     if not resp.ok:
-        logging.error( 'SOMETHING HAPPENED WITH %s' % filename )
+        logger.error( 'SOMETHING HAPPENED WITH %s' % filename )
         return None
     #
     with open(filename, 'wb') as openfile:
@@ -90,10 +90,10 @@ def _process_freshairs_by_year_tuple( input_tuple ):
         time0 = time.perf_counter( )
         try:
             fname = get_freshair(outputdir, date_s, order_totnum = ( order, totnum ), driver = driver )
-            logging.info( 'processed %s in %0.3f seconds.' % ( os.path.basename(fname), time.perf_counter( ) - time0 ) )
+            logger.info( 'processed %s in %0.3f seconds.' % ( os.path.basename(fname), time.perf_counter( ) - time0 ) )
         except Exception as e:
-            logging.error( str( e ) )
-            logging.error('Could not create Fresh Air episode for date %s for some reason' %
+            logger.error( str( e ) )
+            logger.error('Could not create Fresh Air episode for date %s for some reason' %
                 npr_utils.get_datestring( date_s ) )
             
 def process_all_freshairs_by_year(yearnum, inputdir, verbose = True, justCoverage = False):
@@ -186,7 +186,7 @@ def _find_missing_dates(
     input_tuples = list( map(lambda day: datetime.datetime.strptime(
         '%02d.%02d.%04d' % ( day, mon, year ),
         '%d.%m.%Y').date( ), days_remain ) )
-    logging.info( 'list of input_tuples: %s.' % input_tuples )
+    logger.info( 'list of input_tuples: %s.' % input_tuples )
     # pool = multiprocessing.Pool( processes = multiprocessing.cpu_count( ) )
     with ThreadPool( processes = min( cpu_count( ), len( input_tuples ) ) ) as pool:
         successes = list(
@@ -246,7 +246,7 @@ def _get_freshair_lowlevel( outputdir, date_s, titles ):
     split_cmd = [ avconv_exec, '-y', '-i', avconv_concat_cmd, '-ar', '44100', '-ac', '2',
                  '-threads', '%d' % multiprocessing.cpu_count(),
                  '-strict', 'experimental', '-acodec', 'aac', m4afile ]
-    logging.info( 'syntax for NPR Fresh Air %s: %s.' % (
+    logger.info( 'syntax for NPR Fresh Air %s: %s.' % (
         date_s, split_cmd ) )
     proc = subprocess.Popen(split_cmd, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
     stdout_val, stderr_val = proc.communicate()
@@ -327,7 +327,7 @@ def get_title_mp3_urls_attic( outputdir, date_s, debug = False, to_file_debug = 
     print( full_URL )
     
     if not resp.ok:
-        logging.info(
+        logger.info(
             'ERROR GETTING FRESH AIR STORY FOR %s' %
             date_s.strftime('%d %B %Y' ) )
         return None
@@ -452,7 +452,7 @@ def get_title_mp3_urls_working_2023( date_s, debug = False ):
         article_url_elem = article_url_elem[ 0 ]
         article_url_split = urlsplit( article_url_elem['href'].strip( ) )
         article_url = '%s://%s%s' % ( article_url_split.scheme, article_url_split.netloc, article_url_split.path )
-        logging.debug( 'URL TO GET = %s.' % article_url )
+        logger.debug( 'URL TO GET = %s.' % article_url )
         #
         ## first get the info
         resp = requests.get( article_url )
@@ -502,7 +502,7 @@ def get_title_mp3_urls_working_2023( date_s, debug = False ):
         return list(map(lambda entry: ( entry['title'], entry['url'] ), article_infos_in_order))
         
     except Exception as e:
-        logging.info( str( e ) )
+        logger.info( str( e ) )
         return None
     
 
@@ -575,13 +575,13 @@ def get_title_mp3_urls_working( outputdir, date_s, driver, debug = False, to_fil
             date_f = candidate_date.strftime( '%Y-%m-%d' )
             date_elems = list(html_ep.find_all('meta', { 'name' : 'date', 'content' : date_f } ) )
             if len( date_elems ) != 1:
-                logging.error( 'could not find date elem for %s, candidate date = %s' % ( episode_URL, date_f ) )
+                logger.error( 'could not find date elem for %s, candidate date = %s' % ( episode_URL, date_f ) )
                 return None
         #
         ## keep going, get the title    
         title_elems = list(html_ep.find_all('title'))
         if len( title_elems ) == 0:
-            logging.error( 'could not find title elem for %s.' % episode_URL )
+            logger.error( 'could not find title elem for %s.' % episode_URL )
             return None
         title = titlecase.titlecase( ' '.join(map(lambda tok: tok.strip(), title_elems[0].text.split(':')[:-1])) )
         #
@@ -594,7 +594,7 @@ def get_title_mp3_urls_working( outputdir, date_s, driver, debug = False, to_fil
         #
         ## now get order
         mp3_url_sub = re.sub('_rev\.mp3$', '', mp3_url).strip( )
-        logging.debug( 'MP3 URL = %s.' % mp3_url_sub )
+        logger.debug( 'MP3 URL = %s.' % mp3_url_sub )
         bname = re.sub('_$', '', os.path.basename( mp3_url_sub ).split('.')[0].strip( ) ).strip( )
         order = int( bname.split('_')[-1] )
         #

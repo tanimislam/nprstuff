@@ -1,7 +1,8 @@
 import os, sys, signal
 from nprstuff import signal_handler
 signal.signal( signal.SIGINT, signal_handler )
-import datetime, time, multiprocessing, glob, mutagen.mp4
+import datetime, time, glob, mutagen.mp4
+from multiprocessing import Pool, cpu_count
 from nprstuff import logging_dict, nprstuff_logger as logger
 from nprstuff.core import freshair, freshair_by_year, npr_utils
 from argparse import ArgumentParser
@@ -25,10 +26,12 @@ def _freshair_crontab( ):
         return
     #
     ## now download the episode into the correct directory
+    dirname = os.path.join( _default_inputdir, '%04d' % date_s.year )
     try:
-        freshair.get_freshair(
-            _default_inputdir, current_date,
-            check_if_exist = True)
+      if not os.path.isdir( dirname ): os.mkdir( dirname )
+      freshair.get_freshair(
+        dirname, current_date,
+        check_if_exist = True)
     except: pass
 
 def _freshair( ):
@@ -116,25 +119,32 @@ def _find_NPR_files_to_modify_perproc( filename ):
     return mydate
         
 def _find_NPR_dates_to_fix( ):
-    filenames_to_process = glob.glob( os.path.join(
-        _default_inputdir, 'NPR.FreshAir.*.m4a' ) )
-    with multiprocessing.Pool(processes=multiprocessing.cpu_count()) as pool:
-        return set(filter(None, pool.map(
-            _find_NPR_files_to_modify_perproc, filenames_to_process ) ) )
+  time0 = time.perf_counter( )
+  filenames_to_process = glob.glob( os.path.join(
+    _default_inputdir, '*', 'NPR.FreshAir.*.m4a' ) )
+  logger.info( 'found %02d file names to process.' % len( filenames_to_process ) )
+  with Pool(processes = cpu_count( ) ) as pool:
+    missing_dates = set(filter(None, pool.map(
+      _find_NPR_files_to_modify_perproc, filenames_to_process ) ) )
+    logger.info( 'found %02d dates to fix in %0.3f seconds.' % (
+      len( missing_dates ), time.perf_counter( ) - time0 ) )
+    return missing_dates
 
-def _process_dates(npr_dates_to_fix, verbose = False):
-    if verbose and len(npr_dates_to_fix) > 0:
-        print( 'GOT %d dates to fix' % len(npr_dates_to_fix) )
-    time0 = time.time()
-    for idx, mydate in enumerate(npr_dates_to_fix):
-        freshair.get_freshair(_default_inputdir, mydate)
-        if verbose:
-            print( 'PROCESSED %d / %d DATES IN %0.3f SECONDS' % (
-                idx + 1,
-                len(npr_dates_to_fix), time.time() - time0) )
-    if verbose and len(npr_dates_to_fix) > 0:
-        print( 'PROCESSED ALL DATES IN %0.3f SECONDS' % ( time.time() - time0) )
+def _process_dates( npr_dates_to_fix ):
+  time0 = time.perf_counter( )
+  if len(npr_dates_to_fix) > 0:
+    logger.info( 'GOT %d dates to fix' % len(npr_dates_to_fix) )
+  for idx, mydate in enumerate(npr_dates_to_fix):
+    dirname = os.path.join( _default_inputdir, '%04d' % mydate.year )
+    freshair.get_freshair( dirname, mydate)
+    logger.info(
+      'PROCESSED %d / %d DATES IN %0.3f SECONDS' % (
+        idx + 1,
+        len( npr_dates_to_fix ), time.perf_counter( ) - time0 ) )
+    if len( npr_dates_to_fix ) > 0:
+      logger.info(
+        'PROCESSED ALL DATES IN %0.3f SECONDS' % ( time.perf_counter( ) - time0) )
 
 def _freshair_fix_crontab( verbose = True ):
-    npr_dates_to_fix = _find_NPR_dates_to_fix( )
-    _process_dates( npr_dates_to_fix, verbose = verbose )
+  npr_dates_to_fix = _find_NPR_dates_to_fix( )
+  _process_dates( npr_dates_to_fix, verbose = verbose )
