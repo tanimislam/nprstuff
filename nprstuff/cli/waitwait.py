@@ -25,18 +25,18 @@ def _get_last_saturday(datetime_s):
 
 def _waitwait( ):
     parser = ArgumentParser( )
-    parser.add_argument('--dirname', dest='dirname', type=str,
+    parser.add_argument('-X', '--dirname', dest='dirname', type=str,
                         action = 'store', default = _default_inputdir,
                         help = 'Name of the directory to store the file. Default is %s.' %
                         _default_inputdir )
-    parser.add_argument('--date', dest='date', type=str,
+    parser.add_argument('-d', '--date', dest='date', type=str,
                         action = 'store', default =
                         get_datestring(_get_last_saturday( datetime.datetime.now())),
                         help = 'The date, in the form of "January 1, 2014." The default is last Saturday, %s.' %
                         get_datestring( _get_last_saturday( datetime.datetime.now() ) ) )
-    parser.add_argument('--dump', dest='do_dump', action='store_true', default = False,
-                        help = 'If chosen, download the NPR XML data sheet for this Wait Wait episode.')
-    parser.add_argument('--level', dest='level', action='store', type=str, default = 'NONE',
+    parser.add_argument('-D', '--dump', dest='do_dump', action='store_true', default = False,
+                        help = 'If chosen, download the NPR HTML data sheet for this Wait Wait episode.')
+    parser.add_argument('-L', '--level', dest='level', action='store', type=str, default = 'NONE',
                         choices = sorted( logging_dict ),
                         help = 'choose the debug level for downloading NPR Wait Wait episodes or their XML representation of episode info. Can be one of %s. Default is NONE.' % sorted( logging_dict ) )
     parser.add_argument('--justfix', dest='do_justfix', action='store_true', default = False,

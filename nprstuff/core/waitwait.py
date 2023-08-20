@@ -214,6 +214,10 @@ def get_title_mp3_urls_working_2023( date_s, debug = False ):
         article_infos_in_order = sorted(
             map(_get_title_url_here, article_elems ),
             key = lambda entry: entry[ 'url' ] )
+        if len( article_infos_in_order ) == 1:
+          article_infos_in_order = list(map(lambda entry: {
+            'url' : entry['url'],
+            'title' : ': '.join(list(map(lambda tok: tok.strip(), entry['title'].split(':')))[1:]) }, article_infos_in_order ) )
         return list(map(lambda entry: ( entry['title'], entry['url'] ), article_infos_in_order))
     except Exception as e:
         print( str( e ) )
@@ -424,7 +428,7 @@ def get_waitwait(
     year = date_s.year
     decdate = npr_utils.get_decdate( date_s )
     m4afile = os.path.join(outputdir, 'NPR.WaitWait.%s.m4a' % decdate )
-    logging.info( 'INFO TO GET FIGURE OUT get_title_mp3s_url_working: %s, %s, %s, %s' % ( m4afile, date_s, driver, dump ) )
+    logging.info( 'INFO TO GET FIGURE OUT get_title_mp3s_url_working: %s, %s, %s' % ( m4afile, date_s, dump ) )
     if year >= 2006:
         if dump:
             html = get_title_mp3_urls_working_2023( date_s, debug = True )
@@ -433,7 +437,7 @@ def get_waitwait(
             with open( openfile, 'w') as outfile:
                 outfile.write( '%s\n' % html.prettify( ) )
             return openfile
-        title_mp3_urls = get_title_mp3_urls_working_2023( date_s, driver, debug = False )
+        title_mp3_urls = get_title_mp3_urls_working_2023( date_s, debug = False )
         if title_mp3_urls is None or len( title_mp3_urls ) == 0: return None
         titles, songurls = list(zip(*title_mp3_urls))
         title = date_s.strftime('%B %d, %Y')

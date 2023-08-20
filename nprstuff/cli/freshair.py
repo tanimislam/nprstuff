@@ -20,8 +20,8 @@ def _freshair_crontab( ):
     #
     ## get current time
     current_date = datetime.datetime.now( ).date( )
-    if not npr_utils.is_weekday( current_date ):
-      logger.error(
+    if not npr_utils.is_weekday( current_date ):    
+      logger.error( 
         "Error, today is not a weekday. Instead, today is %s." %
         current_date.strftime('%A') )
       return
