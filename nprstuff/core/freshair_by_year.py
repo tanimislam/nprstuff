@@ -4,7 +4,7 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib.patches import Rectangle
 from mutagen.easymp4 import EasyMP4
-from distutils.spawn import find_executable
+from shutil import which
 from PyQt5.QtGui import QColor
 from nprstuff.core import freshair, npr_utils
 from ive_tanim.core import autocrop_image
@@ -84,7 +84,7 @@ def find_underoccupied_dates( mon, year = _default_year ):
     :rtype: dict
     """
     newdict = {}
-    ffprobe_exec = find_executable( 'ffprobe' )
+    ffprobe_exec = which( 'ffprobe' )
     if ffprobe_exec is None:
         raise ValueError("Error, cannot do work without visible FFPROBE" )
     days = find_occupied_days( mon, year = year )
