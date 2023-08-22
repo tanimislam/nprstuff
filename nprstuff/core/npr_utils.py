@@ -1,10 +1,10 @@
 import calendar, numpy, time, datetime, os
 import multiprocessing, multiprocessing.pool
 from itertools import chain
-from distutils.spawn import find_executable
+from shutil import which
 import urllib.parse as urlparse
 from urllib.parse import urlencode
-from configparser import ConfigParser, RawConfigParser
+from nprstuff import session, NPRStuffConfig, resourceDir
 
 def get_firefox_driver( ):
     """
@@ -17,7 +17,7 @@ def get_firefox_driver( ):
     """
     from selenium import webdriver
     from selenium.webdriver.firefox.options import Options
-    geckodriver = find_executable( 'geckodriver' )
+    geckodriver = which( 'geckodriver' )
     if geckodriver is None:
         raise ValueError("Error, could not find geckodriver to launch Selenium Firefox headless browser." )
     options = Options( )
@@ -35,7 +35,7 @@ def get_chrome_driver( ):
     """
     from selenium import webdriver
     from selenium.webdriver.chrome.options import Options
-    chromedriver = find_executable( 'chromedriver' )
+    chromedriver = which( 'chromedriver' )
     if chromedriver is None:
         raise ValueError("Error, could not find chromedriver to launch Selenium Chromium headless browser.")
     options = Options( )
@@ -51,7 +51,7 @@ def find_necessary_executables( ):
     """
     ffmpeg_exec = None
     for ffmpeg_exc in ('avconv', 'ffmpeg'):
-        ffmpeg_exec = find_executable(ffmpeg_exc)
+        ffmpeg_exec = which(ffmpeg_exc)
         if ffmpeg_exec is not None: break
     if ffmpeg_exec is None: return None
     #
@@ -59,156 +59,115 @@ def find_necessary_executables( ):
 
 def store_api_key( npr_API_key ):
     """
-    Stores a candidate NPR API key into the configuration file, ``~/.config/nprstuff/nprstuff.conf``, into the ``NPR_DATA`` section and ``apikey`` key.
+    Stores a candidate NPR API key into the SQLite3_ configuration database.
 
     :param str npr_API_key: candidate NPR API key.
-
+    :returns: the string ``"SUCCESS"`` if could store the new NPR API KEY. Otherwise, the string ``'ERROR, COULD NOT STORE NPR_DATA api.'``.
+    :rtype: str
+    
     .. seealso:: :py:meth:`get_api_key <nprstuff.core.npr_utils.get_api_key>`.
     """
-    resource = 'nprstuff'
-    filename = '%s.conf' % resource
-    baseConfDir = os.path.abspath(
-        os.path.expanduser( '~/.config/%s' % resource ) )
-    absPath = os.path.join( baseConfDir, filename )
-    if os.path.isdir( absPath ):
-        shutil.rmtree( absPath )
-    if not os.path.isfile( absPath ):
-        cparser = RawConfigParser( )
-    else:
-        cparser = ConfigParser( )
-        cparser.read( absPath )
-    #
-    if 'NPR_DATA' not in cparser.sections( ):
-        cparser.add_section( 'NPR_DATA' )
-    cparser.set('NPR_DATA', 'apikey', npr_API_key)
-    with open( absPath, 'w' ) as openfile:
-        cparser.write( openfile )
-        os.chmod( absPath, 0o600 )
+    val = session.query( NPRStuffConfig ).filter( NPRStuffConfig.service == 'NPR_DATA' ).first( )
+    init_data = { }
+    if val is not None:
+        init_data = val.data
+        session.delete( val )
+        session.commit( )
+    init_data[ 'apikey' ] = npr_API_key
+    newval = NPRStuffConfig( service = 'NPR_DATA', data = init_data )
+    session.add( newval )
+    session.commit( )
+    return 'SUCCESS'
   
 def get_api_key( ):
     """
-    :returns: the NPR API key, stored in ``~/.config/nprstuff/nprstuff.conf``, under the ``NPR_DATA`` section and ``apikey`` key.
+    :returns: the NPR API key, stored in` the SQLite3_ configuration database.
     :rtype: str
 
     .. seealso:: :py:meth:`store_api_key <nprstuff.core.npr_utils.store_api_key>`.
     """
-    resource = 'nprstuff'
-    filename = '%s.conf' % resource
-    baseConfDir = os.path.abspath(
-        os.path.expanduser( '~/.config/%s' % resource ) )
-    absPath = os.path.join( baseConfDir, filename )
-    if not os.path.isfile( absPath ):
-        raise ValueError("Error, default configuration file = %s does not exist." % absPath )
-    cparser = ConfigParser()
-    cparser.read( absPath )
-    if not cparser.has_section('NPR_DATA'):
-        raise ValueError("Error, configuration file has not defined NPR_DATA section.")
-    if not cparser.has_option('NPR_DATA', 'apikey'):
+    val = session.query( NPRStuffConfig ).filter( NPRStuffConfig.service == 'NPR_DATA' ).first( )
+    if val is None: raise ValueError("Error, NPR_DATA configuration does not exist." )
+    init_data = val.data
+    if 'apikey' not in init_data:
         raise ValueError("Error, configuration files has not defined an apikey.")
-    npr_api_key = cparser.get('NPR_DATA', 'apikey')
-    return npr_api_key
+    return init_data[ 'apikey' ]
 
 def store_freshair_downloaddir( freshair_downloaddir ):
     """
-    Stores the default location of the `NPR Fresh Air`_ episodes into the configuration file, ``~/.config/nprstuff/nprstuff.com``, into the ``NPR_DATA`` section and ``freshair_downloaddir`` key.
+    Stores the default location of the `NPR Fresh Air`_ episodes into the SQLite3_ configuration database.
 
     :param str freshair_downloaddir: the default directory to download `NPR Fresh Air`_ episodes.
+    :returns: the string ``"SUCCESS"`` if could store the default directory to download `NPR Fresh Air`_ episodes. Otherwise, the string ``'ERROR, COULD NOT STORE NPR_DATA FRESHAIR DIRECTORY.'``.
+    :rtype: str
     
     .. seealso:: :py:meth:`get_freshair_downloaddir <nprstuff.core.npr_utils.get_freshair_downloaddir>`.
     """
     assert( os.path.isdir( os.path.abspath( freshair_downloaddir ) ) )
-    resource = 'nprstuff'
-    filename = '%s.conf' % resource
-    baseConfDir = os.path.abspath(
-        os.path.expanduser( '~/.config/%s' % resource ) )
-    absPath = os.path.join( baseConfDir, filename )
-    if os.path.isdir( absPath ):
-        shutil.rmtree( absPath )
-    if not os.path.isfile( absPath ):
-        cparser = RawConfigParser( )
-    else:
-        cparser = ConfigParser( )
-        cparser.read( absPath )
-    if 'NPR_DATA' not in cparser.sections( ):
-        cparser.add_section( 'NPR_DATA' )
-    cparser.set( 'NPR_DATA', 'freshair_downloaddir', os.path.abspath( freshair_downloaddir ) )
-    with open( absPath, 'w' ) as openfile:
-        cparser.write( openfile )
-        os.chmod( absPath, 0o600 )
+    val = session.query( NPRStuffConfig ).filter( NPRStuffConfig.service == 'NPR_DATA' ).first( )
+    init_data = { }
+    if val is not None:
+        init_data = val.data
+        session.delete( val )
+        session.commit( )
+    init_data[ 'freshair_downloaddir' ] = os.path.abspath( freshair_downloaddir )
+    newval =  NPRStuffConfig( service = 'NPR_DATA', data = init_data )
+    session.add( newval )
+    session.commit( )
+    return "SUCCESS"
 
 def get_freshair_downloaddir( ):
     """
-    :returns: the `NPR Fresh Air`_ default download directory, stored in ``~/.config/nprstuff/nprstuff.conf``, under the ``NPR_DATA`` section and ``freshair_downloaddir`` key.
+    :returns: the `NPR Fresh Air`_ default download directory, stored in the SQLite3_ configuration database.
     :rtype: str
     
     .. seealso:: :py:meth:`store_freshair_downloaddir <nprstuff.core.npr_utils.store_freshair_downloaddir>`.
     """
-    resource = 'nprstuff'
-    filename = '%s.conf' % resource
-    baseConfDir = os.path.abspath(
-        os.path.expanduser( '~/.config/%s' % resource ) )
-    absPath = os.path.join( baseConfDir, filename )
-    if not os.path.isfile( absPath ):
-        raise ValueError("Error, default configuration file = %s does not exist." % absPath )
-    cparser = ConfigParser()
-    cparser.read( absPath )
-    if not cparser.has_section('NPR_DATA'):
-        raise ValueError("Error, configuration file has not defined NPR_DATA section.")
-    if not cparser.has_option('NPR_DATA', 'freshair_downloaddir'):
+    val = session.query( NPRStuffConfig ).filter( NPRStuffConfig.service == 'NPR_DATA' ).first( )
+    if val is None: raise ValueError("Error, NPR_DATA configuration does not exist." )
+    init_data = val.data
+    if 'freshair_downloaddir' not in init_data:
         raise ValueError("Error, configuration file has not defined a default NPR Fresh Air download directory.")
-    freshair_downloaddir = cparser.get( 'NPR_DATA', 'freshair_downloaddir' )
+    freshair_downloaddir = init_data[ 'freshair_downloaddir' ]
     assert( os.path.isdir( freshair_downloaddir ) )
     return freshair_downloaddir
 
 def store_waitwait_downloaddir( waitwait_downloaddir ):
     """
-    Stores the default location of the `NPR Fresh Air`_ episodes into the configuration file, ``~/.config/nprstuff/nprstuff.com``, into the ``NPR_DATA`` section and ``waitwait_downloaddir`` key.
+    Stores the default location of the `NPR Fresh Air`_ episodes into the SQLite3_ configuration database.
 
-    :param str waitwait_downloaddir: the default directory to download `NPR Fresh Air`_ episodes.
+    :param str waitwait_downloaddir: the default directory to download `NPR Wait Wait Air`_ episodes.
+    :returns: the string ``"SUCCESS"`` if could store the default directory to download `NPR Wait Wairt`_ episodes. Otherwise, the string ``'ERROR, COULD NOT STORE NPR_DATA WAITWAIT DIRECTORY.'``.
+    :rtype: str
     
     .. seealso:: :py:meth:`get_waitwait_downloaddir <nprstuff.core.npr_utils.get_waitwait_downloaddir>`.
     """
     assert( os.path.isdir( os.path.abspath( waitwait_downloaddir ) ) )
-    resource = 'nprstuff'
-    filename = '%s.conf' % resource
-    baseConfDir = os.path.abspath(
-        os.path.expanduser( '~/.config/%s' % resource ) )
-    absPath = os.path.join( baseConfDir, filename )
-    if os.path.isdir( absPath ):
-        shutil.rmtree( absPath )
-    if not os.path.isfile( absPath ):
-        cparser = RawConfigParser( )
-    else:
-        cparser = ConfigParser( )
-        cparser.read( absPath )
-    if 'NPR_DATA' not in cparser.sections( ):
-        cparser.add_section( 'NPR_DATA' )
-    cparser.set( 'NPR_DATA', 'waitwait_downloaddir', os.path.abspath( waitwait_downloaddir ) )
-    with open( absPath, 'w' ) as openfile:
-        cparser.write( openfile )
-        os.chmod( absPath, 0o600 )
+    val = session.query( NPRStuffConfig ).filter( NPRStuffConfig.service == 'NPR_DATA' ).first( )
+    init_data = { }
+    if val is not None:
+        init_data = val.data
+        session.delete( val )
+        session.commit( )
+    init_data[ 'waitwait_downloaddir' ] = os.path.abspath( waitwait_downloaddir )
+    newval =  NPRStuffConfig( service = 'NPR_DATA', data = init_data )
+    session.add( newval )
+    session.commit( )
+    return "SUCCESS"
 
 def get_waitwait_downloaddir( ):
     """
-    :returns: the `NPR Fresh Air`_ default download directory, stored in ``~/.config/nprstuff/nprstuff.conf``, under the ``NPR_DATA`` section and ``waitwait_downloaddir`` key.
+    :returns: the `NPR Wait Wait`_ default download directory, stored in the SQLite3_ configuration database.
     :rtype: str
     
     .. seealso:: :py:meth:`store_waitwait_downloaddir <nprstuff.core.npr_utils.store_waitwait_downloaddir>`.
     """
-    resource = 'nprstuff'
-    filename = '%s.conf' % resource
-    baseConfDir = os.path.abspath(
-        os.path.expanduser( '~/.config/%s' % resource ) )
-    absPath = os.path.join( baseConfDir, filename )
-    if not os.path.isfile( absPath ):
-        raise ValueError("Error, default configuration file = %s does not exist." % absPath )
-    cparser = ConfigParser()
-    cparser.read( absPath )
-    if not cparser.has_section('NPR_DATA'):
-        raise ValueError("Error, configuration file has not defined NPR_DATA section.")
-    if not cparser.has_option('NPR_DATA', 'waitwait_downloaddir'):
-        raise ValueError("Error, configuration file has not defined a default NPR Fresh Air download directory.")
-    waitwait_downloaddir = cparser.get( 'NPR_DATA', 'waitwait_downloaddir' )
+    val = session.query( NPRStuffConfig ).filter( NPRStuffConfig.service == 'NPR_DATA' ).first( )
+    if val is None: raise ValueError("Error, NPR_DATA configuration does not exist." )
+    init_data = val.data
+    if 'waitwait_downloaddir' not in init_data:
+        raise ValueError("Error, configuration file has not defined a default NPR Wait Wait download directory.")
+    waitwait_downloaddir = init_data[ 'waitwait_downloaddir' ]
     assert( os.path.isdir( waitwait_downloaddir ) )
     return waitwait_downloaddir
   

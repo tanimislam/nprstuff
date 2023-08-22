@@ -66,7 +66,7 @@ def _waitwait_by_year( ):
 def _waitwait_crontab( ):
     parser = ArgumentParser( )
     parser.add_argument(
-        '--level', dest='level', action='store', type=str, default = 'NONE',
+        '-L', '--level', dest='level', action='store', type=str, default = 'NONE',
         choices = sorted( logging_dict ),
         help = 'choose the debug level for downloading NPR Wait Wait episodes or their XML representation of episode info. Can be one of %s. Default is NONE.' % sorted( logging_dict ) )
     args = parser.parse_args( )
