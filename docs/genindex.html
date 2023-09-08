@@ -10,10 +10,11 @@
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=359c27e9"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="#" />
     <link rel="search" title="Search" href="search.html" /> 
@@ -93,7 +94,6 @@
  | <a href="#T"><strong>T</strong></a>
  | <a href="#U"><strong>U</strong></a>
  | <a href="#W"><strong>W</strong></a>
- | <a href="#Y"><strong>Y</strong></a>
  
 </div>
 <h2 id="A">A</h2>
@@ -203,8 +203,6 @@
 </li>
       <li><a href="core_api.html#nprstuff.core.npr_utils.get_chrome_driver">get_chrome_driver() (in module nprstuff.core.npr_utils)</a>
 </li>
-      <li><a href="core_api.html#nprstuff.core.convert_image_youtube.get_cloudconvert_api_key">get_cloudconvert_api_key() (in module nprstuff.core.convert_image_youtube)</a>
-</li>
       <li><a href="core_api.html#nprstuff.core.freshair_by_year.get_color">get_color() (in module nprstuff.core.freshair_by_year)</a>
 </li>
       <li><a href="core_api.html#nprstuff.core.npr_utils.get_datestring">get_datestring() (in module nprstuff.core.npr_utils)</a>
@@ -227,10 +225,10 @@
 </li>
       <li><a href="core_api.html#nprstuff.core.freshair.get_freshair_valid_dates_remaining_tuples">get_freshair_valid_dates_remaining_tuples() (in module nprstuff.core.freshair)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="email_api.html#nprstuff.npremail.email_imgur.NPRStuffIMGClient.get_image_md5">get_image_md5() (nprstuff.npremail.email_imgur.NPRStuffIMGClient class method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="email_api.html#nprstuff.npremail.get_imgurl_credentials">get_imgurl_credentials() (in module nprstuff.npremail)</a>
 </li>
       <li><a href="email_api.html#nprstuff.npremail.email_imgur.NPRStuffIMGClient.get_main_album_name">get_main_album_name() (nprstuff.npremail.email_imgur.NPRStuffIMGClient method)</a>
@@ -257,6 +255,12 @@
         <li><a href="core_api.html#nprstuff.core.waitwait.get_title_mp3_urls_working">(in module nprstuff.core.waitwait)</a>
 </li>
       </ul></li>
+      <li><a href="core_api.html#nprstuff.core.freshair.get_title_mp3_urls_working_2023">get_title_mp3_urls_working_2023() (in module nprstuff.core.freshair)</a>
+
+      <ul>
+        <li><a href="core_api.html#nprstuff.core.waitwait.get_title_mp3_urls_working_2023">(in module nprstuff.core.waitwait)</a>
+</li>
+      </ul></li>
       <li><a href="core_api.html#nprstuff.core.waitwait.get_waitwait">get_waitwait() (in module nprstuff.core.waitwait)</a>
 </li>
       <li><a href="core_api.html#nprstuff.core.waitwait.get_waitwait_date_from_name">get_waitwait_date_from_name() (in module nprstuff.core.waitwait)</a>
@@ -268,8 +272,6 @@
       <li><a href="core_api.html#nprstuff.core.waitwait.get_waitwait_valid_dates_remaining_tuples">get_waitwait_valid_dates_remaining_tuples() (in module nprstuff.core.waitwait)</a>
 </li>
       <li><a href="core_api.html#nprstuff.core.npr_utils.get_weekday_times_in_year">get_weekday_times_in_year() (in module nprstuff.core.npr_utils)</a>
-</li>
-      <li><a href="core_api.html#nprstuff.core.convert_image_youtube.get_youtube_file">get_youtube_file() (in module nprstuff.core.convert_image_youtube)</a>
 </li>
       <li><a href="email_api.html#nprstuff.npremail.email_imgur.PNGPicObject.getInfoGUI">getInfoGUI() (nprstuff.npremail.email_imgur.PNGPicObject method)</a>
 </li>
@@ -323,8 +325,6 @@
       <ul>
         <li><a href="top_level_api.html#module-nprstuff">nprstuff</a>
 </li>
-        <li><a href="core_api.html#module-nprstuff.core.convert_image_youtube">nprstuff.core.convert_image_youtube</a>
-</li>
         <li><a href="core_api.html#module-nprstuff.core.freshair">nprstuff.core.freshair</a>
 </li>
         <li><a href="core_api.html#module-nprstuff.core.freshair_by_year">nprstuff.core.freshair_by_year</a>
@@ -363,13 +363,6 @@
 
       <ul>
         <li><a href="top_level_api.html#module-nprstuff">module</a>
-</li>
-      </ul></li>
-      <li>
-    nprstuff.core.convert_image_youtube
-
-      <ul>
-        <li><a href="core_api.html#module-nprstuff.core.convert_image_youtube">module</a>
 </li>
       </ul></li>
       <li>
@@ -468,10 +461,6 @@
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="core_api.html#nprstuff.core.convert_image_youtube.pdf2png">pdf2png() (in module nprstuff.core.convert_image_youtube)</a>
-</li>
-      <li><a href="core_api.html#nprstuff.core.convert_image_youtube.png2png">png2png() (in module nprstuff.core.convert_image_youtube)</a>
-</li>
       <li><a href="email_api.html#nprstuff.npremail.email_imgur.PNGPicDelegate">PNGPicDelegate (class in nprstuff.npremail.email_imgur)</a>
 </li>
       <li><a href="email_api.html#nprstuff.npremail.email_imgur.PNGPicLabel">PNGPicLabel (class in nprstuff.npremail.email_imgur)</a>
@@ -480,10 +469,10 @@
 </li>
       <li><a href="email_api.html#nprstuff.npremail.email_imgur.PNGPicQSortFilterModel">PNGPicQSortFilterModel (class in nprstuff.npremail.email_imgur)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="email_api.html#nprstuff.npremail.email_imgur.PNGPicTableModel">PNGPicTableModel (class in nprstuff.npremail.email_imgur)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="email_api.html#nprstuff.npremail.email_imgur.PNGPicTableView">PNGPicTableView (class in nprstuff.npremail.email_imgur)</a>
 </li>
       <li><a href="email_api.html#nprstuff.npremail.email_imgur.PNGWidget">PNGWidget (class in nprstuff.npremail.email_imgur)</a>
@@ -586,8 +575,6 @@
 </li>
       <li><a href="core_api.html#nprstuff.core.freshair_by_year.suncal">suncal() (in module nprstuff.core.freshair_by_year)</a>
 </li>
-      <li><a href="core_api.html#nprstuff.core.convert_image_youtube.svg2png">svg2png() (in module nprstuff.core.convert_image_youtube)</a>
-</li>
   </ul></td>
 </tr></table>
 
@@ -615,14 +602,6 @@
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="core_api.html#nprstuff.core.npr_utils.weekdays_of_month_of_year">weekdays_of_month_of_year() (in module nprstuff.core.npr_utils)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="Y">Y</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="core_api.html#nprstuff.core.convert_image_youtube.youtube2gif">youtube2gif() (in module nprstuff.core.convert_image_youtube)</a>
 </li>
   </ul></td>
 </tr></table>
