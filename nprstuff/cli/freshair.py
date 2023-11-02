@@ -16,24 +16,34 @@ def _freshair_crontab( ):
     """
     This python method downloads a Fresh Air episode on a particular weekday.
     """
-    logger.setLevel( logging_dict[ 'INFO' ] )
+    parser = ArgumentParser( )
+    parser.add_argument(
+        '-L', '--level', dest='level', action='store', type=str, default = 'NONE',
+        choices = sorted( logging_dict ),
+        help = 'choose the debug level for downloading NPR Fresh Air episodes or their XML representation of episode info. Can be one of %s. Default is NONE.' % sorted( logging_dict ) )
+    args = parser.parse_args( )
+    #
+    logger.setLevel( logging_dict[ args.level ] )
     #
     ## get current time
     current_date = datetime.datetime.now( ).date( )
+    logger.info( "CURRENT DATE = %s." % current_date.strftime( "%B %d, %Y" ) )
     if not npr_utils.is_weekday( current_date ):    
-      logger.error( 
-        "Error, today is not a weekday. Instead, today is %s." %
-        current_date.strftime('%A') )
-      return
+        logger.error( 
+            "Error, today is not a weekday. Instead, today is %s." %
+            current_date.strftime('%A') )
+        return
     #
     ## now download the episode into the correct directory
     dirname = os.path.join( _default_inputdir, '%04d' % current_date.year )
+    logger.info( "OUTPUT DIRECTORY = %s." % os.path.abspath( dirname ) )
     try:
-      if not os.path.isdir( dirname ): os.mkdir( dirname )
-      freshair.get_freshair(
-        dirname, current_date,
-        check_if_exist = True)
-    except: pass
+        if not os.path.isdir( dirname ): os.mkdir( dirname )
+        freshair.get_freshair(
+            dirname, current_date )
+    except Exception as e:
+        logger.error("GOT SOME EXCEPTION: %s." % str( e ) )
+        pass
 
 def _freshair( ):
     parser = ArgumentParser( )
