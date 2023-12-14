@@ -106,7 +106,8 @@ def _freshair_by_year( ):
         freshair.process_all_freshairs_by_year(
             args.year, args.inputdir, verbose = args.is_verbose,
             justCoverage = args.get_coverage )
-    else: freshair_by_year.create_plot_year( args.year )
+    else: freshair_by_year.create_plot_year(
+        args.year, format = 'png' )
 
 #
 ##

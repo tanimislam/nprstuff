@@ -610,7 +610,7 @@ def get_title_mp3_urls_working( outputdir, date_s, driver, debug = False, to_fil
 def get_freshair(
     outputdir, date_s, order_totnum = None,
     debug = False, check_if_exist = False,
-    mp3_exist = False, relax_date_check = False ):
+    mp3_exist = False, relax_date_check = False, to_file_debug = True ):
     """
     The main driver method that downloads `NPR Fresh Air`_ episodes for a given date into a specified output directory.
     
@@ -660,9 +660,11 @@ def get_freshair(
         myhtml = get_title_mp3_urls_working_2023( date_s, debug = True )
         decdate = date_s.strftime('%d.%m.%Y')
         outputfile = os.path.join(outputdir, 'NPR.FreshAir.tree.%s.html' % decdate)
-        with open( outputfile, 'w') as openfile:
-            openfile.write( '%s\n' % myhtml.prettify( ) )
-        return outputfile
+        if to_file_debug:
+            with open( outputfile, 'w') as openfile:
+                openfile.write( '%s\n' % myhtml.prettify( ) )
+            return outputfile
+        return myhtml
     title_mp3_urls = get_title_mp3_urls_working_2023( date_s, debug = False )
     if title_mp3_urls is None or len( title_mp3_urls ) == 0: return None
 
