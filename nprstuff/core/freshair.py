@@ -1,4 +1,4 @@
-import os, glob, datetime, json
+import os, glob, datetime, json, logging
 import time, re, titlecase, tempfile
 import mutagen.mp4, subprocess, requests, shutil
 from pathos.multiprocessing import Pool, cpu_count, ThreadPool
@@ -84,25 +84,29 @@ def get_freshair_valid_dates_remaining_tuples(yearnum, inputdir):
     return order_dates_remain
 
 def _process_freshairs_by_year_tuple( input_tuple ):
-    outputdir, totnum, verbose, datetimes_order_tuples = input_tuple
-    driver = npr_utils.get_chrome_driver( )
+    outputdir, totnum, datetimes_order_tuples = input_tuple
     for date_s, order in datetimes_order_tuples:
         time0 = time.perf_counter( )
+        logging.debug( 'DATE = %s, order = %d, totnum = %d, outputdir = %s.' % (
+            date_s, order, totnum, outputdir ) )
         try:
-            fname = get_freshair(outputdir, date_s, order_totnum = ( order, totnum ), driver = driver )
+            fname = get_freshair(outputdir, date_s, order_totnum = ( order, totnum ) )
+            if fname is None:
+                logger.info( 'could not process freshair date = %s in %0.3f seconds.' % (
+                    npr_utils.get_datestring( date_s ), time.perf_counter( ) - time0 ) )
+                return
             logger.info( 'processed %s in %0.3f seconds.' % ( os.path.basename(fname), time.perf_counter( ) - time0 ) )
         except Exception as e:
             logger.error( str( e ) )
             logger.error('Could not create Fresh Air episode for date %s for some reason' %
                 npr_utils.get_datestring( date_s ) )
             
-def process_all_freshairs_by_year(yearnum, inputdir, verbose = True, justCoverage = False):
+def process_all_freshairs_by_year(yearnum, inputdir, justCoverage = False):
     """
     Either downloads all missing `NPR Fresh Air`_ episodes for a given year, or prints out a report of those missing episodes.
     
     :param int yearnum: the year for which to search for missing `NPR Fresh Air`_ episodes.
     :param str inputdir:  the directory in which the `NPR Fresh Air`_ episodes live.
-    :param bool verbose: if ``True``, the print out more debugging output.
     :param bool justCoverage: if ``True``, then only report on missing `NPR Fresh Air`_ episodes.
 
     .. seealso:: :py:meth:`get_freshair <nprstuff.core.freshair.get_freshair>`.
@@ -112,23 +116,22 @@ def process_all_freshairs_by_year(yearnum, inputdir, verbose = True, justCoverag
     totnum = order_dates_remain[0][1]
     nprocs = cpu_count( )
     input_tuples = list(filter(
-        lambda tup: len( tup[-1] ) != 0, [ ( inputdir, totnum, verbose, 
+        lambda tup: len( tup[-1] ) != 0, [ ( inputdir, totnum,
                       [ ( date_s, order ) for ( order, totnum, date_s) in 
                        order_dates_remain if (order - 1) % nprocs == procno ] ) for
                     procno in range(nprocs) ] ) )
     time0 = time.perf_counter( )
     if not justCoverage:
         with npr_utils.MyPool(processes = min( cpu_count( ), len( input_tuples ) ) ) as pool:
-            list( pool.map(_process_freshairs_by_year_tuple, input_tuples) )
+            _ = list( pool.map(_process_freshairs_by_year_tuple, input_tuples) )
     else:
         print( 'Missing %d episodes for %04d.' % ( len(order_dates_remain), yearnum ) )
         for order, totnum, date_s in order_dates_remain:
             print( 'Missing NPR FreshAir episode for %s.' %
                   date_s.strftime('%B %d, %Y') )
     #
-    if verbose:
-        print( 'processed all Fresh Air downloads for %04d in %0.3f seconds.' %
-              ( yearnum, time.perf_counter( ) - time0 )  )
+    logging.info( 'processed all Fresh Air downloads for %04d in %0.3f seconds.' %
+                 ( yearnum, time.perf_counter( ) - time0 )  )
 
 def _process_freshair_titlemp3_tuples( html ):
     def _get_title( story_elem ):
@@ -622,9 +625,12 @@ def get_freshair(
     :param bool check_if_exist: optional argument, if ``True`` and if the correct file name for the `NPR Fresh Air`_ episode exists, then won't overwrite it. Default is ``False``.
     :param bool mp3_exist: optional argument, if ``True`` then check whether the transitional MP3_ files for the stories in the `NPR Fresh Air`_ episode has been downloaded and use the fully downloaded stories to compose an episode. Otherwise, ignore existing downloaded MP3_ stories for download.
     :param bool relax_date_check: optional argument, if ``True`` then do NOT check for article date in NPR stories. Default is ``False``.
+    :param bool to_file_debug: optional argument, if ``True`` and ``debug`` is ``True``, then dump into an XML file. If ``False`` and ``debug`` is ``True``, then returns the :py:class:`list` of :py:class:`tuple` that :py:meth:`get_title_mp3_urls_working_2023 <nprstuff.core.freshair.get_title_mp3_urls_working_2023>` returns.
 
     :returns: the name of the `NPR Fresh Air`_ episode file.
     :rtype: str
+
+    .. _seealso: :py:meth:`get_title_mp3_urls_working_2023 <nprstuff.core.freshair.get_title_mp3_urls_working_2023>`
 
     .. _MP3: https://en.wikipedia.org/wiki/MP3
     """
@@ -658,13 +664,13 @@ def get_freshair(
     #if debug: return data
     if debug:
         myhtml = get_title_mp3_urls_working_2023( date_s, debug = True )
+        if not to_file_debug: return myhtml
+        #
         decdate = date_s.strftime('%d.%m.%Y')
         outputfile = os.path.join(outputdir, 'NPR.FreshAir.tree.%s.html' % decdate)
-        if to_file_debug:
-            with open( outputfile, 'w') as openfile:
-                openfile.write( '%s\n' % myhtml.prettify( ) )
-            return outputfile
-        return myhtml
+        with open( outputfile, 'w') as openfile:
+            openfile.write( '%s\n' % myhtml.prettify( ) )
+        return outputfile
     title_mp3_urls = get_title_mp3_urls_working_2023( date_s, debug = False )
     if title_mp3_urls is None or len( title_mp3_urls ) == 0: return None
 

@@ -82,29 +82,26 @@ def _freshair( ):
 def _freshair_by_year( ):
     default_year = datetime.datetime.now( ).year
     parser = ArgumentParser()
-    parser.add_argument('--year', dest='year', action='store', type=int, default = default_year,
+    parser.add_argument( '-y', '--year', dest='year', action='store', type=int, default = default_year,
                         help = 'Year in which to write out all Fresh Air episodes. Default is %d.' %
                         default_year )
-    parser.add_argument( '--inputdir', dest = 'inputdir', action='store', type = str,
+    parser.add_argument( '-i', '--inputdir', dest = 'inputdir', action='store', type = str,
                         default = _default_inputdir, help =
                         ' '.join([ 'Directory into which',
                                   'to store the NPR Fresh Air episodes.',
                                   'Default is %s.' % _default_inputdir ]) )
-    parser.add_argument('--quiet', dest='is_verbose', action='store_false', default = True,
-                        help = ' '.join([ 'If chosen, do not print verbose output from the action of this',
-                                         'script. By default this is false.' ]) )
-    parser.add_argument('--coverage', dest = 'get_coverage', action = 'store_true', default = False,
+    parser.add_argument( '-C', '--coverage', dest = 'get_coverage', action = 'store_true', default = False,
                         help = 'If chosen, just give the list of missing Fresh Air episodes and nothing else.')
-    parser.add_argument('--audit', dest = 'do_audit', action = 'store_true', default = False,
+    parser.add_argument( '-A', '--audit', dest = 'do_audit', action = 'store_true', default = False,
                         help = 'If chosen, do the audit picture here.')
-    parser.add_argument('--level', dest='level', action='store', type=str, default = 'NONE',
+    parser.add_argument('-L', '--level', dest='level', action='store', type=str, default = 'NONE',
                         choices = sorted( logging_dict ),
                         help = 'choose the debug level for downloading NPR Fresh Air episodes or their XML representation of episode info. Can be one of %s. Default is NONE.' % sorted( logging_dict ) )
     args = parser.parse_args( )
     logger.setLevel( logging_dict[ args.level ] )
     if not args.do_audit:
         freshair.process_all_freshairs_by_year(
-            args.year, args.inputdir, verbose = args.is_verbose,
+            args.year, os.path.expanduser( args.inputdir ),
             justCoverage = args.get_coverage )
     else: freshair_by_year.create_plot_year(
         args.year, format = 'png' )
