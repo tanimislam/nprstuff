@@ -85,7 +85,10 @@ def _waitwait_crontab( ):
         days_back = relativedelta( days = days_back )
         current_date = current_date - days_back
         if current_date.year != current_year: return
-    
     #
     ## now download the episode into the correct directory
-    get_waitwait(_default_inputdir, current_date)
+    dirname = os.path.join( _default_inputdir, '%04d' % current_date.year )
+    logger.info( "OUTPUT DIRECTORY = %s." % os.path.abspath( dirname ) )
+    #
+    ## now download the episode into the correct directory
+    get_waitwait(dirname, current_date, check_if_exist = True)

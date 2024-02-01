@@ -392,7 +392,7 @@ def get_title_mp3_urls_working( outputdir, date_s, driver, dump = False ):
     return list(map(lambda tup: ( tup[1], tup[2] ), ordered_npr_waitwait ) )
 
 def get_waitwait(
-    outputdir, date_s, order_totnum = None, dump = False, justFix = False ):
+    outputdir, date_s, order_totnum = None, dump = False, justFix = False, check_if_exist = False ):
     """
     The main driver method that downloads `NPR Wait Wait <waitwait_>`_ episodes for a given date into a specified output directory.
     
@@ -401,6 +401,7 @@ def get_waitwait(
     :param tuple order_totnum: optional argument, the :py:class:`tuple` of track number and total number of tracks of `NPR Wait Wait <waitwait_>`_ episodes for that year. If ``None``, then this information is gathered from :py:meth:`get_order_num_saturday_in_year <nprstuff.core.npr_utils.get_order_num_saturday_in_year>`.
     :param bool dump: optional argument, if ``True`` returns the :py:class:`BeautifulSoup <bs4.BeautifulSoup>` XML tree for the `NPR Wait Wait <waitwait_>`_ episode (and downloads the XML tree into a file). Default is ``False``.
     :param bool justFix: optional argument, if ``True`` and if `NPR Wait Wait <waitwait_>`_ file exists, then just change the title of the M4A_ file. Default is ``False``.
+     :param bool check_if_exist: optional argument, if ``True`` and if the correct file name for the `NPR Wait Wait <waitwait_>`_ episode exists, then won't overwrite it. Default is ``False``.
 
     :returns: the name of the `NPR Wait Wait <waitwait_>`_ episode file.
     :rtype: str
@@ -428,6 +429,7 @@ def get_waitwait(
     year = date_s.year
     decdate = npr_utils.get_decdate( date_s )
     m4afile = os.path.join(outputdir, 'NPR.WaitWait.%s.m4a' % decdate )
+    if check_if_exist and os.path.isfile(m4afile): return
     logging.info( 'INFO TO GET FIGURE OUT get_title_mp3s_url_working: %s, %s, %s' % ( m4afile, date_s, dump ) )
     if year >= 2006:
         if dump:

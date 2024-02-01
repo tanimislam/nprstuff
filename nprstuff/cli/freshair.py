@@ -40,7 +40,7 @@ def _freshair_crontab( ):
     try:
         if not os.path.isdir( dirname ): os.mkdir( dirname )
         freshair.get_freshair(
-            dirname, current_date )
+            dirname, current_date, check_if_exist = True )
     except Exception as e:
         logger.error("GOT SOME EXCEPTION: %s." % str( e ) )
         pass
