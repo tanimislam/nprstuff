@@ -1,7 +1,7 @@
-import os, sys, datetime, titlecase, requests,  logging
+import os, sys, datetime, titlecase, requests
 import codecs, feedparser, glob, time
 from mutagen.id3 import APIC, TDRC, TALB, COMM, TRCK, TPE2, TPE1, TIT2, TCON, ID3
-from nprstuff import nprstuff_logger, logging_dict
+from nprstuff import nprstuff_logger as logger, logging_dict
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 from pathos.multiprocessing import ThreadPool, cpu_count
@@ -72,10 +72,10 @@ def get_americanlife_info(
     # the see if this episode of this american life exists...
     def _get_response( ):
         if hardURL is not None:
-            logging.info('GOING TO %s.' % hardURL )
+            logger.info('GOING TO %s.' % hardURL )
             return requests.get( hardURL, verify = verify )
         if extraStuff is None:
-            logging.info('GOING TO https://www.thisamericanlife.org/radio-archives/episode/%d.' % epno )
+            logger.info('GOING TO https://www.thisamericanlife.org/radio-archives/episode/%d.' % epno )
             html = give_up_ytdlp_thisamericanlife( epno )
             elems = list(filter(lambda elem: 'href' in elem.attrs and '%03d' % epno in elem['href'],
                             html.find_all('link', { 'rel' : 'canonical'})))
@@ -100,7 +100,7 @@ def get_americanlife_info(
     #
     title_elem_list = html.find_all('div', { 'class' : 'episode-title' } )
     if len(title_elem_list) != 1:
-        logging.info("Error, cannot find date and title for This American Life episode #%d." % epno)
+        logger.info("Error, cannot find date and title for This American Life episode #%d." % epno)
         if throwException:
             raise ValueError("Error, cannot find date and title for This American Life episode #%d." % epno)
         else: return None
@@ -122,7 +122,7 @@ def get_TAL_URL( epno, verify = True ):
     url_epelem = 'https://www.thisamericanlife.org/radio-archives/episode/%d' % epno
     response = requests.get( url_epelem, verify = verify )
     if not response.ok:
-        logging.info( 'ERROR, %s not accessible' % url_epelem )
+        logger.info( 'ERROR, %s not accessible' % url_epelem )
         return None
     html = BeautifulSoup( response.content, 'html.parser' )
     #
@@ -137,7 +137,7 @@ def get_TAL_URL( epno, verify = True ):
     #
     podcast_URL_elems = list(filter(is_download_href, html.find_all('a')))
     if len( podcast_URL_elems ) != 1:
-        logging.info( 'ERROR, could not find MP3 podcast URL for episode %d, with page %s.' % (
+        logger.info( 'ERROR, could not find MP3 podcast URL for episode %d, with page %s.' % (
             epno, url_epelem ) )
         return None
     podcast_URL_elem = podcast_URL_elems[ 0 ]
@@ -159,7 +159,7 @@ def get_american_life_remaining( ):
             elem = list(filter(lambda elem: "this week" in elem.text.lower(), html.find_all("a")))[0]
             
         except Exception as e:
-            logging.info("ERROR WHEN TRYING TO LOOK FOR LAST TAL EPISODE: %s." % str( e ) )
+            logger.info("ERROR WHEN TRYING TO LOOK FOR LAST TAL EPISODE: %s." % str( e ) )
             return max( episodes_here )
     episodes_remaining = set(range(1, max( episodes_here ) + 1 ) ) - episodes_here
     if len( episodes_remaining ) == 0:
@@ -167,7 +167,7 @@ def get_american_life_remaining( ):
     with ThreadPool( processes = max(1, cpu_count( ) // 2 ) ) as pool:
         time0 = time.perf_counter( )
         _ = list( pool.map( get_american_life, episodes_remaining ) )
-        logging.info( 'was able to download %d missing TAL episodes (%s) in %0.3f seconds.' % (
+        logger.info( 'was able to download %d missing TAL episodes (%s) in %0.3f seconds.' % (
             len( episodes_remaining ), ', '.join(sorted(episodes_remaining)),
             time.perf_counter( ) - time0 ) )
     
@@ -192,7 +192,7 @@ def get_american_life(
                                     directory = directory, hardURL = hardURL )
         if dump: return
         title, year, html = tup
-        logging.info('TITLE = %s, YEAR = %d.' % ( title, year ) )
+        logger.info('TITLE = %s, YEAR = %d.' % ( title, year ) )
     except ValueError as e:
         print(e)
         print('Cannot find date and title for This American Life episode #%d.' % epno)
@@ -203,25 +203,25 @@ def get_american_life(
             filter(lambda item: 'href' in item.attrs and 'podtrac' in item['href'] and 'mp3' in item['href'],
                    html.find_all('a')))
         if len( stupid_search_urls_because_python ) == 0:
-            logging.info( "ERROR, ambiguous URL for MP3 file. Exiting..." )
-            logging.info( "NUM URLS: %d." % len( stupid_search_urls_because_python ) )
-            logging.info( "URLS: %s." % '\n'.join(map(lambda item: item['href'], stupid_search_urls_because_python)))
+            logger.info( "ERROR, ambiguous URL for MP3 file. Exiting..." )
+            logger.info( "NUM URLS: %d." % len( stupid_search_urls_because_python ) )
+            logger.info( "URLS: %s." % '\n'.join(map(lambda item: item['href'], stupid_search_urls_because_python)))
             return None
         urlopn = stupid_search_urls_because_python[0]['href']
         resp = requests.get( urlopn, stream = True, verify = verify )
         if resp.ok: return resp
-        logging.info( "TAL episode %d URL = %s not work." % (
+        logger.info( "TAL episode %d URL = %s not work." % (
             epno, urlopn ) )
         return None
     #
     if not os.path.isdir(directory):
-        logging.info( "Error, %s is not a directory." % directory )
+        logger.info( "Error, %s is not a directory." % directory )
         raise ValueError("Error, %s is not a directory." % directory)
     outfile = os.path.join(directory, 'PRI.ThisAmericanLife.%03d.mp3' % epno)
     #
     resp = get_resp( html )
     if resp is None:
-        logging.info( 'Error, 1st and 2nd choice URL for TAL podcasts for episode %d not working.' % epno )
+        logger.info( 'Error, 1st and 2nd choice URL for TAL podcasts for episode %d not working.' % epno )
         urlopn = 'http://audio.thisamericanlife.org/jomamashouse/ismymamashouse/%d.mp3' % epno
         resp = requests.get( urlopn, stream = True, verify = verify )
         if not resp.ok:
@@ -289,10 +289,10 @@ def thisamericanlife_crontab( ):
         return
     #
     time0 = time.perf_counter( )
-    logging.info('downloading This American Life episode #%03d' % epno )
+    logger.info('downloading This American Life episode #%03d' % epno )
     try:
         thisamericanlife.get_american_life( epno )
-        logging.info( "finished downloading This American Life episode #%03d in %0.3f seconds" % (
+        logger.info( "finished downloading This American Life episode #%03d in %0.3f seconds" % (
             epno, time.time( ) - time0 ) )
     except:
         print( "Could not download This American Life episode #%03d" % epno )

@@ -78,6 +78,5 @@ def rm_create_wav_file( date_s, rm_file, outdir = os.getcwd() ):
     wavfile = os.path.join( outdir, 'waitwait%s.wav' % wgdate )
     split_cmd = [ mplayer_exec, '-vo', 'null', '-ao', 'pcm:file=%s' % 
                  wavfile, rm_file ]
-    proc = subprocess.Popen( split_cmd, stdout = subprocess.PIPE, stderr = subprocess.PIPE )
-    stdout_val, stderr_val = proc.communicate()
+    stdout_val = subprocess.check_output( split_cmd, stderr = subprocess.PIPE )
     return wavfile

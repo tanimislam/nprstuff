@@ -1,11 +1,11 @@
 import os, sys, glob, re, requests, mutagen.mp4, json
-import subprocess, logging, datetime, time, titlecase, tempfile, shutil
+import subprocess, datetime, time, titlecase, tempfile, shutil
 import pathos.multiprocessing as multiprocessing
 from urllib.parse import urljoin, urlsplit
 from bs4 import BeautifulSoup
 from urllib.parse import parse_qs
 from nprstuff.core import npr_utils, waitwait_realmedia
-from nprstuff import resourceDir
+from nprstuff import resourceDir, nprstuff_logger
 
 _npr_waitwait_progid = 35
 _default_inputdir = os.getcwd( )
@@ -107,7 +107,7 @@ def get_all_waitwaits_year( yearnum, inputdir ):
     time0 = time.time()
     with multiprocessing.ThreadPool( processes = nprocs ) as pool:
         _ = list( pool.map(_process_waitwaits_by_year_tuple, input_tuples) )
-    logging.info('processed all Wait Wait downloads for %04d in %0.3f seconds.' % ( yearnum, time.time() - time0 ) )
+    nprstuff_logger.info('processed all Wait Wait downloads for %04d in %0.3f seconds.' % ( yearnum, time.time() - time0 ) )
 
 def _get_mp3_chapter_tuple_sorted( html, verify, npr_api_key ):
   story_elems = html.find_all('story')
@@ -124,14 +124,14 @@ def _get_mp3_chapter_tuple_sorted( html, verify, npr_api_key ):
     resp = requests.get( 'https://api.npr.org/query', verify = verify,
                          params = { 'id' : story_id, 'apiKey' : npr_api_key } )
     if resp.status_code != 200:
-      logging.debug('ERROR GETTING STORY ELEM %d' % idx )
+      nprstuff_logger.debug('ERROR GETTING STORY ELEM %d' % idx )
       return None
     h2 = BeautifulSoup( resp.content, 'html.parser' )
     img_elem = max( h2.find_all( 'img' ) )
     img_src_url = img_elem['src'].strip( )
     title_dict = parse_qs( img_src_url )
     if 'utmdt' not in title_dict:
-      logging.debug('ERROR GETTING STORY ELEM %d, CANNOT FIND TITLE' % idx )
+      nprstuff_logger.debug('ERROR GETTING STORY ELEM %d, CANNOT FIND TITLE' % idx )
       return None
     chapter_name = titlecase.titlecase( max( title_dict[ 'utmdt' ] ) )
     chapter_names.append( chapter_name )
@@ -139,7 +139,7 @@ def _get_mp3_chapter_tuple_sorted( html, verify, npr_api_key ):
     ## now get the mp3 URL
     resp = requests.get( m3u_url )
     if resp.status_code != 200:
-      logging.debug('EROR GETTING STORY ELEM %d, CANNOT FIND MP3 URL' % idx )
+      nprstuff_logger.debug('EROR GETTING STORY ELEM %d, CANNOT FIND MP3 URL' % idx )
       return None
     mp3_urls.append( resp.content.decode( ).strip( ) )
   #
@@ -221,7 +221,7 @@ def get_title_mp3_urls_working_2023( date_s, debug = False ):
         return list(map(lambda entry: ( entry['title'], entry['url'] ), article_infos_in_order))
     except Exception as e:
         print( str( e ) )
-        logging.info( str( e ) )
+        nprstuff_logger.info( str( e ) )
         return None
 
 def get_title_mp3_urls_working( outputdir, date_s, driver, dump = False ):
@@ -274,7 +274,7 @@ def get_title_mp3_urls_working( outputdir, date_s, driver, dump = False ):
     #
     ## now get using the driver, go to the URL defined there
     mainURL =  "https://www.npr.org/search?query=*&page=1&refinementList[shows]=Wait Wait...Don't Tell Me!&range[lastModifiedDate][min]=%d&range[lastModifiedDate][max]=%d&sortType=byDateAsc" % ( t_end - 86400, t_end )
-    logging.info("mainURL: %s." % mainURL )
+    nprstuff_logger.info("mainURL: %s." % mainURL )
     driver.get( mainURL )
     time.sleep( 1.5 ) # is 1.5 seconds enough?
     html = BeautifulSoup( driver.page_source, 'html.parser' )
@@ -290,7 +290,7 @@ def get_title_mp3_urls_working( outputdir, date_s, driver, dump = False ):
     episode_elems = html.find_all( 'h2', { 'class' : 'title' } )
     episode_urls = list(map(lambda elem: urljoin( 'https://www.npr.org', elem.find_all('a')[0]['href'] ),
                             episode_elems ) )
-    logging.info( 'date_s = %s, episode_urls = %s.' % ( date_s, episode_urls ) )
+    nprstuff_logger.info( 'date_s = %s, episode_urls = %s.' % ( date_s, episode_urls ) )
 
     #
     ## getting the waitwait mp3_url default #1
@@ -351,13 +351,13 @@ def get_title_mp3_urls_working( outputdir, date_s, driver, dump = False ):
         date_f = date_s.strftime( '%Y-%m-%d' )
         date_elems = list(html_ep.find_all('meta', { 'name' : 'date', 'content' : date_f } ) )
         if len( date_elems ) != 1:
-            logging.error( 'could not find date elem for %s.' % episode_URL )
+            nprstuff_logger.error( 'could not find date elem for %s.' % episode_URL )
             return None
         #
         ## keep going, get the title    
         title_elems = list(html_ep.find_all('title'))
         if len( title_elems ) == 0:
-            logging.error( 'could not find title elem for %s.' % episode_URL )
+            nprstuff_logger.error( 'could not find title elem for %s.' % episode_URL )
             return None
         title = titlecase.titlecase( ' '.join(map(lambda tok: tok.strip(), title_elems[0].text.split(':')[:-1])) )
         #
@@ -368,16 +368,16 @@ def get_title_mp3_urls_working( outputdir, date_s, driver, dump = False ):
         #
         ## now get order
         bname = re.sub('_$', '', os.path.basename( mp3_url ).split('.')[0].strip( ) ).strip( )
-        logging.info('INFO get_npr_waitwait_story(%s,%s).bname = %s.' % (
+        nprstuff_logger.info('INFO get_npr_waitwait_story(%s,%s).bname = %s.' % (
             episode_URL, date_s, bname ) )
         try:
             order = int( bname.split('_')[-1] )
             #
             ## return tuple of order, title, URL
-            logging.info('info: %d, %s, %s' % ( 1, title, mp3_url ) )
+            nprstuff_logger.info('info: %d, %s, %s' % ( 1, title, mp3_url ) )
             return order, title, mp3_url
         except:
-            logging.debug('info: %d, %s, %s' % ( 1, title, mp3_url ) )
+            nprstuff_logger.debug('info: %d, %s, %s' % ( 1, title, mp3_url ) )
             return 1, title, mp3_url
 
     #
@@ -387,7 +387,7 @@ def get_title_mp3_urls_working( outputdir, date_s, driver, dump = False ):
         key = lambda tup: tup[0] )
     assert( len( ordered_npr_waitwait ) == len( episode_urls ) )
     print( ordered_npr_waitwait )
-    logging.info("finished getting list of stories for NPR Wait Wait episode: %s. Story list: %s." % (
+    nprstuff_logger.info("finished getting list of stories for NPR Wait Wait episode: %s. Story list: %s." % (
         date_s, '\n'.join(map(lambda tup: '%s' % list(tup), ordered_npr_waitwait ) ) ) )
     return list(map(lambda tup: ( tup[1], tup[2] ), ordered_npr_waitwait ) )
 
@@ -418,7 +418,7 @@ def get_waitwait(
     exec_dict = npr_utils.find_necessary_executables()
     assert( exec_dict is not None )
     avconv_exec = exec_dict['avconv']
-    logging.debug('avconv exec = %s.' % avconv_exec )
+    nprstuff_logger.debug('avconv exec = %s.' % avconv_exec )
   
     if order_totnum is None:
         order_totnum = npr_utils.get_order_number_saturday_in_year(date_s)
@@ -430,7 +430,7 @@ def get_waitwait(
     decdate = npr_utils.get_decdate( date_s )
     m4afile = os.path.join(outputdir, 'NPR.WaitWait.%s.m4a' % decdate )
     if check_if_exist and os.path.isfile(m4afile): return
-    logging.info( 'INFO TO GET FIGURE OUT get_title_mp3s_url_working: %s, %s, %s' % ( m4afile, date_s, dump ) )
+    nprstuff_logger.info( 'INFO TO GET FIGURE OUT get_title_mp3s_url_working: %s, %s, %s' % ( m4afile, date_s, dump ) )
     if year >= 2006:
         if dump:
             html = get_title_mp3_urls_working_2023( date_s, debug = True )
@@ -453,10 +453,10 @@ def get_waitwait(
             mp4tags = mutagen.mp4.MP4(m4afile)
             mp4tags.tags['\xa9nam'] = [ title, ]
             mp4tags.save( )
-            logging.info('fixed title for %s.' % m4afile )
+            nprstuff_logger.info('fixed title for %s.' % m4afile )
             return m4afile
 
-        logging.info('got here in NPR Wait Wait episode %s, title = %s.' % (
+        nprstuff_logger.info('got here in NPR Wait Wait episode %s, title = %s.' % (
             date_s, title ) )
         
         # temporary directory
@@ -476,9 +476,9 @@ def get_waitwait(
         split_cmd = [ avconv_exec, '-y', '-i', avconv_concat_cmd, '-ar', '44100', '-ac', '2', '-threads', 
                      '%d' % multiprocessing.cpu_count(), '-strict', 'experimental', '-acodec', 'aac',
                      m4afile_temp ]
-        logging.info("here is the split command: %s." % split_cmd )
+        nprstuff_logger.info("here is the split command: %s." % split_cmd )
         stdout_val = subprocess.check_output(split_cmd, stderr = subprocess.PIPE).decode( 'utf8' )
-        logging.debug("stdout_val: %s." % stdout_val )
+        nprstuff_logger.debug("stdout_val: %s." % stdout_val )
         #
         ## remove mp3 files
         for filename in outfiles: os.remove(filename)
@@ -496,9 +496,7 @@ def get_waitwait(
         split_cmd = [ avconv_exec, '-y', '-i', wavfile, '-ar', '44100',
                      '-ac', '2', '-threads', '%d' % multiprocessing.cpu_count(),
                      '-strict', 'experimental', '-acodec', 'aac', m4afile_temp ]
-        proc = subprocess.Popen(split_cmd, stdout = subprocess.PIPE,
-                                stderr = subprocess.PIPE)
-        stdout_val, stderr_val = proc.communicate()
+        stdout_val = subprocess.check_output(split_cmd, stderr = subprocess.PIPE)
         #
         ## remove wav file
         os.remove( wavfile )

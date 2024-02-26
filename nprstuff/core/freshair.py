@@ -251,8 +251,7 @@ def _get_freshair_lowlevel( outputdir, date_s, titles ):
                  '-strict', 'experimental', '-acodec', 'aac', m4afile ]
     logger.info( 'syntax for NPR Fresh Air %s: %s.' % (
         date_s, split_cmd ) )
-    proc = subprocess.Popen(split_cmd, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-    stdout_val, stderr_val = proc.communicate()
+    stdout_val = subprocess.check_output(split_cmd, stderr = subprocess.PIPE)
     
     # remove mp3 files
     for filename in outfiles: os.remove(filename)
@@ -706,8 +705,7 @@ def get_freshair(
         avconv_exec, '-y', '-i', avconv_concat_cmd, '-ar', '44100', '-ac', '2',
         '-threads', '%d' % cpu_count( ),
         '-strict', 'experimental', '-acodec', 'aac', m4afile_temp ]
-    proc = subprocess.Popen(split_cmd, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-    stdout_val, stderr_val = proc.communicate()
+    stdout_val = subprocess.check_output(split_cmd, stderr = subprocess.PIPE)
     #
     ## remove mp3 files
     for filename in outfiles: os.remove(filename)

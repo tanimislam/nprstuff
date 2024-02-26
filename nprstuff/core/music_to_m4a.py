@@ -5,7 +5,8 @@ from PIL import Image
 from mutagen.mp4 import MP4Cover, MP4, MP4Cover
 from mutagen.mp3 import MP3
 from mutagen.oggvorbis import OggVorbis
-from distutils.spawn import find_executable
+from shutil import which
+from nprstuff import nprstuff_logger
 
 _files_to_convert_from = (
     'application/x-flac',
@@ -99,7 +100,7 @@ def music_to_m4a(filename, tottracks = None,
     
     .. _titlecase: https://github.com/ppannuto/python-titlecase
     """
-    ffmpeg_exec = find_executable( 'ffmpeg' )
+    ffmpeg_exec = which( 'ffmpeg' )
     if ffmpeg_exec is None:
         raise ValueError("Error, cannot find ffmpeg executable." )
     if not _can_convert_file(filename):
@@ -129,10 +130,8 @@ def music_to_m4a(filename, tottracks = None,
     
     exec_path = [ ffmpeg_exec, '-y', '-i', filename, '-map', '0:0', 
                  '-strict', 'experimental', '-aq', '400', outfile ]
-    proc = subprocess.Popen(
-        exec_path, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
-    stdout_val, stderr_val = proc.communicate()
-    if verbose: print( stdout_val )
+    stdout_val = subprocess.check_output( exec_path, stderr = subprocess.PIPE)
+    nprstuff_logger.debug( stdout_val )
     #
     mp4tags = MP4(outfile)
     mp4tags['\xa9nam'] = [ title, ]
