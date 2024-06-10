@@ -202,6 +202,9 @@ def get_american_life(
         stupid_search_urls_because_python = list(
             filter(lambda item: 'href' in item.attrs and 'podtrac' in item['href'] and 'mp3' in item['href'],
                    html.find_all('a')))
+        if len( stupid_search_urls_because_python ) == 0: # update 20240609
+            stupid_search_urls_because_python = list(
+                filter(lambda elem: 'href' in elem.attrs and 'download' in elem.attrs, html.find_all('a')))
         if len( stupid_search_urls_because_python ) == 0:
             logger.info( "ERROR, ambiguous URL for MP3 file. Exiting..." )
             logger.info( "NUM URLS: %d." % len( stupid_search_urls_because_python ) )
