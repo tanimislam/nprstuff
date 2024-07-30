@@ -157,6 +157,32 @@ def _process_freshair_titlemp3_tuples( html ):
         filter(None, zip( titles, mp3s ) ), key = lambda tup: tup[1] ) 
     return title_mp3_urls
 
+def _process_freshair_titlemp3_tuples_planB( html ):
+    def _get_title_mp3( story_elem ):
+        url_line_elems = list( story_elem.find_all( 'a' ) )
+        if len( url_line_elems ) != 1:
+            return None
+        url_line = url_line_elems[ 0 ]['href'].strip( )
+        if not url_line.startswith( 'https' ):
+            return None
+        title = titlecase.titlecase(
+            story_elem.text.strip( ) )
+        #
+        ## now get the mp3 file
+        h2 = BeautifulSoup( requests.get( url_line ).content, 'html.parser' )
+        mp3_elems = h2.find_all( 'a', { 'class' : 'audio-module-listen' } )
+        if len( mp3_elems ) != 1:
+            return None
+        mp3_url_scheme = urlsplit( mp3_elems[ 0 ]['href' ].strip( ) )
+        mp3_url = '%s://%s%s' % (
+            mp3_url_scheme.scheme,
+            mp3_url_scheme.netloc,
+            mp3_url_scheme.path )
+        return { 'title' : title, 'mp3' : mp3_url }
+
+    title_mp3_list = list(filter(None, map( _get_title_mp3, html.find_all('h3', { 'class' : 'rundown-segment__title' } ) ) ) )
+    return sorted( map(lambda entry: ( entry['title'], entry['mp3'] ), title_mp3_list ), key = lambda entry: entry[1] )
+
 def _find_missing_dates(
     inputdir,
     mon, year = datetime.datetime.now( ).date( ).year ):
@@ -412,6 +438,32 @@ def get_title_mp3_urls_working_2023( date_s, debug = False ):
       candidate_url = '%s://%s%s' % ( candidate_url_split.scheme, candidate_url_split.netloc, candidate_url_split.path )
       return { 'title' : candidate_title, 'url' : candidate_url }
 
+    def _plan_C2_get_title_url_here( story_elem ): # stuff tried out 2024-07-30
+        url_line_elems = list( story_elem.find_all( 'a' ) )
+        if len( url_line_elems ) != 1:
+            return None
+        url_line = url_line_elems[ 0 ]['href'].strip( )
+        if not url_line.startswith( 'https' ):
+            return None
+        title = titlecase.titlecase(
+            story_elem.text.strip( ) )
+        #
+        ## now get the mp3 file
+        h2 = BeautifulSoup( requests.get( url_line ).content, 'html.parser' )
+        mp3_elems = h2.find_all( 'a', { 'class' : 'audio-module-listen' } )
+        if len( mp3_elems ) != 1:
+            return None
+        mp3_url_scheme = urlsplit( mp3_elems[ 0 ]['href' ].strip( ) )
+        mp3_url = '%s://%s%s' % (
+            mp3_url_scheme.scheme,
+            mp3_url_scheme.netloc,
+            mp3_url_scheme.path )
+        return { 'title' : title, 'url' : mp3_url }
+
+        #title_mp3_list = list(filter(None, map( _get_title_mp3, html.find_all('h3', { 'class' : 'rundown-segment__title' } ) ) ) )
+        # return sorted( map(lambda entry: ( entry['title'], entry['mp3'] ), title_mp3_list ), key = lambda entry: entry[1] )
+
+
     def _plan_C_get_title_url_here( elem ):
       data_here = json.loads( elem[ 'data-metrics-ga4' ] )
       assert( 'title' in data_here )
@@ -467,15 +519,18 @@ def get_title_mp3_urls_working_2023( date_s, debug = False ):
             print( 'URL = %s' % article_url )
             return myhtml
         try:
-          story_list_elems = myhtml.find_all( 'div', { 'class' : 'story-list' } )
-          assert( len( story_list_elems ) == 1 )
-          story_list_elem = story_list_elems[ 0 ]
-          article_infos_in_order = sorted(
-            map(_get_title_url_here, story_list_elem.find_all( 'article', { 'class' : 'rundown-segment' } ) ),
-            key = lambda entry: entry[ 'url' ] )
-          if len( article_infos_in_order ) != 0:
+            story_list_elems = myhtml.find_all( 'div', { 'class' : 'story-list' } )
+            assert( len( story_list_elems ) == 1 )
+            story_list_elem = story_list_elems[ 0 ]
+            article_infos_in_order = sorted(
+                map(_get_title_url_here, story_list_elem.find_all( 'article', { 'class' : 'rundown-segment' } ) ),
+                key = lambda entry: entry[ 'url' ] )
+            if len( article_infos_in_order ) == 0:
+                raise ValueError("FAILED PLAN A")
+            if any(map(lambda entry: len( entry['title'].strip( ) ) <= 20, article_infos_in_order ) ):
+                raise ValueError( "FAILED ON PLAN A")
+            logging.debug( 'PLAN A: %s' % article_infos_in_order )
             return list(map(lambda entry: ( entry['title'], entry['url'] ), article_infos_in_order))
-          raise ValueError("FAILED PLAN A")
         except: pass
         #
         ## otherwise PLAN B do the needful, see if this works...
@@ -496,11 +551,12 @@ def get_title_mp3_urls_working_2023( date_s, debug = False ):
         except: pass
         #
         ## otherwise PLAN C what the fuck??
-        actual_elems = list(filter(lambda elem: 'data-embed-url' in elem.attrs and 'data-metrics-ga4' in elem.attrs, myhtml.find_all()))
+        # actual_elems = list(filter(lambda elem: 'data-embed-url' in elem.attrs and 'data-metrics-ga4' in elem.attrs, myhtml.find_all()))
+        actual_elems = myhtml.find_all('h3', { 'class' : 'rundown-segment__title' } )
         assert( len( actual_elems ) != 0 )
         article_infos_in_order = sorted(
-          map(_plan_C_get_title_url_here, actual_elems ),
-          key = lambda entry: entry[ 'url' ] )
+            map(_plan_C2_get_title_url_here, actual_elems ),
+            key = lambda entry: entry[ 'url' ] )
         return list(map(lambda entry: ( entry['title'], entry['url'] ), article_infos_in_order))
         
     except Exception as e:
