@@ -270,7 +270,7 @@ def _get_freshair_lowlevel( outputdir, date_s, titles ):
 
     # create m4a file
     time0 = time.perf_counter( )
-    fnames = [ filename.replace(' ', '\ ') for filename in outfiles ]
+    fnames = [ filename.replace(' ', r'\ ') for filename in outfiles ]
     avconv_concat_cmd = 'concat:%s' % '|'.join(fnames)
     split_cmd = [ avconv_exec, '-y', '-i', avconv_concat_cmd, '-ar', '44100', '-ac', '2',
                  '-threads', '%d' % multiprocessing.cpu_count(),
@@ -681,7 +681,7 @@ def get_title_mp3_urls_working( outputdir, date_s, driver, debug = False, to_fil
         mp3_url = urljoin( 'https://%s' % mp3_url_split.netloc, mp3_url_split.path )
         #
         ## now get order
-        mp3_url_sub = re.sub('_rev\.mp3$', '', mp3_url).strip( )
+        mp3_url_sub = re.sub(r'_rev\.mp3$', '', mp3_url).strip( )
         logger.debug( 'MP3 URL = %s.' % mp3_url_sub )
         bname = re.sub('_$', '', os.path.basename( mp3_url_sub ).split('.')[0].strip( ) ).strip( )
         order = int( bname.split('_')[-1] )
@@ -785,7 +785,7 @@ def get_freshair(
     # now convert to m4a file
     # /usr/bin/avconv -y -i freshair$wgdate.wav -ar 44100 -ac 2 -aq 400 -acodec libfaac NPR.FreshAir."$decdate".m4a ;
     time0 = time.perf_counter( )
-    fnames = [ filename.replace(' ', '\ ') for filename in outfiles ]
+    fnames = [ filename.replace(' ', r'\ ') for filename in outfiles ]
     avconv_concat_cmd = 'concat:%s' % '|'.join(fnames)
     split_cmd = [
         avconv_exec, '-y', '-i', avconv_concat_cmd, '-ar', '44100', '-ac', '2',

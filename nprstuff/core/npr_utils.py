@@ -203,7 +203,7 @@ def get_NPR_URL(date_s, program_id, NPR_API_key):
     return result.geturl( )
 
 def weekdays_of_month_of_year( year, month ):
-    """
+    r"""
     :param int year: input year.
     :param int month: input month as an integer from 1 (January) through 12 (December).
     :returns: a sorted :py:class:`list` of days in a calendar month that are weekdays, each of which ranges from first (1) to last day of month. Each day is an integer :math:`\ge 1`.
@@ -217,7 +217,7 @@ def weekdays_of_month_of_year( year, month ):
     return days
 
 def saturdays_of_month_of_year( year, month ):
-    """
+    r"""
     :param int year: input year.
     :param int month: input month as an integer from 1 (January) through 12 (December).
     :returns: a sorted :py:class:`list` of days in a calendar month that are Saturdays, each of which ranges from first (1) to last day of month. Each day is an integer :math:`\ge 1`.
