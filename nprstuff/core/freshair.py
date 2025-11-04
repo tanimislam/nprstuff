@@ -410,7 +410,7 @@ def get_title_mp3_urls_working_2023( date_s, debug = False ):
     """
 
     def _fix_title( my_string ):
-      return titlecase.titlecase( re.sub( '&#39;', "'", my_string ).strip( ) )
+        return titlecase.titlecase( re.sub( '&#39;', "'", my_string ).strip( ) )
     
     def _get_title_url_here( article_elem ):
         #
@@ -454,8 +454,7 @@ def get_title_mp3_urls_working_2023( date_s, debug = False ):
         url_line = url_line_elems[ 0 ]['href'].strip( )
         if not url_line.startswith( 'https' ):
             return None
-        title = titlecase.titlecase(
-            story_elem.text.strip( ) )
+        title = titlecase.titlecase( story_elem.text.strip( ) )
         #
         ## now get the mp3 file
         h2 = BeautifulSoup( requests.get( url_line ).content, 'html.parser' )
@@ -472,31 +471,30 @@ def get_title_mp3_urls_working_2023( date_s, debug = False ):
         #title_mp3_list = list(filter(None, map( _get_title_mp3, html.find_all('h3', { 'class' : 'rundown-segment__title' } ) ) ) )
         # return sorted( map(lambda entry: ( entry['title'], entry['mp3'] ), title_mp3_list ), key = lambda entry: entry[1] )
 
-
     def _plan_C_get_title_url_here( elem ):
-      data_here = json.loads( elem[ 'data-metrics-ga4' ] )
-      assert( 'title' in data_here )
-      candidate_title = _fix_title( data_here[ 'title' ].strip( ) )
-      #
-      ## now get the episode URL
-      embed_url = elem['data-embed-url']
-      resp = requests.get( embed_url )
-      assert( resp.ok )
-      assert( resp.status_code == 200 )
-      myhtml2 = BeautifulSoup( resp.content, 'html.parser' )
-      #
-      ## now look through those codes that are unempty
-      valid_script_elems = list(filter(lambda elem: len( elem.text.strip( ) ) != 0 and 'audioModel' in elem.text,
-                                       myhtml2.find_all( 'script', { 'type' : 'text/javascript' } ) ) )
-      assert( len( valid_script_elems ) == 1 )
-      valid_script_elem = valid_script_elems[ 0 ]
-      valid_json_text = '='.join( valid_script_elem.text.strip( ).split('=')[1:] ).strip( )
-      valid_json_text = re.sub(';$', '', valid_json_text ).strip( )
-      data_json = json.loads( valid_json_text )
-      assert( 'audioSrc' in data_json )
-      candidate_url_split = urlsplit( data_json[ 'audioSrc' ] )
-      candidate_url = '%s://%s%s' % ( candidate_url_split.scheme, candidate_url_split.netloc, candidate_url_split.path )
-      return { 'title' : candidate_title, 'url' : candidate_url }
+        data_here = json.loads( elem[ 'data-metrics-ga4' ] )
+        assert( 'title' in data_here )
+        candidate_title = _fix_title( data_here[ 'title' ].strip( ) )
+        #
+        ## now get the episode URL
+        embed_url = elem['data-embed-url']
+        resp = requests.get( embed_url )
+        assert( resp.ok )
+        assert( resp.status_code == 200 )
+        myhtml2 = BeautifulSoup( resp.content, 'html.parser' )
+        #
+        ## now look through those codes that are unempty
+        valid_script_elems = list(filter(lambda elem: len( elem.text.strip( ) ) != 0 and 'audioModel' in elem.text,
+                                         myhtml2.find_all( 'script', { 'type' : 'text/javascript' } ) ) )
+        assert( len( valid_script_elems ) == 1 )
+        valid_script_elem = valid_script_elems[ 0 ]
+        valid_json_text = '='.join( valid_script_elem.text.strip( ).split('=')[1:] ).strip( )
+        valid_json_text = re.sub(';$', '', valid_json_text ).strip( )
+        data_json = json.loads( valid_json_text )
+        assert( 'audioSrc' in data_json )
+        candidate_url_split = urlsplit( data_json[ 'audioSrc' ] )
+        candidate_url = '%s://%s%s' % ( candidate_url_split.scheme, candidate_url_split.netloc, candidate_url_split.path )
+        return { 'title' : candidate_title, 'url' : candidate_url }
       
     try:
         #
@@ -529,7 +527,7 @@ def get_title_mp3_urls_working_2023( date_s, debug = False ):
             return myhtml
         try:
             story_list_elems = myhtml.find_all( 'div', { 'class' : 'story-list' } )
-            assert( len( story_list_elems ) == 1 )
+            assert( len( story_list_elems ) == 1 ), "error number of story elems = %d but should be 1." % len( story_list_elems )
             story_list_elem = story_list_elems[ 0 ]
             article_infos_in_order = sorted(
                 map(_get_title_url_here, story_list_elem.find_all( 'article', { 'class' : 'rundown-segment' } ) ),
@@ -541,13 +539,22 @@ def get_title_mp3_urls_working_2023( date_s, debug = False ):
             logging.info( 'PLAN A: %s' % article_infos_in_order )
             return list(map(lambda entry: ( entry['title'], entry['url'] ), article_infos_in_order))
         except Exception as e:
-            logging.info( "PROBLEM GETTING PLAN A: %s." % str( e ) )
+            logging.info( "PROBLEM GETTING PLAN A: %s, %s." % ( str( e ), type( e ) ) )
             pass
+
         #
-        ## otherwise PLAN B do the needful, see if this works...
+        ## PLAN B now use the following story list elems try it out...
+        try:
+            return _process_freshair_titlemp3_tuples_planB( myhtml )
+        except Exception as e:
+            logging.info( "PROBLEM GETTING PLAN B: %s, %s." % ( str( e ), type( e ) ) )
+            pass
+                
+        #
+        ## otherwise PLAN C do the needful, see if this works...
         try:
             actual_elems = list(filter(lambda elem: 'data-play-all' in elem.attrs, myhtml.find_all('b')))
-            assert( len( actual_elems ) != 0 )
+            assert( len( actual_elems ) != 0 ), "number of elems in actual_elems = %d." % len( actual_elems )
             actual_elem = actual_elems[ 0 ]
             data = json.loads( actual_elem['data-play-all'] )
             assert( 'audioData' in data )
@@ -568,22 +575,30 @@ def get_title_mp3_urls_working_2023( date_s, debug = False ):
                         'https://ondemand.npr.org/anon.npr-mp3/npr/fa/%d/%02d/%s_fa_%02d.mp3' % (
                             date_s.year, date_s.month, date_s.strftime( '%Y%m%d' ), idx ), range(1, len( article_infos_in_order ) + 1 ) ) )
                 possible_story_rems = possible_story_urls - set(map(lambda elem: elem['url'], article_infos_in_order ) )
-                assert( len( possible_story_rems ) == 1 )
+                assert( len( possible_story_rems ) == 1 ), "error, length of possible story remainings = %d." % len( possible_story_rems )
                 rem_story = max( possible_story_rems )
                 for elem in article_infos_in_order:
                     if elem['url'].endswith( '.mp3' ): continue
                     elem[ 'url' ] = rem_story
-                logging.info( 'PLAN B: %s' % article_infos_in_order )
+                logging.info( 'PLAN C: %s' % article_infos_in_order )
                 return list(map(lambda entry: ( entry['title'], entry['url'] ), article_infos_in_order))
             
-            raise ValueError("FAILED PLAN B: length of articles = 0")
+            raise ValueError("FAILED PLAN C: length of articles = 0")
         except Exception as e:
-            logging.info( "PROBLEM GETTING PLAN B: %s." % str( e ) )
+            logging.info( "PROBLEM GETTING PLAN C: %s, %s" % ( str( e ), type( e ) ) )
             pass
         #
-        ## otherwise PLAN C what the fuck??
+        ## otherwise PLAN C do the needful, see if it works...
+        #try:
+        #    actual_elems = myhtml.find_all('li' : { 'class' : 'audio-tool-download' } )
+        #    assert( len( actual_elems ) == 1 ), "error, should have 1 elem that has a valid mp3 href. Instead length = %d." % len( actual_elems )
+        #    actual_elem  = actual_elems[ 0 ]
+            
+        
+        #
+        ## otherwise PLAN D what the fuck??
         # actual_elems = list(filter(lambda elem: 'data-embed-url' in elem.attrs and 'data-metrics-ga4' in elem.attrs, myhtml.find_all()))
-        actual_elems = myhtml.find_all('h3', { 'class' : 'rundown-segment__title' } )
+        actual_elems = myhtml.find_all('h3', { 'class' : 'rundown-segment_title' } )
         assert( len( actual_elems ) != 0 )
         article_infos_in_order = sorted(
             map(_plan_C2_get_title_url_here, actual_elems ),
