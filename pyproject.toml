@@ -1,0 +1,114 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nprstuff"
+version = "1.0"
+description = "I like NPR, so I made some scripts to download my favorite programs from NPR."
+authors = [
+    {name = "Tanim Islam", email = "tanim.islam@gmail.com"}
+]
+readme = "README.md"  # Add this file if you have one, or remove this line
+license = {text = "BSD-2-Clause"}
+requires-python = ">=3.9"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: BSD License",
+    "Operating System :: POSIX",
+    "Environment :: Console",
+    "Environment :: X11 Applications :: Qt",
+    "Programming Language :: Python :: 3",
+    "Topic :: Utilities",
+    "Topic :: Multimedia",
+]
+
+dependencies = [
+   "beautifulsoup4",
+   "docutils",
+   "feedparser",
+   "google-api-python-client",
+   "google-auth",
+   "google-auth-httplib2",
+   "google-auth-oauthlib",
+   "lxml",
+   "matplotlib",
+   "mutagen",
+   "oauth2client",
+   "pathos",
+   "Pillow",
+   "pyexiv2",
+   "pypdf",
+   "PyQt5",
+   "PyQtWebEngine",
+   "python-magic",
+   "qtmodern",
+   "requests",
+   "selenium",
+   "sphinx",
+   "sphinx-argparse",
+   "sphinx-issues",
+   "sphinx_rtd_theme",
+   "sphinxcontrib-youtube",
+   "SQLAlchemy",
+   "tabulate",
+   "titlecase",
+   "webcolors",
+   "yt_dlp",
+]
+
+[project.urls]
+Homepage = "https://tanimislam.github.io/nprstuff"
+Repository = "https://github.com/tanimislam/nprstuff"
+
+[project.scripts]
+# Music utilities
+music_to_m4a = "nprstuff.cli.music_to_m4a:_main"
+nprconfig = "nprstuff.cli.nprconfig:main"
+
+# Fresh Air CLI
+freshair = "nprstuff.cli.freshair:_freshair"
+freshair_crontab = "nprstuff.cli.freshair:_freshair_crontab"
+freshair_by_year = "nprstuff.cli.freshair:_freshair_by_year"
+freshair_fix_crontab = "nprstuff.cli.freshair:_freshair_fix_crontab"
+
+# Extra CLI utilities
+convertImage_youtube = "nprstuff.cli.convertImage_youtube:_main"
+display = "nprstuff.cli.display:_main"
+download_surahs = "nprstuff.cli.download_surahs:_main"
+titleit = "nprstuff.cli.titleit:_main"
+
+# This American Life CLI
+thisamericanlife = "nprstuff.cli.thisamericanlife:_main"
+thisamericanlife_crontab = "nprstuff.core.thisamericanlife:thisamericanlife_crontab"
+thisamericanlife_remaining = "nprstuff.core.thisamericanlife:get_american_life_remaining"
+
+# Wait Wait CLI
+waitwait = "nprstuff.cli.waitwait:_waitwait"
+waitwait_crontab = "nprstuff.cli.waitwait:_waitwait_crontab"
+waitwait_by_year = "nprstuff.cli.waitwait:_waitwait_by_year"
+
+# GUI applications
+nprstuff_gui_maingui = "nprstuff.cli.gui:_maingui"
+nprstuff_gui_lightspeed = "nprstuff.cli.gui:_lightspeed"
+nprstuff_gui_medium = "nprstuff.cli.gui:_medium"
+nprstuff_gui_newyorker = "nprstuff.cli.gui:_newyorker"
+nprstuff_gui_nytimes = "nprstuff.cli.gui:_nytimes"
+nprstuff_gui_vqronline = "nprstuff.cli.gui:_vqronline"
+rest_email = "nprstuff.cli.rest_email:main"
+
+# GUI2 applications (superseded by howdy project)
+nprstuff_gui2_loginwindow = "nprstuff.cli.gui2:_loginwindow"
+nprstuff_gui2_mainapp = "nprstuff.cli.gui2:_mainapp"
+
+[tool.setuptools.packages.find]
+exclude = ["*.tests", "*.tests.*", "tests"]
+
+[tool.setuptools.package-data]
+nprstuff = [
+    "resources/*.png",
+    "resources/fonts/*.ttf",
+    "resources/fonts/*.otf",
+    "resources/icons/*.png",
+]

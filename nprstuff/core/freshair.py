@@ -157,6 +157,72 @@ def _process_freshair_titlemp3_tuples( html ):
         filter(None, zip( titles, mp3s ) ), key = lambda tup: tup[1] ) 
     return title_mp3_urls
 
+
+def _fix_title( my_string ):
+    return titlecase.titlecase( re.sub( '&#39;', "'", my_string ).strip( ) )
+
+def _process_freshair_titlemp3_tuples_planA( html ):
+    
+    def _get_title_url_here_fallback( article_elem ):
+        #
+        ## first find candidate title
+        candidate_title_elem = list(filter(lambda elem: 'class' in elem.attrs and 'audio-module-title' in elem['class'], article_elem.find_all( )))
+        assert( len( candidate_title_elem ) != 0 )
+        candidate_title_elem = candidate_title_elem[ 0 ]
+        candidate_title = _fix_title( candidate_title_elem.text.strip( ) )
+        #
+        ## now get episode URL
+        candidate_url_elem = list(filter(lambda elem: 'href' in elem.attrs and 'ondemand' in elem['href'], article_elem.find_all('a')))
+        assert( len( candidate_url_elem ) != 0 )
+        candidate_url_elem = candidate_url_elem[ 0 ]
+        candidate_url = candidate_url_elem['href'].strip( ).split('?')[ 0 ]
+        assert( candidate_url.endswith( '.mp3' ) )
+        #
+        ## now return the crap
+        return { 'title' : candidate_title, 'url' : candidate_url }
+
+    def _get_title_url_here_inital( article_elem ):
+        candidate_data_elem = list(filter(
+            lambda elem: 'data-metrics-ga4' in elem.attrs and
+            'href' in elem.attrs and
+            '.mp3' in elem['href'], article_elem.find_all('a') ) )
+        assert( len( candidate_data_elem ) != 0 )
+        candidate_data_elem = candidate_data_elem[ 0 ]
+        data = json.loads( candidate_data_elem['data-metrics-ga4'] )
+        #
+        ## first find candidate title
+        candidate_title = _fix_title( data[ 'title' ] )
+        #
+        ## now get episode URL
+        candidate_url = candidate_data_elem[ 'href' ].strip( ).split('?')[ 0 ]
+        assert( candidate_url.endswith( '.mp3' ) )        
+        #
+        ## now return the crap
+        return { 'title' : candidate_title, 'url' : candidate_url }
+
+    def _get_title_url_here( article_elem ):
+        try:
+            return _get_title_url_here_inital( article_elem )
+        except:
+            return _get_title_url_here_fallback( article_elem )
+    
+    try:
+        story_list_elems = html.find_all( 'div', { 'class' : 'story-list' } )
+        assert( len( story_list_elems ) == 1 ), "error number of story elems = %d but should be 1." % len( story_list_elems )
+        story_list_elem = story_list_elems[ 0 ]
+        article_infos_in_order = sorted(
+            map(_get_title_url_here, story_list_elem.find_all( 'article', { 'class' : 'rundown-segment' } ) ),
+            key = lambda entry: entry[ 'url' ] )
+        if len( article_infos_in_order ) == 0:
+            raise ValueError("FAILED PLAN A: length of articles = 0")
+            if any(map(lambda entry: len( entry['title'].strip( ) ) <= 20, article_infos_in_order ) ):
+                raise ValueError( "FAILED ON PLAN A: length of any of the titles is <= 0")
+        logging.info( 'PLAN A: %s' % article_infos_in_order )
+        return list(map(lambda entry: ( entry['title'], entry['url'] ), article_infos_in_order))
+    except Exception as e:
+        logging.info( "PROBLEM GETTING PLAN A: %s, %s." % ( str( e ), type( e ) ) )
+        return None
+
 def _process_freshair_titlemp3_tuples_planB( html ):
     def _get_title_mp3( story_elem ):
         url_line_elems = list( story_elem.find_all( 'a' ) )
@@ -167,6 +233,7 @@ def _process_freshair_titlemp3_tuples_planB( html ):
             return None
         title = titlecase.titlecase(
             story_elem.text.strip( ) )
+        logging.info( "TITLE: %s." % title )
         #
         ## now get the mp3 file
         h2 = BeautifulSoup( requests.get( url_line ).content, 'html.parser' )
@@ -180,8 +247,12 @@ def _process_freshair_titlemp3_tuples_planB( html ):
             mp3_url_scheme.path )
         return { 'title' : title, 'mp3' : mp3_url }
 
-    title_mp3_list = list(filter(None, map( _get_title_mp3, html.find_all('h3', { 'class' : 'rundown-segment__title' } ) ) ) )
-    return sorted( map(lambda entry: ( entry['title'], entry['mp3'] ), title_mp3_list ), key = lambda entry: entry[1] )
+    try:
+        title_mp3_list = list(filter(None, map( _get_title_mp3, html.find_all('h3', { 'class' : 'rundown-segment__title' } ) ) ) )
+        return sorted( map(lambda entry: ( entry['title'], entry['mp3'] ), title_mp3_list ), key = lambda entry: entry[1] )
+    except Exception as e:
+        logging.info( "PROBLEM GETTING PLAN B: %s, %s." % ( str( e ), type( e ) ) )
+        return None
 
 def _find_missing_dates(
     inputdir,
@@ -408,27 +479,7 @@ def get_title_mp3_urls_working_2023( date_s, debug = False ):
     :returns: the :py:class:`list` of stories, by order, for the `NPR Fresh Air`_ episode. The first element of each :py:class:`tuple` is the story title, and the second is the MP3_ URL for the story. Otherwise returns ``None``.
     :rtype: list
     """
-
-    def _fix_title( my_string ):
-        return titlecase.titlecase( re.sub( '&#39;', "'", my_string ).strip( ) )
     
-    def _get_title_url_here( article_elem ):
-        #
-        ## first find candidate title
-        candidate_title_elem = list(filter(lambda elem: 'class' in elem.attrs and 'audio-module-title' in elem['class'], article_elem.find_all( )))
-        assert( len( candidate_title_elem ) != 0 )
-        candidate_title_elem = candidate_title_elem[ 0 ]
-        candidate_title = _fix_title( candidate_title_elem.text.strip( ) )
-        #
-        ## now get episode URL
-        candidate_url_elem = list(filter(lambda elem: 'href' in elem.attrs and 'ondemand' in elem['href'], article_elem.find_all('a')))
-        assert( len( candidate_url_elem ) != 0 )
-        candidate_url_elem = candidate_url_elem[ 0 ]
-        candidate_url = candidate_url_elem['href'].strip( ).split('?')[ 0 ]
-        #
-        ## now return the crap
-        return { 'title' : candidate_title, 'url' : candidate_url }
-
     def _get_title_url_here_something( elem ):
         assert( 'title' in elem )
         candidate_title = _fix_title( elem[ 'title' ].strip( ) )
@@ -495,7 +546,7 @@ def get_title_mp3_urls_working_2023( date_s, debug = False ):
         candidate_url_split = urlsplit( data_json[ 'audioSrc' ] )
         candidate_url = '%s://%s%s' % ( candidate_url_split.scheme, candidate_url_split.netloc, candidate_url_split.path )
         return { 'title' : candidate_title, 'url' : candidate_url }
-      
+
     try:
         #
         ## STEP #1: do an archive search
@@ -505,6 +556,7 @@ def get_title_mp3_urls_working_2023( date_s, debug = False ):
         assert( resp.ok )
         assert( resp.status_code == 200 )
         myhtml = BeautifulSoup( resp.content, 'html.parser' )
+        #
         archive_elem = list(filter(lambda elem: 'data-episode-date' in elem.attrs and date_s.strftime('%Y-%m-%d') in elem['data-episode-date'], myhtml.find_all('article' )))
         assert( len( archive_elem ) != 0 )
         archive_elem = archive_elem[ 0 ]
@@ -525,30 +577,16 @@ def get_title_mp3_urls_working_2023( date_s, debug = False ):
         if debug:
             print( 'URL = %s' % article_url )
             return myhtml
-        try:
-            story_list_elems = myhtml.find_all( 'div', { 'class' : 'story-list' } )
-            assert( len( story_list_elems ) == 1 ), "error number of story elems = %d but should be 1." % len( story_list_elems )
-            story_list_elem = story_list_elems[ 0 ]
-            article_infos_in_order = sorted(
-                map(_get_title_url_here, story_list_elem.find_all( 'article', { 'class' : 'rundown-segment' } ) ),
-                key = lambda entry: entry[ 'url' ] )
-            if len( article_infos_in_order ) == 0:
-                raise ValueError("FAILED PLAN A: length of articles = 0")
-            if any(map(lambda entry: len( entry['title'].strip( ) ) <= 20, article_infos_in_order ) ):
-                raise ValueError( "FAILED ON PLAN A: length of any of the titles is <= 0")
-            logging.info( 'PLAN A: %s' % article_infos_in_order )
-            return list(map(lambda entry: ( entry['title'], entry['url'] ), article_infos_in_order))
-        except Exception as e:
-            logging.info( "PROBLEM GETTING PLAN A: %s, %s." % ( str( e ), type( e ) ) )
-            pass
 
         #
+        ## PLAN A
+        mytuple = _process_freshair_titlemp3_tuples_planA( myhtml )
+        if mytuple is not None: return mytuple
+            
+        #
         ## PLAN B now use the following story list elems try it out...
-        try:
-            return _process_freshair_titlemp3_tuples_planB( myhtml )
-        except Exception as e:
-            logging.info( "PROBLEM GETTING PLAN B: %s, %s." % ( str( e ), type( e ) ) )
-            pass
+        mytuple = _process_freshair_titlemp3_tuples_planB( myhtml )
+        if mytuple is not None: return mytuple
                 
         #
         ## otherwise PLAN C do the needful, see if this works...
@@ -564,7 +602,7 @@ def get_title_mp3_urls_working_2023( date_s, debug = False ):
                 map(_get_title_url_here_something, data_audio ),
                 key = lambda entry: entry[ 'url' ] )
             if len( article_infos_in_order ) == 0:
-                raise ValueError( "ERROR, PLAN B: length of articles = 0" )
+                raise ValueError( "ERROR, PLAN C: length of articles = 0" )
 
             #
             ## now perform more sewage-processing of crappy NPR Fresh Air results
